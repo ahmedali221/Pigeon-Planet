@@ -1,0 +1,137 @@
+{
+  "@@locale": "ar",
+  "appName": "كوكب الحمام",
+  "@appName": { "description": "Application name" },
+
+  "login": "تسجيل الدخول",
+  "@login": { "description": "Login button / page title" },
+
+  "register": "إنشاء حساب",
+  "@register": { "description": "Register button / page title" },
+
+  "email": "البريد الإلكتروني",
+  "@email": {},
+
+  "password": "كلمة المرور",
+  "@password": {},
+
+  "confirmPassword": "تأكيد كلمة المرور",
+  "@confirmPassword": {},
+
+  "fullName": "الاسم الكامل",
+  "@fullName": {},
+
+  "phoneNumber": "رقم الهاتف",
+  "@phoneNumber": {},
+
+  "country": "الدولة",
+  "@country": {},
+
+  "city": "المدينة",
+  "@city": {},
+
+  "forgotPassword": "نسيت كلمة المرور؟",
+  "@forgotPassword": {},
+
+  "welcomeBack": "مرحباً بعودتك",
+  "@welcomeBack": {},
+
+  "home": "الرئيسية",
+  "@home": {},
+
+  "auctions": "المزادات",
+  "@auctions": {},
+
+  "market": "المتجر",
+  "@market": {},
+
+  "profile": "الملف الشخصي",
+  "@profile": {},
+
+  "notifications": "الإشعارات",
+  "@notifications": {},
+
+  "digitalId": "الهوية الرقمية",
+  "@digitalId": {},
+
+  "ringNumber": "رقم الحلقة",
+  "@ringNumber": {},
+
+  "breed": "السلالة",
+  "@breed": {},
+
+  "gender": "الجنس",
+  "@gender": {},
+
+  "male": "ذكر",
+  "@male": {},
+
+  "female": "أنثى",
+  "@female": {},
+
+  "hatchDate": "تاريخ الفقس",
+  "@hatchDate": {},
+
+  "raceResults": "نتائج السباقات",
+  "@raceResults": {},
+
+  "addPhotos": "إضافة الصور",
+  "@addPhotos": {},
+
+  "recordVideo": "تسجيل الفيديو",
+  "@recordVideo": {},
+
+  "preview": "المعاينة",
+  "@preview": {},
+
+  "publish": "نشر",
+  "@publish": {},
+
+  "addToCart": "أضف إلى السلة",
+  "@addToCart": {},
+
+  "buyNow": "اشتري الآن",
+  "@buyNow": {},
+
+  "price": "السعر",
+  "@price": {},
+
+  "quantity": "الكمية",
+  "@quantity": {},
+
+  "verifyOtp": "التحقق من الرمز",
+  "@verifyOtp": {},
+
+  "resendCode": "إعادة الإرسال",
+  "@resendCode": {},
+
+  "next": "التالي",
+  "@next": {},
+
+  "cancel": "إلغاء",
+  "@cancel": {},
+
+  "save": "حفظ",
+  "@save": {},
+
+  "search": "بحث",
+  "@search": {},
+
+  "categories": "الفئات",
+  "@categories": {},
+
+  "products": "المنتجات",
+  "@products": {},
+
+  "activeAuctions": "المزادات النشطة",
+  "@activeAuctions": {},
+
+  "sellerDashboard": "لوحة البائع",
+  "@sellerDashboard": {},
+
+  "buyerMode": "مشترٍ",
+  "@buyerMode": {},
+
+  "sellerMode": "مقدم خدمة",
+  "@sellerMode": {}
+}

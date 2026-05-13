@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -lh \"c:\\\\Users\\\\Ahmed Ali\\\\pigeon_planet\"/*.pdf)",
+      "Bash(python3 -c \":*)",
+      "Bash(powershell -Command \"Get-ChildItem ''C:\\\\Users\\\\Ahmed Ali\\\\pigeon_planet\\\\'' | Where-Object { $_.Name -like ''*.pdf'' } | Select-Object FullName\")",
+      "Bash(powershell -Command \":*)",
+      "Bash(powershell -Command \"where.exe python; where.exe node; where.exe dart; where.exe flutter\")",
+      "Bash(python -c \":*)",
+      "WebFetch(domain:shy-paste-77240743.figma.site)"
+    ]
+  }
+}
