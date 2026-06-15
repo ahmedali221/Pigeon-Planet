@@ -5,39 +5,56 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
 import 'core/locale/locale_service.dart';
+import 'core/utils/navigation_service.dart';
 import 'features/auth/view/pages/account_type_page.dart';
 import 'features/auth/viewmodel/auth_bloc.dart';
 import 'features/home/view/pages/home_page.dart';
 
-void main() {
+import 'core/network/dio_client.dart';
+import 'core/services/permission_service.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupDependencies();
+  await PermissionService.requestStartupPermissions();
+
+  // Listen for unauthorized events to redirect to the start screen
+  sl<DioClient>().onUnauthorized.listen((_) {
+    NavigationService.instance
+        .navigateToWidgetAndRemoveUntil(const AccountTypePage());
+  });
+  
   runApp(const PigeonPlanetApp());
 }
+
 
 class PigeonPlanetApp extends StatelessWidget {
   const PigeonPlanetApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Locale>(
-      valueListenable: LocaleService.notifier,
-      builder: (_, locale, _) {
-        return MaterialApp(
-          title: 'Pigeon Planet',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light,
-          locale: locale,
-          supportedLocales: const [Locale('ar'), Locale('en')],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          home: BlocProvider(
-            create: (_) =>
-                sl<AuthBloc>()..add(const AuthCheckRequested()),
-            child: BlocBuilder<AuthBloc, AuthState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) => sl<AuthBloc>()..add(const AuthCheckRequested()),
+        ),
+      ],
+      child: ValueListenableBuilder<Locale>(
+        valueListenable: LocaleService.notifier,
+        builder: (_, locale, _) {
+          return MaterialApp(
+            title: 'Pigeon Planet',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            locale: locale,
+            supportedLocales: const [Locale('ar'), Locale('en')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            navigatorKey: NavigationService.instance.navigatorKey,
+            home: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 if (state is AuthSuccess ||
                     state is AuthSwitchingProfile ||
@@ -52,9 +69,9 @@ class PigeonPlanetApp extends StatelessWidget {
                 return const AccountTypePage();
               },
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

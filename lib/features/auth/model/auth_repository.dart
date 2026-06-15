@@ -12,12 +12,16 @@ abstract class AuthRepository {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   });
 
   Future<Either<Failure, UserModel>> registerProvider({
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   });
 
   Future<Either<Failure, String>> verifyOtp({
@@ -29,5 +33,9 @@ abstract class AuthRepository {
 
   Future<Either<Failure, UserModel>> switchProfile(String newProfile);
 
+  Future<Either<Failure, void>> createSellerProfile();
+
   Future<Either<Failure, UserModel?>> getStoredUser();
+
+  Future<void> logout();
 }

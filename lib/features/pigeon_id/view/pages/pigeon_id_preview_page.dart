@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../model/pigeon_model.dart';
@@ -9,8 +10,37 @@ import '../../viewmodel/pigeon_id_bloc.dart';
 import '../widgets/pigeon_id_shared_widgets.dart';
 import 'pigeon_id_card_page.dart';
 
-class PigeonIdPreviewPage extends StatelessWidget {
+class PigeonIdPreviewPage extends StatefulWidget {
   const PigeonIdPreviewPage({super.key});
+
+  @override
+  State<PigeonIdPreviewPage> createState() => _PigeonIdPreviewPageState();
+}
+
+class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
+  VideoPlayerController? _videoController;
+  bool _videoInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final path = context.read<PigeonIdBloc>().state.videoPath;
+    if (path != null) {
+      _videoController = VideoPlayerController.file(File(path))
+        ..initialize().then((_) {
+          if (mounted) setState(() => _videoInitialized = true);
+        });
+      _videoController!.addListener(() {
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
+  }
 
   void _submit(BuildContext context) {
     context.read<PigeonIdBloc>().add(const PigeonIdSubmitted());
@@ -19,13 +49,21 @@ class PigeonIdPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PigeonIdBloc, PigeonIdState>(
-      listenWhen: (prev, curr) => curr.status == PigeonIdStatus.submitted,
+      listenWhen: (prev, curr) =>
+          prev.status != curr.status &&
+          (curr.status == PigeonIdStatus.submitted ||
+              curr.status == PigeonIdStatus.updated),
       listener: (context, state) {
+        final bloc = context.read<PigeonIdBloc>();
+        if (bloc.onBirdSaved != null && state.savedBird != null) {
+          bloc.onBirdSaved!(state.savedBird!);
+          return;
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-              value: context.read<PigeonIdBloc>(),
+              value: bloc,
               child: const PigeonIdCardPage(),
             ),
           ),
@@ -138,43 +176,99 @@ class PigeonIdPreviewPage extends StatelessWidget {
                         icon: Icons.videocam_rounded,
                         trailing:
                             _CheckBadge(ok: state.videoPath != null),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: state.videoPath != null
-                                    ? AppColors.primaryLight
-                                    : AppColors.redLight,
-                                borderRadius: BorderRadius.circular(10),
+                        child: state.videoPath != null && _videoInitialized
+                            ? Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: AspectRatio(
+                                      aspectRatio: _videoController!
+                                          .value.aspectRatio,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          VideoPlayer(_videoController!),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _videoController!.value.isPlaying
+                                                  ? _videoController!.pause()
+                                                  : _videoController!.play();
+                                            },
+                                            child: AnimatedOpacity(
+                                              opacity: _videoController!
+                                                      .value.isPlaying
+                                                  ? 0.0
+                                                  : 1.0,
+                                              duration: const Duration(
+                                                  milliseconds: 250),
+                                              child: Container(
+                                                width: 52,
+                                                height: 52,
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.black54,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                    Icons.play_arrow_rounded,
+                                                    color: Colors.white,
+                                                    size: 34),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  VideoProgressIndicator(
+                                    _videoController!,
+                                    allowScrubbing: true,
+                                    colors: const VideoProgressColors(
+                                      playedColor: AppColors.primary,
+                                      bufferedColor: AppColors.primaryLight,
+                                      backgroundColor: AppColors.border,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: state.videoPath != null
+                                          ? AppColors.primaryLight
+                                          : AppColors.redLight,
+                                      borderRadius:
+                                          BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      state.videoPath != null
+                                          ? Icons.play_circle_rounded
+                                          : Icons.videocam_off_rounded,
+                                      color: state.videoPath != null
+                                          ? AppColors.primary
+                                          : AppColors.red,
+                                      size: 32,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Text(
+                                      state.videoPath != null
+                                          ? 'تم تسجيل فيديو زاجل بنجاح ✓'
+                                          : 'لم يتم تسجيل الفيديو بعد',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: state.videoPath != null
+                                            ? AppColors.textPrimary
+                                            : AppColors.error,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                state.videoPath != null
-                                    ? Icons.play_circle_rounded
-                                    : Icons.videocam_off_rounded,
-                                color: state.videoPath != null
-                                    ? AppColors.primary
-                                    : AppColors.red,
-                                size: 32,
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Text(
-                                state.videoPath != null
-                                    ? 'تم تسجيل فيديو زاجل بنجاح ✓'
-                                    : 'لم يتم تسجيل الفيديو بعد',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: state.videoPath != null
-                                      ? AppColors.textPrimary
-                                      : AppColors.error,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
 
                       // ── Race results ─────────────────────────────────

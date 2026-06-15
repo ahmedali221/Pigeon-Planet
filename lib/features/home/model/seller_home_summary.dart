@@ -63,6 +63,7 @@ class SellerHomeSummary extends Equatable {
   final String balance;
   final String currency;
   final String? subscriptionTier;
+  final int? pointsBalance;
   final bool profileActivated;
   final int activeLiveAuctions;
   final int myActiveListings;
@@ -77,6 +78,7 @@ class SellerHomeSummary extends Equatable {
     required this.balance,
     required this.currency,
     this.subscriptionTier,
+    this.pointsBalance,
     required this.profileActivated,
     required this.activeLiveAuctions,
     required this.myActiveListings,
@@ -99,6 +101,7 @@ class SellerHomeSummary extends Equatable {
       balance: j['balance'] as String? ?? '0',
       currency: j['currency'] as String? ?? 'EGP',
       subscriptionTier: j['subscription_tier'] as String?,
+      pointsBalance: (j['points_balance'] as num?)?.toInt(),
       profileActivated: j['profile_activated'] as bool? ?? false,
       activeLiveAuctions: (j['active_live_auctions'] as num?)?.toInt() ?? 0,
       myActiveListings: (j['my_active_listings'] as num?)?.toInt() ?? 0,
@@ -118,22 +121,23 @@ class SellerHomeSummary extends Equatable {
   String get balanceDisplay {
     final b = balance.trim();
     if (b.isEmpty) return '0';
-    return '$currency $b';
+    return b;
   }
 
   @override
   List<Object?> get props => [
-        nickname,
-        balance,
-        currency,
-        subscriptionTier,
-        profileActivated,
-        activeLiveAuctions,
-        myActiveListings,
-        salesToday,
-        pendingOrderItems,
-        notifications,
-        notificationsNewCount,
-        providerNotes,
-      ];
+    nickname,
+    balance,
+    currency,
+    subscriptionTier,
+    pointsBalance,
+    profileActivated,
+    activeLiveAuctions,
+    myActiveListings,
+    salesToday,
+    pendingOrderItems,
+    notifications,
+    notificationsNewCount,
+    providerNotes,
+  ];
 }

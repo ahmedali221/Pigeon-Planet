@@ -5,15 +5,67 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/injection.dart';
 import '../../model/pigeon_model.dart';
 import '../../viewmodel/pigeon_id_bloc.dart';
+import 'pigeon_id_form_page.dart';
+
 
 class PigeonIdCardPage extends StatelessWidget {
   const PigeonIdCardPage({super.key});
 
+  void _confirmDelete(BuildContext context, int id) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('حذف الطائر'),
+        content: const Text('هل أنت متأكد من حذف هذا الطائر؟ لا يمكن التراجع.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogCtx);
+              context
+                  .read<PigeonIdBloc>()
+                  .add(PigeonIdDeleteRequested(id));
+            },
+            child: const Text('حذف',
+                style: TextStyle(color: AppColors.error)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PigeonIdBloc, PigeonIdState>(
+    return BlocConsumer<PigeonIdBloc, PigeonIdState>(
+      listenWhen: (prev, curr) =>
+          curr.status == PigeonIdStatus.deleted ||
+          (curr.status == PigeonIdStatus.error &&
+              prev.status == PigeonIdStatus.deleting),
+      listener: (context, state) {
+        if (state.status == PigeonIdStatus.deleted) {
+          int count = 0;
+          Navigator.popUntil(context, (_) => ++count > 3);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم حذف الطائر بنجاح'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        } else if (state.status == PigeonIdStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? 'حدث خطأ أثناء الحذف'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         final isMale = state.gender == PigeonGender.male;
         final genderColor = isMale ? AppColors.blue : AppColors.red;
@@ -30,6 +82,40 @@ class PigeonIdCardPage extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
             actions: [
+              if (state.savedBird != null) ...[
+                IconButton(
+                  icon: const Icon(Icons.edit_rounded),
+                  tooltip: 'تعديل',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => sl<PigeonIdBloc>(),
+                          child: PigeonIdFormPage(
+                              initialPigeon: state.savedBird),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: state.status == PigeonIdStatus.deleting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(Icons.delete_rounded),
+                  tooltip: 'حذف',
+                  onPressed: state.status == PigeonIdStatus.deleting ||
+                          state.savedBird?.id == null
+                      ? null
+                      : () => _confirmDelete(
+                          context, state.savedBird!.id!),
+                ),
+              ],
               IconButton(
                 icon: const Icon(Icons.share_rounded),
                 onPressed: () {
@@ -38,10 +124,6 @@ class PigeonIdCardPage extends StatelessWidget {
                         content: Text('سيتم إضافة المشاركة قريباً')),
                   );
                 },
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
@@ -338,6 +420,37 @@ class PigeonIdCardPage extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Back to birds ─────────────────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      int count = 0;
+                      Navigator.popUntil(context, (_) => ++count > 3);
+                    },
+                    icon: const Icon(Icons.chevron_right_rounded,
+                        color: AppColors.primary),
+                    label: const Text(
+                      'العودة لطيوري',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                            color: AppColors.primary.withValues(alpha: 0.3)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 32),

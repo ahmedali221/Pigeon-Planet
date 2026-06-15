@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../auctions/view/pages/auction_detail_page.dart';
 
 class HomeAuctionsSection extends StatelessWidget {
   final List<Map<String, dynamic>> auctions;
@@ -29,7 +30,17 @@ class _AuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final auctionId = auction['id'] as int?;
+    return GestureDetector(
+      onTap: auctionId != null
+          ? () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AuctionDetailPage(auctionId: auctionId),
+                ),
+              )
+          : null,
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -218,6 +229,7 @@ class _AuctionCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

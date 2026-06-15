@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../auctions/model/bird_summary_model.dart';
 
 class HomeFixedPriceBirdsSection extends StatelessWidget {
-  final List<Map<String, dynamic>> birds;
+  final List<BirdSummaryModel> birds;
+  final void Function(BirdSummaryModel)? onBirdTap;
 
-  const HomeFixedPriceBirdsSection({super.key, required this.birds});
+  const HomeFixedPriceBirdsSection({
+    super.key,
+    required this.birds,
+    this.onBirdTap,
+  });
+
+  static String _fmt(double v) {
+    if (v == 0) return '0';
+    final s = v.toStringAsFixed(0);
+    final buf = StringBuffer();
+    int count = 0;
+    for (int i = s.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+      count++;
+    }
+    return buf.toString().split('').reversed.join();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,25 +33,25 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              GestureDetector(
-                onTap: () {},
-                child: const Row(
-                  children: [
-                    Icon(Icons.chevron_left_rounded,
-                        color: AppColors.textSecondary, size: 20),
-                    Text('الكل',
-                        style: TextStyle(
-                            color: AppColors.textSecondary, fontSize: 14)),
-                  ],
-                ),
-              ),
-              const Spacer(),
               const Text(
                 'طيور بسعر ثابت',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {},
+                child: const Row(
+                  children: [
+                    Text('الكل',
+                        style: TextStyle(
+                            color: AppColors.textSecondary, fontSize: 14)),
+                    Icon(Icons.chevron_left_rounded,
+                        color: AppColors.textSecondary, size: 20),
+                  ],
                 ),
               ),
             ],
@@ -49,167 +68,162 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
             itemCount: birds.length,
             itemBuilder: (context, i) {
               final bird = birds[i];
-              final hasDiscount = bird['discount'] != null;
-              final hasOldPrice = bird['oldPrice'] != null;
 
-              return Container(
-                width: 160,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(14),
-                            topRight: Radius.circular(14),
-                          ),
-                          child: SizedBox(
-                            height: 110,
-                            width: double.infinity,
-                            child: Image.network(
-                              'https://picsum.photos/seed/${i + 30}/200/150',
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
-                                color: Color(bird['color'] as int),
-                                child: const Icon(Icons.flutter_dash,
-                                    color: Colors.white54, size: 40),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (hasDiscount)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.red,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'خصم ${bird['discount']}',
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                              ),
-                            ),
-                          ),
-                        Positioned(
-                          bottom: 6,
-                          left: 6,
-                          child: Row(
-                            children: [
-                              _OverlayChip(
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.star_rounded,
-                                        color: Colors.amber, size: 11),
-                                    const SizedBox(width: 2),
-                                    Text(bird['rating'] as String,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 10)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              _OverlayChip(
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.visibility_outlined,
-                                        color: Colors.white70, size: 10),
-                                    const SizedBox(width: 2),
-                                    Text(bird['views'] as String,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 10)),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                      child: Text(
-                        bird['name'] as String,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              return GestureDetector(
+                onTap: onBirdTap != null ? () => onBirdTap!(bird) : null,
+                child: Container(
+                  width: 160,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
                         children: [
-                          Text(
-                            'ج.م ${bird['price']}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(14),
+                              topRight: Radius.circular(14),
+                            ),
+                            child: SizedBox(
+                              height: 110,
+                              width: double.infinity,
+                              child: bird.thumbnailUrl != null
+                                  ? Image.network(
+                                      bird.thumbnailUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) =>
+                                          _placeholder(bird),
+                                    )
+                                  : _placeholder(bird),
                             ),
                           ),
-                          if (hasOldPrice) ...[
-                            const SizedBox(width: 6),
-                            Text(
-                              bird['oldPrice'] as String,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.textHint,
-                                decoration: TextDecoration.lineThrough,
-                              ),
+                          Positioned(
+                            bottom: 6,
+                            left: 6,
+                            child: Row(
+                              children: [
+                                if (bird.gender.isNotEmpty)
+                                  _OverlayChip(
+                                    child: Text(
+                                      bird.gender == 'male'
+                                          ? 'ذكر'
+                                          : bird.gender == 'female'
+                                              ? 'أنثى'
+                                              : 'صغير',
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 10),
+                                    ),
+                                  ),
+                                if (bird.flyingSpeed != null) ...[
+                                  const SizedBox(width: 4),
+                                  _OverlayChip(
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.bolt_rounded,
+                                            color: Colors.amber, size: 10),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          '${bird.flyingSpeed!.toStringAsFixed(0)} كم',
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
+                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 30,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                            padding: EdgeInsets.zero,
-                            elevation: 0,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                        child: Text(
+                          bird.name.isNotEmpty ? bird.name : bird.ringNumber,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
                           ),
-                          child: const Text('أضف للسلة',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12)),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                  ],
+                      if (bird.colour.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 2, 10, 0),
+                          child: Text(
+                            bird.colour,
+                            style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'ج.م ${_fmt(bird.price)}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 30,
+                          child: ElevatedButton(
+                            onPressed: onBirdTap != null
+                                ? () => onBirdTap!(bird)
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: EdgeInsets.zero,
+                              elevation: 0,
+                            ),
+                            child: const Text('عرض التفاصيل',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _placeholder(BirdSummaryModel bird) {
+    return Container(
+      color: AppColors.primary.withValues(alpha: 0.15),
+      child: const Center(
+        child: Icon(Icons.flutter_dash, color: AppColors.primary, size: 40),
+      ),
     );
   }
 }

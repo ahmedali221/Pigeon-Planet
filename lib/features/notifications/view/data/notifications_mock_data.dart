@@ -6,7 +6,8 @@ class NotificationItem {
   final String timeAgo;
   final bool isRead;
   final NotificationType type;
-  final String tag; // 'مشتري' or 'بائع'
+  final String tag; // 'مشتري' or 'بائع' or 'عام'
+  final int? apiId;
 
   const NotificationItem({
     required this.title,
@@ -15,6 +16,7 @@ class NotificationItem {
     required this.isRead,
     required this.type,
     required this.tag,
+    this.apiId,
   });
 }
 

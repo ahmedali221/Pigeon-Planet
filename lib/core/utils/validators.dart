@@ -17,7 +17,7 @@ class AppValidators {
 
   static String? password(String? value) {
     if (value == null || value.trim().isEmpty) return AppStrings.fieldRequired;
-    if (value.length < 6) return AppStrings.passwordTooShort;
+    if (value.length < 12) return AppStrings.passwordTooShort;
     return null;
   }
 
@@ -31,6 +31,13 @@ class AppValidators {
     if (value == null || value.trim().isEmpty) return AppStrings.fieldRequired;
     final digits = value.replaceAll(RegExp(r'[\s\-\+]'), '');
     if (digits.length < 9) return AppStrings.invalidPhone;
+    return null;
+  }
+
+  static String? username(String? value) {
+    if (value == null || value.trim().isEmpty) return AppStrings.fieldRequired;
+    if (value.trim().length < 3) return 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل';
+    if (value.contains(' ')) return 'اسم المستخدم لا يجب أن يحتوي على مسافات';
     return null;
   }
 }

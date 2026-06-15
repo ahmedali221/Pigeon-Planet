@@ -1,0 +1,71 @@
+part of 'races_bloc.dart';
+
+enum RacesStatus { initial, loading, loaded, searchResults, error }
+
+enum RacesDetailStatus { initial, loading, loaded, error }
+
+class RacesState extends Equatable {
+  final RacesStatus status;
+  final RacesDetailStatus detailStatus;
+  final List<RaceModel> races;
+  final List<RaceResultModel> globalSearchResults;
+  final RaceModel? selectedRace;
+  final String searchQuery;
+  final String resultSearchQuery;
+  final String? errorMessage;
+  final String? detailErrorMessage;
+
+  const RacesState({
+    this.status = RacesStatus.initial,
+    this.detailStatus = RacesDetailStatus.initial,
+    this.races = const [],
+    this.globalSearchResults = const [],
+    this.selectedRace,
+    this.searchQuery = '',
+    this.resultSearchQuery = '',
+    this.errorMessage,
+    this.detailErrorMessage,
+  });
+
+  RacesState copyWith({
+    RacesStatus? status,
+    RacesDetailStatus? detailStatus,
+    List<RaceModel>? races,
+    List<RaceResultModel>? globalSearchResults,
+    RaceModel? selectedRace,
+    String? searchQuery,
+    String? resultSearchQuery,
+    String? errorMessage,
+    String? detailErrorMessage,
+    bool clearError = false,
+    bool clearDetailError = false,
+    bool clearSelectedRace = false,
+  }) {
+    return RacesState(
+      status: status ?? this.status,
+      detailStatus: detailStatus ?? this.detailStatus,
+      races: races ?? this.races,
+      globalSearchResults: globalSearchResults ?? this.globalSearchResults,
+      selectedRace: clearSelectedRace ? null : (selectedRace ?? this.selectedRace),
+      searchQuery: searchQuery ?? this.searchQuery,
+      resultSearchQuery: resultSearchQuery ?? this.resultSearchQuery,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      detailErrorMessage: clearDetailError
+          ? null
+          : (detailErrorMessage ?? this.detailErrorMessage),
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        status,
+        detailStatus,
+        races,
+        globalSearchResults,
+        selectedRace,
+        searchQuery,
+        resultSearchQuery,
+        errorMessage,
+        detailErrorMessage,
+      ];
+}

@@ -28,30 +28,38 @@ class AuthRegisterPersonalRequested extends AuthEvent {
   final String phoneNumber;
   final String password;
   final String country;
+  final String username;
+  final String? avatarPath;
 
   const AuthRegisterPersonalRequested({
     required this.phoneNumber,
     required this.password,
     required this.country,
+    required this.username,
+    this.avatarPath,
   });
 
   @override
-  List<Object?> get props => [phoneNumber, password, country];
+  List<Object?> get props => [phoneNumber, password, country, username, avatarPath];
 }
 
 class AuthRegisterProviderRequested extends AuthEvent {
   final String phoneNumber;
   final String password;
   final String country;
+  final String username;
+  final String? avatarPath;
 
   const AuthRegisterProviderRequested({
     required this.phoneNumber,
     required this.password,
     required this.country,
+    required this.username,
+    this.avatarPath,
   });
 
   @override
-  List<Object?> get props => [phoneNumber, password, country];
+  List<Object?> get props => [phoneNumber, password, country, username, avatarPath];
 }
 
 class AuthOtpVerifyRequested extends AuthEvent {
@@ -81,6 +89,12 @@ class AuthSwitchProfileRequested extends AuthEvent {
 
   @override
   List<Object?> get props => [newProfile];
+}
+
+/// Fired when a customer-profile user wants to switch to Seller.
+/// Creates the seller profile if it doesn't exist, then switches.
+class AuthBecomeSellerRequested extends AuthEvent {
+  const AuthBecomeSellerRequested();
 }
 
 class AuthProfileSwitchFailureAcknowledged extends AuthEvent {

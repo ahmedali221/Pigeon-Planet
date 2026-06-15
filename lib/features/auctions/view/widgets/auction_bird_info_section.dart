@@ -62,9 +62,9 @@ class AuctionBirdInfoSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
+              color: AppColors.blueLight,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFF90CAF9)),
+              border: Border.all(color: AppColors.blue.withValues(alpha: 0.4)),
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +79,7 @@ class AuctionBirdInfoSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1565C0),
+                        color: AppColors.blue,
                       ),
                     ),
                   ],
@@ -93,7 +93,7 @@ class AuctionBirdInfoSection extends StatelessWidget {
                     Text(
                       'اقتني بطل اليوم - حقق انتصارات الغد',
                       style: TextStyle(
-                          fontSize: 12, color: Color(0xFF1565C0)),
+                          fontSize: 12, color: AppColors.blue),
                     ),
                   ],
                 ),

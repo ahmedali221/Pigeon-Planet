@@ -39,12 +39,16 @@ class AuthRepositoryImpl implements AuthRepository {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
     try {
       final user = await remoteDataSource.registerPersonal(
         phoneNumber: phoneNumber,
         password: password,
         country: country,
+        username: username,
+        avatarPath: avatarPath,
       );
       return Right(user);
     } on ApiException catch (e) {
@@ -62,12 +66,16 @@ class AuthRepositoryImpl implements AuthRepository {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
     try {
       final user = await remoteDataSource.registerProvider(
         phoneNumber: phoneNumber,
         password: password,
         country: country,
+        username: username,
+        avatarPath: avatarPath,
       );
       return Right(user);
     } on ApiException catch (e) {
@@ -115,6 +123,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> createSellerProfile() async {
+    try {
+      await remoteDataSource.createSellerProfile();
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(_mapApiException(e));
+    } catch (e, st) {
+      dev.log('createSellerProfile error', error: e, stackTrace: st, name: 'AuthRepo');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel?>> getStoredUser() async {
     try {
       final user = await remoteDataSource.getStoredUser();
@@ -122,6 +143,11 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (_) {
       return const Right(null);
     }
+  }
+
+  @override
+  Future<void> logout() async {
+    await remoteDataSource.logout();
   }
 
   Failure _mapApiException(ApiException e) {

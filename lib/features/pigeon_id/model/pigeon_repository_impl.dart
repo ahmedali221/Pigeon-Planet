@@ -22,6 +22,31 @@ class PigeonRepositoryImpl implements PigeonRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, PigeonModel>> updateBird(
+      int id, PigeonModel pigeon) async {
+    try {
+      final result = await _dataSource.updateBird(id, pigeon);
+      return Right(result);
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteBird(int id) async {
+    try {
+      await _dataSource.deleteBird(id);
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
   Failure _map(ApiException e) {
     if (e is UnauthorizedException) return UnauthorizedFailure(e.message);
     if (e is NetworkException) return NetworkFailure(e.message);

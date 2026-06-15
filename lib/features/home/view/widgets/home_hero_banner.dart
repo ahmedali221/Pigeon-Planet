@@ -40,39 +40,63 @@ class _HomeHeroBannerState extends State<HomeHeroBanner> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 180,
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (i) => setState(() => _currentPage = i),
-            itemCount: widget.banners.length,
-            itemBuilder: (context, i) {
-              final banner = widget.banners[i];
-              return Container(
-                decoration:
-                    BoxDecoration(color: Color(banner['color'] as int)),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 0.08,
-                        child: Image.network(
-                          'https://picsum.photos/seed/${i + 10}/600/200',
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const SizedBox(),
+        Container(
+          height: 190,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (i) => setState(() => _currentPage = i),
+              itemCount: widget.banners.length,
+              itemBuilder: (context, i) {
+                final banner = widget.banners[i];
+                return Container(
+                  decoration:
+                      BoxDecoration(color: Color(banner['color'] as int)),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Opacity(
+                          opacity: 0.12,
+                          child: Image.network(
+                            'https://picsum.photos/seed/${i + 10}/600/200',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const SizedBox(),
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(8),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 90,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                Colors.black.withValues(alpha: 0.55),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
                         ),
+                      ),
+                      Positioned(
+                        bottom: 14,
+                        right: 16,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -83,33 +107,40 @@ class _HomeHeroBannerState extends State<HomeHeroBanner> {
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black45,
+                                    blurRadius: 4,
+                                  ),
+                                ],
                               ),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               banner['sub'] as String,
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.85),
-                                fontSize: 11,
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 12,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(widget.banners.length, (i) {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: _currentPage == i ? 18 : 6,
+              width: _currentPage == i ? 20 : 6,
               height: 6,
               decoration: BoxDecoration(
                 color: _currentPage == i ? AppColors.primary : AppColors.border,

@@ -69,6 +69,62 @@ class PigeonIdRaceResultRemoved extends PigeonIdEvent {
   List<Object?> get props => [index];
 }
 
+class PigeonIdAchievementsChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdAchievementsChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdStaminaChanged extends PigeonIdEvent {
+  final StaminaAbility stamina;
+  const PigeonIdStaminaChanged(this.stamina);
+  @override
+  List<Object?> get props => [stamina];
+}
+
+class PigeonIdNameChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdNameChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdPriceChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdPriceChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdDescriptionChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdDescriptionChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdFlyingSpeedChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdFlyingSpeedChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
 class PigeonIdSubmitted extends PigeonIdEvent {
   const PigeonIdSubmitted();
+}
+
+class PigeonIdLoadedForEdit extends PigeonIdEvent {
+  final PigeonModel pigeon;
+  const PigeonIdLoadedForEdit(this.pigeon);
+  @override
+  List<Object?> get props => [pigeon];
+}
+
+class PigeonIdDeleteRequested extends PigeonIdEvent {
+  final int id;
+  const PigeonIdDeleteRequested(this.id);
+  @override
+  List<Object?> get props => [id];
 }

@@ -5,8 +5,24 @@ class AuctionDetailsGrid extends StatelessWidget {
   final Map<String, dynamic> data;
   const AuctionDetailsGrid({super.key, required this.data});
 
+  static String _staminaLabel(String v) => switch (v) {
+        'excellent' => 'ممتاز',
+        'verygood'  => 'جيد جداً',
+        'good'      => 'جيد',
+        _           => '—',
+      };
+
+  static String _genderLabel(String v) => switch (v) {
+        'male'   => 'ذكر',
+        'female' => 'أنثى',
+        'young'  => 'صغير',
+        _        => '—',
+      };
+
   @override
   Widget build(BuildContext context) {
+    final achievements = data['achievements'] as String? ?? '';
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -18,7 +34,7 @@ class AuctionDetailsGrid extends StatelessWidget {
               Expanded(
                 child: AuctionDetailCell(
                   label: 'العمر',
-                  value: data['age'] as String,
+                  value: data['age'] as String? ?? '—',
                   icon: Icons.cake_rounded,
                 ),
               ),
@@ -26,41 +42,75 @@ class AuctionDetailsGrid extends StatelessWidget {
               Expanded(
                 child: AuctionDetailCell(
                   label: 'الموقع',
-                  value: data['location'] as String,
+                  value: data['location'] as String? ?? '—',
                   icon: Icons.location_on_rounded,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          // row 2: speed | achievements
+          // row 2: ring | gender
           Row(
             children: [
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'الإنجازات',
-                  value: '—',
-                  icon: Icons.emoji_events_rounded,
-                  iconColor: const Color(0xFFD4A017),
+                  label: 'رقم الحلقة',
+                  value: data['ringNumber'] as String? ?? '—',
+                  icon: Icons.tag_rounded,
+                  iconColor: AppColors.primary,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'السرعة',
-                  value: '—',
-                  icon: Icons.bolt_rounded,
-                  iconColor: AppColors.orange,
+                  label: 'الجنس',
+                  value: _genderLabel(data['gender'] as String? ?? ''),
+                  icon: Icons.pets_rounded,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          // row 3: breeder (full width)
+          // row 3: speed | stamina
+          Row(
+            children: [
+              Expanded(
+                child: AuctionDetailCell(
+                  label: 'السرعة',
+                  value: (data['flyingSpeed'] as double?) != null
+                      ? '${(data['flyingSpeed'] as double).toStringAsFixed(1)} كم/س'
+                      : '—',
+                  icon: Icons.bolt_rounded,
+                  iconColor: AppColors.orange,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AuctionDetailCell(
+                  label: 'التحمل',
+                  value: _staminaLabel(data['staminaAbility'] as String? ?? ''),
+                  icon: Icons.favorite_rounded,
+                  iconColor: AppColors.red,
+                ),
+              ),
+            ],
+          ),
+          // row 4: achievements (full width, only if present)
+          if (achievements.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            AuctionDetailCell(
+              label: 'الإنجازات',
+              value: achievements,
+              icon: Icons.emoji_events_rounded,
+              iconColor: const Color(0xFFD4A017),
+              fullWidth: true,
+            ),
+          ],
+          const SizedBox(height: 10),
+          // breeder row (full width)
           Container(
             width: double.infinity,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.pageBackground,
               borderRadius: BorderRadius.circular(10),
@@ -70,9 +120,11 @@ class AuctionDetailsGrid extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: const Color(0xFF1565C0),
+                  backgroundColor: AppColors.blue,
                   child: Text(
-                    (data['breeder'] as String)[0],
+                    (data['breeder'] as String? ?? '?').isNotEmpty
+                        ? (data['breeder'] as String)[0]
+                        : '?',
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -90,7 +142,7 @@ class AuctionDetailsGrid extends StatelessWidget {
                               color: AppColors.textSecondary)),
                       const SizedBox(height: 2),
                       Text(
-                        data['breeder'] as String,
+                        data['breeder'] as String? ?? '—',
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -114,6 +166,7 @@ class AuctionDetailCell extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color? iconColor;
+  final bool fullWidth;
 
   const AuctionDetailCell({
     super.key,
@@ -121,11 +174,13 @@ class AuctionDetailCell extends StatelessWidget {
     required this.value,
     required this.icon,
     this.iconColor,
+    this.fullWidth = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: fullWidth ? double.infinity : null,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.pageBackground,
@@ -146,6 +201,7 @@ class AuctionDetailCell extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(value,
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

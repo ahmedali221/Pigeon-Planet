@@ -1,9 +1,12 @@
 import 'package:dartz/dartz.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/error/failures.dart';
+import 'asset_rating_model.dart';
 import 'auction_model.dart';
+import 'auction_create_payload.dart';
 import 'auctions_repository.dart';
 import 'bid_model.dart';
+import 'bird_summary_model.dart';
 import 'datasources/auctions_remote_datasource.dart';
 
 class AuctionsRepositoryImpl implements AuctionsRepository {
@@ -39,6 +42,24 @@ class AuctionsRepositoryImpl implements AuctionsRepository {
   @override
   Future<Either<Failure, List<BidModel>>> getBidsForItem(int itemId) =>
       _wrap(() => _dataSource.getBidsForItem(itemId));
+
+  @override
+  Future<Either<Failure, AuctionModel>> createAuction(AuctionCreatePayload payload) =>
+      _wrap(() => _dataSource.createAuction(payload));
+
+  @override
+  Future<Either<Failure, List<BirdSummaryModel>>> getSellerBirds({
+    bool mineOnly = false,
+    bool availableForAuction = false,
+  }) =>
+      _wrap(() => _dataSource.getSellerBirds(
+            mineOnly: mineOnly,
+            availableForAuction: availableForAuction,
+          ));
+
+  @override
+  Future<Either<Failure, List<AssetRatingModel>>> getAssetRatings(int assetId) =>
+      _wrap(() => _dataSource.getAssetRatings(assetId));
 
   Future<Either<Failure, T>> _wrap<T>(Future<T> Function() call) async {
     try {

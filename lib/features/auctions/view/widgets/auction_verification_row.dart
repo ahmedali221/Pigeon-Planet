@@ -22,7 +22,7 @@ class AuctionVerificationRow extends StatelessWidget {
           const SizedBox(width: 8),
           if (data['hasHealthGuarantee'] as bool)
             AuctionVerifChip(
-                label: 'ضمان صحي', color: const Color(0xFF00897B)),
+                label: 'ضمان صحي', color: AppColors.success),
         ],
       ),
     );

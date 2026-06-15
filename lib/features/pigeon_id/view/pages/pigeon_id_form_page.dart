@@ -8,7 +8,8 @@ import '../widgets/pigeon_id_shared_widgets.dart';
 import 'pigeon_id_photos_page.dart';
 
 class PigeonIdFormPage extends StatefulWidget {
-  const PigeonIdFormPage({super.key});
+  final PigeonModel? initialPigeon;
+  const PigeonIdFormPage({super.key, this.initialPigeon});
 
   @override
   State<PigeonIdFormPage> createState() => _PigeonIdFormPageState();
@@ -16,14 +17,45 @@ class PigeonIdFormPage extends StatefulWidget {
 
 class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
   final _ringCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController();
   final _breedCtrl = TextEditingController();
   final _raceCtrl = TextEditingController();
+  final _achievementsCtrl = TextEditingController();
+  final _priceCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
+  final _speedCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final p = widget.initialPigeon;
+    if (p != null) {
+      _ringCtrl.text = p.ringNumber;
+      _nameCtrl.text = p.name;
+      _breedCtrl.text = p.breed;
+      _achievementsCtrl.text = p.achievements;
+      _priceCtrl.text = p.price > 0 ? p.price.toStringAsFixed(0) : '';
+      _descCtrl.text = p.description;
+      _speedCtrl.text =
+          p.flyingSpeed != null ? p.flyingSpeed!.toStringAsFixed(1) : '';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<PigeonIdBloc>().add(PigeonIdLoadedForEdit(p));
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
     _ringCtrl.dispose();
+    _nameCtrl.dispose();
     _breedCtrl.dispose();
     _raceCtrl.dispose();
+    _achievementsCtrl.dispose();
+    _priceCtrl.dispose();
+    _descCtrl.dispose();
+    _speedCtrl.dispose();
     super.dispose();
   }
 
@@ -51,7 +83,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
     if (!state.canProceedToPhotos) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('يرجى إدخال رقم الحلقة والسلالة'),
+          content: Text('يرجى إدخال رقم الحلقة والسلالة والإنجازات'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -70,17 +102,41 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PigeonIdBloc, PigeonIdState>(
+    return BlocConsumer<PigeonIdBloc, PigeonIdState>(
+      listenWhen: (prev, curr) =>
+          curr.status == PigeonIdStatus.updated ||
+          (curr.status == PigeonIdStatus.error &&
+              prev.status == PigeonIdStatus.updating),
+      listener: (context, state) {
+        if (state.status == PigeonIdStatus.updated) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم تعديل بيانات الطائر بنجاح'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        } else if (state.status == PigeonIdStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
+        final isEditMode = state.editingId != null;
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: AppBar(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             elevation: 0,
-            title: const Text(
-              'الهوية الرقمية للحمامة',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            title: Text(
+              isEditMode ? 'تعديل الطائر' : 'الهوية الرقمية للحمامة',
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
             actions: [
               IconButton(
@@ -92,8 +148,9 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
           ),
           body: Column(
             children: [
-              PigeonStepHeader(
-                  current: 1, total: 4, label: 'البيانات الأساسية'),
+              if (!isEditMode)
+                PigeonStepHeader(
+                    current: 1, total: 4, label: 'البيانات الأساسية'),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -236,17 +293,127 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             ),
                       ],
 
+                      const SizedBox(height: 16),
+
+                      // ── Achievements ─────────────────────────────────
+                      const PigeonFieldLabel(text: 'الإنجازات *'),
+                      const SizedBox(height: 6),
+                      PigeonAppInput(
+                        controller: _achievementsCtrl,
+                        hint: 'مثال: بطل سباق 500كم 2024',
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdAchievementsChanged(v)),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ── Stamina ability ──────────────────────────────
+                      const PigeonFieldLabel(text: 'قدرة التحمل *'),
+                      const SizedBox(height: 8),
+                      _StaminaSelector(
+                        selected: state.staminaAbility,
+                        onChanged: (s) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdStaminaChanged(s)),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ── Optional divider ─────────────────────────────
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'بيانات البيع',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary),
+                            ),
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ── Display name ─────────────────────────────────
+                      const PigeonFieldLabel(text: 'اسم العرض'),
+                      const SizedBox(height: 6),
+                      PigeonAppInput(
+                        controller: _nameCtrl,
+                        hint: 'مثال: الصاعقة الزرقاء',
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdNameChanged(v)),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ── Price ─────────────────────────────────────────
+                      const PigeonFieldLabel(text: 'السعر (ج.م) *'),
+                      const SizedBox(height: 6),
+                      PigeonAppInput(
+                        controller: _priceCtrl,
+                        hint: 'مثال: 5000',
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdPriceChanged(v)),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ── Description ───────────────────────────────────
+                      const PigeonFieldLabel(text: 'وصف الطائر'),
+                      const SizedBox(height: 6),
+                      PigeonAppInput(
+                        controller: _descCtrl,
+                        hint: 'اكتب وصفاً مختصراً عن الطائر وميزاته...',
+                        maxLines: 3,
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdDescriptionChanged(v)),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ── Flying speed ──────────────────────────────────
+                      const PigeonFieldLabel(text: 'سرعة الطيران (كم/ساعة)'),
+                      const SizedBox(height: 6),
+                      PigeonAppInput(
+                        controller: _speedCtrl,
+                        hint: 'مثال: 108.5',
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdFlyingSpeedChanged(v)),
+                      ),
+
                       const SizedBox(height: 32),
                     ],
                   ),
                 ),
               ),
 
-              PigeonNextButton(
-                label: 'التالي — إضافة الصور',
-                enabled: state.canProceedToPhotos,
-                onTap: () => _next(context, state),
-              ),
+              isEditMode
+                  ? PigeonNextButton(
+                      label: state.status == PigeonIdStatus.updating
+                          ? 'جارٍ الحفظ...'
+                          : 'حفظ التعديلات',
+                      enabled: state.isReadyToSubmit &&
+                          state.status != PigeonIdStatus.updating,
+                      onTap: () => context
+                          .read<PigeonIdBloc>()
+                          .add(const PigeonIdSubmitted()),
+                    )
+                  : PigeonNextButton(
+                      label: 'التالي — إضافة الصور',
+                      enabled: state.canProceedToPhotos,
+                      onTap: () => _next(context, state),
+                    ),
             ],
           ),
         );
@@ -342,6 +509,53 @@ class _GenderOption extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _StaminaSelector extends StatelessWidget {
+  final StaminaAbility selected;
+  final ValueChanged<StaminaAbility> onChanged;
+
+  const _StaminaSelector({required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: StaminaAbility.values.map((s) {
+        final isSelected = s == selected;
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => onChanged(s),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: EdgeInsetsDirectional.only(
+                end: s != StaminaAbility.good ? 8 : 0,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primaryLight : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.border,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Text(
+                s.label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

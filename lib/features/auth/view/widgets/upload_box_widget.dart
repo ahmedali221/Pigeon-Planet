@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/services/permission_service.dart';
 
 class UploadBoxWidget extends StatefulWidget {
   final String label;
@@ -24,6 +25,8 @@ class _UploadBoxWidgetState extends State<UploadBoxWidget> {
   final _picker = ImagePicker();
 
   Future<void> _pick() async {
+    final granted = await PermissionService.requestGalleryPermission();
+    if (!granted) return;
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,

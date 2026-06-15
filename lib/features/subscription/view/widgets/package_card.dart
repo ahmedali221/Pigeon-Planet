@@ -14,6 +14,8 @@ class PlanCard extends StatelessWidget {
   final IconData icon;
   final String? badge;
   final List<String> features;
+  final VoidCallback? onSubscribe;
+  final bool isLoading;
 
   const PlanCard({
     super.key,
@@ -29,6 +31,8 @@ class PlanCard extends StatelessWidget {
     required this.icon,
     this.badge,
     required this.features,
+    this.onSubscribe,
+    this.isLoading = false,
   });
 
   bool get _isSelected => selectedIndex == index;
@@ -62,7 +66,6 @@ class PlanCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // checkmark on the left (trailing in RTL)
                   _isSelected
                       ? Container(
                           width: 26,
@@ -88,8 +91,6 @@ class PlanCard extends StatelessWidget {
                             ),
                           ),
                         ),
-
-                  // badge on the right (leading in RTL)
                   if (badge != null)
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -120,7 +121,6 @@ class PlanCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  // text section (leading / right in RTL)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,8 +180,6 @@ class PlanCard extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // icon box (trailing / left in RTL)
                   Container(
                     width: 54,
                     height: 54,
@@ -212,11 +210,13 @@ class PlanCard extends StatelessWidget {
                           size: 18,
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          feature,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textPrimary,
+                        Expanded(
+                          child: Text(
+                            feature,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ),
                       ],
@@ -233,23 +233,33 @@ class PlanCard extends StatelessWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: (isLoading || onSubscribe == null) ? null : onSubscribe,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isSelected ? color : Colors.white,
                     foregroundColor: _isSelected ? Colors.white : color,
+                    disabledBackgroundColor: _isSelected ? color.withValues(alpha: 0.6) : Colors.white,
                     side: BorderSide(color: color, width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    _isSelected ? 'اشترك الآن' : 'اختر هذه الباقة',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: isLoading && _isSelected
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: _isSelected ? Colors.white : color,
+                          ),
+                        )
+                      : Text(
+                          _isSelected ? 'اشترك الآن' : 'اختر هذه الباقة',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),

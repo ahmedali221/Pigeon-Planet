@@ -40,3 +40,36 @@ class AuctionBidPlaced extends AuctionsEvent {
   @override
   List<Object?> get props => [itemId, amount];
 }
+
+class AuctionSellerBirdsRequested extends AuctionsEvent {
+  final bool mineOnly;
+  final bool availableForAuction;
+  const AuctionSellerBirdsRequested({
+    this.mineOnly = false,
+    this.availableForAuction = false,
+  });
+
+  @override
+  List<Object?> get props => [mineOnly, availableForAuction];
+}
+
+class AuctionAvailableBirdIdsRequested extends AuctionsEvent {
+  const AuctionAvailableBirdIdsRequested();
+}
+
+class AuctionCreateRequested extends AuctionsEvent {
+  final AuctionCreatePayload payload;
+  const AuctionCreateRequested(this.payload);
+
+  @override
+  List<Object?> get props => [payload];
+}
+
+class AuctionItemDetailRequested extends AuctionsEvent {
+  final int itemId;
+  final int birdId;
+  const AuctionItemDetailRequested({required this.itemId, required this.birdId});
+
+  @override
+  List<Object?> get props => [itemId, birdId];
+}

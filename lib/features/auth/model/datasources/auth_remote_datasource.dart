@@ -10,19 +10,27 @@ abstract class AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   });
 
   Future<UserModel> registerProvider({
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   });
 
   Future<void> resendOtp({required String phoneNumber});
 
   Future<UserModel> switchProfile(String newProfile);
 
+  Future<void> createSellerProfile();
+
   Future<UserModel?> getStoredUser();
+
+  Future<void> logout();
 }
 
 // ─────────────────────────────────────────────
@@ -54,6 +62,8 @@ class DemoAuthRemoteDataSource implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
     await Future.delayed(_fakeDelay);
     return UserModel(
@@ -70,6 +80,8 @@ class DemoAuthRemoteDataSource implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
     await Future.delayed(_fakeDelay);
     return UserModel(
@@ -99,7 +111,13 @@ class DemoAuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> createSellerProfile() async {}
+
+  @override
   Future<UserModel?> getStoredUser() async => null;
+
+  @override
+  Future<void> logout() async {}
 }
 
 class DemoException implements Exception {

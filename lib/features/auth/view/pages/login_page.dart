@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/di/injection.dart';
 import '../../../../core/utils/validators.dart';
 import '../../viewmodel/auth_bloc.dart';
 import '../widgets/app_text_field.dart';
@@ -18,8 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneCtrl = TextEditingController(text: '+201000000001');
-  final _passwordCtrl = TextEditingController(text: 'Seller1234!@#\$');
+  final _phoneCtrl = TextEditingController(text: '+201000000006');
+  final _passwordCtrl = TextEditingController(text: 'Password123!');
 
   @override
   void dispose() {
@@ -40,58 +39,56 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            AppStrings.login,
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          AppStrings.login,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 20,
-                color: AppColors.textSecondary,
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
         ),
-        body: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(AppStrings.loginSuccess),
-                  backgroundColor: AppColors.success,
-                ),
-              );
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
-                (_) => false,
-              );
-            }
-            if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: AppColors.error,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 20,
+              color: AppColors.textSecondary,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(AppStrings.loginSuccess),
+                backgroundColor: AppColors.success,
+              ),
+            );
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+              (_) => false,
+            );
+          }
+          if (state is AuthFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
             final isLoading = state is AuthLoading;
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -212,7 +209,6 @@ class _LoginPageState extends State<LoginPage> {
             );
           },
         ),
-      ),
     );
   }
 }

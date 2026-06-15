@@ -75,15 +75,21 @@ class _AuctionCardState extends State<AuctionCard> {
                   child: SizedBox(
                     height: 150,
                     width: double.infinity,
-                    child: Image.network(
-                      'https://picsum.photos/seed/${a.id}/300/200',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        color: AppColors.primary,
-                        child: const Icon(Icons.flutter_dash,
-                            color: Colors.white54, size: 40),
-                      ),
-                    ),
+                    child: a.thumbnailUrl != null
+                        ? Image.network(
+                            a.thumbnailUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Container(
+                              color: AppColors.primary,
+                              child: const Icon(Icons.flutter_dash,
+                                  color: Colors.white54, size: 40),
+                            ),
+                          )
+                        : Container(
+                            color: AppColors.primary,
+                            child: const Icon(Icons.flutter_dash,
+                                color: Colors.white54, size: 40),
+                          ),
                   ),
                 ),
                 // end time — top right (RTL: start = right)
@@ -162,15 +168,6 @@ class _AuctionCardState extends State<AuctionCard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '$bidsCount',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textHint,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
                   Flexible(
                     child: Text(
                       ringNumber,
@@ -180,7 +177,16 @@ class _AuctionCardState extends State<AuctionCard> {
                         color: AppColors.textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '$bidsCount',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textHint,
                     ),
                   ),
                 ],
@@ -192,8 +198,11 @@ class _AuctionCardState extends State<AuctionCard> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  const Icon(Icons.access_time_rounded,
+                      color: AppColors.red, size: 12),
+                  const SizedBox(width: 3),
                   Text(
                     _formatTimeLeft(a.timeRemaining),
                     style: const TextStyle(
@@ -202,9 +211,6 @@ class _AuctionCardState extends State<AuctionCard> {
                       color: AppColors.red,
                     ),
                   ),
-                  const SizedBox(width: 3),
-                  const Icon(Icons.access_time_rounded,
-                      color: AppColors.red, size: 12),
                 ],
               ),
             ),
@@ -268,8 +274,16 @@ class _AuctionCardState extends State<AuctionCard> {
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  const Icon(Icons.home_work_rounded,
+                      color: AppColors.primary, size: 12),
+                  const SizedBox(width: 4),
+                  const Text('برعاية',
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textSecondary)),
+                  const SizedBox(width: 4),
                   Flexible(
                     child: Text(
                       a.sellerNickname,
@@ -280,14 +294,6 @@ class _AuctionCardState extends State<AuctionCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  const Text('برعاية',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary)),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.home_work_rounded,
-                      color: AppColors.primary, size: 12),
                 ],
               ),
             ),

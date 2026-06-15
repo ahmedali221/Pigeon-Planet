@@ -24,10 +24,23 @@ dependencies:
 
   # Network
   dio: ^5.7.0
+  crypto: ^3.0.6
   flutter_secure_storage: ^9.0.0
+
+  # Camera + sensors for Zajel scanner
+  camera: ^0.11.0+2
+  sensors_plus: ^7.0.0
+  path_provider: ^2.1.4
+
+  # Video processing + playback
+  ffmpeg_kit_flutter_new: ^4.2.1
+  video_player: ^2.9.2
 
   # Image Picker (for ID / tax card photo uploads)
   image_picker: ^1.1.2
+
+  # Runtime permissions
+  permission_handler: ^11.4.0
 
   # QR Code generation (Pigeon Digital ID)
   qr_flutter: ^4.1.0

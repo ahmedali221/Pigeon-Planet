@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/services/cloudinary_service.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/token_storage.dart';
 import '../user_model.dart';
@@ -28,6 +31,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = payload['profile'] as String? ?? 'Customer';
+    final avatarUrl = _avatarUrlFrom(payload);
 
     return UserModel(
       id: userId,
@@ -35,6 +39,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       profileType: profileType,
       accessToken: access,
       refreshToken: refresh,
+      avatarUrl: avatarUrl,
     );
   }
 
@@ -43,20 +48,26 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
+    final countryCode = _toCountryCode(country);
+    final currency = _toCurrency(country);
     await _dio.post(
       ApiConstants.registerCustomer,
-      data: {
-        'username': phoneNumber,
-        'phone_number': phoneNumber,
-        'password': password,
-        'customer_profile': {
-          'country': _toCountryCode(country),
-          'currency': _toCurrency(country),
-        },
-      },
+      data: await _buildRegisterBody(
+        username: username,
+        phoneNumber: phoneNumber,
+        password: password,
+        countryCode: countryCode,
+        currency: currency,
+        avatarPath: avatarPath,
+      ),
     );
-    // Backend returns 201 with message only — login to get tokens
+    await _tokenStorage.saveCustomerMeta(
+      country: countryCode,
+      currency: currency,
+    );
     return login(phoneNumber: phoneNumber, password: password);
   }
 
@@ -65,23 +76,49 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String country,
+    required String username,
+    String? avatarPath,
   }) async {
-    // Register as customer first (no seller endpoint exists)
+    final countryCode = _toCountryCode(country);
+    final currency = _toCurrency(country);
     await _dio.post(
       ApiConstants.registerCustomer,
-      data: {
-        'username': phoneNumber,
-        'phone_number': phoneNumber,
-        'password': password,
-        'customer_profile': {
-          'country': _toCountryCode(country),
-          'currency': _toCurrency(country),
-        },
-      },
+      data: await _buildRegisterBody(
+        username: username,
+        phoneNumber: phoneNumber,
+        password: password,
+        countryCode: countryCode,
+        currency: currency,
+        avatarPath: avatarPath,
+      ),
     );
-    // Login then switch to Seller profile
+    await _tokenStorage.saveCustomerMeta(
+      country: countryCode,
+      currency: currency,
+    );
     await login(phoneNumber: phoneNumber, password: password);
     return switchProfile('Seller');
+  }
+
+  Future<Map<String, dynamic>> _buildRegisterBody({
+    required String username,
+    required String phoneNumber,
+    required String password,
+    required String countryCode,
+    required String currency,
+    String? avatarPath,
+  }) async {
+    String? avatarUrl;
+    if (avatarPath != null) {
+      avatarUrl = await CloudinaryService.uploadAvatar(avatarPath, username);
+    }
+    return {
+      'username': username,
+      'phone_number': phoneNumber,
+      'password': password,
+      'customer_profile': {'country': countryCode, 'currency': currency},
+      ...?avatarUrl == null ? null : {'avatar_url': avatarUrl},
+    };
   }
 
   @override
@@ -104,6 +141,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = response.data['profile'] as String? ?? newProfile;
+    final avatarUrl = _avatarUrlFrom(payload);
 
     return UserModel(
       id: userId,
@@ -111,6 +149,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       profileType: profileType,
       accessToken: access,
       refreshToken: refresh,
+      avatarUrl: avatarUrl,
     );
   }
 
@@ -136,20 +175,75 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       profileType: payload['profile'] as String? ?? 'Customer',
       accessToken: access,
       refreshToken: refresh,
+      avatarUrl: _avatarUrlFrom(payload),
     );
+  }
+
+  @override
+  Future<void> createSellerProfile() async {
+    var meta = await _tokenStorage.getCustomerMeta();
+
+    if (meta == null) {
+      // Fallback: fetch customer profile from backend
+      final response = await _dio.get(ApiConstants.myCustomers);
+      final data = response.data;
+      Map<String, dynamic> profile = {};
+      if (data is Map && data.containsKey('results')) {
+        final results = data['results'] as List;
+        if (results.isNotEmpty) {
+          profile = Map<String, dynamic>.from(results.first as Map);
+        }
+      } else if (data is List && data.isNotEmpty) {
+        profile = Map<String, dynamic>.from(data.first as Map);
+      } else if (data is Map) {
+        profile = Map<String, dynamic>.from(data);
+      }
+      final country = profile['country'] as String? ?? 'EG';
+      final currency = profile['currency'] as String? ?? 'EGP';
+      meta = (country: country, currency: currency);
+      await _tokenStorage.saveCustomerMeta(
+        country: country,
+        currency: currency,
+      );
+    }
+
+    try {
+      await _dio.post(
+        ApiConstants.mySellers,
+        data: {'country': meta.country, 'currency': meta.currency},
+      );
+    } on DioException catch (e) {
+      // 400 = "Profile already exists" — not an error, proceed to switch
+      if (e.response?.statusCode == 400) return;
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    await _tokenStorage.clearTokens();
+    await _tokenStorage.clearCustomerMeta();
   }
 
   // Maps country name/code → ISO 2-letter code the backend expects
   String _toCountryCode(String country) {
     const map = {
-      'مصر': 'EG', 'egypt': 'EG',
-      'السعودية': 'SA', 'saudi': 'SA',
-      'الإمارات': 'AE', 'uae': 'AE',
-      'الكويت': 'KW', 'kuwait': 'KW',
-      'قطر': 'QA', 'qatar': 'QA',
-      'البحرين': 'BH', 'bahrain': 'BH',
-      'عمان': 'OM', 'oman': 'OM',
-      'الأردن': 'JO', 'jordan': 'JO',
+      'مصر': 'EG',
+      'egypt': 'EG',
+      'السعودية': 'SA',
+      'saudi': 'SA',
+      'الإمارات': 'AE',
+      'uae': 'AE',
+      'الكويت': 'KW',
+      'kuwait': 'KW',
+      'قطر': 'QA',
+      'qatar': 'QA',
+      'البحرين': 'BH',
+      'bahrain': 'BH',
+      'عمان': 'OM',
+      'oman': 'OM',
+      'الأردن': 'JO',
+      'jordan': 'JO',
     };
     final key = country.toLowerCase().trim();
     return map[key] ?? map[country] ?? 'EG';
@@ -157,10 +251,21 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
 
   String _toCurrency(String country) {
     const map = {
-      'EG': 'EGP', 'SA': 'SAR', 'AE': 'AED',
-      'KW': 'KWD', 'QA': 'QAR', 'BH': 'BHD',
-      'OM': 'OMR', 'JO': 'JOD',
+      'EG': 'EGP',
+      'SA': 'SAR',
+      'AE': 'AED',
+      'KW': 'KWD',
+      'QA': 'QAR',
+      'BH': 'BHD',
+      'OM': 'OMR',
+      'JO': 'JOD',
     };
     return map[_toCountryCode(country)] ?? 'EGP';
+  }
+
+  String? _avatarUrlFrom(Map<String, dynamic> payload) {
+    final value = payload['avatar_url'] as String?;
+    if (value == null || value.trim().isEmpty) return null;
+    return value;
   }
 }

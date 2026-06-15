@@ -62,3 +62,4 @@ class MarketFavoriteToggled extends MarketEvent {
   @override
   List<Object?> get props => [productId];
 }
+

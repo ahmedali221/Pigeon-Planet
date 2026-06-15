@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../viewmodel/auctions_bloc.dart';
 import '../widgets/auction_card.dart';
+import 'auction_create_page.dart';
 
 class AuctionsPage extends StatelessWidget {
   const AuctionsPage({super.key});
@@ -49,8 +51,32 @@ class _AuctionsViewState extends State<_AuctionsView> {
 
   @override
   Widget build(BuildContext context) {
+    final isSeller = context.select<AuthBloc, bool>((b) {
+      final s = b.state;
+      if (s is AuthSuccess) return s.user.isSeller;
+      if (s is AuthSwitchingProfile) return s.user.isSeller;
+      return false;
+    });
+
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
+      floatingActionButton: isSeller
+          ? FloatingActionButton.extended(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<AuctionsBloc>(),
+                    child: const AuctionCreatePage(),
+                  ),
+                ),
+              ),
+              backgroundColor: AppColors.primary,
+              icon: const Icon(Icons.add_rounded, color: Colors.white),
+              label: const Text('مزاد جديد',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            )
+          : null,
       body: Column(
         children: [
           // ── Green header ──────────────────────────────────────────────────
@@ -96,13 +122,12 @@ class _AuctionsViewState extends State<_AuctionsView> {
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              reverse: true,
               child: Row(
                 children: List.generate(_filters.length, (i) {
                   final f = _filters[i];
                   final isSelected = _filterIndex == i;
                   return Padding(
-                    padding: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsetsDirectional.only(end: 8),
                     child: GestureDetector(
                       onTap: () => _onFilterTap(i),
                       child: Container(
@@ -122,11 +147,6 @@ class _AuctionsViewState extends State<_AuctionsView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if ((f['emoji'] as String).isNotEmpty) ...[
-                              Text(f['emoji'] as String,
-                                  style: const TextStyle(fontSize: 13)),
-                              const SizedBox(width: 4),
-                            ],
                             Text(
                               f['label'] as String,
                               style: TextStyle(
@@ -139,6 +159,11 @@ class _AuctionsViewState extends State<_AuctionsView> {
                                     : AppColors.textSecondary,
                               ),
                             ),
+                            if ((f['emoji'] as String).isNotEmpty) ...[
+                              const SizedBox(width: 4),
+                              Text(f['emoji'] as String,
+                                  style: const TextStyle(fontSize: 13)),
+                            ],
                           ],
                         ),
                       ),
@@ -248,17 +273,9 @@ class _AuctionsHeader extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: onRefresh,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.refresh_rounded,
-                  color: Colors.white, size: 20),
-            ),
+            onTap: () => Navigator.pop(context),
+            child: const Icon(Icons.arrow_back_ios_rounded,
+                color: Colors.white, size: 20),
           ),
           const Expanded(
             child: Column(
@@ -275,9 +292,17 @@ class _AuctionsHeader extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_forward_ios_rounded,
-                color: Colors.white, size: 20),
+            onTap: onRefresh,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.refresh_rounded,
+                  color: Colors.white, size: 20),
+            ),
           ),
         ],
       ),

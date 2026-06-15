@@ -18,7 +18,7 @@ class HomeBottomNavBar extends StatelessWidget {
     _NavItem(icon: Icons.meeting_room_rounded, label: 'الغرف'),
     _NavItem(icon: Icons.emoji_events_rounded, label: 'النتائج'),
     _NavItem(icon: Icons.access_time_rounded, label: 'الساعة'),
-    _NavItem(icon: Icons.flutter_dash, label: 'البرامج'),
+    _NavItem(icon: Icons.flutter_dash, label: 'البرنامج'),
   ];
 
   @override
@@ -40,20 +40,22 @@ class HomeBottomNavBar extends StatelessWidget {
           height: 62,
           child: Row(
             children: List.generate(_items.length, (i) {
+              final item = _items[i];
               final active = i == currentIndex;
+              final color =
+                  active ? AppColors.primary : AppColors.textSecondary;
               return Expanded(
                 child: GestureDetector(
                   onTap: () => onTap(i),
                   behavior: HitTestBehavior.opaque,
                   child: Column(
                     children: [
-                      // gold top indicator
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
                         height: 3,
                         width: active ? 28 : 0,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4A017),
+                          color: AppColors.primary,
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(3),
                             bottomRight: Radius.circular(3),
@@ -61,24 +63,15 @@ class HomeBottomNavBar extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Icon(
-                        _items[i].icon,
-                        size: 22,
-                        color: active
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                      ),
+                      Icon(item.icon, size: 22, color: color),
                       const SizedBox(height: 3),
                       Text(
-                        _items[i].label,
+                        item.label,
                         style: TextStyle(
                           fontSize: 10,
-                          fontWeight: active
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: active
-                              ? AppColors.primary
-                              : AppColors.textSecondary,
+                          fontWeight:
+                              active ? FontWeight.bold : FontWeight.normal,
+                          color: color,
                         ),
                       ),
                     ],

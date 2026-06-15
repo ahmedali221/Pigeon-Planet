@@ -6,6 +6,7 @@ class UserModel extends Equatable {
   final String profileType; // 'Customer' | 'Seller' | 'Manager'
   final String accessToken;
   final String refreshToken;
+  final String? avatarUrl;
 
   const UserModel({
     required this.id,
@@ -13,6 +14,7 @@ class UserModel extends Equatable {
     required this.profileType,
     required this.accessToken,
     required this.refreshToken,
+    this.avatarUrl,
   });
 
   bool get isSeller => profileType == 'Seller';
@@ -24,6 +26,7 @@ class UserModel extends Equatable {
     String? profileType,
     String? accessToken,
     String? refreshToken,
+    String? avatarUrl,
   }) =>
       UserModel(
         id: id ?? this.id,
@@ -31,9 +34,10 @@ class UserModel extends Equatable {
         profileType: profileType ?? this.profileType,
         accessToken: accessToken ?? this.accessToken,
         refreshToken: refreshToken ?? this.refreshToken,
+        avatarUrl: avatarUrl ?? this.avatarUrl,
       );
 
   @override
   List<Object?> get props =>
-      [id, phoneNumber, profileType, accessToken, refreshToken];
+      [id, phoneNumber, profileType, accessToken, refreshToken, avatarUrl];
 }

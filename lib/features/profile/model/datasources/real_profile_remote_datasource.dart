@@ -1,0 +1,59 @@
+import '../../../../core/constants/api_constants.dart';
+import '../../../../core/network/dio_client.dart';
+import '../profile_model.dart';
+import 'profile_remote_datasource.dart';
+
+class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
+  final DioClient _dio;
+  const RealProfileRemoteDataSource(this._dio);
+
+  @override
+  Future<ProfileModel> getProfile(String profileType) async {
+    final endpoint = profileType == 'Seller'
+        ? ApiConstants.mySellers
+        : ApiConstants.myCustomers;
+    final response = await _dio.get(endpoint);
+    final data = response.data;
+    List<dynamic> results;
+    if (data is Map && data.containsKey('results')) {
+      results = data['results'] as List<dynamic>;
+    } else if (data is List) {
+      results = data;
+    } else {
+      results = [];
+    }
+    if (results.isEmpty) {
+      throw Exception('لم يتم العثور على الملف الشخصي');
+    }
+    return ProfileModel.fromJson(results.first as Map<String, dynamic>);
+  }
+
+  @override
+  Future<ProfileModel> updateProfile(ProfileModel profile) async {
+    final endpoint = profile.isSeller
+        ? ApiConstants.sellerDetail(profile.id)
+        : ApiConstants.customerDetail(profile.id);
+
+    final body = profile.isSeller
+        ? {
+            'nickname': profile.nickname ?? '',
+            'country': profile.country,
+            'currency': profile.currency,
+          }
+        : {
+            'country': profile.country,
+            'currency': profile.currency,
+          };
+
+    final response = await _dio.patch(endpoint, data: body);
+    return ProfileModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> deleteProfile(ProfileModel profile) async {
+    final endpoint = profile.isSeller
+        ? ApiConstants.sellerDetail(profile.id)
+        : ApiConstants.customerDetail(profile.id);
+    await _dio.delete(endpoint);
+  }
+}

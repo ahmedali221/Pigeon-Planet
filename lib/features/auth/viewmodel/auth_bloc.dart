@@ -11,8 +11,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _repository;
 
   AuthBloc({required AuthRepository repository})
-      : _repository = repository,
-        super(const AuthInitial()) {
+    : _repository = repository,
+      super(const AuthInitial()) {
     on<AuthCheckRequested>(_onCheck);
     on<AuthLoginRequested>(_onLogin);
     on<AuthRegisterPersonalRequested>(_onRegisterPersonal);
@@ -20,7 +20,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthOtpVerifyRequested>(_onOtpVerify);
     on<AuthResendOtpRequested>(_onResendOtp);
     on<AuthSwitchProfileRequested>(_onSwitchProfile);
-    on<AuthProfileSwitchFailureAcknowledged>(_onProfileSwitchFailureAcknowledged);
+    on<AuthBecomeSellerRequested>(_onBecomeSeller);
+    on<AuthProfileSwitchFailureAcknowledged>(
+      _onProfileSwitchFailureAcknowledged,
+    );
     on<AuthLogoutRequested>(_onLogout);
     on<AuthReset>(_onReset);
   }
@@ -33,9 +36,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _repository.getStoredUser();
     result.fold(
       (_) => emit(const AuthInitial()),
-      (user) => user != null
-          ? emit(AuthSuccess(user))
-          : emit(const AuthInitial()),
+      (user) =>
+          user != null ? emit(AuthSuccess(user)) : emit(const AuthInitial()),
     );
   }
 
@@ -63,6 +65,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       phoneNumber: event.phoneNumber,
       password: event.password,
       country: event.country,
+      username: event.username,
+      avatarPath: event.avatarPath,
     );
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
@@ -79,6 +83,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       phoneNumber: event.phoneNumber,
       password: event.password,
       country: event.country,
+      username: event.username,
+      avatarPath: event.avatarPath,
     );
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
@@ -95,14 +101,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       phoneNumber: event.phoneNumber,
       code: event.code,
     );
-    result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
-      (_) {
-        // After OTP, user needs to login to get a token — re-login is handled
-        // by the OTP page navigating to home; emit a placeholder success
-        emit(AuthOtpVerified(event.phoneNumber));
-      },
-    );
+    await result.fold((failure) async => emit(AuthFailure(failure.message)), (
+      _,
+    ) async {
+      // Tokens were saved during registerPersonal/registerProvider login.
+      // Restore session from storage so the root bloc has an authenticated user.
+      final stored = await _repository.getStoredUser();
+      stored.fold(
+        (_) => emit(AuthOtpVerified(event.phoneNumber)),
+        (user) => user != null
+            ? emit(AuthSuccess(user))
+            : emit(AuthOtpVerified(event.phoneNumber)),
+      );
+    });
   }
 
   Future<void> _onResendOtp(
@@ -132,8 +143,46 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthSwitchingProfile(sessionUser));
     final result = await _repository.switchProfile(event.newProfile);
     result.fold(
-      (failure) =>
-          emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
+      (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
+      (user) => emit(AuthSuccess(user)),
+    );
+  }
+
+  Future<void> _onBecomeSeller(
+    AuthBecomeSellerRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state is AuthSwitchingProfile) return;
+
+    UserModel? previous;
+    if (state is AuthSuccess) {
+      previous = (state as AuthSuccess).user;
+    } else if (state is AuthProfileSwitchFailure) {
+      previous = (state as AuthProfileSwitchFailure).user;
+    }
+    if (previous == null) return;
+    final sessionUser = previous;
+
+    emit(AuthSwitchingProfile(sessionUser));
+
+    // Step 1: create seller profile (idempotent — 400 "already exists" is swallowed)
+    final firstSwitchResult = await _repository.switchProfile('Seller');
+    if (firstSwitchResult.isRight()) {
+      firstSwitchResult.fold((_) {}, (user) => emit(AuthSuccess(user)));
+      return;
+    }
+
+    final createResult = await _repository.createSellerProfile();
+    if (createResult.isLeft()) {
+      final message = createResult.fold((f) => f.message, (_) => '');
+      emit(AuthProfileSwitchFailure(sessionUser, message));
+      return;
+    }
+
+    // Step 2: switch active profile to Seller
+    final switchResult = await _repository.switchProfile('Seller');
+    switchResult.fold(
+      (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
       (user) => emit(AuthSuccess(user)),
     );
   }
@@ -151,6 +200,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
+    await _repository.logout();
     emit(const AuthInitial());
   }
 

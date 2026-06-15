@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/services/permission_service.dart';
+
 import '../../viewmodel/pigeon_id_bloc.dart';
 import '../widgets/pigeon_id_shared_widgets.dart';
 import 'zajel_scanner_page.dart';
@@ -13,6 +16,8 @@ class PigeonIdPhotosPage extends StatelessWidget {
   const PigeonIdPhotosPage({super.key});
 
   Future<void> _pickPhoto(BuildContext context) async {
+    final granted = await PermissionService.requestGalleryPermission();
+    if (!granted) return;
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
@@ -24,6 +29,8 @@ class PigeonIdPhotosPage extends StatelessWidget {
   }
 
   Future<void> _takePhoto(BuildContext context) async {
+    final status = await Permission.camera.request();
+    if (!status.isGranted) return;
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.camera,

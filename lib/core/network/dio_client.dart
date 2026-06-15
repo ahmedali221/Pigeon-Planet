@@ -157,8 +157,22 @@ class DioClient {
 
     String message = 'حدث خطأ غير متوقع';
     if (data is Map) {
-      message = (data['detail'] ?? data['message'] ?? data['error'] ?? message)
-          .toString();
+      // Try standard single-message keys first
+      final single = data['detail'] ?? data['message'] ?? data['error'];
+      if (single != null) {
+        message = single.toString();
+      } else {
+        // DRF field-level errors: {field: ["msg", ...], ...}
+        final parts = <String>[];
+        for (final value in data.values) {
+          if (value is List) {
+            parts.addAll(value.map((e) => e.toString()));
+          } else if (value != null) {
+            parts.add(value.toString());
+          }
+        }
+        if (parts.isNotEmpty) message = parts.join('\n');
+      }
     } else if (data is String && data.isNotEmpty) {
       message = data;
     }

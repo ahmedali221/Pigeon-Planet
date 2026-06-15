@@ -170,13 +170,13 @@ class _NotifItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                   horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                color: AppColors.orangeLight,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
                 'جديد',
                 style: TextStyle(
-                    color: AppColors.primary,
+                    color: AppColors.orange,
                     fontSize: 10,
                     fontWeight: FontWeight.bold),
               ),

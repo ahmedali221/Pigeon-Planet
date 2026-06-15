@@ -19,6 +19,8 @@ class AuctionModel {
   final double minBidIncrement;
   final int itemCount;
   final List<AuctionItemModel> items;
+  final bool isOwner;
+  final String? thumbnailUrl;
 
   const AuctionModel({
     required this.id,
@@ -39,6 +41,8 @@ class AuctionModel {
     required this.minBidIncrement,
     this.itemCount = 0,
     this.items = const [],
+    this.isOwner = false,
+    this.thumbnailUrl,
   });
 
   double get currentPrice =>
@@ -77,6 +81,8 @@ class AuctionModel {
       items: (json['items'] as List<dynamic>? ?? [])
           .map((i) => AuctionItemModel.fromJson(i as Map<String, dynamic>))
           .toList(),
+      isOwner: json['is_owner'] as bool? ?? false,
+      thumbnailUrl: json['thumbnail_url'] as String?,
     );
   }
 }

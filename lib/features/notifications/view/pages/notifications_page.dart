@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/di/injection.dart';
+import '../../model/datasources/notifications_remote_datasource.dart';
 import '../data/notifications_mock_data.dart';
 
 class NotificationsPage extends StatefulWidget {
@@ -10,13 +13,84 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  int _tabIndex = 0; // 0 = مشتري, 1 = بائع
+  int _tabIndex = 0;
+  List<NotificationItem>? _remoteItems;
+  bool _remoteLoadDone = false;
 
-  List<NotificationItem> get _items => _tabIndex == 0
-      ? NotificationsMockData.buyerNotifications
-      : NotificationsMockData.sellerNotifications;
+  @override
+  void initState() {
+    super.initState();
+    _loadRemote();
+  }
+
+  Future<void> _loadRemote() async {
+    try {
+      final raw = await sl<NotificationsRemoteDataSource>().fetchNotifications();
+      if (!mounted) return;
+      final mapped = raw.map(_notificationFromApi).toList();
+      setState(() {
+        _remoteItems = mapped;
+        _remoteLoadDone = true;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _remoteItems = null;
+        _remoteLoadDone = true;
+      });
+    }
+  }
+
+  List<NotificationItem> get _items {
+    if (_remoteItems != null && _remoteItems!.isNotEmpty) {
+      return _remoteItems!.where((n) {
+        if (n.tag == 'عام') return true;
+        if (_tabIndex == 0) return n.tag == 'مشتري';
+        return n.tag == 'بائع';
+      }).toList();
+    }
+    return _tabIndex == 0
+        ? NotificationsMockData.buyerNotifications
+        : NotificationsMockData.sellerNotifications;
+  }
 
   int get _unreadCount => _items.where((n) => !n.isRead).length;
+
+  Future<void> _markRead(NotificationItem item) async {
+    final id = item.apiId;
+    if (id == null || item.isRead) return;
+    try {
+      await sl<NotificationsRemoteDataSource>().markRead(id);
+      if (!mounted) return;
+      setState(() {
+        if (_remoteItems != null) {
+          _remoteItems = _remoteItems!
+              .map(
+                (n) => n.apiId == id
+                    ? NotificationItem(
+                        title: n.title,
+                        body: n.body,
+                        timeAgo: n.timeAgo,
+                        isRead: true,
+                        type: n.type,
+                        tag: n.tag,
+                        apiId: n.apiId,
+                      )
+                    : n,
+              )
+              .toList();
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تعذر تحديث حالة الإشعار'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +98,37 @@ class _NotificationsPageState extends State<NotificationsPage> {
       backgroundColor: AppColors.pageBackground,
       body: Column(
         children: [
-          _NotificationsHeader(onBack: () => Navigator.pop(context)),
+          _NotificationsHeader(
+            onBack: () => Navigator.pop(context),
+            onRefresh: _remoteLoadDone ? _loadRemote : null,
+          ),
           _TabBar(
             selectedIndex: _tabIndex,
             onTap: (i) => setState(() => _tabIndex = i),
           ),
           if (_unreadCount > 0) _UnreadBanner(count: _unreadCount),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: _items.length,
-              separatorBuilder: (_, _) => const Divider(
-                height: 1,
-                indent: 16,
-                endIndent: 16,
-                color: AppColors.divider,
-              ),
-              itemBuilder: (context, i) => _NotificationTile(item: _items[i]),
-            ),
+            child: !_remoteLoadDone
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: _items.length,
+                    separatorBuilder: (_, _) => const Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: AppColors.divider,
+                    ),
+                    itemBuilder: (context, i) {
+                      final item = _items[i];
+                      return _NotificationTile(
+                        item: item,
+                        onMarkRead: item.apiId != null && !item.isRead
+                            ? () => _markRead(item)
+                            : null,
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -49,10 +136,74 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 }
 
+NotificationType _mapKind(String kind) {
+  final k = kind.toLowerCase();
+  if (k.contains('order') || k.contains('sold') || k.contains('won')) {
+    return NotificationType.auctionWon;
+  }
+  if (k.contains('accept')) return NotificationType.bidAccepted;
+  if (k.contains('badge') || k.contains('وسام')) {
+    return NotificationType.newBadge;
+  }
+  return NotificationType.newBid;
+}
+
+String _arTimeHintFromIso(String? iso) {
+  if (iso == null || iso.isEmpty) return '';
+  final dt = DateTime.tryParse(iso);
+  if (dt == null) return '';
+  final now = DateTime.now().toUtc();
+  var secs = now.difference(dt.toUtc()).inSeconds;
+  if (secs < 0) secs = 0;
+  if (secs < 60) return 'الآن';
+  if (secs < 3600) {
+    final m = secs ~/ 60;
+    return m == 1 ? 'منذ دقيقة' : 'منذ $m دقيقة';
+  }
+  if (secs < 86400) {
+    final h = secs ~/ 3600;
+    return h == 1 ? 'منذ ساعة' : 'منذ $h ساعة';
+  }
+  final d = secs ~/ 86400;
+  return d == 1 ? 'منذ يوم' : 'منذ $d يوم';
+}
+
+NotificationItem _notificationFromApi(Map<String, dynamic> j) {
+  final id = (j['id'] as num?)?.toInt();
+  final kind = j['kind'] as String? ?? '';
+  final title = j['title'] as String? ?? '';
+  final body = j['body'] as String? ?? '';
+  final readAt = j['read_at'];
+  final created = j['created'] as String?;
+  final pt = j['profile_type'] as String? ?? 'All';
+  String tag;
+  if (pt == 'Seller') {
+    tag = 'بائع';
+  } else if (pt == 'Customer') {
+    tag = 'مشتري';
+  } else {
+    tag = 'عام';
+  }
+  return NotificationItem(
+    title: title,
+    body: body.isEmpty ? ' ' : body,
+    timeAgo: _arTimeHintFromIso(created),
+    isRead: readAt != null,
+    type: _mapKind(kind),
+    tag: tag,
+    apiId: id,
+  );
+}
+
 // ── Header ────────────────────────────────────────────────────────────────────
 class _NotificationsHeader extends StatelessWidget {
   final VoidCallback onBack;
-  const _NotificationsHeader({required this.onBack});
+  final Future<void> Function()? onRefresh;
+
+  const _NotificationsHeader({
+    required this.onBack,
+    this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +218,6 @@ class _NotificationsHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // back arrow on the right (RTL: right = start = natural back position)
           GestureDetector(
             onTap: onBack,
             child: const Icon(
@@ -76,7 +226,6 @@ class _NotificationsHeader extends StatelessWidget {
               size: 20,
             ),
           ),
-          // title centered
           const Expanded(
             child: Center(
               child: Text(
@@ -89,8 +238,13 @@ class _NotificationsHeader extends StatelessWidget {
               ),
             ),
           ),
-          // spacer to balance the back arrow
-          const SizedBox(width: 36),
+          if (onRefresh != null)
+            IconButton(
+              onPressed: () => onRefresh!(),
+              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+            )
+          else
+            const SizedBox(width: 48),
         ],
       ),
     );
@@ -183,91 +337,100 @@ class _UnreadBanner extends StatelessWidget {
 // ── Notification tile ─────────────────────────────────────────────────────────
 class _NotificationTile extends StatelessWidget {
   final NotificationItem item;
-  const _NotificationTile({required this.item});
+  final Future<void> Function()? onMarkRead;
+
+  const _NotificationTile({
+    required this.item,
+    this.onMarkRead,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
       color: item.isRead ? Colors.white : AppColors.primaryLight,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // type icon (rightmost in RTL)
-          _NotificationIcon(type: item.type),
-
-          const SizedBox(width: 12),
-
-          // text content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.body,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
+      child: InkWell(
+        onTap: onMarkRead == null
+            ? null
+            : () async {
+                await onMarkRead!();
+              },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _NotificationIcon(type: item.type),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        item.tag,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    Text(
+                      item.title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight:
+                            item.isRead ? FontWeight.w600 : FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(height: 4),
                     Text(
-                      item.timeAgo,
+                      item.body,
                       style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textHint,
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                        height: 1.5,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            item.tag,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          item.timeAgo,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textHint,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-
-          // unread dot (leftmost in RTL)
-          Padding(
-            padding: const EdgeInsets.only(top: 6, right: 10),
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: item.isRead ? Colors.transparent : AppColors.primary,
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6, right: 10),
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: item.isRead ? Colors.transparent : AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

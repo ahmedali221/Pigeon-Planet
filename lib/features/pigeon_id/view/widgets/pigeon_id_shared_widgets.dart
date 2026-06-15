@@ -118,6 +118,7 @@ class PigeonAppInput extends StatelessWidget {
   final String hint;
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
+  final int maxLines;
 
   const PigeonAppInput({
     super.key,
@@ -125,6 +126,7 @@ class PigeonAppInput extends StatelessWidget {
     required this.hint,
     this.onChanged,
     this.keyboardType,
+    this.maxLines = 1,
   });
 
   @override
@@ -133,6 +135,7 @@ class PigeonAppInput extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       keyboardType: keyboardType,
+      maxLines: maxLines,
       style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
       decoration: InputDecoration(
         hintText: hint,

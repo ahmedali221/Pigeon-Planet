@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
@@ -48,15 +49,27 @@ class MarketProductCard extends StatelessWidget {
                   child: SizedBox(
                     height: 130,
                     width: double.infinity,
-                    child: Image.network(
-                      'https://picsum.photos/seed/${product.seed}/300/200',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        color: AppColors.primaryLight,
-                        child: const Icon(Icons.image_not_supported_outlined,
-                            color: AppColors.primary, size: 36),
-                      ),
-                    ),
+                    child: product.thumbnailUrl != null
+                        ? Image.network(
+                            product.thumbnailUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Container(
+                              color: AppColors.primaryLight,
+                              child: const Icon(
+                                Icons.image_not_supported_outlined,
+                                color: AppColors.primary,
+                                size: 36,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: AppColors.primaryLight,
+                            child: const Icon(
+                              Icons.storefront_outlined,
+                              color: AppColors.primary,
+                              size: 36,
+                            ),
+                          ),
                   ),
                 ),
                 // best seller badge
@@ -66,7 +79,9 @@ class MarketProductCard extends StatelessWidget {
                     right: 8,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.orange,
                         borderRadius: BorderRadius.circular(6),
@@ -74,9 +89,10 @@ class MarketProductCard extends StatelessWidget {
                       child: const Text(
                         'الأكثر مبيعاً',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -85,14 +101,16 @@ class MarketProductCard extends StatelessWidget {
                   top: 6,
                   left: 6,
                   child: GestureDetector(
-                    onTap: () => context
-                        .read<MarketBloc>()
-                        .add(MarketFavoriteToggled(product.id)),
+                    onTap: () => context.read<MarketBloc>().add(
+                      MarketFavoriteToggled(product.id),
+                    ),
                     child: Container(
                       width: 30,
                       height: 30,
                       decoration: const BoxDecoration(
-                          color: Colors.white, shape: BoxShape.circle),
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
                       child: Icon(
                         product.isFavorite
                             ? Icons.favorite
@@ -128,19 +146,22 @@ class MarketProductCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  const Icon(Icons.star_rounded,
-                      color: Colors.amber, size: 14),
+                  const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
                   const SizedBox(width: 3),
                   Text(
                     product.rating.toString(),
                     style: const TextStyle(
-                        fontSize: 12, color: AppColors.textPrimary),
+                      fontSize: 12,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(width: 3),
                   Text(
                     '(${product.reviewCount})',
                     style: const TextStyle(
-                        fontSize: 11, color: AppColors.textHint),
+                      fontSize: 11,
+                      color: AppColors.textHint,
+                    ),
                   ),
                 ],
               ),
@@ -167,12 +188,9 @@ class MarketProductCard extends StatelessWidget {
                   // cart button — end (left in RTL)
                   GestureDetector(
                     onTap: () {
-                      context
-                          .read<MarketBloc>()
-                          .add(MarketProductOpened(product));
-                      context
-                          .read<MarketBloc>()
-                          .add(const MarketAddToCart());
+                      final assetId = int.tryParse(product.id);
+                      if (assetId == null) return;
+                      context.read<CartBloc>().add(CartItemAdded(assetId, 1));
                     },
                     child: Container(
                       width: 32,
@@ -181,8 +199,11 @@ class MarketProductCard extends StatelessWidget {
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.shopping_cart_outlined,
-                          color: Colors.white, size: 16),
+                      child: const Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ],

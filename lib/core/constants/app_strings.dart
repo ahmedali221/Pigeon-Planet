@@ -34,6 +34,8 @@ class AppStrings {
   // Registration - Common
   static const String fullName = 'الاسم الكامل';
   static const String fullNameHint = 'أدخل الاسم الكامل';
+  static const String username = 'اسم المستخدم';
+  static const String usernameHint = 'أدخل اسم المستخدم (بدون مسافات)';
   static const String phoneNumber = 'رقم الهاتف';
   static const String phoneHint = '+20 1xx xxx xxxx';
   static const String emailLabel = 'البريد الإلكتروني';
@@ -66,7 +68,7 @@ class AppStrings {
   // Validation
   static const String fieldRequired = 'هذا الحقل مطلوب';
   static const String invalidEmail = 'البريد الإلكتروني غير صحيح';
-  static const String passwordTooShort = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+  static const String passwordTooShort = 'كلمة المرور يجب أن تكون 12 حرفاً على الأقل';
   static const String passwordsDoNotMatch = 'كلمتا المرور غير متطابقتين';
   static const String mustAgreeToTerms = 'يجب الموافقة على الشروط والأحكام';
   static const String invalidPhone = 'رقم الهاتف غير صحيح';

@@ -2,21 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/di/injection.dart';
-import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
-import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
-import '../../../auctions/view/pages/auctions_page.dart';
-import '../../../market/view/pages/market_page.dart';
-import '../../../market/viewmodel/market_bloc.dart';
 import '../../model/seller_home_summary.dart';
+import '../../viewmodel/home_bloc.dart';
+import '../pages/seller_my_birds_page.dart';
+import '../pages/seller_my_auctions_page.dart';
+import '../pages/seller_stats_page.dart';
+import '../pages/seller_tools_page.dart';
+import '../../../seller_products/view/pages/seller_products_page.dart';
 
 class HomeSellerMetricsSection extends StatelessWidget {
   final SellerHomeSummary? summary;
+  final int myAuctionsCount;
+  final int myBirdsCount;
+  final String? displayName;
+  final bool showSellerTools;
 
-  const HomeSellerMetricsSection({super.key, this.summary});
+  const HomeSellerMetricsSection({
+    super.key,
+    this.summary,
+    this.myAuctionsCount = 0,
+    this.myBirdsCount = 0,
+    this.displayName,
+    this.showSellerTools = true,
+  });
 
   String get _greeting {
-    final n = summary?.nickname.trim() ?? '';
+    final n = summary?.nickname.trim().isNotEmpty == true
+        ? summary!.nickname.trim()
+        : (displayName ?? '').trim();
     if (n.isEmpty) return 'مرحباً بعودتك! 👋';
     return 'مرحباً $n 👋';
   }
@@ -24,10 +37,6 @@ class HomeSellerMetricsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = summary;
-    final live = s?.activeLiveAuctions ?? 0;
-    final sales = s?.salesToday ?? 0;
-    final pending = s?.pendingOrderItems ?? 0;
-    final listings = s?.myActiveListings ?? 0;
     final pkg = s?.packageLabel ?? 'بدون باقة';
 
     return Padding(
@@ -35,61 +44,116 @@ class HomeSellerMetricsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Greeting header ───────────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: [AppColors.primaryDark, AppColors.primary],
                 begin: Alignment.centerRight,
                 end: Alignment.centerLeft,
               ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text(
-                      _greeting,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _greeting,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        const Text(
+                          'الباقة الحالية',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 3),
-                    const Text(
-                      'الباقة الحالية',
-                      style:
-                          TextStyle(color: Colors.white70, fontSize: 11),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white38),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.workspace_premium_rounded,
+                            color: Colors.amber,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            pkg,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white38),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SellerStatsPage(summary: s),
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.workspace_premium_rounded,
-                          color: Colors.amber, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        pkg,
-                        style: const TextStyle(
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.white30),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.bar_chart_rounded,
                           color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          size: 16,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 8),
+                        Text(
+                          'عرض الإحصائيات الكاملة',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.white70,
+                          size: 18,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -98,134 +162,42 @@ class HomeSellerMetricsSection extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Row(
-            children: [
-              Expanded(
-                child: _StatCard(
-                  label: 'مزادات نشطة',
-                  value: '$live',
-                  icon: Icons.gavel_rounded,
-                  color: AppColors.primary,
-                  bg: AppColors.primaryLight,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _StatCard(
-                  label: 'مبيعات اليوم',
-                  value: '$sales',
-                  icon: Icons.trending_up_rounded,
-                  color: AppColors.orange,
-                  bg: AppColors.orangeLight,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _StatCard(
-                  label: 'طلبات جديدة',
-                  value: '$pending',
-                  icon: Icons.notifications_active_rounded,
-                  color: AppColors.red,
-                  bg: AppColors.redLight,
-                  showDot: pending > 0,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          Row(
-            children: [
-              Expanded(
-                child: _ActionButton(
-                  label: 'إضافة حمام',
-                  subtitle: 'للمزاد أو بسعر ثابت',
-                  icon: Icons.add_rounded,
-                  color: AppColors.primary,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) => sl<PigeonIdBloc>(),
-                        child: const PigeonIdFormPage(),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _ActionButton(
-                  label: 'مزاداتي الآتية',
-                  subtitle: listings > 0 ? '$listings قائمة' : 'لا قوائم',
-                  icon: Icons.bolt_rounded,
-                  color: AppColors.blue,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const AuctionsPage()),
-                  ),
-                ),
-              ),
-            ],
+          // ── Listings card ─────────────────────────────────────────────────
+          _ListingsCard(
+            auctionsCount: myAuctionsCount,
+            birdsCount: myBirdsCount,
+            onAuctionsTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SellerMyAuctionsPage()),
+              );
+              if (context.mounted) {
+                context.read<HomeBloc>().add(const HomeRefreshRequested());
+              }
+            },
+            onBirdsTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SellerMyBirdsPage()),
+              );
+              if (context.mounted) {
+                context.read<HomeBloc>().add(const HomeRefreshRequested());
+              }
+            },
+            onStoreTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SellerProductsPage()),
+            ),
           ),
 
           const SizedBox(height: 10),
 
-          GestureDetector(
+          // ── Tools tile ────────────────────────────────────────────────────
+          _ToolsNavTile(
+            notifCount: s?.notificationsNewCount ?? 0,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => sl<MarketBloc>()..add(const MarketStarted()),
-                  child: const MarketPage(),
-                ),
-              ),
-            ),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.purpleLight,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.purple.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'إضافة منتج للمتجر',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.purple,
-                        ),
-                      ),
-                      Text(
-                        'علف، أدوية، مستلزمات',
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textSecondary),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.purple,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.storefront_rounded,
-                        color: Colors.white, size: 18),
-                  ),
-                ],
-              ),
+              MaterialPageRoute(builder: (_) => SellerToolsPage(summary: s)),
             ),
           ),
         ],
@@ -234,73 +206,60 @@ class HomeSellerMetricsSection extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final Color bg;
-  final bool showDot;
+// ── Listings card (auctions + birds + store) ──────────────────────────────────
 
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.bg,
-    this.showDot = false,
+class _ListingsCard extends StatelessWidget {
+  final int auctionsCount;
+  final int birdsCount;
+  final VoidCallback onAuctionsTap;
+  final VoidCallback onBirdsTap;
+  final VoidCallback onStoreTap;
+
+  const _ListingsCard({
+    required this.auctionsCount,
+    required this.birdsCount,
+    required this.onAuctionsTap,
+    required this.onBirdsTap,
+    required this.onStoreTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                    color: bg, borderRadius: BorderRadius.circular(8)),
-                child: Icon(icon, color: color, size: 15),
-              ),
-              const Spacer(),
-              if (showDot)
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                      color: color, shape: BoxShape.circle),
-                ),
-            ],
+          _ListingRow(
+            icon: Icons.gavel_rounded,
+            iconColor: AppColors.blue,
+            iconBg: AppColors.blueLight,
+            count: auctionsCount,
+            label: 'مزاداتي',
+            onTap: onAuctionsTap,
+            isFirst: true,
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+          const Divider(height: 1, indent: 14, endIndent: 14),
+          _ListingRow(
+            icon: Icons.flutter_dash,
+            iconColor: AppColors.orange,
+            iconBg: AppColors.orangeLight,
+            count: birdsCount,
+            label: 'طيوري',
+            onTap: onBirdsTap,
           ),
-          Text(
-            label,
-            style: const TextStyle(
-                fontSize: 10, color: AppColors.textSecondary),
+          const Divider(height: 1, indent: 14, endIndent: 14),
+          _ListingRow(
+            icon: Icons.storefront_rounded,
+            iconColor: AppColors.primary,
+            iconBg: AppColors.primaryLight,
+            label: 'إضافة منتج للمتجر',
+            subtitle: 'علف، أدوية، مستلزمات',
+            onTap: onStoreTap,
+            isLast: true,
           ),
         ],
       ),
@@ -308,19 +267,27 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final String subtitle;
+class _ListingRow extends StatelessWidget {
   final IconData icon;
-  final Color color;
+  final Color iconColor;
+  final Color iconBg;
+  final int? count;
+  final String label;
+  final String? subtitle;
   final VoidCallback onTap;
+  final bool isFirst;
+  final bool isLast;
 
-  const _ActionButton({
-    required this.label,
-    required this.subtitle,
+  const _ListingRow({
     required this.icon,
-    required this.color,
+    required this.iconColor,
+    required this.iconBg,
+    required this.label,
     required this.onTap,
+    this.count,
+    this.subtitle,
+    this.isFirst = false,
+    this.isLast = false,
   });
 
   @override
@@ -328,40 +295,161 @@ class _ActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.vertical(
+            top: isFirst ? const Radius.circular(13) : Radius.zero,
+            bottom: isLast ? const Radius.circular(13) : Radius.zero,
+          ),
         ),
         child: Row(
           children: [
-            Column(
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: iconBg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: count != null
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          '$count',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: iconColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                      ],
+                    ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textHint,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Tools nav tile ────────────────────────────────────────────────────────────
+
+class _ToolsNavTile extends StatelessWidget {
+  final int notifCount;
+  final VoidCallback onTap;
+
+  const _ToolsNavTile({required this.notifCount, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.tune_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  'أدواتي ومميزاتي',
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
                   ),
                 ),
                 Text(
-                  subtitle,
-                  style: const TextStyle(
-                      color: Colors.white70, fontSize: 11),
+                  'إشعارات · متطلبات النشر · أدوات متقدمة',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
             const Spacer(),
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
+            if (notifCount > 0)
+              Container(
+                margin: const EdgeInsetsDirectional.only(end: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '$notifCount',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              child: Icon(icon, color: Colors.white, size: 20),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.primary,
+              size: 20,
             ),
           ],
         ),

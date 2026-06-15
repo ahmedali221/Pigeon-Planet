@@ -59,49 +59,21 @@ class HomeProviderFeaturesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.purple,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'مميزات مقدمي الخدمة',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'الهوية الرقمية والفيديو الإلزامي للمزادات الاحترافية',
-                        style:
-                            TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
-                  ),
+          Row(
+            children: const [
+              Icon(Icons.verified_rounded,
+                  color: AppColors.purple, size: 18),
+              SizedBox(width: 8),
+              Text(
+                'مميزات مقدمي الخدمة',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
                 ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.verified_rounded,
-                      color: Colors.white, size: 22),
-                ),
-              ],
-            ),
+              ),
+              Spacer(),
+            ],
           ),
 
           const SizedBox(height: 10),
