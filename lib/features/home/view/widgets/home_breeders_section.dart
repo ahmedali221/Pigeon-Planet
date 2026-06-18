@@ -207,10 +207,21 @@ class _BreederCard extends StatelessWidget {
                             child: CircleAvatar(
                               radius: 28,
                               backgroundColor: AppColors.primaryLight,
-                              backgroundImage: NetworkImage(
-                                'https://picsum.photos/seed/${s.id}/80/80',
-                              ),
-                              onBackgroundImageError: (_, _) {},
+                              backgroundImage: (s.avatarUrl != null && s.avatarUrl!.isNotEmpty)
+                                  ? NetworkImage(s.avatarUrl!) as ImageProvider
+                                  : null,
+                              child: (s.avatarUrl == null || s.avatarUrl!.isEmpty)
+                                  ? Text(
+                                      s.nickname.isNotEmpty
+                                          ? s.nickname[0].toUpperCase()
+                                          : 'م',
+                                      style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : null,
                             ),
                           ),
                         ),

@@ -7,6 +7,7 @@ class SellerModel {
   final int ratingsCount;
   final int activeAuctionsCount;
   final int totalBirdsCount;
+  final String? avatarUrl;
 
   const SellerModel({
     required this.id,
@@ -17,6 +18,7 @@ class SellerModel {
     this.ratingsCount = 0,
     this.activeAuctionsCount = 0,
     this.totalBirdsCount = 0,
+    this.avatarUrl,
   });
 
   factory SellerModel.fromJson(Map<String, dynamic> json) => SellerModel(
@@ -30,5 +32,6 @@ class SellerModel {
         ratingsCount: json['ratings_count'] as int? ?? 0,
         activeAuctionsCount: json['active_auctions_count'] as int? ?? 0,
         totalBirdsCount: json['total_birds_count'] as int? ?? 0,
+        avatarUrl: json['avatar_url'] as String?,
       );
 }

@@ -156,8 +156,7 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCredit = transaction.transactionType == 'earned' ||
-        (transaction.transactionType == 'adjustment' && transaction.amount > 0);
+    final isCredit = transaction.isCredit;
     final color = isCredit ? AppColors.success : AppColors.error;
     final icon =
         isCredit ? Icons.add_circle_outline : Icons.remove_circle_outline;

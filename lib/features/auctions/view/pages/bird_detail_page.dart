@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../pigeon_id/model/pigeon_model.dart';
 import '../../../pigeon_id/model/pigeon_repository.dart';
@@ -15,8 +16,8 @@ import '../widgets/auction_details_grid.dart';
 import '../widgets/auction_inquiries_section.dart';
 import '../widgets/auction_media_section.dart';
 import '../widgets/auction_pedigree_button.dart';
-import '../widgets/auction_reviews_section.dart';
 import '../widgets/auction_verification_row.dart';
+import '../../../ratings/view/widgets/ratings_section.dart';
 
 class BirdDetailPage extends StatefulWidget {
   final BirdSummaryModel bird;
@@ -205,6 +206,9 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
     }
 
     final d = _buildData();
+    final authState = context.read<AuthBloc>().state;
+    final canRate =
+        authState is AuthSuccess && authState.user.isCustomer && !widget.isOwner;
 
     return BlocListener<CartBloc, CartState>(
       listenWhen: (prev, curr) =>
@@ -311,7 +315,22 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
               const SizedBox(height: 12),
               const AuctionInquiriesSection(),
               const SizedBox(height: 16),
-              const AuctionReviewsSection(reviews: []),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: RatingsSection(
+                    targetType: RatingTargetType.asset,
+                    targetId: widget.bird.id,
+                    canRate: canRate,
+                  ),
+                ),
+              ),
               const SizedBox(height: 32),
             ],
           ),

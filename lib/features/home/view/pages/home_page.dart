@@ -156,6 +156,9 @@ class _HomeViewState extends State<_HomeView> {
         'origin': ring,
         'note': a.description,
         'color': 0xFF3E7B52,
+        'thumbnailUrl': (a.thumbnailUrl?.isNotEmpty == true)
+            ? a.thumbnailUrl
+            : (a.items.isNotEmpty ? a.items.first.bird.thumbnailUrl : null),
       };
     }).toList();
   }
@@ -1005,6 +1008,7 @@ class _HomeViewState extends State<_HomeView> {
                   onPressed: () => PointsSystemModal.show(
                     context,
                     pointsBalance: currentPointsBalance,
+                    isSeller: isSeller,
                   ),
                   backgroundColor: AppColors.primary,
                   shape: const CircleBorder(),

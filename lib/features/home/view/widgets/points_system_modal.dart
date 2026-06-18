@@ -7,15 +7,27 @@ import '../../model/datasources/points_remote_datasource.dart';
 
 class PointsSystemModal extends StatelessWidget {
   final int pointsBalance;
+  final bool isSeller;
 
-  const PointsSystemModal({super.key, required this.pointsBalance});
+  const PointsSystemModal({
+    super.key,
+    required this.pointsBalance,
+    required this.isSeller,
+  });
 
-  static void show(BuildContext context, {int pointsBalance = 0}) {
+  static void show(
+    BuildContext context, {
+    int pointsBalance = 0,
+    bool isSeller = false,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => PointsSystemModal(pointsBalance: pointsBalance),
+      builder: (_) => PointsSystemModal(
+        pointsBalance: pointsBalance,
+        isSeller: isSeller,
+      ),
     );
   }
 
@@ -25,7 +37,10 @@ class PointsSystemModal extends StatelessWidget {
       initialChildSize: 0.88,
       minChildSize: 0.55,
       maxChildSize: 0.95,
-      builder: (_, controller) => _ModalBody(pointsBalance: pointsBalance),
+      builder: (_, controller) => _ModalBody(
+        pointsBalance: pointsBalance,
+        isSeller: isSeller,
+      ),
     );
   }
 }
@@ -34,8 +49,12 @@ class PointsSystemModal extends StatelessWidget {
 
 class _ModalBody extends StatefulWidget {
   final int pointsBalance;
+  final bool isSeller;
 
-  const _ModalBody({required this.pointsBalance});
+  const _ModalBody({
+    required this.pointsBalance,
+    required this.isSeller,
+  });
 
   @override
   State<_ModalBody> createState() => _ModalBodyState();
@@ -51,7 +70,9 @@ class _ModalBodyState extends State<_ModalBody>
     super.initState();
     _tab = TabController(length: 2, vsync: this);
     _tab.addListener(() => setState(() {}));
-    _snapshotFuture = sl<PointsRemoteDataSource>().fetchSnapshot();
+    _snapshotFuture = sl<PointsRemoteDataSource>().fetchSnapshot(
+      includePackageBalance: widget.isSeller,
+    );
   }
 
   @override

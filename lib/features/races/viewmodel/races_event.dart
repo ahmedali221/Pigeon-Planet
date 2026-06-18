@@ -23,6 +23,19 @@ class RacesSearchChanged extends RacesEvent {
   List<Object?> get props => [query];
 }
 
+class RacesFilterChanged extends RacesEvent {
+  final String seasonYear;
+  final String stationName;
+
+  const RacesFilterChanged({
+    required this.seasonYear,
+    required this.stationName,
+  });
+
+  @override
+  List<Object?> get props => [seasonYear, stationName];
+}
+
 class RaceDetailRequested extends RacesEvent {
   final int raceId;
   const RaceDetailRequested(this.raceId);

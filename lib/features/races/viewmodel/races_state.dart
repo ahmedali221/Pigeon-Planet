@@ -12,6 +12,8 @@ class RacesState extends Equatable {
   final RaceModel? selectedRace;
   final String searchQuery;
   final String resultSearchQuery;
+  final String seasonYearFilter;
+  final String stationNameFilter;
   final String? errorMessage;
   final String? detailErrorMessage;
   final int currentPage;
@@ -26,6 +28,8 @@ class RacesState extends Equatable {
     this.selectedRace,
     this.searchQuery = '',
     this.resultSearchQuery = '',
+    this.seasonYearFilter = '',
+    this.stationNameFilter = '',
     this.errorMessage,
     this.detailErrorMessage,
     this.currentPage = 1,
@@ -41,6 +45,8 @@ class RacesState extends Equatable {
     RaceModel? selectedRace,
     String? searchQuery,
     String? resultSearchQuery,
+    String? seasonYearFilter,
+    String? stationNameFilter,
     String? errorMessage,
     String? detailErrorMessage,
     bool clearError = false,
@@ -58,6 +64,8 @@ class RacesState extends Equatable {
       selectedRace: clearSelectedRace ? null : (selectedRace ?? this.selectedRace),
       searchQuery: searchQuery ?? this.searchQuery,
       resultSearchQuery: resultSearchQuery ?? this.resultSearchQuery,
+      seasonYearFilter: seasonYearFilter ?? this.seasonYearFilter,
+      stationNameFilter: stationNameFilter ?? this.stationNameFilter,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       detailErrorMessage: clearDetailError
           ? null
@@ -77,6 +85,8 @@ class RacesState extends Equatable {
         selectedRace,
         searchQuery,
         resultSearchQuery,
+        seasonYearFilter,
+        stationNameFilter,
         errorMessage,
         detailErrorMessage,
         currentPage,

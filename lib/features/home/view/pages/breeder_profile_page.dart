@@ -7,6 +7,7 @@ import '../../../../features/auth/viewmodel/auth_bloc.dart';
 import '../../../../features/chat/view/pages/chat_room_page.dart';
 import '../../../../features/chat/viewmodel/chat_bloc.dart';
 import '../../../../features/feed/viewmodel/feed_bloc.dart';
+import '../../../../features/ratings/view/widgets/ratings_section.dart';
 import '../../model/seller_model.dart';
 
 class BreederProfilePage extends StatelessWidget {
@@ -16,6 +17,9 @@ class BreederProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final canRate = authState is AuthSuccess && authState.user.isCustomer;
+
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       body: CustomScrollView(
@@ -147,10 +151,21 @@ class BreederProfilePage extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 40,
                             backgroundColor: AppColors.primaryLight,
-                            backgroundImage: NetworkImage(
-                              'https://picsum.photos/seed/${seller.id}/120/120',
-                            ),
-                            onBackgroundImageError: (_, _) {},
+                            backgroundImage: (seller.avatarUrl != null && seller.avatarUrl!.isNotEmpty)
+                                ? NetworkImage(seller.avatarUrl!) as ImageProvider
+                                : null,
+                            child: (seller.avatarUrl == null || seller.avatarUrl!.isEmpty)
+                                ? Text(
+                                    seller.nickname.isNotEmpty
+                                        ? seller.nickname[0].toUpperCase()
+                                        : 'م',
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -390,6 +405,18 @@ class BreederProfilePage extends StatelessWidget {
                         ],
                       ),
                     ],
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                _SectionCard(
+                  title: 'Ø§Ù„Ø¢Ø±Ø§Ø¡ ÙˆØ§Ù„ØªØ¹Ù„ÙŠÙ‚Ø§Øª',
+                  icon: Icons.rate_review_outlined,
+                  child: RatingsSection(
+                    targetType: RatingTargetType.seller,
+                    targetId: seller.id,
+                    canRate: canRate,
                   ),
                 ),
 
@@ -653,22 +680,16 @@ class _AuctionPlaceholderTile extends StatelessWidget {
           const SizedBox(width: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              'https://picsum.photos/seed/$seed/80/80',
+            child: Container(
               width: 64,
               height: 64,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                width: 64,
-                height: 64,
-                color: AppColors.primaryLight,
-                child: const Icon(
-                  Icons.flutter_dash,
-                  color: AppColors.primary,
+              color: AppColors.primaryLight,
+              child: const Icon(
+                Icons.flutter_dash,
+                color: AppColors.primary,
                   size: 28,
                 ),
               ),
-            ),
           ),
         ],
       ),

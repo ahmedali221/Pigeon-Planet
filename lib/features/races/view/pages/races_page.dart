@@ -32,6 +32,8 @@ class _RacesViewState extends State<_RacesView>
   late final TabController _tabController;
   final _racesSearchCtrl = TextEditingController();
   final _resultsSearchCtrl = TextEditingController();
+  final _seasonCtrl = TextEditingController();
+  final _stationCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -44,6 +46,8 @@ class _RacesViewState extends State<_RacesView>
     _tabController.dispose();
     _racesSearchCtrl.dispose();
     _resultsSearchCtrl.dispose();
+    _seasonCtrl.dispose();
+    _stationCtrl.dispose();
     super.dispose();
   }
 
@@ -72,7 +76,11 @@ class _RacesViewState extends State<_RacesView>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _RacesListTab(searchCtrl: _racesSearchCtrl),
+          _RacesListTab(
+            searchCtrl: _racesSearchCtrl,
+            seasonCtrl: _seasonCtrl,
+            stationCtrl: _stationCtrl,
+          ),
           _ResultsSearchTab(searchCtrl: _resultsSearchCtrl),
         ],
       ),
@@ -84,8 +92,14 @@ class _RacesViewState extends State<_RacesView>
 
 class _RacesListTab extends StatelessWidget {
   final TextEditingController searchCtrl;
+  final TextEditingController seasonCtrl;
+  final TextEditingController stationCtrl;
 
-  const _RacesListTab({required this.searchCtrl});
+  const _RacesListTab({
+    required this.searchCtrl,
+    required this.seasonCtrl,
+    required this.stationCtrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +113,11 @@ class _RacesListTab extends StatelessWidget {
               onChanged: (q) => context
                   .read<RacesBloc>()
                   .add(RacesSearchChanged(q)),
+            ),
+            _RaceFiltersBar(
+              seasonCtrl: seasonCtrl,
+              stationCtrl: stationCtrl,
+              state: state,
             ),
             Expanded(
               child: _buildBody(context, state),
@@ -177,6 +196,140 @@ class _RacesListTab extends StatelessWidget {
 }
 
 // ── Tab 2: Global result search ───────────────────────────────────────────────
+
+class _RaceFiltersBar extends StatelessWidget {
+  final TextEditingController seasonCtrl;
+  final TextEditingController stationCtrl;
+  final RacesState state;
+
+  const _RaceFiltersBar({
+    required this.seasonCtrl,
+    required this.stationCtrl,
+    required this.state,
+  });
+
+  bool get _hasFilters =>
+      state.seasonYearFilter.isNotEmpty || state.stationNameFilter.isNotEmpty;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _FilterField(
+                  controller: seasonCtrl,
+                  hint: 'الموسم',
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _FilterField(
+                  controller: stationCtrl,
+                  hint: 'المحطة',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<RacesBloc>().add(
+                          RacesFilterChanged(
+                            seasonYear: seasonCtrl.text,
+                            stationName: stationCtrl.text,
+                          ),
+                        );
+                  },
+                  icon: const Icon(Icons.filter_alt_rounded, size: 18),
+                  label: const Text('تطبيق الفلتر'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: _hasFilters ||
+                        seasonCtrl.text.isNotEmpty ||
+                        stationCtrl.text.isNotEmpty
+                    ? () {
+                        seasonCtrl.clear();
+                        stationCtrl.clear();
+                        context.read<RacesBloc>().add(
+                              const RacesFilterChanged(
+                                seasonYear: '',
+                                stationName: '',
+                              ),
+                            );
+                      }
+                    : null,
+                icon: const Icon(Icons.close_rounded, size: 18),
+                label: const Text('مسح'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.textPrimary,
+                  side: BorderSide(color: AppColors.border),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final TextInputType? keyboardType;
+
+  const _FilterField({
+    required this.controller,
+    required this.hint,
+    this.keyboardType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: AppColors.pageBackground,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+    );
+  }
+}
 
 class _ResultsSearchTab extends StatelessWidget {
   final TextEditingController searchCtrl;

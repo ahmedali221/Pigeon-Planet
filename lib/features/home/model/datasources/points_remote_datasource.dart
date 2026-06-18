@@ -121,7 +121,7 @@ abstract class PointsRemoteDataSource {
   Future<List<PointTransactionModel>> fetchTransactions();
   Future<List<BadgeAwardModel>> fetchMyBadges();
   Future<List<BadgeCatalogItem>> fetchBadgeCatalog();
-  Future<LoyaltySnapshot> fetchSnapshot();
+  Future<LoyaltySnapshot> fetchSnapshot({bool includePackageBalance = true});
 }
 
 class RealPointsRemoteDataSource implements PointsRemoteDataSource {
@@ -192,10 +192,14 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
   }
 
   @override
-  Future<LoyaltySnapshot> fetchSnapshot() async {
+  Future<LoyaltySnapshot> fetchSnapshot({
+    bool includePackageBalance = true,
+  }) async {
     final results = await Future.wait<dynamic>([
       _safe<int?>(fetchLoyaltyBalance, null),
-      _safe<int?>(fetchPackageBalance, null),
+      includePackageBalance
+          ? _safe<int?>(fetchPackageBalance, null)
+          : Future<int?>.value(null),
       _safe<List<PointTransactionModel>>(
         fetchTransactions,
         const <PointTransactionModel>[],

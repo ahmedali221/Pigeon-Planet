@@ -184,15 +184,10 @@ class _ComingSoonCard extends StatelessWidget {
                         ? Image.network(
                             thumbnailUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
+                            errorBuilder: (context, error, stackTrace) =>
                                 _placeholder(auction.id),
                           )
-                        : Image.network(
-                            'https://picsum.photos/seed/${auction.id}/400/220',
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
-                                _placeholder(auction.id),
-                          ),
+                        : _placeholder(auction.id),
                   ),
                 ),
                 // type badge — top right

@@ -54,10 +54,9 @@ class _NotificationsViewState extends State<_NotificationsView> {
       builder: (context, state) {
         final isLoading = state.status == NotificationsStatus.loading;
 
+        final showMock = state.status == NotificationsStatus.initial;
         final items = _filtered(
-          state.notifications.isNotEmpty
-              ? state.notifications
-              : NotificationsMockData.forTab(_tabIndex),
+          showMock ? NotificationsMockData.forTab(_tabIndex) : state.notifications,
         );
         final unread = items.where((n) => !n.isRead).length;
 

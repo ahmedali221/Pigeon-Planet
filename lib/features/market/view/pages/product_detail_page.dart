@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
+import '../../../ratings/view/widgets/ratings_section.dart';
 import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
@@ -37,6 +39,10 @@ class ProductDetailPage extends StatelessWidget {
         builder: (context, state) {
           final product = state.selectedProduct;
           if (product == null) return const SizedBox.shrink();
+          final authState = context.read<AuthBloc>().state;
+          final canRate =
+              authState is AuthSuccess && authState.user.isCustomer;
+          final assetId = int.tryParse(product.id);
 
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
@@ -80,6 +86,13 @@ class ProductDetailPage extends StatelessWidget {
                   // ── Description ────────────────────────────────────────────
                   _ProductDescription(product: product),
                   const SizedBox(height: 12),
+                  if (assetId != null) ...[
+                    _ProductRatingsSection(
+                      assetId: assetId,
+                      canRate: canRate,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
 
                   // ── Benefits ───────────────────────────────────────────────
                   if (product.benefits.isNotEmpty)
@@ -290,6 +303,29 @@ class _ProductDescription extends StatelessWidget {
 }
 
 // ── Benefits ──────────────────────────────────────────────────────────────────
+class _ProductRatingsSection extends StatelessWidget {
+  final int assetId;
+  final bool canRate;
+
+  const _ProductRatingsSection({
+    required this.assetId,
+    required this.canRate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: RatingsSection(
+        targetType: RatingTargetType.asset,
+        targetId: assetId,
+        canRate: canRate,
+      ),
+    );
+  }
+}
+
 class _ProductBenefits extends StatelessWidget {
   final List<String> benefits;
   const _ProductBenefits({required this.benefits});

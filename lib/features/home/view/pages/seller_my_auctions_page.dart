@@ -222,15 +222,21 @@ class _AuctionListTile extends StatelessWidget {
               child: SizedBox(
                 width: 90,
                 height: 96,
-                child: Image.network(
-                  'https://picsum.photos/seed/${a.id}/200/200',
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
-                    color: AppColors.primaryLight,
-                    child: const Icon(Icons.gavel_rounded,
-                        color: AppColors.primary, size: 32),
-                  ),
-                ),
+                child: (a.thumbnailUrl != null && a.thumbnailUrl!.isNotEmpty)
+                    ? Image.network(
+                        a.thumbnailUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: AppColors.primaryLight,
+                          child: const Icon(Icons.gavel_rounded,
+                              color: AppColors.primary, size: 32),
+                        ),
+                      )
+                    : Container(
+                        color: AppColors.primaryLight,
+                        child: const Icon(Icons.gavel_rounded,
+                            color: AppColors.primary, size: 32),
+                      ),
               ),
             ),
             const SizedBox(width: 14),

@@ -1,7 +1,7 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String baseUrl = 'https://ppw-backend.vercel.app/api';
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   static const String login = '/auth/login/';
@@ -20,19 +20,22 @@ class ApiConstants {
 
   // ── Loyalty ───────────────────────────────────────────────────────────────
   static const String loyaltyPoints = '/loyalty/points/';
-  static const String loyaltyPointsTransactions = '/loyalty/points/transactions/';
+  static const String loyaltyPointsTransactions =
+      '/loyalty/points/transactions/';
   static const String loyaltyBadges = '/loyalty/badges/';
   static const String loyaltyMyBadges = '/loyalty/badges/my/';
 
   // ── Notifications ─────────────────────────────────────────────────────────
   static const String notifications = '/core/notifications/';
-  static const String notificationsUnreadCount = '/core/notifications/unread-count/';
+  static const String notificationsUnreadCount =
+      '/core/notifications/unread-count/';
   static String notificationRead(int id) => '/core/notifications/$id/read/';
 
   // ── Assets ────────────────────────────────────────────────────────────────
   static const String birds = '/assets/birds/';
   static String birdDetail(int id) => '/assets/birds/$id/';
-  static String publicBird(String publicId) => '/assets/birds/public/$publicId/';
+  static String publicBird(String publicId) =>
+      '/assets/birds/public/$publicId/';
   static const String supplies = '/assets/supplies/';
   static const String accessories = '/assets/accessories/';
   static const String feeds = '/assets/feeds/';
@@ -56,11 +59,14 @@ class ApiConstants {
   // ── Packages ──────────────────────────────────────────────────────────────
   static const String packages = '/packages/';
   static const String mySellerPackages = '/packages/my-packages/';
-  static String cancelSellerPackage(int id) => '/packages/my-packages/$id/cancel/';
+  static String cancelSellerPackage(int id) =>
+      '/packages/my-packages/$id/cancel/';
 
   // ── Promotions ────────────────────────────────────────────────────────────
-  static const String currentDiscountOffers = '/promotions/discount-offers/current/';
-  static const String currentCashbackOffers = '/promotions/cashback-offers/current/';
+  static const String currentDiscountOffers =
+      '/promotions/discount-offers/current/';
+  static const String currentCashbackOffers =
+      '/promotions/cashback-offers/current/';
   static const String cashbackBalance = '/promotions/cashback/balance/';
   static const String cashbackTransactions = '/promotions/cashback/my/';
 
@@ -80,7 +86,8 @@ class ApiConstants {
   static const String orders = '/orders/';
   static String orderDetail(int id) => '/orders/$id/';
   static const String orderItems = '/orders/items/';
-  static String approveOrderItem(int itemId) => '/orders/items/$itemId/approve/';
+  static String approveOrderItem(int itemId) =>
+      '/orders/items/$itemId/approve/';
   static String rejectOrderItem(int itemId) => '/orders/items/$itemId/reject/';
 
   // ── Cart & Checkout ───────────────────────────────────────────────────────
@@ -92,11 +99,14 @@ class ApiConstants {
 
   // ── Payments ──────────────────────────────────────────────────────────────
   static const String paymentRequests = '/payments/requests/';
-  static const String auctionPaymentRequest = '/payments/requests/auction-item/';
+  static const String auctionPaymentRequest =
+      '/payments/requests/auction-item/';
   static const String marketPaymentRequest = '/payments/requests/order-item/';
   static String paymentRequestDetail(int id) => '/payments/requests/$id/';
-  static String approvePaymentRequest(int id) => '/payments/requests/$id/approve/';
-  static String rejectPaymentRequest(int id) => '/payments/requests/$id/reject/';
+  static String approvePaymentRequest(int id) =>
+      '/payments/requests/$id/approve/';
+  static String rejectPaymentRequest(int id) =>
+      '/payments/requests/$id/reject/';
 
   // ── Complaints ────────────────────────────────────────────────────────────
   static const String complaints = '/complaints/';
@@ -116,16 +126,19 @@ class ApiConstants {
   static const String feedMarket = '/feed/market/';
   static const String peopleYouMayKnow = '/feed/people-you-may-know/';
   static String followSeller(int sellerId) => '/feed/sellers/$sellerId/follow/';
-  static String unfollowSeller(int sellerId) => '/feed/sellers/$sellerId/unfollow/';
+  static String unfollowSeller(int sellerId) =>
+      '/feed/sellers/$sellerId/unfollow/';
   static const String following = '/feed/sellers/following/';
   static const String blocks = '/feed/blocks/customer-seller/';
   // Unblock uses the opposite profile's id, not the block record id
-  static String unblock(int profileId) => '/feed/blocks/customer-seller/$profileId/';
+  static String unblock(int profileId) =>
+      '/feed/blocks/customer-seller/$profileId/';
 
   // ── Pedigrees ─────────────────────────────────────────────────────────────
   static const String pedigreeDocuments = '/pedigrees/documents/';
   static String pedigreeDocumentDetail(int id) => '/pedigrees/documents/$id/';
-  static String pedigreeDocumentReview(int id) => '/pedigrees/documents/$id/review/';
+  static String pedigreeDocumentReview(int id) =>
+      '/pedigrees/documents/$id/review/';
 
   // ── Dead / unimplemented backend endpoints (DO NOT USE in new code) ───────
   // `/core/activity/` does not exist in the current backend — feature is a stub

@@ -16,6 +16,7 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     on<RacesStarted>(_onStarted);
     on<RacesRefreshRequested>(_onStarted);
     on<RacesSearchChanged>(_onSearchChanged);
+    on<RacesFilterChanged>(_onFilterChanged);
     on<RaceDetailRequested>(_onDetailRequested);
     on<RaceResultSearchChanged>(_onResultSearchChanged);
     on<RacesLoadMoreRequested>(_onLoadMore);
@@ -32,7 +33,11 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
       hasMore: false,
       loadingMore: false,
     ));
-    final result = await _repository.getRaces(page: 1);
+    final result = await _repository.getRaces(
+      page: 1,
+      seasonYear: _nullableFilter(state.seasonYearFilter),
+      stationName: _nullableFilter(state.stationNameFilter),
+    );
     result.fold(
       (f) => emit(state.copyWith(
           status: RacesStatus.error, errorMessage: f.message)),
@@ -52,7 +57,11 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     if (!state.hasMore || state.loadingMore) return;
     emit(state.copyWith(loadingMore: true));
     final nextPage = state.currentPage + 1;
-    final result = await _repository.getRaces(page: nextPage);
+    final result = await _repository.getRaces(
+      page: nextPage,
+      seasonYear: _nullableFilter(state.seasonYearFilter),
+      stationName: _nullableFilter(state.stationNameFilter),
+    );
     result.fold(
       (f) => emit(state.copyWith(loadingMore: false)),
       (page) => emit(state.copyWith(
@@ -70,7 +79,10 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
   ) async {
     final query = event.query.trim();
     if (query.isEmpty) {
-      add(const RacesStarted());
+      add(RacesFilterChanged(
+        seasonYear: state.seasonYearFilter,
+        stationName: state.stationNameFilter,
+      ));
       return;
     }
     emit(state.copyWith(
@@ -81,6 +93,39 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
           status: RacesStatus.error, errorMessage: f.message)),
       (results) => emit(state.copyWith(
           status: RacesStatus.searchResults, globalSearchResults: results)),
+    );
+  }
+
+  Future<void> _onFilterChanged(
+    RacesFilterChanged event,
+    Emitter<RacesState> emit,
+  ) async {
+    final seasonYear = event.seasonYear.trim();
+    final stationName = event.stationName.trim();
+    emit(state.copyWith(
+      status: RacesStatus.loading,
+      seasonYearFilter: seasonYear,
+      stationNameFilter: stationName,
+      searchQuery: '',
+      currentPage: 1,
+      hasMore: false,
+      loadingMore: false,
+      clearError: true,
+    ));
+    final result = await _repository.getRaces(
+      page: 1,
+      seasonYear: _nullableFilter(seasonYear),
+      stationName: _nullableFilter(stationName),
+    );
+    result.fold(
+      (f) => emit(state.copyWith(
+          status: RacesStatus.error, errorMessage: f.message)),
+      (page) => emit(state.copyWith(
+        status: RacesStatus.loaded,
+        races: page.races,
+        currentPage: 1,
+        hasMore: page.hasMore,
+      )),
     );
   }
 
@@ -121,5 +166,10 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
       (results) => emit(state.copyWith(
           status: RacesStatus.searchResults, globalSearchResults: results)),
     );
+  }
+
+  String? _nullableFilter(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 }

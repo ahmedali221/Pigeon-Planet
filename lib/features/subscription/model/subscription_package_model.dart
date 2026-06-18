@@ -88,6 +88,6 @@ class PendingSellerPackageModel {
         packageName:
             (j['package'] as Map?)?['name'] as String? ?? '',
         status: j['status'] as String? ?? '',
-        createdAt: j['created_at'] as String? ?? '',
+        createdAt: j['created'] as String? ?? j['created_at'] as String? ?? '',
       );
 }

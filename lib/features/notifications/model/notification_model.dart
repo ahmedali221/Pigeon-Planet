@@ -66,7 +66,7 @@ class NotificationModel {
       body: (json['body'] as String?)?.isNotEmpty == true
           ? json['body'] as String
           : ' ',
-      isRead: readAt != null,
+      isRead: json['is_read'] as bool? ?? (readAt != null),
       profileType: json['profile_type'] as String? ?? 'All',
       created: createdRaw != null
           ? DateTime.tryParse(createdRaw) ?? DateTime.now()

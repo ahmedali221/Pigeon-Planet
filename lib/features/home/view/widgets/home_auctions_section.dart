@@ -31,6 +31,8 @@ class _AuctionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auctionId = auction['id'] as int?;
+    final thumbnailUrl = auction['thumbnailUrl'] as String?;
+    final placeholderColor = Color(auction['color'] as int);
     return GestureDetector(
       onTap: auctionId != null
           ? () => Navigator.push(
@@ -65,17 +67,25 @@ class _AuctionCard extends StatelessWidget {
                 child: SizedBox(
                   height: 160,
                   width: double.infinity,
-                  child: Image.network(
-                    'https://picsum.photos/seed/${auction['color']}/400/200',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
-                      color: Color(auction['color'] as int),
-                      child: const Center(
-                        child: Icon(Icons.flutter_dash,
-                            color: Colors.white54, size: 50),
-                      ),
-                    ),
-                  ),
+                  child: thumbnailUrl != null && thumbnailUrl.isNotEmpty
+                      ? Image.network(
+                          thumbnailUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: placeholderColor,
+                            child: const Center(
+                              child: Icon(Icons.flutter_dash,
+                                  color: Colors.white54, size: 50),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: placeholderColor,
+                          child: const Center(
+                            child: Icon(Icons.flutter_dash,
+                                color: Colors.white54, size: 50),
+                          ),
+                        ),
                 ),
               ),
               // rating + views
