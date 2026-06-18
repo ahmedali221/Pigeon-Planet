@@ -106,6 +106,7 @@ class _ModalBodyState extends State<_ModalBody>
                     _RewardsTab(
                       isLoading: isLoading,
                       badges: data?.badges ?? const [],
+                      catalog: data?.catalog ?? const [],
                     ),
                   ],
                 ),
@@ -728,8 +729,13 @@ class _PointsValueTable extends StatelessWidget {
 class _RewardsTab extends StatelessWidget {
   final bool isLoading;
   final List<BadgeAwardModel> badges;
+  final List<BadgeCatalogItem> catalog;
 
-  const _RewardsTab({required this.isLoading, required this.badges});
+  const _RewardsTab({
+    required this.isLoading,
+    required this.badges,
+    required this.catalog,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -749,6 +755,17 @@ class _RewardsTab extends StatelessWidget {
           ...badges.take(5).map((badge) => _BadgeAwardTile(badge: badge)),
 
         const SizedBox(height: 20),
+
+        // Badge catalog from backend
+        if (!isLoading && catalog.isNotEmpty) ...[
+          const _SectionTitle(icon: '🏅', label: 'الشارات المتاحة'),
+          const SizedBox(height: 10),
+          ...catalog.map((item) => _BadgeCatalogTile(
+                item: item,
+                earned: badges.any((b) => b.badgeType == item.badgeType),
+              )),
+          const SizedBox(height: 20),
+        ],
 
         // How to redeem
         _SectionTitle(icon: '🎁', label: 'كيف تحصل على جائزة؟'),
@@ -1381,6 +1398,105 @@ class _BadgeAwardTile extends StatelessWidget {
                   ),
                 ],
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BadgeCatalogTile extends StatelessWidget {
+  final BadgeCatalogItem item;
+  final bool earned;
+
+  const _BadgeCatalogTile({required this.item, required this.earned});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: earned
+              ? AppColors.primary.withValues(alpha: 0.4)
+              : AppColors.border,
+          width: earned ? 1.5 : 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: earned ? AppColors.primaryLight : AppColors.inputBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.workspace_premium_rounded,
+              color: earned ? AppColors.primary : AppColors.textHint,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.name.isEmpty ? item.badgeType : item.name,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (item.description.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    item.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+                if (item.criteriaThreshold != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    'الحد: ${item.criteriaThreshold}',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: earned
+                  ? AppColors.primaryLight
+                  : AppColors.inputBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              earned ? 'مكتسبة ✓' : 'متاحة',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: earned ? AppColors.primary : AppColors.textSecondary,
+              ),
             ),
           ),
         ],

@@ -68,3 +68,26 @@ class ActiveSellerPackageModel {
   bool get hasEnoughForAuction => remainingPoints >= auctionCost;
   bool get hasEnoughForProduct => remainingPoints >= productCost;
 }
+
+class PendingSellerPackageModel {
+  final int id;
+  final String packageName;
+  final String status;
+  final String createdAt;
+
+  const PendingSellerPackageModel({
+    required this.id,
+    required this.packageName,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory PendingSellerPackageModel.fromJson(Map<String, dynamic> j) =>
+      PendingSellerPackageModel(
+        id: (j['id'] as num?)?.toInt() ?? 0,
+        packageName:
+            (j['package'] as Map?)?['name'] as String? ?? '',
+        status: j['status'] as String? ?? '',
+        createdAt: j['created_at'] as String? ?? '',
+      );
+}

@@ -63,3 +63,17 @@ class MarketFavoriteToggled extends MarketEvent {
   List<Object?> get props => [productId];
 }
 
+class MarketFeedLoadMoreRequested extends MarketEvent {
+  const MarketFeedLoadMoreRequested();
+}
+
+class MarketSortChanged extends MarketEvent {
+  /// Backend `ordering` param value, e.g. `'price'`, `'-price'`, `'-created'`.
+  /// Null means default (no explicit ordering).
+  final String? ordering;
+  const MarketSortChanged(this.ordering);
+
+  @override
+  List<Object?> get props => [ordering];
+}
+

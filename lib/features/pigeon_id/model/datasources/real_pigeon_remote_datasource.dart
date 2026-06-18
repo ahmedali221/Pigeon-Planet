@@ -11,14 +11,23 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
 
   // ── Cloudinary helpers ──────────────────────────────────────────────────────
 
-  Future<List<Map<String, dynamic>>> _uploadImages(
+  // Uploads local paths; passes through existing https:// URLs unchanged.
+  // Returns the full ordered media list for all image paths.
+  Future<List<Map<String, dynamic>>> _buildImageMedia(
       List<String> paths, String ringNumber) async {
     final result = <Map<String, dynamic>>[];
     for (int i = 0; i < paths.length; i++) {
-      final url = await CloudinaryService.uploadImage(paths[i], ringNumber);
+      final path = paths[i];
+      final String? url;
+      if (path.startsWith('http')) {
+        url = path;
+      } else {
+        url = await CloudinaryService.uploadImage(path, ringNumber);
+      }
       if (url != null) {
         result.add({
-          'image_url': url,
+          'media_url': url,
+          'media_type': 'image',
           'is_primary': i == 0,
           'order': i,
         });
@@ -29,11 +38,11 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
 
   // ── Shared body builder ─────────────────────────────────────────────────────
 
-  Map<String, dynamic> _body(PigeonModel pigeon) => {
+  Map<String, dynamic> _body(PigeonModel pigeon, {bool includeStatus = false}) => {
         'name': pigeon.name.isNotEmpty ? pigeon.name : pigeon.ringNumber,
         'ring_number': pigeon.ringNumber,
         'title': pigeon.name.isNotEmpty ? pigeon.name : pigeon.ringNumber,
-        'gender': pigeon.gender == PigeonGender.female ? 'female' : 'male',
+        'gender': pigeon.gender.apiValue,
         'colour': pigeon.breed,
         if (pigeon.hatchDate != null)
           'birthday': pigeon.hatchDate!.toIso8601String().split('T').first,
@@ -44,13 +53,15 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
         'description': pigeon.description,
         if (pigeon.flyingSpeed != null)
           'flying_speed': pigeon.flyingSpeed!.toStringAsFixed(2),
+        if (includeStatus) 'status': pigeon.status,
       };
 
   // ── Public API ──────────────────────────────────────────────────────────────
 
   @override
   Future<PigeonModel> saveBird(PigeonModel pigeon) async {
-    final images = await _uploadImages(pigeon.photoPaths, pigeon.ringNumber);
+    final imageMedia = await _buildImageMedia(
+        pigeon.photoPaths, pigeon.ringNumber);
 
     String? videoUrl;
     if (pigeon.videoPath != null) {
@@ -58,13 +69,22 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
           pigeon.videoPath!, pigeon.ringNumber);
     }
 
-    final body = {
+    final mediaList = <Map<String, dynamic>>[...imageMedia];
+    if (videoUrl != null && videoUrl.isNotEmpty) {
+      mediaList.add({
+        'media_url': videoUrl,
+        'media_type': 'video',
+        'is_primary': false,
+        'order': mediaList.length,
+      });
+    }
+
+    final body = <String, dynamic>{
       ..._body(pigeon),
       'is_for_auction': false,
       'category': 'bird',
       'count': 1,
-      if (images.isNotEmpty) 'images': images,
-      if (videoUrl != null && videoUrl.isNotEmpty) 'video_url': videoUrl,
+      if (mediaList.isNotEmpty) 'media': mediaList,
     };
 
     final response = await _dio.post(ApiConstants.birds, data: body);
@@ -73,13 +93,10 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
 
   @override
   Future<PigeonModel> updateBird(int id, PigeonModel pigeon) async {
-    // Only re-upload images when the caller supplies local paths.
-    // If photoPaths are already https:// URLs (loaded from server), skip upload.
-    final localPaths =
-        pigeon.photoPaths.where((p) => !p.startsWith('http')).toList();
-    final newImages = localPaths.isNotEmpty
-        ? await _uploadImages(localPaths, pigeon.ringNumber)
-        : <Map<String, dynamic>>[];
+    // _buildImageMedia passes through existing https:// URLs and uploads local paths.
+    // Sends the full ordered list so the backend replaces the media set correctly.
+    final imageMedia = await _buildImageMedia(
+        pigeon.photoPaths, pigeon.ringNumber);
 
     String? videoUrl = pigeon.videoPath;
     if (pigeon.videoPath != null && !pigeon.videoPath!.startsWith('http')) {
@@ -87,10 +104,19 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
           pigeon.videoPath!, pigeon.ringNumber);
     }
 
-    final body = {
-      ..._body(pigeon),
-      if (newImages.isNotEmpty) 'images': newImages,
-      if (videoUrl != null && videoUrl.isNotEmpty) 'video_url': videoUrl,
+    final mediaList = <Map<String, dynamic>>[...imageMedia];
+    if (videoUrl != null && videoUrl.isNotEmpty) {
+      mediaList.add({
+        'media_url': videoUrl,
+        'media_type': 'video',
+        'is_primary': false,
+        'order': mediaList.length,
+      });
+    }
+
+    final body = <String, dynamic>{
+      ..._body(pigeon, includeStatus: true),
+      if (mediaList.isNotEmpty) 'media': mediaList,
     };
 
     final response =
@@ -101,5 +127,11 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
   @override
   Future<void> deleteBird(int id) async {
     await _dio.delete(ApiConstants.birdDetail(id));
+  }
+
+  @override
+  Future<PigeonModel> fetchPublicBird(String publicId) async {
+    final response = await _dio.get(ApiConstants.publicBird(publicId));
+    return PigeonModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

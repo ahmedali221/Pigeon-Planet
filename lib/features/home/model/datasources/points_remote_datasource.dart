@@ -59,12 +59,49 @@ class BadgeAwardModel {
   }
 }
 
+class BadgeCatalogItem {
+  final String badgeType;
+  final String name;
+  final String description;
+  final String criteriaType;
+  final int? criteriaThreshold;
+  final String iconUrl;
+
+  const BadgeCatalogItem({
+    required this.badgeType,
+    required this.name,
+    required this.description,
+    required this.criteriaType,
+    required this.criteriaThreshold,
+    required this.iconUrl,
+  });
+
+  factory BadgeCatalogItem.fromJson(Map<String, dynamic> json) =>
+      BadgeCatalogItem(
+        badgeType: json['badge_type'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        description: json['description'] as String? ?? '',
+        criteriaType: json['criteria_type'] as String? ?? '',
+        criteriaThreshold: _readCriteriaThreshold(json['criteria_value']),
+        iconUrl: json['icon_url'] as String? ?? '',
+      );
+
+  static int? _readCriteriaThreshold(dynamic value) {
+    if (value is num) return value.toInt();
+    if (value is Map && value['threshold'] is num) {
+      return (value['threshold'] as num).toInt();
+    }
+    return null;
+  }
+}
+
 class LoyaltySnapshot {
   final int? balance;
   final int? loyaltyBalance;
   final int? packageBalance;
   final List<PointTransactionModel> transactions;
   final List<BadgeAwardModel> badges;
+  final List<BadgeCatalogItem> catalog;
 
   const LoyaltySnapshot({
     required this.balance,
@@ -72,6 +109,7 @@ class LoyaltySnapshot {
     required this.packageBalance,
     required this.transactions,
     required this.badges,
+    required this.catalog,
   });
 }
 
@@ -82,6 +120,7 @@ abstract class PointsRemoteDataSource {
   Future<int?> fetchPackageBalance();
   Future<List<PointTransactionModel>> fetchTransactions();
   Future<List<BadgeAwardModel>> fetchMyBadges();
+  Future<List<BadgeCatalogItem>> fetchBadgeCatalog();
   Future<LoyaltySnapshot> fetchSnapshot();
 }
 
@@ -100,7 +139,7 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
 
   @override
   Future<int?> fetchLoyaltyBalance() async {
-    final response = await _dio.get(ApiConstants.corePoints);
+    final response = await _dio.get(ApiConstants.loyaltyPoints);
     final data = response.data;
     if (data is Map && data['balance'] is num) {
       return (data['balance'] as num).toInt();
@@ -127,7 +166,7 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
 
   @override
   Future<List<PointTransactionModel>> fetchTransactions() async {
-    final response = await _dio.get(ApiConstants.corePointsHistory);
+    final response = await _dio.get(ApiConstants.loyaltyPointsTransactions);
     return _readList(response.data)
         .map(
           (item) =>
@@ -145,6 +184,14 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
   }
 
   @override
+  Future<List<BadgeCatalogItem>> fetchBadgeCatalog() async {
+    final response = await _dio.get(ApiConstants.loyaltyBadges);
+    return _readList(response.data)
+        .map((item) => BadgeCatalogItem.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
   Future<LoyaltySnapshot> fetchSnapshot() async {
     final results = await Future.wait<dynamic>([
       _safe<int?>(fetchLoyaltyBalance, null),
@@ -154,6 +201,10 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
         const <PointTransactionModel>[],
       ),
       _safe<List<BadgeAwardModel>>(fetchMyBadges, const <BadgeAwardModel>[]),
+      _safe<List<BadgeCatalogItem>>(
+        fetchBadgeCatalog,
+        const <BadgeCatalogItem>[],
+      ),
     ]);
     final loyaltyBalance = results[0] as int?;
     final packageBalance = results[1] as int?;
@@ -165,6 +216,7 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
       packageBalance: packageBalance,
       transactions: results[2] as List<PointTransactionModel>,
       badges: results[3] as List<BadgeAwardModel>,
+      catalog: results[4] as List<BadgeCatalogItem>,
     );
   }
 

@@ -120,19 +120,13 @@ class _ProductImage extends StatelessWidget {
         SizedBox(
           height: 260,
           width: double.infinity,
-          child: Image.network(
-            'https://picsum.photos/seed/${product.seed}/400/300',
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(
-              height: 260,
-              color: AppColors.primaryLight,
-              child: const Icon(
-                Icons.image_not_supported_outlined,
-                color: AppColors.primary,
-                size: 60,
-              ),
-            ),
-          ),
+          child: product.thumbnailUrl != null
+              ? Image.network(
+                  product.thumbnailUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const _ProductImagePlaceholder(),
+                )
+              : const _ProductImagePlaceholder(),
         ),
         // favorite
         Positioned(
@@ -187,6 +181,23 @@ class _ProductImage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ProductImagePlaceholder extends StatelessWidget {
+  const _ProductImagePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 260,
+      color: AppColors.primaryLight,
+      child: const Icon(
+        Icons.image_not_supported_outlined,
+        color: AppColors.primary,
+        size: 60,
+      ),
     );
   }
 }

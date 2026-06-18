@@ -229,6 +229,14 @@ class _OrderItemRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              if (item.hasDiscount)
+                Text(
+                  '${item.grossTotal.toStringAsFixed(2)} ر.س',
+                  style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textHint,
+                      decoration: TextDecoration.lineThrough),
+                ),
               Text(
                 '${item.total.toStringAsFixed(2)} ر.س',
                 style: const TextStyle(

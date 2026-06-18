@@ -5,6 +5,8 @@ class BidModel {
   final double amount;
   final DateTime created;
   final bool isWinningBid;
+  final int? itemId;
+  final String? auctionTitle;
 
   const BidModel({
     required this.id,
@@ -13,6 +15,8 @@ class BidModel {
     required this.amount,
     required this.created,
     required this.isWinningBid,
+    this.itemId,
+    this.auctionTitle,
   });
 
   factory BidModel.fromJson(Map<String, dynamic> json) => BidModel(
@@ -22,5 +26,7 @@ class BidModel {
         amount: double.parse(json['amount'].toString()),
         created: DateTime.parse(json['created'] as String),
         isWinningBid: json['is_winning_bid'] as bool? ?? false,
+        itemId: json['item'] as int?,
+        auctionTitle: json['auction_title'] as String?,
       );
 }

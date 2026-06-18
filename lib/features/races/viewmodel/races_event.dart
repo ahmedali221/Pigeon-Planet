@@ -38,3 +38,7 @@ class RaceResultSearchChanged extends RacesEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class RacesLoadMoreRequested extends RacesEvent {
+  const RacesLoadMoreRequested();
+}

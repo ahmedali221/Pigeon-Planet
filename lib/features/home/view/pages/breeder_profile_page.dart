@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../../features/auth/viewmodel/auth_bloc.dart';
+import '../../../../features/chat/view/pages/chat_room_page.dart';
+import '../../../../features/chat/viewmodel/chat_bloc.dart';
+import '../../../../features/feed/viewmodel/feed_bloc.dart';
 import '../../model/seller_model.dart';
 
 class BreederProfilePage extends StatelessWidget {
@@ -24,6 +31,71 @@ class BreederProfilePage extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              BlocBuilder<FeedBloc, FeedState>(
+                buildWhen: (p, c) =>
+                    p.blockedProfileIds.contains(seller.id) !=
+                    c.blockedProfileIds.contains(seller.id),
+                builder: (context, state) {
+                  final isBlocked =
+                      state.blockedProfileIds.contains(seller.id);
+                  return PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded,
+                        color: Colors.white),
+                    onSelected: (value) {
+                      if (value == 'block') {
+                        context
+                            .read<FeedBloc>()
+                            .add(FeedBlockRequested(seller.id));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('تم حظر هذا البائع'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      } else if (value == 'unblock') {
+                        context
+                            .read<FeedBloc>()
+                            .add(FeedUnblockRequested(seller.id));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('تم إلغاء الحظر'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: isBlocked ? 'unblock' : 'block',
+                        child: Row(
+                          children: [
+                            Icon(
+                              isBlocked
+                                  ? Icons.lock_open_rounded
+                                  : Icons.block_rounded,
+                              size: 18,
+                              color: isBlocked
+                                  ? AppColors.primary
+                                  : AppColors.error,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              isBlocked ? 'إلغاء الحظر' : 'حظر البائع',
+                              style: TextStyle(
+                                color: isBlocked
+                                    ? AppColors.primary
+                                    : AppColors.error,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
@@ -170,7 +242,18 @@ class BreederProfilePage extends StatelessWidget {
                 // ── Follow button ────────────────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _FollowButton(),
+                  child: _FollowButton(sellerId: seller.id),
+                ),
+
+                const SizedBox(height: 10),
+
+                // ── Chat button (customers only) ─────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _ChatButton(
+                    sellerId: seller.id,
+                    sellerNickname: seller.nickname,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -323,53 +406,110 @@ class BreederProfilePage extends StatelessWidget {
 }
 
 // ── Follow button ─────────────────────────────────────────────────────────────
-class _FollowButton extends StatefulWidget {
-  const _FollowButton();
-
-  @override
-  State<_FollowButton> createState() => _FollowButtonState();
-}
-
-class _FollowButtonState extends State<_FollowButton> {
-  bool _following = false;
+class _FollowButton extends StatelessWidget {
+  final int sellerId;
+  const _FollowButton({required this.sellerId});
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<FeedBloc, FeedState>(
+      buildWhen: (p, c) =>
+          p.followedSellerIds.contains(sellerId) !=
+          c.followedSellerIds.contains(sellerId),
+      builder: (context, state) {
+        final isFollowing = state.followedSellerIds.contains(sellerId);
+        return SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: isFollowing
+              ? OutlinedButton.icon(
+                  onPressed: () => context
+                      .read<FeedBloc>()
+                      .add(FeedUnfollowRequested(sellerId)),
+                  icon: const Icon(Icons.check_circle_rounded, size: 20),
+                  label: const Text(
+                    'تتابع الآن',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side:
+                        const BorderSide(color: AppColors.primary, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                )
+              : ElevatedButton.icon(
+                  onPressed: () => context
+                      .read<FeedBloc>()
+                      .add(FeedFollowRequested(sellerId)),
+                  icon: const Icon(Icons.person_add_rounded, size: 20),
+                  label: const Text(
+                    'متابعة',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+        );
+      },
+    );
+  }
+}
+
+// ── Chat button ───────────────────────────────────────────────────────────────
+class _ChatButton extends StatelessWidget {
+  final int sellerId;
+  final String sellerNickname;
+
+  const _ChatButton({required this.sellerId, required this.sellerNickname});
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final isSeller =
+        authState is AuthSuccess && authState.user.isSeller;
+    if (isSeller) return const SizedBox.shrink();
+
     return SizedBox(
       width: double.infinity,
       height: 50,
-      child: _following
-          ? OutlinedButton.icon(
-              onPressed: () => setState(() => _following = false),
-              icon: const Icon(Icons.check_circle_rounded, size: 20),
-              label: const Text(
-                'تتابع الآن',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-            )
-          : ElevatedButton.icon(
-              onPressed: () => setState(() => _following = true),
-              icon: const Icon(Icons.person_add_rounded, size: 20),
-              label: const Text(
-                'متابعة',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+      child: OutlinedButton.icon(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (_) => sl<ChatBloc>()
+                ..add(const ChatStarted(profileType: 'Customer')),
+              child: ChatRoomPage(
+                receiverProfileId: sellerId,
+                partnerNickname: sellerNickname,
               ),
             ),
+          ),
+        ),
+        icon: const Icon(Icons.chat_bubble_outline_rounded, size: 20),
+        label: const Text(
+          'تواصل مع البائع',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+      ),
     );
   }
 }

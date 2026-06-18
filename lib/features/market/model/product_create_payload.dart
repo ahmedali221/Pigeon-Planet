@@ -16,7 +16,7 @@ class ProductCreatePayload {
   String get endpoint => '/assets/$category/';
 
   Map<String, dynamic> toJson() => {
-        'name': name,
+        'title': name,
         'description': description,
         'price': price,
         'count': count,

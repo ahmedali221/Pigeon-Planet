@@ -13,6 +13,7 @@ class PackagesBloc extends Bloc<PackagesEvent, PackagesState> {
         super(const PackagesState()) {
     on<PackagesLoadRequested>(_onLoad);
     on<PackageRequestSubmitted>(_onRequest);
+    on<PackageCancelRequested>(_onCancel);
   }
 
   Future<void> _onLoad(
@@ -23,10 +24,12 @@ class PackagesBloc extends Bloc<PackagesEvent, PackagesState> {
     try {
       List<PackageModel>? packages;
       ActiveSellerPackageModel? activePackage;
+      PendingSellerPackageModel? pendingPackage;
 
       await Future.wait([
         _datasource.fetchPackages().then((v) => packages = v),
         _datasource.fetchActivePackage().then((v) => activePackage = v),
+        _datasource.fetchPendingPackage().then((v) => pendingPackage = v),
       ]);
 
       emit(state.copyWith(
@@ -34,11 +37,32 @@ class PackagesBloc extends Bloc<PackagesEvent, PackagesState> {
         packages: packages ?? [],
         activePackage: activePackage,
         clearActivePackage: activePackage == null,
+        pendingPackage: pendingPackage,
+        clearPendingPackage: pendingPackage == null,
       ));
     } catch (_) {
       emit(state.copyWith(
         status: PackagesStatus.error,
         errorMessage: 'تعذر تحميل الباقات. تحقق من اتصالك وحاول مجدداً.',
+      ));
+    }
+  }
+
+  Future<void> _onCancel(
+    PackageCancelRequested event,
+    Emitter<PackagesState> emit,
+  ) async {
+    emit(state.copyWith(cancelling: true, clearCancelError: true));
+    try {
+      await _datasource.cancelPackage(event.packageId);
+      emit(state.copyWith(
+        cancelling: false,
+        clearPendingPackage: true,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        cancelling: false,
+        cancelError: 'تعذر إلغاء الطلب. حاول مرة أخرى.',
       ));
     }
   }

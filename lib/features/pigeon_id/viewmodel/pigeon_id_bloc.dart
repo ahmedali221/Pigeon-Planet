@@ -32,6 +32,7 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
     on<PigeonIdSubmitted>(_onSubmitted);
     on<PigeonIdLoadedForEdit>(_onLoadedForEdit);
     on<PigeonIdDeleteRequested>(_onDeleteRequested);
+    on<PigeonIdStatusChanged>(_onStatusChanged);
   }
 
   void _onRingNumberChanged(
@@ -113,6 +114,11 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
     emit(state.copyWith(flyingSpeed: event.value));
   }
 
+  void _onStatusChanged(
+      PigeonIdStatusChanged event, Emitter<PigeonIdState> emit) {
+    emit(state.copyWith(birdStatus: event.status));
+  }
+
   Future<void> _onSubmitted(
       PigeonIdSubmitted event, Emitter<PigeonIdState> emit) async {
     if (!state.isReadyToSubmit) return;
@@ -130,6 +136,7 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
       description: state.description,
       flyingSpeed: double.tryParse(state.flyingSpeed),
       isMarketListed: true,
+      status: state.birdStatus,
       photoPaths: state.photoPaths,
       videoPath: state.videoPath,
     );
@@ -155,15 +162,10 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
           status: PigeonIdStatus.error,
           errorMessage: f.message,
         )),
-        (saved) {
-          final qrData =
-              'PP-BIRD::${saved.ringNumber}::${DateTime.now().millisecondsSinceEpoch}';
-          emit(state.copyWith(
-            status: PigeonIdStatus.submitted,
-            savedBird: saved,
-            qrData: qrData,
-          ));
-        },
+        (saved) => emit(state.copyWith(
+          status: PigeonIdStatus.submitted,
+          savedBird: saved,
+        )),
       );
     }
   }
@@ -177,6 +179,8 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
       ringNumber: p.ringNumber,
       breed: p.breed,
       gender: p.gender,
+      photoPaths: p.photoPaths,
+      videoPath: p.videoPath,
       hatchDate: p.hatchDate,
       achievements: p.achievements,
       staminaAbility: p.staminaAbility,
@@ -186,6 +190,7 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
       flyingSpeed: p.flyingSpeed != null
           ? p.flyingSpeed!.toStringAsFixed(1)
           : '',
+      birdStatus: p.status,
       savedBird: p,
     ));
   }

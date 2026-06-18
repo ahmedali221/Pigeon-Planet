@@ -126,25 +126,38 @@ class _RacesListTab extends StatelessWidget {
     if (state.races.isEmpty) {
       return const _EmptyView(message: 'لا توجد سباقات بعد');
     }
+    final hasFooter = state.hasMore || state.loadingMore;
     return RefreshIndicator(
       onRefresh: () async =>
           context.read<RacesBloc>().add(const RacesRefreshRequested()),
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: state.races.length,
-        separatorBuilder: (_, index) => const SizedBox(height: 12),
-        itemBuilder: (_, i) => _RaceCard(
-          race: state.races[i],
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: context.read<RacesBloc>(),
-                child: RaceDetailPage(raceId: state.races[i].id),
+        itemCount: state.races.length + (hasFooter ? 1 : 0),
+        separatorBuilder: (_, i) =>
+            i < state.races.length - 1
+                ? const SizedBox(height: 12)
+                : const SizedBox.shrink(),
+        itemBuilder: (ctx, i) {
+          if (i == state.races.length) {
+            return _LoadMoreButton(
+              loading: state.loadingMore,
+              onTap: () =>
+                  ctx.read<RacesBloc>().add(const RacesLoadMoreRequested()),
+            );
+          }
+          return _RaceCard(
+            race: state.races[i],
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: context.read<RacesBloc>(),
+                  child: RaceDetailPage(raceId: state.races[i].id),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -548,6 +561,44 @@ class _ResultRow extends StatelessWidget {
       default:
         return AppColors.primary;
     }
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _LoadMoreButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      child: Center(
+        child: loading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              )
+            : OutlinedButton.icon(
+                onPressed: onTap,
+                icon: const Icon(Icons.expand_more_rounded, size: 18),
+                label: const Text('تحميل المزيد'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+      ),
+    );
   }
 }
 

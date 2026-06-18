@@ -14,6 +14,9 @@ class RacesState extends Equatable {
   final String resultSearchQuery;
   final String? errorMessage;
   final String? detailErrorMessage;
+  final int currentPage;
+  final bool hasMore;
+  final bool loadingMore;
 
   const RacesState({
     this.status = RacesStatus.initial,
@@ -25,6 +28,9 @@ class RacesState extends Equatable {
     this.resultSearchQuery = '',
     this.errorMessage,
     this.detailErrorMessage,
+    this.currentPage = 1,
+    this.hasMore = false,
+    this.loadingMore = false,
   });
 
   RacesState copyWith({
@@ -40,6 +46,9 @@ class RacesState extends Equatable {
     bool clearError = false,
     bool clearDetailError = false,
     bool clearSelectedRace = false,
+    int? currentPage,
+    bool? hasMore,
+    bool? loadingMore,
   }) {
     return RacesState(
       status: status ?? this.status,
@@ -53,6 +62,9 @@ class RacesState extends Equatable {
       detailErrorMessage: clearDetailError
           ? null
           : (detailErrorMessage ?? this.detailErrorMessage),
+      currentPage: currentPage ?? this.currentPage,
+      hasMore: hasMore ?? this.hasMore,
+      loadingMore: loadingMore ?? this.loadingMore,
     );
   }
 
@@ -67,5 +79,8 @@ class RacesState extends Equatable {
         resultSearchQuery,
         errorMessage,
         detailErrorMessage,
+        currentPage,
+        hasMore,
+        loadingMore,
       ];
 }

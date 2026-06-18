@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../complaints/view/pages/complaints_page.dart';
+import '../../../payments/view/pages/payments_page.dart';
+import '../../../pedigrees/view/pages/pedigrees_page.dart';
+import '../../../feed/view/pages/following_page.dart';
+import '../../../feed/viewmodel/feed_bloc.dart';
+import '../../../promotions/view/pages/cashback_history_page.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'edit_profile_page.dart';
@@ -62,10 +69,9 @@ class ProfilePage extends StatelessWidget {
                   Text(state.errorMessage ?? 'حدث خطأ في تحميل الملف الشخصي'),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context
-                        .read<ProfileBloc>()
-                        .add(ProfileStarted(
-                            state.profile?.type ?? 'Customer')),
+                    onPressed: () => context.read<ProfileBloc>().add(
+                      ProfileStarted(state.profile?.type ?? 'Customer'),
+                    ),
                     child: const Text('إعادة المحاولة'),
                   ),
                 ],
@@ -93,6 +99,18 @@ class ProfilePage extends StatelessWidget {
                         _RatingCard(profile: profile),
                         const SizedBox(height: 16),
                       ],
+                      const _PaymentsNavTile(),
+                      const SizedBox(height: 12),
+                      const _ComplaintsNavTile(),
+                      const SizedBox(height: 12),
+                      if (!profile.isSeller) ...[
+                        const _CashbackHistoryNavTile(),
+                        const SizedBox(height: 12),
+                        const _FollowingNavTile(),
+                        const SizedBox(height: 12),
+                      ],
+                      const _PedigreesNavTile(),
+                      const SizedBox(height: 12),
                       _EditButton(profile: profile),
                       const SizedBox(height: 80),
                     ],
@@ -118,8 +136,10 @@ class _ProfileHeader extends StatelessWidget {
       pinned: true,
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
-      title: const Text('الملف الشخصي',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      title: const Text(
+        'الملف الشخصي',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
@@ -141,8 +161,11 @@ class _ProfileHeader extends StatelessWidget {
                       ? NetworkImage(profile.avatarUrl!)
                       : null,
                   child: profile.avatarUrl == null
-                      ? const Icon(Icons.person_rounded,
-                          color: Colors.white, size: 44)
+                      ? const Icon(
+                          Icons.person_rounded,
+                          color: Colors.white,
+                          size: 44,
+                        )
                       : null,
                 ),
                 const SizedBox(height: 10),
@@ -157,15 +180,16 @@ class _ProfileHeader extends StatelessWidget {
                 const SizedBox(height: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     profile.isSeller ? 'بائع' : 'مشتري',
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 13),
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
               ],
@@ -212,10 +236,11 @@ class _StatusChips extends StatelessWidget {
     );
   }
 
-  Widget _chip(
-      {required String label,
-      required Color color,
-      required IconData icon}) {
+  Widget _chip({
+    required String label,
+    required Color color,
+    required IconData icon,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -228,11 +253,14 @@ class _StatusChips extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 14),
           const SizedBox(width: 4),
-          Text(label,
-              style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -251,9 +279,10 @@ class _InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -266,13 +295,23 @@ class _InfoCard extends StatelessWidget {
             ),
             const Divider(height: 1, indent: 16, endIndent: 16),
           ],
-          _InfoRow(
-            icon: Icons.account_balance_wallet_outlined,
-            label: 'الرصيد',
-            value:
-                '${profile.balance.toStringAsFixed(2)} ${profile.currency}',
-          ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          if ((profile.phoneNumber ?? '').isNotEmpty) ...[
+            _InfoRow(
+              icon: Icons.phone_outlined,
+              label: 'رقم الهاتف',
+              value: profile.phoneNumber!,
+            ),
+            const Divider(height: 1, indent: 16, endIndent: 16),
+          ],
+          if (!profile.isSeller) ...[
+            _InfoRow(
+              icon: Icons.account_balance_wallet_outlined,
+              label: 'رصيد الكاشباك',
+              value:
+                  '${(profile.cashbackBalance ?? 0.0).toStringAsFixed(2)} ${profile.currency}',
+            ),
+            const Divider(height: 1, indent: 16, endIndent: 16),
+          ],
           _InfoRow(
             icon: Icons.flag_outlined,
             label: 'الدولة',
@@ -318,15 +357,22 @@ class _InfoRow extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.primary, size: 20),
           const SizedBox(width: 12),
-          Text(label,
-              style: const TextStyle(
-                  color: AppColors.textSecondary, fontSize: 14)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+            ),
+          ),
           const Spacer(),
-          Text(value,
-              style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600)),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -348,9 +394,10 @@ class _RatingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
@@ -362,8 +409,11 @@ class _RatingCard extends StatelessWidget {
               color: AppColors.orange.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.star_rounded,
-                color: AppColors.orange, size: 28),
+            child: const Icon(
+              Icons.star_rounded,
+              color: AppColors.orange,
+              size: 28,
+            ),
           ),
           const SizedBox(width: 14),
           Column(
@@ -372,14 +422,17 @@ class _RatingCard extends StatelessWidget {
               Text(
                 avg.toStringAsFixed(1),
                 style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               Text(
                 '$count تقييم',
                 style: const TextStyle(
-                    fontSize: 13, color: AppColors.textSecondary),
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -392,15 +445,323 @@ class _RatingCard extends StatelessWidget {
               return Icon(
                 half
                     ? Icons.star_half_rounded
-                    : (filled
-                        ? Icons.star_rounded
-                        : Icons.star_border_rounded),
+                    : (filled ? Icons.star_rounded : Icons.star_border_rounded),
                 color: AppColors.orange,
                 size: 20,
               );
             }),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PaymentsNavTile extends StatelessWidget {
+  const _PaymentsNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PaymentsPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.blue.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.payment_rounded,
+                color: AppColors.blue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'طلبات الدفع',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ComplaintsNavTile extends StatelessWidget {
+  const _ComplaintsNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const ComplaintsPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.orangeLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.report_problem_outlined,
+                color: AppColors.orange,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'الشكاوى',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PedigreesNavTile extends StatelessWidget {
+  const _PedigreesNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PedigreesPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.purpleLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.description_rounded,
+                color: AppColors.purple,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'شهادات النسب',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FollowingNavTile extends StatelessWidget {
+  const _FollowingNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<FeedBloc>()..add(const FeedStarted()),
+            child: const FollowingPage(),
+          ),
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.people_outline_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'من أتابع',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CashbackHistoryNavTile extends StatelessWidget {
+  const _CashbackHistoryNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const CashbackHistoryPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.account_balance_wallet_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'سجل الكاش باك',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -427,11 +788,8 @@ class _EditButton extends StatelessWidget {
           );
           if (updated == true && context.mounted) {
             final profileType =
-                context.read<ProfileBloc>().state.profile?.type ??
-                    'Customer';
-            context
-                .read<ProfileBloc>()
-                .add(ProfileStarted(profileType));
+                context.read<ProfileBloc>().state.profile?.type ?? 'Customer';
+            context.read<ProfileBloc>().add(ProfileStarted(profileType));
           }
         },
         icon: const Icon(Icons.edit_outlined, size: 18),
@@ -441,7 +799,8 @@ class _EditButton extends StatelessWidget {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );

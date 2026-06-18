@@ -28,6 +28,10 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     on<AuctionAvailableBirdIdsRequested>(_onAvailableBirdIdsRequested);
     on<AuctionCreateRequested>(_onCreateRequested);
     on<AuctionItemDetailRequested>(_onItemDetailRequested);
+    on<AuctionCancelRequested>(_onCancelRequested);
+    on<AuctionUpdateRequested>(_onUpdateRequested);
+    on<AuctionBuyNowRequested>(_onBuyNowRequested);
+    on<AuctionMyBidsLoadRequested>(_onMyBidsLoad);
   }
 
   Future<void> _onStarted(
@@ -203,6 +207,77 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
         isCreating: false,
         createdAuction: auction,
       )),
+    );
+  }
+
+  Future<void> _onCancelRequested(
+    AuctionCancelRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isCancelling: true, clearCancelError: true));
+    final result = await _repository.cancelAuction(event.auctionId);
+    await result.fold(
+      (f) async => emit(state.copyWith(isCancelling: false, cancelError: f.message)),
+      (_) async {
+        emit(state.copyWith(isCancelling: false));
+        add(const AuctionsFilterChanged('my_auctions'));
+      },
+    );
+  }
+
+  Future<void> _onUpdateRequested(
+    AuctionUpdateRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isUpdating: true, clearUpdateError: true));
+    final result = await _repository.updateAuction(
+      event.auctionId,
+      title: event.title,
+      description: event.description,
+      tags: event.tags,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(isUpdating: false, updateError: f.message)),
+      (auction) {
+        final updated = state.auctions.map((a) => a.id == auction.id ? auction : a).toList();
+        emit(state.copyWith(
+          isUpdating: false,
+          selectedAuction: auction,
+          auctions: updated,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onBuyNowRequested(
+    AuctionBuyNowRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isBuyingNow: true, clearBuyNowError: true));
+    final result = await _repository.buyNow(event.itemId);
+    await result.fold(
+      (f) async => emit(state.copyWith(isBuyingNow: false, buyNowError: f.message)),
+      (_) async {
+        emit(state.copyWith(isBuyingNow: false));
+        if (state.selectedAuction != null) {
+          await _onDetailRequested(
+            AuctionDetailRequested(state.selectedAuction!.id),
+            emit,
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> _onMyBidsLoad(
+    AuctionMyBidsLoadRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(myBidsLoading: true));
+    final result = await _repository.getMyBids();
+    result.fold(
+      (f) => emit(state.copyWith(myBidsLoading: false)),
+      (bids) => emit(state.copyWith(myBidsLoading: false, myBids: bids)),
     );
   }
 }

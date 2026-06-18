@@ -9,6 +9,8 @@ abstract class SubscriptionPackagesRemoteDataSource {
   Future<List<PackageModel>> fetchPackages();
   Future<ActiveSellerPackageModel?> fetchActivePackage();
   Future<void> requestPackage(int packageId);
+  Future<PendingSellerPackageModel?> fetchPendingPackage();
+  Future<void> cancelPackage(int id);
 }
 
 class RealSubscriptionPackagesRemoteDataSource
@@ -35,7 +37,10 @@ class RealSubscriptionPackagesRemoteDataSource
   @override
   Future<ActiveSellerPackageModel?> fetchActivePackage() async {
     try {
-      final response = await _dio.get(ApiConstants.mySellerPackagesActive);
+      final response = await _dio.get(
+        ApiConstants.mySellerPackages,
+        queryParameters: {'active': 'true'},
+      );
       final data = response.data;
       if (data is Map<String, dynamic>) {
         return ActiveSellerPackageModel.fromJson(data);
@@ -53,5 +58,32 @@ class RealSubscriptionPackagesRemoteDataSource
       ApiConstants.mySellerPackages,
       data: {'package_id': packageId},
     );
+  }
+
+  @override
+  Future<PendingSellerPackageModel?> fetchPendingPackage() async {
+    try {
+      final response = await _dio.get(
+        ApiConstants.mySellerPackages,
+        queryParameters: {'status': 'pending'},
+      );
+      final data = response.data;
+      final List<dynamic> raw = data is Map && data['results'] is List
+          ? data['results'] as List<dynamic>
+          : data is List
+              ? data
+              : [];
+      if (raw.isEmpty) return null;
+      return PendingSellerPackageModel.fromJson(
+        Map<String, dynamic>.from(raw.first as Map),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> cancelPackage(int id) async {
+    await _dio.post(ApiConstants.cancelSellerPackage(id));
   }
 }

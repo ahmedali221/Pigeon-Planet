@@ -48,6 +48,48 @@ import '../../features/races/model/datasources/real_races_remote_datasource.dart
 import '../../features/races/model/races_repository.dart';
 import '../../features/races/model/races_repository_impl.dart';
 import '../../features/races/viewmodel/races_bloc.dart';
+import '../../features/ratings/model/datasources/ratings_remote_datasource.dart';
+import '../../features/ratings/model/datasources/real_ratings_remote_datasource.dart';
+import '../../features/ratings/model/ratings_repository.dart';
+import '../../features/ratings/model/ratings_repository_impl.dart';
+import '../../features/ratings/viewmodel/ratings_bloc.dart';
+import '../../features/payments/model/datasources/payments_remote_datasource.dart';
+import '../../features/payments/model/datasources/real_payments_remote_datasource.dart';
+import '../../features/payments/model/payments_repository.dart';
+import '../../features/payments/model/payments_repository_impl.dart';
+import '../../features/payments/viewmodel/payments_bloc.dart';
+import '../../features/complaints/model/datasources/complaints_remote_datasource.dart';
+import '../../features/complaints/model/datasources/real_complaints_remote_datasource.dart';
+import '../../features/complaints/model/complaints_repository.dart';
+import '../../features/complaints/model/complaints_repository_impl.dart';
+import '../../features/complaints/viewmodel/complaints_bloc.dart';
+import '../../features/insights/model/datasources/insights_remote_datasource.dart';
+import '../../features/insights/model/insights_repository.dart';
+import '../../features/insights/model/insights_repository_impl.dart';
+import '../../features/insights/viewmodel/insights_bloc.dart';
+import '../../features/notifications/model/notifications_repository.dart';
+import '../../features/notifications/model/notifications_repository_impl.dart';
+import '../../features/notifications/viewmodel/notifications_bloc.dart';
+import '../../features/pedigrees/model/datasources/pedigrees_remote_datasource.dart';
+import '../../features/pedigrees/model/datasources/real_pedigrees_remote_datasource.dart';
+import '../../features/pedigrees/model/pedigrees_repository.dart';
+import '../../features/pedigrees/model/pedigrees_repository_impl.dart';
+import '../../features/pedigrees/viewmodel/pedigrees_bloc.dart';
+import '../../features/chat/model/datasources/chat_remote_datasource.dart';
+import '../../features/chat/model/datasources/real_chat_remote_datasource.dart';
+import '../../features/chat/model/chat_repository.dart';
+import '../../features/chat/model/chat_repository_impl.dart';
+import '../../features/chat/viewmodel/chat_bloc.dart';
+import '../../features/feed/model/datasources/feed_remote_datasource.dart';
+import '../../features/feed/model/datasources/real_feed_remote_datasource.dart';
+import '../../features/feed/model/feed_repository.dart';
+import '../../features/feed/model/feed_repository_impl.dart';
+import '../../features/feed/viewmodel/feed_bloc.dart';
+import '../../features/promotions/model/datasources/promotions_remote_datasource.dart';
+import '../../features/promotions/model/datasources/real_promotions_remote_datasource.dart';
+import '../../features/promotions/model/promotions_repository.dart';
+import '../../features/promotions/model/promotions_repository_impl.dart';
+import '../../features/promotions/viewmodel/promotions_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -62,9 +104,7 @@ void setupDependencies() {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => RealAuthRemoteDataSource(sl(), sl()),
   );
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
   sl.registerFactory(() => AuthBloc(repository: sl()));
 
   // ── Auctions ──────────────────────────────────────────────────────────
@@ -80,18 +120,14 @@ void setupDependencies() {
   sl.registerLazySingleton<MarketRemoteDataSource>(
     () => RealMarketRemoteDataSource(sl()),
   );
-  sl.registerLazySingleton<MarketRepository>(
-    () => MarketRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<MarketRepository>(() => MarketRepositoryImpl(sl()));
   sl.registerFactory(() => MarketBloc(repository: sl()));
 
   // ── Pigeon ID ─────────────────────────────────────────────────────────────
   sl.registerLazySingleton<PigeonRemoteDataSource>(
     () => RealPigeonRemoteDataSource(sl()),
   );
-  sl.registerLazySingleton<PigeonRepository>(
-    () => PigeonRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<PigeonRepository>(() => PigeonRepositoryImpl(sl()));
   sl.registerFactory(() => PigeonIdBloc(repository: sl()));
 
   // ── Seller Products ───────────────────────────────────────────────────────
@@ -107,9 +143,7 @@ void setupDependencies() {
   sl.registerLazySingleton<CartRemoteDataSource>(
     () => RealCartRemoteDataSource(sl()),
   );
-  sl.registerLazySingleton<CartRepository>(
-    () => CartRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(sl()));
   sl.registerFactory(() => CartBloc(repository: sl()));
 
   // ── Profile ───────────────────────────────────────────────────────────────
@@ -127,6 +161,10 @@ void setupDependencies() {
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
     () => RealNotificationsRemoteDataSource(sl()),
   );
+  sl.registerLazySingleton<NotificationsRepository>(
+    () => NotificationsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => NotificationsBloc(repository: sl()));
   sl.registerLazySingleton<SubscriptionPackagesRemoteDataSource>(
     () => RealSubscriptionPackagesRemoteDataSource(sl()),
   );
@@ -143,16 +181,82 @@ void setupDependencies() {
   sl.registerLazySingleton<RacesRemoteDataSource>(
     () => RealRacesRemoteDataSource(sl()),
   );
-  sl.registerLazySingleton<RacesRepository>(
-    () => RacesRepositoryImpl(sl()),
-  );
+  sl.registerLazySingleton<RacesRepository>(() => RacesRepositoryImpl(sl()));
   sl.registerFactory(() => RacesBloc(repository: sl()));
 
+  // ── Ratings & Comments ────────────────────────────────────────────────────
+  sl.registerLazySingleton<RatingsRemoteDataSource>(
+    () => RealRatingsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<RatingsRepository>(
+    () => RatingsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => RatingsBloc(repository: sl()));
+
+  // ── Payments ─────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<PaymentsRemoteDataSource>(
+    () => RealPaymentsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<PaymentsRepository>(
+    () => PaymentsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => PaymentsBloc(repository: sl()));
+
+  sl.registerLazySingleton<ComplaintsRemoteDataSource>(
+    () => RealComplaintsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<ComplaintsRepository>(
+    () => ComplaintsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => ComplaintsBloc(repository: sl()));
+
+  // ── Insights ─────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<InsightsRemoteDataSource>(
+    () => RealInsightsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<InsightsRepository>(
+    () => InsightsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => InsightsBloc(repository: sl()));
+
+  // ── Pedigrees ─────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<PedigreesRemoteDataSource>(
+    () => RealPedigreesRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<PedigreesRepository>(
+    () => PedigreesRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => PedigreesBloc(repository: sl()));
+
+  // ── Chat ──────────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => RealChatRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
+  sl.registerFactory(() => ChatBloc(repository: sl()));
+
+  // ── Feed ──────────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<FeedRemoteDataSource>(
+    () => RealFeedRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<FeedRepository>(() => FeedRepositoryImpl(sl()));
+  sl.registerFactory(() => FeedBloc(repository: sl()));
+
+  // ── Promotions ────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<PromotionsRemoteDataSource>(
+    () => RealPromotionsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<PromotionsRepository>(
+    () => PromotionsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => PromotionsBloc(repository: sl()));
+
   // ── Home ──────────────────────────────────────────────────────────────────
-  sl.registerFactory(() => HomeBloc(
-        auctionsRepository: sl(),
-        marketRepository: sl(),
-        sellerHomeRemote: sl(),
-        pointsRemote: sl(),
-      ));
+  sl.registerFactory(
+    () => HomeBloc(
+      auctionsRepository: sl(),
+      sellerHomeRemote: sl(),
+      pointsRemote: sl(),
+    ),
+  );
 }

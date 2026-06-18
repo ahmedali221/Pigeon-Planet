@@ -4,12 +4,14 @@ import '../../../../../core/constants/app_colors.dart';
 class HomeTopBar extends StatelessWidget {
   final VoidCallback? onMenuPressed;
   final VoidCallback? onAvatarTap;
+  final VoidCallback? onQrScanPressed;
   final String? avatarUrl;
 
   const HomeTopBar({
     super.key,
     this.onMenuPressed,
     this.onAvatarTap,
+    this.onQrScanPressed,
     this.avatarUrl,
   });
 
@@ -85,6 +87,19 @@ class HomeTopBar extends StatelessWidget {
               ),
             ),
           ),
+          // QR scanner
+          IconButton(
+            icon: const Icon(
+              Icons.qr_code_scanner_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
+            onPressed: onQrScanPressed,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            tooltip: 'مسح بطاقة طائر',
+          ),
+          const SizedBox(width: 4),
           // Hamburger — opens drawer (leftmost in RTL)
           IconButton(
             icon: const Icon(

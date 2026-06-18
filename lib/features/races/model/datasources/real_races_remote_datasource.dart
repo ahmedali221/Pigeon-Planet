@@ -10,7 +10,7 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
   const RealRacesRemoteDataSource(this._dio);
 
   @override
-  Future<List<RaceModel>> getRaces({
+  Future<RacePage> getRaces({
     int page = 1,
     String? seasonYear,
     String? stationName,
@@ -23,16 +23,21 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
     final response = await _dio.get(ApiConstants.races, queryParameters: params);
     final data = response.data;
     List<dynamic> items;
+    bool hasMore = false;
     if (data is Map && data.containsKey('results')) {
       items = data['results'] as List<dynamic>? ?? [];
+      hasMore = data['next'] != null;
     } else if (data is List) {
       items = data;
     } else {
       throw const ServerException('Unexpected response format');
     }
-    return items
-        .map((e) => RaceModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return RacePage(
+      races: items
+          .map((e) => RaceModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      hasMore: hasMore,
+    );
   }
 
   @override

@@ -41,8 +41,8 @@ class RaceResultModel {
       rank: json['rank'] as int,
       competitorName: json['competitor_name'] as String? ?? '',
       birdRingNumber: json['bird_ring_number'] as String? ?? '',
-      distanceKm: double.parse(json['distance_km'].toString()),
-      speed: double.parse(json['speed'].toString()),
+      distanceKm: double.tryParse(json['distance_km']?.toString() ?? '0') ?? 0.0,
+      speed: double.tryParse(json['speed']?.toString() ?? '0') ?? 0.0,
       arrivalDatetime: json['arrival_datetime'] as String? ?? '',
       basketNumber: json['basket_number'] as int?,
     );
@@ -104,4 +104,11 @@ class RaceModel {
           [],
     );
   }
+}
+
+class RacePage {
+  final List<RaceModel> races;
+  final bool hasMore;
+
+  const RacePage({required this.races, required this.hasMore});
 }

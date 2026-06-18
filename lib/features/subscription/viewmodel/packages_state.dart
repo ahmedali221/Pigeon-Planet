@@ -8,17 +8,23 @@ class PackagesState extends Equatable {
   final PackagesStatus status;
   final List<PackageModel> packages;
   final ActiveSellerPackageModel? activePackage;
+  final PendingSellerPackageModel? pendingPackage;
   final String? errorMessage;
   final String? requestError;
   final bool requestSuccess;
+  final bool cancelling;
+  final String? cancelError;
 
   const PackagesState({
     this.status = PackagesStatus.initial,
     this.packages = const [],
     this.activePackage,
+    this.pendingPackage,
     this.errorMessage,
     this.requestError,
     this.requestSuccess = false,
+    this.cancelling = false,
+    this.cancelError,
   });
 
   PackagesState copyWith({
@@ -26,18 +32,29 @@ class PackagesState extends Equatable {
     List<PackageModel>? packages,
     ActiveSellerPackageModel? activePackage,
     bool clearActivePackage = false,
+    PendingSellerPackageModel? pendingPackage,
+    bool clearPendingPackage = false,
     String? errorMessage,
     String? requestError,
     bool clearRequestError = false,
     bool? requestSuccess,
+    bool? cancelling,
+    String? cancelError,
+    bool clearCancelError = false,
   }) {
     return PackagesState(
       status: status ?? this.status,
       packages: packages ?? this.packages,
-      activePackage: clearActivePackage ? null : (activePackage ?? this.activePackage),
+      activePackage:
+          clearActivePackage ? null : (activePackage ?? this.activePackage),
+      pendingPackage:
+          clearPendingPackage ? null : (pendingPackage ?? this.pendingPackage),
       errorMessage: errorMessage ?? this.errorMessage,
-      requestError: clearRequestError ? null : (requestError ?? this.requestError),
+      requestError:
+          clearRequestError ? null : (requestError ?? this.requestError),
       requestSuccess: requestSuccess ?? this.requestSuccess,
+      cancelling: cancelling ?? this.cancelling,
+      cancelError: clearCancelError ? null : (cancelError ?? this.cancelError),
     );
   }
 
@@ -46,8 +63,11 @@ class PackagesState extends Equatable {
         status,
         packages,
         activePackage,
+        pendingPackage,
         errorMessage,
         requestError,
         requestSuccess,
+        cancelling,
+        cancelError,
       ];
 }

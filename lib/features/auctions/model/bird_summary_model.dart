@@ -54,12 +54,18 @@ class BirdSummaryModel {
         price: json['price'] != null
             ? double.tryParse(json['price'].toString()) ?? 0.0
             : 0.0,
-        imageUrls: (json['images'] as List<dynamic>? ?? [])
-            .map((img) =>
-                (img as Map<String, dynamic>)['image_url'] as String? ?? '')
+        imageUrls: (json['media'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .where((m) => (m['media_type'] as String? ?? 'image') == 'image')
+            .map((m) => m['media_url'] as String? ?? '')
             .where((url) => url.isNotEmpty)
             .toList(),
-        videoUrl: json['video_url'] as String?,
+        videoUrl: (json['media'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .where((m) => m['media_type'] == 'video')
+            .map((m) => m['media_url'] as String? ?? '')
+            .where((url) => url.isNotEmpty)
+            .firstOrNull,
         sellerId: json['seller_id'] as int? ?? json['owner'] as int?,
         sellerNickname: json['seller_nickname'] as String? ?? '',
       );

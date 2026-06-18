@@ -97,6 +97,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       currency: currency,
     );
     await login(phoneNumber: phoneNumber, password: password);
+    await createSellerProfile();
     return switchProfile('Seller');
   }
 
@@ -229,24 +230,44 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
   String _toCountryCode(String country) {
     const map = {
       'مصر': 'EG',
-      'egypt': 'EG',
       'السعودية': 'SA',
-      'saudi': 'SA',
       'الإمارات': 'AE',
-      'uae': 'AE',
       'الكويت': 'KW',
-      'kuwait': 'KW',
       'قطر': 'QA',
-      'qatar': 'QA',
       'البحرين': 'BH',
-      'bahrain': 'BH',
       'عمان': 'OM',
-      'oman': 'OM',
       'الأردن': 'JO',
+      'العراق': 'IQ',
+      'لبنان': 'LB',
+      'سوريا': 'SY',
+      'ليبيا': 'LY',
+      'تونس': 'TN',
+      'المغرب': 'MA',
+      'الجزائر': 'DZ',
+      'السودان': 'SD',
+      'اليمن': 'YE',
+      'فلسطين': 'PS',
+      'egypt': 'EG',
+      'saudi': 'SA',
+      'uae': 'AE',
+      'kuwait': 'KW',
+      'qatar': 'QA',
+      'bahrain': 'BH',
+      'oman': 'OM',
       'jordan': 'JO',
+      'iraq': 'IQ',
+      'lebanon': 'LB',
+      'syria': 'SY',
+      'libya': 'LY',
+      'tunisia': 'TN',
+      'morocco': 'MA',
+      'algeria': 'DZ',
+      'sudan': 'SD',
+      'yemen': 'YE',
+      'palestine': 'PS',
     };
     final key = country.toLowerCase().trim();
-    return map[key] ?? map[country] ?? 'EG';
+    return map[country] ?? map[key] ?? 'EG';
   }
 
   String _toCurrency(String country) {
@@ -259,6 +280,16 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       'BH': 'BHD',
       'OM': 'OMR',
       'JO': 'JOD',
+      'IQ': 'IQD',
+      'LB': 'LBP',
+      'SY': 'SYP',
+      'LY': 'LYD',
+      'TN': 'TND',
+      'MA': 'MAD',
+      'DZ': 'DZD',
+      'SD': 'SDG',
+      'YE': 'YER',
+      'PS': 'ILS',
     };
     return map[_toCountryCode(country)] ?? 'EGP';
   }

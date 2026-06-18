@@ -6,6 +6,7 @@ import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../viewmodel/auctions_bloc.dart';
 import '../widgets/auction_card.dart';
 import 'auction_create_page.dart';
+import 'my_bids_page.dart';
 
 class AuctionsPage extends StatelessWidget {
   const AuctionsPage({super.key});
@@ -86,6 +87,10 @@ class _AuctionsViewState extends State<_AuctionsView> {
               auctionCount: state.auctions.length,
               onRefresh: () =>
                   context.read<AuctionsBloc>().add(const AuctionsRefreshRequested()),
+              onMyBids: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MyBidsPage()),
+              ),
             ),
           ),
 
@@ -260,8 +265,9 @@ class _AuctionsViewState extends State<_AuctionsView> {
 class _AuctionsHeader extends StatelessWidget {
   final int auctionCount;
   final VoidCallback onRefresh;
+  final VoidCallback onMyBids;
   const _AuctionsHeader(
-      {required this.auctionCount, required this.onRefresh});
+      {required this.auctionCount, required this.onRefresh, required this.onMyBids});
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +297,20 @@ class _AuctionsHeader extends StatelessWidget {
               ],
             ),
           ),
+          GestureDetector(
+            onTap: onMyBids,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.gavel_rounded,
+                  color: Colors.white, size: 18),
+            ),
+          ),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: onRefresh,
             child: Container(

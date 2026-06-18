@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+
 import '../../../../../core/constants/app_colors.dart';
+import '../../../pedigrees/view/pages/pedigrees_page.dart';
 
 class AuctionPedigreeButton extends StatelessWidget {
-  const AuctionPedigreeButton({super.key});
+  final int? birdId;
+  final bool isOwner;
+
+  const AuctionPedigreeButton({
+    super.key,
+    this.birdId,
+    this.isOwner = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,19 +21,29 @@ class AuctionPedigreeButton extends StatelessWidget {
         width: double.infinity,
         height: 48,
         child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () => _onPressed(context),
           icon: const Icon(Icons.description_rounded, size: 18),
-          label: const Text('عرض شهادة النسب الكاملة',
-              style:
-                  TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          label: Text(
+            isOwner ? 'إدارة شهادة النسب' : 'عرض شهادة النسب الكاملة',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
         ),
+      ),
+    );
+  }
+
+  void _onPressed(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PedigreesPage(initialBirdId: birdId),
       ),
     );
   }

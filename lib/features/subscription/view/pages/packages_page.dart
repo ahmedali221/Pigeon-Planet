@@ -114,7 +114,9 @@ class _PackagesViewState extends State<_PackagesView> {
       listenWhen: (prev, curr) =>
           (curr.requestSuccess && !prev.requestSuccess) ||
           (curr.requestError != null &&
-              curr.requestError != prev.requestError),
+              curr.requestError != prev.requestError) ||
+          (curr.cancelError != null &&
+              curr.cancelError != prev.cancelError),
       listener: (context, state) {
         if (state.requestSuccess) {
           _showSnackBar(
@@ -124,6 +126,8 @@ class _PackagesViewState extends State<_PackagesView> {
           );
         } else if (state.requestError != null) {
           _showSnackBar(context, state.requestError!, AppColors.error);
+        } else if (state.cancelError != null) {
+          _showSnackBar(context, state.cancelError!, AppColors.error);
         }
       },
       builder: (context, state) {
@@ -227,6 +231,18 @@ class _PackagesViewState extends State<_PackagesView> {
           const SizedBox(height: 12),
         ],
 
+        // Pending package card
+        if (state.pendingPackage != null) ...[
+          _PendingPackageBanner(
+            pending: state.pendingPackage!,
+            cancelling: state.cancelling,
+            onCancel: () => bloc.add(
+              PackageCancelRequested(state.pendingPackage!.id),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
         // Package cards
         ...state.packages.asMap().entries.map((entry) {
           final i = entry.key;
@@ -256,6 +272,109 @@ class _PackagesViewState extends State<_PackagesView> {
           );
         }),
       ],
+    );
+  }
+}
+
+// ── Pending package banner ────────────────────────────────────────────────────
+
+class _PendingPackageBanner extends StatelessWidget {
+  final PendingSellerPackageModel pending;
+  final bool cancelling;
+  final VoidCallback onCancel;
+
+  const _PendingPackageBanner({
+    required this.pending,
+    required this.cancelling,
+    required this.onCancel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.orange.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.orange.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.orangeLight,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.hourglass_top_rounded,
+              color: AppColors.orange,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'طلب اشتراك معلق',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  pending.packageName.isNotEmpty
+                      ? pending.packageName
+                      : 'بانتظار تفعيل المشرف',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          cancelling
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.orange,
+                  ),
+                )
+              : TextButton(
+                  onPressed: onCancel,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(
+                          color: AppColors.error.withValues(alpha: 0.4)),
+                    ),
+                  ),
+                  child: const Text(
+                    'إلغاء',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 }

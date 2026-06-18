@@ -4,4 +4,5 @@ abstract class PigeonRemoteDataSource {
   Future<PigeonModel> saveBird(PigeonModel pigeon);
   Future<PigeonModel> updateBird(int id, PigeonModel pigeon);
   Future<void> deleteBird(int id);
+  Future<PigeonModel> fetchPublicBird(String publicId);
 }

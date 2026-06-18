@@ -24,9 +24,10 @@ class SellerProductPayload {
         'count': count,
         'is_market_listed': isMarketListed,
         if (imageUrls.isNotEmpty)
-          'images': imageUrls.asMap().entries
+          'media': imageUrls.asMap().entries
               .map((e) => {
-                    'image_url': e.value,
+                    'media_url': e.value,
+                    'media_type': 'image',
                     'is_primary': e.key == 0,
                     'order': e.key,
                   })
@@ -61,9 +62,10 @@ class SellerProductUpdatePayload {
         if (isMarketListed != null) 'is_market_listed': isMarketListed,
         if (status != null) 'status': status,
         if (imageUrls != null)
-          'images': imageUrls!.asMap().entries
+          'media': imageUrls!.asMap().entries
               .map((e) => {
-                    'image_url': e.value,
+                    'media_url': e.value,
+                    'media_type': 'image',
                     'is_primary': e.key == 0,
                     'order': e.key,
                   })

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../auctions/model/auction_model.dart';
 import '../../auctions/model/auctions_repository.dart';
 import '../../auctions/model/bird_summary_model.dart';
-import '../../market/model/market_repository.dart';
 import '../model/customer_home_summary.dart';
 import '../model/datasources/points_remote_datasource.dart';
 import '../model/datasources/seller_home_remote_datasource.dart';
@@ -16,17 +15,14 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final AuctionsRepository _auctionsRepository;
-  final MarketRepository _marketRepository;
   final SellerHomeRemoteDataSource _sellerHomeRemote;
   final PointsRemoteDataSource _pointsRemote;
 
   HomeBloc({
     required AuctionsRepository auctionsRepository,
-    required MarketRepository marketRepository,
     required SellerHomeRemoteDataSource sellerHomeRemote,
     required PointsRemoteDataSource pointsRemote,
   }) : _auctionsRepository = auctionsRepository,
-       _marketRepository = marketRepository,
        _sellerHomeRemote = sellerHomeRemote,
        _pointsRemote = pointsRemote,
        super(const HomeState()) {
@@ -63,9 +59,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }();
 
     final pointsFuture = () async {
-      if (!shouldLoadSellerPrivateData) return null;
       try {
-        return await _pointsRemote.fetchBalance();
+        if (shouldLoadSellerPrivateData) {
+          return await _pointsRemote.fetchBalance();
+        }
+        return await _pointsRemote.fetchLoyaltyBalance();
       } catch (_) {
         return null;
       }
@@ -82,24 +80,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final results = await Future.wait([
       _auctionsRepository.getActiveAuctions(), // 0
       _auctionsRepository.getEndingSoon(), // 1
-      _marketRepository.getBirds(), // 2
-      sellerFuture, // 3
-      customerFuture, // 4
-      unreadFuture, // 5
-      pointsFuture, // 6
-      _auctionsRepository.getAuctions(), // 7
-      sellersFuture, // 8
+      sellerFuture, // 2
+      customerFuture, // 3
+      unreadFuture, // 4
+      pointsFuture, // 5
+      _auctionsRepository.getAuctions(), // 6
+      sellersFuture, // 7
     ]);
 
     final activeResult = results[0] as dynamic;
     final endingResult = results[1] as dynamic;
-    final birdsResult = results[2] as dynamic;
-    final remoteSellerSummary = results[3] as SellerHomeSummary?;
-    final remoteCustomerSummary = results[4] as CustomerHomeSummary?;
-    final unreadCount = results[5] as int;
-    final pointsBalance = results[6] as int?;
-    final comingSoonResult = results[7] as dynamic;
-    final sellers = results[8] as List<SellerModel>;
+    final remoteSellerSummary = results[2] as SellerHomeSummary?;
+    final remoteCustomerSummary = results[3] as CustomerHomeSummary?;
+    final unreadCount = results[4] as int;
+    final pointsBalance = results[5] as int?;
+    final comingSoonResult = results[6] as dynamic;
+    final sellers = results[7] as List<SellerModel>;
 
     String? errorMessage;
 
@@ -111,10 +107,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       errorMessage ??= failure.toString();
       return <AuctionModel>[];
     }, (list) => list as List<AuctionModel>);
-    final featuredBirds = birdsResult.fold((failure) {
-      errorMessage ??= failure.toString();
-      return <BirdSummaryModel>[];
-    }, (list) => list as List<BirdSummaryModel>);
+    const featuredBirds = <BirdSummaryModel>[];
     final comingSoon = comingSoonResult.fold(
       (_) => <AuctionModel>[],
       (list) => list as List<AuctionModel>,

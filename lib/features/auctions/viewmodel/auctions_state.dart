@@ -22,6 +22,14 @@ class AuctionsState extends Equatable {
   final AuctionModel? createdAuction;
   // null = not yet fetched; empty set = all birds are in auctions
   final Set<int>? availableForAuctionBirdIds;
+  final bool isCancelling;
+  final String? cancelError;
+  final bool isBuyingNow;
+  final String? buyNowError;
+  final bool isUpdating;
+  final String? updateError;
+  final List<BidModel> myBids;
+  final bool myBidsLoading;
 
   const AuctionsState({
     this.status = AuctionsStatus.initial,
@@ -41,6 +49,14 @@ class AuctionsState extends Equatable {
     this.createError,
     this.createdAuction,
     this.availableForAuctionBirdIds,
+    this.isCancelling = false,
+    this.cancelError,
+    this.isBuyingNow = false,
+    this.buyNowError,
+    this.isUpdating = false,
+    this.updateError,
+    this.myBids = const [],
+    this.myBidsLoading = false,
   });
 
   AuctionsState copyWith({
@@ -66,6 +82,17 @@ class AuctionsState extends Equatable {
     bool clearCreatedAuction = false,
     Set<int>? availableForAuctionBirdIds,
     bool clearAvailableBirdIds = false,
+    bool? isCancelling,
+    String? cancelError,
+    bool clearCancelError = false,
+    bool? isBuyingNow,
+    String? buyNowError,
+    bool clearBuyNowError = false,
+    bool? isUpdating,
+    String? updateError,
+    bool clearUpdateError = false,
+    List<BidModel>? myBids,
+    bool? myBidsLoading,
   }) =>
       AuctionsState(
         status: status ?? this.status,
@@ -87,6 +114,14 @@ class AuctionsState extends Equatable {
         availableForAuctionBirdIds: clearAvailableBirdIds
             ? null
             : (availableForAuctionBirdIds ?? this.availableForAuctionBirdIds),
+        isCancelling: isCancelling ?? this.isCancelling,
+        cancelError: clearCancelError ? null : (cancelError ?? this.cancelError),
+        isBuyingNow: isBuyingNow ?? this.isBuyingNow,
+        buyNowError: clearBuyNowError ? null : (buyNowError ?? this.buyNowError),
+        isUpdating: isUpdating ?? this.isUpdating,
+        updateError: clearUpdateError ? null : (updateError ?? this.updateError),
+        myBids: myBids ?? this.myBids,
+        myBidsLoading: myBidsLoading ?? this.myBidsLoading,
       );
 
   @override
@@ -108,5 +143,13 @@ class AuctionsState extends Equatable {
         createError,
         createdAuction?.id,
         availableForAuctionBirdIds,
+        isCancelling,
+        cancelError,
+        isBuyingNow,
+        buyNowError,
+        isUpdating,
+        updateError,
+        myBids,
+        myBidsLoading,
       ];
 }

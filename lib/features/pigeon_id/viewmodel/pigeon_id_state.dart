@@ -30,6 +30,7 @@ class PigeonIdState extends Equatable {
   final String price;
   final String description;
   final String flyingSpeed;
+  final String birdStatus;
   final PigeonModel? savedBird;
 
   const PigeonIdState({
@@ -50,6 +51,7 @@ class PigeonIdState extends Equatable {
     this.price = '',
     this.description = '',
     this.flyingSpeed = '',
+    this.birdStatus = 'available',
     this.savedBird,
   });
 
@@ -79,6 +81,7 @@ class PigeonIdState extends Equatable {
     String? price,
     String? description,
     String? flyingSpeed,
+    String? birdStatus,
     PigeonModel? savedBird,
   }) =>
       PigeonIdState(
@@ -99,6 +102,7 @@ class PigeonIdState extends Equatable {
         price: price ?? this.price,
         description: description ?? this.description,
         flyingSpeed: flyingSpeed ?? this.flyingSpeed,
+        birdStatus: birdStatus ?? this.birdStatus,
         savedBird: savedBird ?? this.savedBird,
       );
 
@@ -121,6 +125,7 @@ class PigeonIdState extends Equatable {
         price,
         description,
         flyingSpeed,
+        birdStatus,
         savedBird,
       ];
 }

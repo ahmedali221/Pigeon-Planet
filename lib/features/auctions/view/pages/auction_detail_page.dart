@@ -6,6 +6,7 @@ import '../../../../../core/di/injection.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
+import 'auction_edit_page.dart';
 import 'auction_item_detail_page.dart';
 
 class AuctionDetailPage extends StatelessWidget {
@@ -24,6 +25,30 @@ class AuctionDetailPage extends StatelessWidget {
 
 class _AuctionOverviewView extends StatelessWidget {
   const _AuctionOverviewView();
+
+  void _confirmCancel(BuildContext context, int auctionId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('إلغاء المزاد'),
+        content: const Text('هل أنت متأكد من إلغاء هذا المزاد؟ لا يمكن التراجع عن هذا الإجراء.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('تراجع'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AuctionsBloc>().add(AuctionCancelRequested(auctionId));
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+            child: const Text('إلغاء المزاد', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +71,69 @@ class _AuctionOverviewView extends StatelessWidget {
               fontSize: 17,
               fontWeight: FontWeight.bold),
         ),
+        actions: [
+          BlocBuilder<AuctionsBloc, AuctionsState>(
+            buildWhen: (p, c) =>
+                p.selectedAuction?.isOwner != c.selectedAuction?.isOwner ||
+                p.selectedAuction?.status != c.selectedAuction?.status ||
+                p.isCancelling != c.isCancelling,
+            builder: (context, state) {
+              final auction = state.selectedAuction;
+              if (auction == null || !auction.isOwner) return const SizedBox.shrink();
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (auction.isActive) ...[
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, color: Colors.white),
+                      tooltip: 'تعديل',
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<AuctionsBloc>(),
+                            child: AuctionEditPage(auction: auction),
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: state.isCancelling
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.cancel_outlined, color: Colors.white),
+                      tooltip: 'إلغاء المزاد',
+                      onPressed: state.isCancelling
+                          ? null
+                          : () => _confirmCancel(context, auction.id),
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<AuctionsBloc, AuctionsState>(
+      body: BlocConsumer<AuctionsBloc, AuctionsState>(
+        listenWhen: (p, c) =>
+            (p.isCancelling && !c.isCancelling),
+        listener: (context, state) {
+          if (state.cancelError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(state.cancelError!),
+              backgroundColor: AppColors.error,
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('تم إلغاء المزاد'),
+              backgroundColor: AppColors.success,
+            ));
+            Navigator.pop(context);
+          }
+        },
         builder: (context, state) {
           if (state.status == AuctionsStatus.loading ||
               state.selectedAuction == null) {

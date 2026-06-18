@@ -13,6 +13,7 @@ import '../widgets/home_fixed_price_birds_section.dart';
 import '../widgets/home_hero_banner.dart';
 import '../widgets/home_seller_metrics_section.dart';
 import '../widgets/home_bottom_nav_bar.dart';
+import '../widgets/home_insights_preview_section.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/points_system_modal.dart';
 import '../widgets/home_demo_cards_section.dart';
@@ -22,11 +23,15 @@ import '../../../auctions/view/pages/auctions_page.dart';
 import '../../../auctions/view/pages/bird_detail_page.dart';
 import '../../../auctions/viewmodel/auctions_bloc.dart';
 import '../../../cart/view/pages/cart_page.dart';
+import '../../../cart/view/pages/orders_page.dart';
+import '../../../cart/view/pages/seller_orders_page.dart';
+import '../../../payments/view/pages/payments_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../market/view/pages/market_page.dart';
 import '../../../profile/view/pages/profile_page.dart';
 import '../../../profile/viewmodel/profile_bloc.dart';
 import '../../../profile/model/profile_repository.dart';
+import '../../../pigeon_id/view/pages/bird_qr_scanner_page.dart';
 import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
 import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 
@@ -39,6 +44,7 @@ import '../../../races/view/pages/races_page.dart';
 import '../../../seller_products/view/pages/seller_products_page.dart';
 import '../../../subscription/view/pages/packages_page.dart';
 import '../../../rooms/view/pages/rooms_page.dart';
+import '../../../feed/viewmodel/feed_bloc.dart';
 
 UserModel? _homeAuthUserForUi(AuthState authState) {
   if (authState is AuthSuccess) return authState.user;
@@ -53,14 +59,23 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authUser = _homeAuthUserForUi(context.read<AuthBloc>().state);
+    final isSeller = authUser?.isSeller ?? false;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (_) =>
               sl<HomeBloc>()
-                ..add(HomeStarted(isSeller: authUser?.isSeller ?? false)),
+                ..add(HomeStarted(isSeller: isSeller)),
         ),
         BlocProvider(create: (_) => sl<CartBloc>()..add(const CartStarted())),
+        // FeedBloc is customer-only; sellers get an idle instance (never started)
+        BlocProvider(
+          create: (_) {
+            final bloc = sl<FeedBloc>();
+            if (!isSeller) bloc.add(const FeedStarted());
+            return bloc;
+          },
+        ),
       ],
       child: const _HomeView(),
     );
@@ -278,14 +293,19 @@ class _HomeViewState extends State<_HomeView> {
                     ],
                   ),
                   title: const Text('الإشعارات'),
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => const NotificationsPage(),
                       ),
                     );
+                    if (context.mounted) {
+                      context.read<HomeBloc>().add(
+                            HomeRefreshRequested(isSeller: isSeller),
+                          );
+                    }
                   },
                 ),
                 // My Package (sellers only)
@@ -307,7 +327,48 @@ class _HomeViewState extends State<_HomeView> {
                       );
                     },
                   ),
-                // Cart
+                // Seller: customer order items
+                if (isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.receipt_long_outlined,
+                      color: AppColors.textPrimary,
+                      size: 24,
+                    ),
+                    title: const Text('طلبات العملاء'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<CartBloc>(),
+                            child: const SellerOrdersPage(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                // Seller: payment requests
+                if (isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.payment_rounded,
+                      color: AppColors.textPrimary,
+                      size: 24,
+                    ),
+                    title: const Text('طلبات الدفع'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                // Cart (customers only)
                 if (!isSeller)
                   BlocBuilder<CartBloc, CartState>(
                     builder: (context, cartState) => ListTile(
@@ -334,6 +395,47 @@ class _HomeViewState extends State<_HomeView> {
                         );
                       },
                     ),
+                  ),
+                // Orders history (customers only)
+                if (!isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.inventory_2_outlined,
+                      color: AppColors.textPrimary,
+                      size: 24,
+                    ),
+                    title: const Text('طلباتي'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<CartBloc>(),
+                            child: const OrdersPage(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                // Customer: payment requests
+                if (!isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.payment_rounded,
+                      color: AppColors.textPrimary,
+                      size: 24,
+                    ),
+                    title: const Text('طلبات الدفع'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentsPage(),
+                        ),
+                      );
+                    },
                   ),
                 // Language
                 ValueListenableBuilder<Locale>(
@@ -647,6 +749,8 @@ class _HomeViewState extends State<_HomeView> {
                           children: [
                             HomeTopBar(
                               avatarUrl: authUser?.avatarUrl,
+                              onQrScanPressed: () =>
+                                  BirdQrScannerPage.push(context),
                               onMenuPressed: () =>
                                   _scaffoldKey.currentState?.openEndDrawer(),
                               onAvatarTap: () {
@@ -739,6 +843,8 @@ class _HomeViewState extends State<_HomeView> {
                                                 myBirdsCount:
                                                     homeState.myBirds.length,
                                               ),
+                                              const SizedBox(height: 20),
+                                              const HomeInsightsPreviewSection(),
                                               const SizedBox(height: 20),
                                               HomeBreedersSection(
                                                 sellers: homeState.sellers,

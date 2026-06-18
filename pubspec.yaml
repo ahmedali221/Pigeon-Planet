@@ -45,6 +45,9 @@ dependencies:
   # QR Code generation (Pigeon Digital ID)
   qr_flutter: ^4.1.0
 
+  # QR Code scanning (public bird lookup via scanned bird card)
+  mobile_scanner: ^5.2.0
+
   # Fonts
   google_fonts: ^6.2.1
 

@@ -8,6 +8,9 @@ class OrderModel extends Equatable {
   final double totalPrice;
   final List<int> sellersInvolved;
   final List<OrderItemModel> items;
+  // item_count from list endpoint (OrderListSerializer has no items[])
+  final int? itemCount;
+  final DateTime? created;
 
   const OrderModel({
     required this.id,
@@ -15,7 +18,12 @@ class OrderModel extends Equatable {
     required this.totalPrice,
     required this.sellersInvolved,
     required this.items,
+    this.itemCount,
+    this.created,
   });
+
+  // Use itemCount (list endpoint) if items[] wasn't returned
+  int get displayItemCount => itemCount ?? items.length;
 
   factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
         id: json['id'] as int,
@@ -28,6 +36,8 @@ class OrderModel extends Equatable {
         items: (json['items'] as List<dynamic>? ?? [])
             .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
             .toList(),
+        itemCount: json['item_count'] as int?,
+        created: DateTime.tryParse(json['created'] as String? ?? ''),
       );
 
   String get statusLabel {
@@ -49,5 +59,5 @@ class OrderModel extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, status, totalPrice, sellersInvolved, items];
+      [id, status, totalPrice, sellersInvolved, items, itemCount, created];
 }

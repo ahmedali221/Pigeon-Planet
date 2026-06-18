@@ -157,12 +157,19 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                   itemBuilder: (_, i) => ClipRRect(
                                     borderRadius:
                                         BorderRadius.circular(10),
-                                    child: Image.file(
-                                      File(state.photoPaths[i]),
-                                      width: 90,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: state.photoPaths[i].startsWith('http')
+                                        ? Image.network(
+                                            state.photoPaths[i],
+                                            width: 90,
+                                            height: 90,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.file(
+                                            File(state.photoPaths[i]),
+                                            width: 90,
+                                            height: 90,
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                         ),

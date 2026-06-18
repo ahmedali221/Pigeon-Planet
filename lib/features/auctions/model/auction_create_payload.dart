@@ -85,8 +85,6 @@ class AuctionCreatePayload {
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,
-        if (thumbnailUrl != null && thumbnailUrl!.isNotEmpty)
-          'thumbnail_url': thumbnailUrl,
         'auction_type': auctionType,
         'start_time': startTime,
         'end_time': endTime,

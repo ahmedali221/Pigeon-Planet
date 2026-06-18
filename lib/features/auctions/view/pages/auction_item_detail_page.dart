@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
+import '../../../payments/view/pages/payments_page.dart';
 import '../widgets/auction_bids_section.dart';
 import '../widgets/auction_bird_info_section.dart';
 import '../widgets/auction_description_section.dart';
@@ -122,10 +123,93 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     );
   }
 
+  void _confirmBuyNow(BuildContext context) {
+    final price = widget.auction.buyNowPrice ?? 0;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('شراء فوري'),
+        content: Text('هل تريد شراء هذا الطائر فوراً بسعر ${_fmt(price)} ج.م؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AuctionsBloc>().add(AuctionBuyNowRequested(widget.item.id));
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            child: const Text('تأكيد', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmPaymentRequest(
+      BuildContext context, int itemId, double amount) {
+    String note = '';
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('إرسال طلب دفع'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('المبلغ: ${_fmt(amount)} ج.م'),
+            const SizedBox(height: 12),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'ملاحظة للبائع (اختياري)',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (v) => note = v,
+              maxLines: 2,
+              textInputAction: TextInputAction.done,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PaymentsPage(
+                    pendingAuctionItemId: itemId,
+                    pendingBuyerNote: note.trim().isEmpty ? null : note.trim(),
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary),
+            child: const Text('إرسال',
+                style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final d = _buildData();
     final canBid = widget.auction.isActive && !widget.auction.isOwner;
+    final canBuyNow = widget.auction.isActive &&
+        !widget.auction.isOwner &&
+        widget.auction.buyNowEnabled &&
+        widget.auction.buyNowPrice != null &&
+        widget.item.status == 'active';
+    final canRequestPayment =
+        widget.item.status == 'sold' && !widget.auction.isOwner;
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -149,15 +233,24 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
         ),
       ),
       body: BlocConsumer<AuctionsBloc, AuctionsState>(
-        listenWhen: (p, c) => p.isBidding && !c.isBidding,
+        listenWhen: (p, c) =>
+            (p.isBidding && !c.isBidding) ||
+            (p.isBuyingNow && !c.isBuyingNow),
         listener: (context, state) {
-          if (state.errorMessage != null) {
+          if (state.isBidding || state.isBuyingNow) return;
+          if (state.buyNowError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(state.buyNowError!),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ));
+          } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(state.errorMessage!),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
             ));
-          } else {
+          } else if (!state.isBidding) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('تمت المزايدة بنجاح'),
               backgroundColor: Colors.green,
@@ -197,10 +290,40 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                       item: widget.item,
                       auction: widget.auction,
                       fmtFn: _fmt,
-                      onBid: canBid
-                          ? () => _showBidDialog(context)
-                          : null,
+                      onBid: canBid ? () => _showBidDialog(context) : null,
+                      onBuyNow: canBuyNow ? () => _confirmBuyNow(context) : null,
+                      isBuyingNow: state.isBuyingNow,
                     ),
+                    if (canRequestPayment) ...[
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton.icon(
+                            onPressed: () => _confirmPaymentRequest(
+                              context,
+                              widget.item.id,
+                              widget.item.currentPrice,
+                            ),
+                            icon: const Icon(Icons.payment_rounded,
+                                color: Colors.white, size: 18),
+                            label: const Text('إرسال طلب دفع',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.blue,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 12),
                     if (state.isItemLoading)
                       const Padding(
@@ -246,12 +369,16 @@ class _ItemBidCard extends StatelessWidget {
   final AuctionModel auction;
   final String Function(double) fmtFn;
   final VoidCallback? onBid;
+  final VoidCallback? onBuyNow;
+  final bool isBuyingNow;
 
   const _ItemBidCard({
     required this.item,
     required this.auction,
     required this.fmtFn,
     this.onBid,
+    this.onBuyNow,
+    this.isBuyingNow = false,
   });
 
   @override
@@ -308,28 +435,63 @@ class _ItemBidCard extends StatelessWidget {
               ),
             ),
             const Divider(height: 20, color: AppColors.divider),
-            if (onBid != null)
+            if (onBid != null || onBuyNow != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: onBid,
-                    icon: const Icon(Icons.gavel_rounded,
-                        color: Colors.white, size: 18),
-                    label: const Text('زايد الآن',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      elevation: 0,
-                    ),
-                  ),
+                child: Column(
+                  children: [
+                    if (onBid != null) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: onBid,
+                          icon: const Icon(Icons.gavel_rounded,
+                              color: Colors.white, size: 18),
+                          label: const Text('زايد الآن',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (onBuyNow != null) ...[
+                      if (onBid != null) const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: isBuyingNow ? null : onBuyNow,
+                          icon: isBuyingNow
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white))
+                              : const Icon(Icons.flash_on_rounded,
+                                  color: Colors.white, size: 18),
+                          label: const Text('اشتري الآن',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.orange,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               )
             else

@@ -298,7 +298,10 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
               const SizedBox(height: 12),
               AuctionDescriptionSection(text: d['description'] as String),
               const SizedBox(height: 12),
-              const AuctionPedigreeButton(),
+              AuctionPedigreeButton(
+                birdId: widget.bird.id,
+                isOwner: widget.isOwner,
+              ),
               const SizedBox(height: 12),
               _BirdPriceSection(
                 data: d,

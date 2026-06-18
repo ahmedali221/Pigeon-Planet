@@ -22,7 +22,16 @@ class RealSellerHomeRemoteDataSource implements SellerHomeRemoteDataSource {
 
   @override
   Future<int> fetchUnreadNotificationCount() async {
-    return 0;
+    try {
+      final response =
+          await _dio.get(ApiConstants.notificationsUnreadCount);
+      final data = response.data;
+      if (data is int) return data;
+      if (data is Map) return (data['count'] as num?)?.toInt() ?? 0;
+      return 0;
+    } catch (_) {
+      return 0;
+    }
   }
 
   @override

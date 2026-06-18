@@ -78,10 +78,11 @@ class ProductsPage extends StatelessWidget {
               ),
             ),
 
-            // ── Products count ───────────────────────────────────────────────
+            // ── Products count + sort ────────────────────────────────────────
             BlocBuilder<MarketBloc, MarketState>(
               buildWhen: (p, c) =>
-                  p.filteredProducts.length != c.filteredProducts.length,
+                  p.filteredProducts.length != c.filteredProducts.length ||
+                  p.activeOrdering != c.activeOrdering,
               builder: (context, state) => Container(
                 color: Colors.white,
                 padding: const EdgeInsets.symmetric(
@@ -97,6 +98,8 @@ class ProductsPage extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                     ),
+                    const Spacer(),
+                    _SortButton(activeOrdering: state.activeOrdering),
                   ],
                 ),
               ),
@@ -155,6 +158,94 @@ class ProductsPage extends StatelessWidget {
                     ),
                   );
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Sort button ───────────────────────────────────────────────────────────────
+
+class _SortButton extends StatelessWidget {
+  final String? activeOrdering;
+  const _SortButton({this.activeOrdering});
+
+  static const _options = [
+    (label: 'الأحدث', value: null),
+    (label: 'السعر: الأقل أولاً', value: 'price'),
+    (label: 'السعر: الأعلى أولاً', value: '-price'),
+  ];
+
+  String get _activeLabel {
+    for (final o in _options) {
+      if (o.value == activeOrdering) return o.label;
+    }
+    return 'ترتيب';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = activeOrdering != null;
+    return PopupMenuButton<String?>(
+      onSelected: (v) =>
+          context.read<MarketBloc>().add(MarketSortChanged(v)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      itemBuilder: (_) => _options
+          .map(
+            (o) => PopupMenuItem<String?>(
+              value: o.value,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      o.label,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: o.value == activeOrdering
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: o.value == activeOrdering
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  if (o.value == activeOrdering)
+                    const Icon(Icons.check_rounded,
+                        color: AppColors.primary, size: 16),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primaryLight : AppColors.inputBg,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isActive ? AppColors.primary : AppColors.border,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.sort_rounded,
+              size: 15,
+              color: isActive ? AppColors.primary : AppColors.textSecondary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              _activeLabel,
+              style: TextStyle(
+                fontSize: 12,
+                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                fontWeight:
+                    isActive ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           ],

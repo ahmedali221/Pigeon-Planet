@@ -12,18 +12,18 @@ class RacesRepositoryImpl implements RacesRepository {
   const RacesRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<Failure, List<RaceModel>>> getRaces({
+  Future<Either<Failure, RacePage>> getRaces({
     int page = 1,
     String? seasonYear,
     String? stationName,
   }) async {
     try {
-      final list = await _dataSource.getRaces(
+      final racePage = await _dataSource.getRaces(
         page: page,
         seasonYear: seasonYear,
         stationName: stationName,
       );
-      return Right(list);
+      return Right(racePage);
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {

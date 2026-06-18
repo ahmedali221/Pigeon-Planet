@@ -28,8 +28,8 @@ class AuctionsRepositoryImpl implements AuctionsRepository {
       _wrap(() => _dataSource.getEndingSoon(minutes: minutes));
 
   @override
-  Future<Either<Failure, List<AuctionModel>>> getMyAuctions() =>
-      _wrap(() => _dataSource.getMyAuctions());
+  Future<Either<Failure, List<AuctionModel>>> getMyAuctions({String? status}) =>
+      _wrap(() => _dataSource.getMyAuctions(status: status));
 
   @override
   Future<Either<Failure, AuctionModel>> getAuctionDetail(int id) =>
@@ -46,6 +46,22 @@ class AuctionsRepositoryImpl implements AuctionsRepository {
   @override
   Future<Either<Failure, AuctionModel>> createAuction(AuctionCreatePayload payload) =>
       _wrap(() => _dataSource.createAuction(payload));
+
+  @override
+  Future<Either<Failure, void>> cancelAuction(int id) =>
+      _wrap(() => _dataSource.cancelAuction(id));
+
+  @override
+  Future<Either<Failure, AuctionModel>> updateAuction(int id, {String? title, String? description, String? tags}) =>
+      _wrap(() => _dataSource.updateAuction(id, title: title, description: description, tags: tags));
+
+  @override
+  Future<Either<Failure, void>> buyNow(int itemId) =>
+      _wrap(() => _dataSource.buyNow(itemId));
+
+  @override
+  Future<Either<Failure, List<BidModel>>> getMyBids() =>
+      _wrap(() => _dataSource.getMyBids());
 
   @override
   Future<Either<Failure, List<BirdSummaryModel>>> getSellerBirds({

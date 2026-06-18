@@ -15,6 +15,19 @@ class MarketState extends Equatable {
   final int cartCount;
   final String? errorMessage;
 
+  // Personalized market feed
+  final List<ProductModel> feedProducts;
+  final String? feedCursor;
+  final bool feedHasMore;
+  final bool feedLoading;
+
+  // Active promotions
+  final List<DiscountOfferModel> discountOffers;
+  final List<CashbackOfferModel> cashbackOffers;
+
+  // Ordering — null = default (newest first)
+  final String? activeOrdering;
+
   const MarketState({
     this.status = MarketStatus.initial,
     this.categories = const [],
@@ -27,6 +40,13 @@ class MarketState extends Equatable {
     this.quantity = 1,
     this.cartCount = 0,
     this.errorMessage,
+    this.feedProducts = const [],
+    this.feedCursor,
+    this.feedHasMore = false,
+    this.feedLoading = false,
+    this.discountOffers = const [],
+    this.cashbackOffers = const [],
+    this.activeOrdering,
   });
 
   double get currentPrice {
@@ -46,6 +66,14 @@ class MarketState extends Equatable {
     int? quantity,
     int? cartCount,
     String? errorMessage,
+    List<ProductModel>? feedProducts,
+    String? feedCursor,
+    bool? feedHasMore,
+    bool? feedLoading,
+    List<DiscountOfferModel>? discountOffers,
+    List<CashbackOfferModel>? cashbackOffers,
+    String? activeOrdering,
+    bool clearOrdering = false,
   }) {
     return MarketState(
       status: status ?? this.status,
@@ -59,6 +87,13 @@ class MarketState extends Equatable {
       quantity: quantity ?? this.quantity,
       cartCount: cartCount ?? this.cartCount,
       errorMessage: errorMessage ?? this.errorMessage,
+      feedProducts: feedProducts ?? this.feedProducts,
+      feedCursor: feedCursor ?? this.feedCursor,
+      feedHasMore: feedHasMore ?? this.feedHasMore,
+      feedLoading: feedLoading ?? this.feedLoading,
+      discountOffers: discountOffers ?? this.discountOffers,
+      cashbackOffers: cashbackOffers ?? this.cashbackOffers,
+      activeOrdering: clearOrdering ? null : (activeOrdering ?? this.activeOrdering),
     );
   }
 
@@ -75,5 +110,12 @@ class MarketState extends Equatable {
         quantity,
         cartCount,
         errorMessage,
+        feedProducts,
+        feedCursor,
+        feedHasMore,
+        feedLoading,
+        discountOffers,
+        cashbackOffers,
+        activeOrdering,
       ];
 }

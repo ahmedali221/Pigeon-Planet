@@ -21,6 +21,7 @@ class AuctionModel {
   final List<AuctionItemModel> items;
   final bool isOwner;
   final String? thumbnailUrl;
+  final String? tags;
 
   const AuctionModel({
     required this.id,
@@ -43,6 +44,7 @@ class AuctionModel {
     this.items = const [],
     this.isOwner = false,
     this.thumbnailUrl,
+    this.tags,
   });
 
   double get currentPrice =>
@@ -83,6 +85,7 @@ class AuctionModel {
           .toList(),
       isOwner: json['is_owner'] as bool? ?? false,
       thumbnailUrl: json['thumbnail_url'] as String?,
+      tags: json['tags'] as String?,
     );
   }
 }

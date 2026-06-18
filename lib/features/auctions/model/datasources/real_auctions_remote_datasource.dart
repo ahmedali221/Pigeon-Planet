@@ -1,6 +1,5 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
-import '../../../../core/services/cloudinary_service.dart';
 import '../asset_rating_model.dart';
 import '../auction_model.dart';
 import '../auction_create_payload.dart';
@@ -53,8 +52,11 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   }
 
   @override
-  Future<List<AuctionModel>> getMyAuctions() async {
-    final response = await _dio.get(ApiConstants.auctionsMyAuctions);
+  Future<List<AuctionModel>> getMyAuctions({String? status}) async {
+    final response = await _dio.get(
+      ApiConstants.auctionsMyAuctions,
+      queryParameters: status != null ? {'status': status} : null,
+    );
     return _parseList(response.data);
   }
 
@@ -91,25 +93,43 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
 
   @override
   Future<AuctionModel> createAuction(AuctionCreatePayload payload) async {
-    var finalPayload = payload;
-    // Upload the cover image to Cloudinary first (mirrors bird image upload),
-    // then send the resulting URL with the auction creation request.
-    if ((payload.thumbnailUrl == null || payload.thumbnailUrl!.isEmpty) &&
-        payload.thumbnailPath != null &&
-        payload.thumbnailPath!.isNotEmpty) {
-      final url = await CloudinaryService.uploadAuctionThumbnail(
-        payload.thumbnailPath!,
-        payload.title,
-      );
-      if (url != null && url.isNotEmpty) {
-        finalPayload = payload.copyWith(thumbnailUrl: url);
-      }
-    }
     final response = await _dio.post(
-      ApiConstants.createAuction,
-      data: finalPayload.toJson(),
+      ApiConstants.auctions,
+      data: payload.toJson(),
     );
     return AuctionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> cancelAuction(int id) async {
+    await _dio.post(ApiConstants.auctionCancel(id), data: {});
+  }
+
+  @override
+  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags}) async {
+    final data = <String, dynamic>{
+      'title': ?title,
+      'description': ?description,
+      'tags': ?tags,
+    };
+    final response = await _dio.patch(ApiConstants.auctionDetail(id), data: data);
+    return AuctionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> buyNow(int itemId) async {
+    await _dio.post(ApiConstants.buyNow(itemId), data: {});
+  }
+
+  @override
+  Future<List<BidModel>> getMyBids() async {
+    final response = await _dio.get(ApiConstants.myBids);
+    final data = response.data;
+    if (data == null) return [];
+    final items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data is List ? data : []);
+    return items.map((j) => BidModel.fromJson(j as Map<String, dynamic>)).toList();
   }
 
   @override

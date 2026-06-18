@@ -19,7 +19,6 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
   final _ringCtrl = TextEditingController();
   final _nameCtrl = TextEditingController();
   final _breedCtrl = TextEditingController();
-  final _raceCtrl = TextEditingController();
   final _achievementsCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
@@ -51,7 +50,6 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
     _ringCtrl.dispose();
     _nameCtrl.dispose();
     _breedCtrl.dispose();
-    _raceCtrl.dispose();
     _achievementsCtrl.dispose();
     _priceCtrl.dispose();
     _descCtrl.dispose();
@@ -70,13 +68,6 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
     if (picked != null && context.mounted) {
       context.read<PigeonIdBloc>().add(PigeonIdHatchDateChanged(picked));
     }
-  }
-
-  void _addRaceResult(BuildContext context) {
-    final text = _raceCtrl.text.trim();
-    if (text.isEmpty) return;
-    context.read<PigeonIdBloc>().add(PigeonIdRaceResultAdded(text));
-    _raceCtrl.clear();
   }
 
   void _next(BuildContext context, PigeonIdState state) {
@@ -253,48 +244,6 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
 
                       const SizedBox(height: 16),
 
-                      // ── Race results ─────────────────────────────────
-                      const PigeonFieldLabel(text: 'نتائج السباقات'),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: PigeonAppInput(
-                              controller: _raceCtrl,
-                              hint: 'مثال: المركز الأول - سباق 500كم',
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () => _addRaceResult(context),
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.add,
-                                  color: Colors.white, size: 22),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      if (state.raceResults.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        ...state.raceResults.asMap().entries.map(
-                              (e) => _RaceResultChip(
-                                label: e.value,
-                                onRemove: () => context
-                                    .read<PigeonIdBloc>()
-                                    .add(PigeonIdRaceResultRemoved(e.key)),
-                              ),
-                            ),
-                      ],
-
-                      const SizedBox(height: 16),
-
                       // ── Achievements ─────────────────────────────────
                       const PigeonFieldLabel(text: 'الإنجازات *'),
                       const SizedBox(height: 6),
@@ -392,6 +341,19 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdFlyingSpeedChanged(v)),
                       ),
 
+                      // ── Bird status (edit only) ───────────────────────
+                      if (state.editingId != null) ...[
+                        const SizedBox(height: 16),
+                        const PigeonFieldLabel(text: 'حالة الطائر'),
+                        const SizedBox(height: 8),
+                        _BirdStatusSelector(
+                          selected: state.birdStatus,
+                          onChanged: (s) => context
+                              .read<PigeonIdBloc>()
+                              .add(PigeonIdStatusChanged(s)),
+                        ),
+                      ],
+
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -431,32 +393,32 @@ class _GenderSelector extends StatelessWidget {
   const _GenderSelector(
       {required this.selected, required this.onChanged});
 
+  static const _options = [
+    (PigeonGender.male, 'ذكر', '🔵', AppColors.blue, AppColors.blueLight),
+    (PigeonGender.female, 'أنثى', '🔴', AppColors.red, AppColors.redLight),
+    (PigeonGender.young, 'صغير', '🟡', AppColors.orange, AppColors.orangeLight),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Expanded(
-          child: _GenderOption(
-            label: 'ذكر',
-            emoji: '🔵',
-            isSelected: selected == PigeonGender.male,
-            selectedColor: AppColors.blue,
-            selectedBg: AppColors.blueLight,
-            onTap: () => onChanged(PigeonGender.male),
+      children: _options.asMap().entries.map((e) {
+        final idx = e.key;
+        final (gender, label, emoji, color, bg) = e.value;
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(end: idx < 2 ? 8 : 0),
+            child: _GenderOption(
+              label: label,
+              emoji: emoji,
+              isSelected: selected == gender,
+              selectedColor: color,
+              selectedBg: bg,
+              onTap: () => onChanged(gender),
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _GenderOption(
-            label: 'أنثى',
-            emoji: '🔴',
-            isSelected: selected == PigeonGender.female,
-            selectedColor: AppColors.red,
-            selectedBg: AppColors.redLight,
-            onTap: () => onChanged(PigeonGender.female),
-          ),
-        ),
-      ],
+        );
+      }).toList(),
     );
   }
 }
@@ -560,39 +522,55 @@ class _StaminaSelector extends StatelessWidget {
   }
 }
 
-class _RaceResultChip extends StatelessWidget {
-  final String label;
-  final VoidCallback onRemove;
+class _BirdStatusSelector extends StatelessWidget {
+  final String selected;
+  final ValueChanged<String> onChanged;
 
-  const _RaceResultChip(
-      {required this.label, required this.onRemove});
+  static const _options = [
+    ('available', 'متاح', AppColors.success),
+    ('inactive', 'غير نشط', AppColors.textSecondary),
+    ('sold', 'مباع', AppColors.blue),
+  ];
+
+  const _BirdStatusSelector(
+      {required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.emoji_events_rounded,
-              size: 16, color: AppColors.primary),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(label,
-                style: const TextStyle(
-                    fontSize: 13, color: AppColors.textPrimary)),
+    return Row(
+      children: _options.asMap().entries.map((e) {
+        final idx = e.key;
+        final (apiVal, label, color) = e.value;
+        final isSelected = selected == apiVal;
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => onChanged(apiVal),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: EdgeInsetsDirectional.only(end: idx < 2 ? 8 : 0),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected ? color.withValues(alpha: 0.12) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected ? color : AppColors.border,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? color : AppColors.textSecondary,
+                ),
+              ),
+            ),
           ),
-          GestureDetector(
-            onTap: onRemove,
-            child: const Icon(Icons.close_rounded,
-                size: 16, color: AppColors.textSecondary),
-          ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }
+

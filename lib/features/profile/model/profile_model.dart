@@ -4,11 +4,12 @@ class ProfileModel extends Equatable {
   final int id;
   final String type; // 'Seller' | 'Customer'
   final String? nickname; // seller only
-  final String? username; // customer only (UserAccount.username)
+  final String? username;
+  final String? phoneNumber;
   final String? avatarUrl;
   final String country;
   final String currency;
-  final double balance;
+  final double? cashbackBalance; // customer only — from cashback_balance
   final double? avgRating; // seller only
   final int? ratingsCount; // seller only
   final bool activated;
@@ -21,10 +22,11 @@ class ProfileModel extends Equatable {
     required this.type,
     this.nickname,
     this.username,
+    this.phoneNumber,
     this.avatarUrl,
     required this.country,
     required this.currency,
-    required this.balance,
+    this.cashbackBalance,
     this.avgRating,
     this.ratingsCount,
     required this.activated,
@@ -49,7 +51,7 @@ class ProfileModel extends Equatable {
     'LB': 'لبنان', 'SY': 'سوريا', 'PS': 'فلسطين',
     'YE': 'اليمن', 'MA': 'المغرب', 'TN': 'تونس',
     'DZ': 'الجزائر', 'LY': 'ليبيا', 'SD': 'السودان',
-    'TR': 'تركيا',
+    'US': 'الولايات المتحدة', 'EU': 'الاتحاد الأوروبي',
   };
 
   static const Map<String, String> countryCurrency = {
@@ -57,7 +59,7 @@ class ProfileModel extends Equatable {
     'QA': 'QAR', 'BH': 'BHD', 'OM': 'OMR', 'JO': 'JOD',
     'IQ': 'IQD', 'LB': 'LBP', 'SY': 'SYP', 'PS': 'ILS',
     'YE': 'YER', 'MA': 'MAD', 'TN': 'TND', 'DZ': 'DZD',
-    'LY': 'LYD', 'SD': 'SDG', 'TR': 'TRY',
+    'LY': 'LYD', 'SD': 'SDG', 'US': 'USD', 'EU': 'EUR',
   };
 
   static List<String> get countryCodes => _countryNames.keys.toList();
@@ -69,11 +71,12 @@ class ProfileModel extends Equatable {
         type: json['type'] as String? ?? 'Customer',
         nickname: json['nickname'] as String?,
         username: json['username'] as String?,
+        phoneNumber: json['phone_number'] as String?,
         avatarUrl: json['avatar_url'] as String?,
         country: json['country'] as String? ?? '',
         currency: json['currency'] as String? ?? '',
-        balance:
-            double.tryParse(json['balance']?.toString() ?? '') ?? 0.0,
+        cashbackBalance:
+            double.tryParse(json['cashback_balance']?.toString() ?? ''),
         avgRating:
             double.tryParse(json['avg_rating']?.toString() ?? ''),
         ratingsCount: json['ratings_count'] as int?,
@@ -96,10 +99,11 @@ class ProfileModel extends Equatable {
         type: type,
         nickname: nickname ?? this.nickname,
         username: username,
+        phoneNumber: phoneNumber,
         avatarUrl: avatarUrl ?? this.avatarUrl,
         country: country ?? this.country,
         currency: currency ?? this.currency,
-        balance: balance,
+        cashbackBalance: cashbackBalance,
         avgRating: avgRating,
         ratingsCount: ratingsCount,
         activated: activated,
@@ -110,7 +114,7 @@ class ProfileModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id, type, nickname, username, avatarUrl, country, currency, balance,
-        avgRating, ratingsCount, activated, isActive, isValid, created,
+        id, type, nickname, username, phoneNumber, avatarUrl, country, currency,
+        cashbackBalance, avgRating, ratingsCount, activated, isActive, isValid, created,
       ];
 }

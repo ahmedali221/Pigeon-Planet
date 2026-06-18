@@ -47,6 +47,18 @@ class PigeonRepositoryImpl implements PigeonRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, PigeonModel>> fetchPublicBird(String publicId) async {
+    try {
+      final result = await _dataSource.fetchPublicBird(publicId);
+      return Right(result);
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
   Failure _map(ApiException e) {
     if (e is UnauthorizedException) return UnauthorizedFailure(e.message);
     if (e is NetworkException) return NetworkFailure(e.message);

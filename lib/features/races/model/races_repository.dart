@@ -4,7 +4,7 @@ import '../../../core/error/failures.dart';
 import 'race_model.dart';
 
 abstract class RacesRepository {
-  Future<Either<Failure, List<RaceModel>>> getRaces({
+  Future<Either<Failure, RacePage>> getRaces({
     int page,
     String? seasonYear,
     String? stationName,

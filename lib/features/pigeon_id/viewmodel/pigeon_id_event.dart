@@ -128,3 +128,10 @@ class PigeonIdDeleteRequested extends PigeonIdEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class PigeonIdStatusChanged extends PigeonIdEvent {
+  final String status;
+  const PigeonIdStatusChanged(this.status);
+  @override
+  List<Object?> get props => [status];
+}

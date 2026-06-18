@@ -52,7 +52,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
     if (p != null) {
       _selectedCategory = p.category;
       _isMarketListed = p.isMarketListed;
-      _selectedStatus = p.status == 'sold' ? 'available' : p.status;
+      _selectedStatus = p.status;
       _imagePaths.addAll(p.imageUrls);
     }
   }
@@ -563,6 +563,7 @@ class _StatusDropdown extends StatelessWidget {
 
   static const _statuses = [
     ('available', 'متاح'),
+    ('sold', 'مباع'),
     ('inactive', 'غير نشط'),
   ];
 

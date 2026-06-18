@@ -4,6 +4,9 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
+import '../../model/cashback_offer_model.dart';
+import '../../model/discount_offer_model.dart';
+import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 import '../widgets/market_category_tile.dart';
 import 'products_page.dart';
@@ -71,8 +74,11 @@ class _MarketView extends StatelessWidget {
           Expanded(
             child: BlocBuilder<MarketBloc, MarketState>(
               builder: (context, state) {
-                if (state.status == MarketStatus.initial) {
-                  return const Center(child: CircularProgressIndicator());
+                if (state.status == MarketStatus.initial ||
+                    state.status == MarketStatus.loading) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
                 }
 
                 final categories = state.searchQuery.isEmpty
@@ -88,9 +94,32 @@ class _MarketView extends StatelessWidget {
                     _StatsBar(totalProducts: state.allProducts.length),
                     const SizedBox(height: 12),
 
+                    // ── Active promotions ─────────────────────────────────
+                    if (state.discountOffers.isNotEmpty ||
+                        state.cashbackOffers.isNotEmpty) ...[
+                      _PromotionsStrip(
+                        discountOffers: state.discountOffers,
+                        cashbackOffers: state.cashbackOffers,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
                     // ── Quality banner ────────────────────────────────────
                     _QualityBanner(),
                     const SizedBox(height: 16),
+
+                    // ── Personalized feed ─────────────────────────────────
+                    if (state.feedProducts.isNotEmpty) ...[
+                      _FeedSection(
+                        products: state.feedProducts,
+                        hasMore: state.feedHasMore,
+                        isLoading: state.feedLoading,
+                        onLoadMore: () => context
+                            .read<MarketBloc>()
+                            .add(const MarketFeedLoadMoreRequested()),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // ── Categories ────────────────────────────────────────
                     ...categories.map(
@@ -230,7 +259,6 @@ class _StatsBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          // free delivery
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(14),
@@ -265,7 +293,6 @@ class _StatsBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          // product count
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(14),
@@ -357,6 +384,308 @@ class _QualityBanner extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Promotions strip ──────────────────────────────────────────────────────────
+class _PromotionsStrip extends StatelessWidget {
+  final List<DiscountOfferModel> discountOffers;
+  final List<CashbackOfferModel> cashbackOffers;
+
+  const _PromotionsStrip({
+    required this.discountOffers,
+    required this.cashbackOffers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsetsDirectional.only(start: 16),
+          child: Text(
+            'عروض نشطة',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 44,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+            children: [
+              ...discountOffers.map(
+                (o) => _OfferChip(
+                  label: o.displayLabel,
+                  color: AppColors.orange,
+                  icon: '🎁',
+                ),
+              ),
+              ...cashbackOffers.map(
+                (o) => _OfferChip(
+                  label: o.displayLabel,
+                  color: AppColors.primary,
+                  icon: '💰',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OfferChip extends StatelessWidget {
+  final String label;
+  final Color color;
+  final String icon;
+
+  const _OfferChip({
+    required this.label,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsetsDirectional.only(end: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Personalized feed section ─────────────────────────────────────────────────
+class _FeedSection extends StatelessWidget {
+  final List<ProductModel> products;
+  final bool hasMore;
+  final bool isLoading;
+  final VoidCallback onLoadMore;
+
+  const _FeedSection({
+    required this.products,
+    required this.hasMore,
+    required this.isLoading,
+    required this.onLoadMore,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsetsDirectional.only(start: 16),
+          child: Text(
+            'مقترح لك',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 186,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+            itemCount: products.length + (hasMore ? 1 : 0),
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            itemBuilder: (context, i) {
+              if (i == products.length) {
+                return isLoading
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: onLoadMore,
+                        child: Container(
+                          width: 72,
+                          margin: const EdgeInsetsDirectional.only(end: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                'المزيد',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+              }
+              return _FeedProductCard(product: products[i]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FeedProductCard extends StatelessWidget {
+  final ProductModel product;
+  const _FeedProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final isFollowing = product.source == 'following';
+
+    return Container(
+      width: 130,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Thumbnail
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(14),
+              topRight: Radius.circular(14),
+            ),
+            child: Stack(
+              children: [
+                SizedBox(
+                  height: 102,
+                  child: product.thumbnailUrl != null
+                      ? Image.network(
+                          product.thumbnailUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (_, _, _) => Container(
+                            color: AppColors.primaryLight,
+                            child: const Icon(
+                              Icons.storefront_outlined,
+                              color: AppColors.primary,
+                              size: 28,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: AppColors.primaryLight,
+                          child: const Icon(
+                            Icons.storefront_outlined,
+                            color: AppColors.primary,
+                            size: 28,
+                          ),
+                        ),
+                ),
+                if (isFollowing)
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'متابَع',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Info
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${product.price.toStringAsFixed(0)} ج.م',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -18,19 +18,49 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     on<RacesSearchChanged>(_onSearchChanged);
     on<RaceDetailRequested>(_onDetailRequested);
     on<RaceResultSearchChanged>(_onResultSearchChanged);
+    on<RacesLoadMoreRequested>(_onLoadMore);
   }
 
   Future<void> _onStarted(
     RacesEvent event,
     Emitter<RacesState> emit,
   ) async {
-    emit(state.copyWith(status: RacesStatus.loading, clearError: true));
-    final result = await _repository.getRaces();
+    emit(state.copyWith(
+      status: RacesStatus.loading,
+      clearError: true,
+      currentPage: 1,
+      hasMore: false,
+      loadingMore: false,
+    ));
+    final result = await _repository.getRaces(page: 1);
     result.fold(
       (f) => emit(state.copyWith(
           status: RacesStatus.error, errorMessage: f.message)),
-      (races) => emit(state.copyWith(
-          status: RacesStatus.loaded, races: races)),
+      (page) => emit(state.copyWith(
+        status: RacesStatus.loaded,
+        races: page.races,
+        currentPage: 1,
+        hasMore: page.hasMore,
+      )),
+    );
+  }
+
+  Future<void> _onLoadMore(
+    RacesLoadMoreRequested event,
+    Emitter<RacesState> emit,
+  ) async {
+    if (!state.hasMore || state.loadingMore) return;
+    emit(state.copyWith(loadingMore: true));
+    final nextPage = state.currentPage + 1;
+    final result = await _repository.getRaces(page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(loadingMore: false)),
+      (page) => emit(state.copyWith(
+        races: [...state.races, ...page.races],
+        currentPage: nextPage,
+        hasMore: page.hasMore,
+        loadingMore: false,
+      )),
     );
   }
 

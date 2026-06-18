@@ -73,3 +73,39 @@ class AuctionItemDetailRequested extends AuctionsEvent {
   @override
   List<Object?> get props => [itemId, birdId];
 }
+
+class AuctionCancelRequested extends AuctionsEvent {
+  final int auctionId;
+  const AuctionCancelRequested(this.auctionId);
+
+  @override
+  List<Object?> get props => [auctionId];
+}
+
+class AuctionUpdateRequested extends AuctionsEvent {
+  final int auctionId;
+  final String? title;
+  final String? description;
+  final String? tags;
+  const AuctionUpdateRequested({
+    required this.auctionId,
+    this.title,
+    this.description,
+    this.tags,
+  });
+
+  @override
+  List<Object?> get props => [auctionId, title, description, tags];
+}
+
+class AuctionBuyNowRequested extends AuctionsEvent {
+  final int itemId;
+  const AuctionBuyNowRequested(this.itemId);
+
+  @override
+  List<Object?> get props => [itemId];
+}
+
+class AuctionMyBidsLoadRequested extends AuctionsEvent {
+  const AuctionMyBidsLoadRequested();
+}
