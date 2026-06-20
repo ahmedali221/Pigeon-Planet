@@ -51,6 +51,9 @@ dependencies:
   # Fonts
   google_fonts: ^6.2.1
 
+  # Navigation
+  go_router: ^14.6.3
+
   # Localization
   flutter_localizations:
     sdk: flutter

@@ -29,6 +29,41 @@ class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
   }
 
   @override
+  Future<List<ProfileModel>> fetchAllSellerProfiles() async {
+    final response = await _dio.get(ApiConstants.mySellers);
+    final data = response.data;
+    final List list;
+    if (data is Map && data.containsKey('results')) {
+      list = data['results'] as List;
+    } else if (data is List) {
+      list = data;
+    } else {
+      return [];
+    }
+    return list
+        .map((e) => ProfileModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<void> createRoom({
+    required String nickname,
+    required String description,
+    required String country,
+    required String currency,
+  }) async {
+    await _dio.post(
+      ApiConstants.mySellers,
+      data: {
+        'nickname': nickname,
+        'description': description,
+        'country': country,
+        'currency': currency,
+      },
+    );
+  }
+
+  @override
   Future<ProfileModel> updateProfile(ProfileModel profile) async {
     final endpoint = profile.isSeller
         ? ApiConstants.sellerDetail(profile.id)

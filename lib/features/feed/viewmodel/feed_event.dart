@@ -49,3 +49,11 @@ class FeedFollowingRefreshed extends FeedEvent {
 class FeedSuggestionsRefreshed extends FeedEvent {
   const FeedSuggestionsRefreshed();
 }
+
+class FeedSellersListRequested extends FeedEvent {
+  const FeedSellersListRequested();
+}
+
+class FeedSellersListNextPageRequested extends FeedEvent {
+  const FeedSellersListNextPageRequested();
+}

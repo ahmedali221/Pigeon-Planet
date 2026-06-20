@@ -21,6 +21,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     on<FeedUnblockRequested>(_onUnblock);
     on<FeedFollowingRefreshed>(_onFollowingRefreshed);
     on<FeedSuggestionsRefreshed>(_onSuggestionsRefreshed);
+    on<FeedSellersListRequested>(_onSellersListRequested);
+    on<FeedSellersListNextPageRequested>(_onSellersListNextPage);
   }
 
   Future<void> _onStarted(
@@ -185,6 +187,53 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     result.fold(
       (_) {},
       (suggestions) => emit(state.copyWith(suggestions: suggestions)),
+    );
+  }
+
+  Future<void> _onSellersListRequested(
+    FeedSellersListRequested event,
+    Emitter<FeedState> emit,
+  ) async {
+    if (state.sellersStatus == SellersListStatus.loading) return;
+    emit(state.copyWith(
+      sellersStatus: SellersListStatus.loading,
+      sellersList: [],
+      sellersPage: 1,
+    ));
+    final result = await _repository.getSellersList(1);
+    result.fold(
+      (failure) => emit(state.copyWith(
+        sellersStatus: SellersListStatus.error,
+        actionError: failure.message,
+      )),
+      (data) => emit(state.copyWith(
+        sellersStatus: SellersListStatus.loaded,
+        sellersList: data.sellers,
+        sellersPage: 1,
+        sellersHasMore: data.hasMore,
+      )),
+    );
+  }
+
+  Future<void> _onSellersListNextPage(
+    FeedSellersListNextPageRequested event,
+    Emitter<FeedState> emit,
+  ) async {
+    if (state.sellersStatus == SellersListStatus.loadingMore ||
+        !state.sellersHasMore) {
+      return;
+    }
+    emit(state.copyWith(sellersStatus: SellersListStatus.loadingMore));
+    final nextPage = state.sellersPage + 1;
+    final result = await _repository.getSellersList(nextPage);
+    result.fold(
+      (_) => emit(state.copyWith(sellersStatus: SellersListStatus.loaded)),
+      (data) => emit(state.copyWith(
+        sellersStatus: SellersListStatus.loaded,
+        sellersList: [...state.sellersList, ...data.sellers],
+        sellersPage: nextPage,
+        sellersHasMore: data.hasMore,
+      )),
     );
   }
 }

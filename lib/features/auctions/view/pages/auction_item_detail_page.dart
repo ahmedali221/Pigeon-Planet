@@ -14,6 +14,7 @@ import '../widgets/auction_float_btn.dart';
 import '../widgets/auction_media_section.dart';
 import '../widgets/auction_pedigree_button.dart';
 import '../widgets/auction_reviews_section.dart';
+import '../widgets/auction_chat_section.dart';
 import '../widgets/auction_verification_row.dart';
 
 class AuctionItemDetailPage extends StatefulWidget {
@@ -199,6 +200,19 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     );
   }
 
+  void _openChat(BuildContext context, AuctionModel auction) {
+    final bloc = context.read<AuctionsBloc>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => BlocProvider.value(
+        value: bloc,
+        child: AuctionChatSection(auction: auction),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final d = _buildData();
@@ -231,6 +245,28 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
               fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          BlocBuilder<AuctionsBloc, AuctionsState>(
+            buildWhen: (p, c) =>
+                p.selectedAuction?.chatEnabled !=
+                c.selectedAuction?.chatEnabled,
+            builder: (context, state) {
+              final chatEnabled =
+                  state.selectedAuction?.chatEnabled ??
+                      widget.auction.chatEnabled;
+              if (!chatEnabled && !widget.auction.isOwner) {
+                return const SizedBox.shrink();
+              }
+              return IconButton(
+                icon: const Icon(Icons.chat_bubble_outline_rounded,
+                    color: Colors.white),
+                tooltip: 'شات المزاد',
+                onPressed: () => _openChat(
+                    context, state.selectedAuction ?? widget.auction),
+              );
+            },
+          ),
+        ],
       ),
       body: BlocConsumer<AuctionsBloc, AuctionsState>(
         listenWhen: (p, c) =>
@@ -335,6 +371,15 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                       )
                     else ...[
                       AuctionBidsSection(bids: state.itemBids),
+                      if (widget.item.hasWinner) ...[
+                        const SizedBox(height: 8),
+                        _WinnerBar(
+                          winnerUsername: widget.item.winnerUsername ?? '',
+                          birdName: widget.item.bird.name.isNotEmpty
+                              ? widget.item.bird.name
+                              : widget.auction.title,
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       AuctionReviewsSection(reviews: state.itemReviews),
                     ],
@@ -552,6 +597,80 @@ class _StatusBadge extends StatelessWidget {
       child: Text(label,
           style: TextStyle(
               fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+    );
+  }
+}
+
+// ── Winner bar ────────────────────────────────────────────────────────────────
+class _WinnerBar extends StatelessWidget {
+  final String winnerUsername;
+  final String birdName;
+  const _WinnerBar({required this.winnerUsername, required this.birdName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
+          begin: AlignmentDirectional.centerEnd,
+          end: AlignmentDirectional.centerStart,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1565C0).withValues(alpha: 0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.emoji_events_rounded,
+                color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        winnerUsername,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text('🎉', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+                Text(
+                  'فاز في مزاد $birdName',
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

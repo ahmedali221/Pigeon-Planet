@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/error/failures.dart';
 import '../model/asset_rating_model.dart';
+import '../model/auction_comment_model.dart';
 import '../model/auction_create_payload.dart';
 import '../model/auction_model.dart';
 import '../model/auctions_repository.dart';
@@ -32,6 +33,9 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     on<AuctionUpdateRequested>(_onUpdateRequested);
     on<AuctionBuyNowRequested>(_onBuyNowRequested);
     on<AuctionMyBidsLoadRequested>(_onMyBidsLoad);
+    on<AuctionChatLoadRequested>(_onChatLoadRequested);
+    on<AuctionCommentPosted>(_onCommentPosted);
+    on<AuctionChatToggleRequested>(_onChatToggleRequested);
   }
 
   Future<void> _onStarted(
@@ -235,6 +239,7 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
       title: event.title,
       description: event.description,
       tags: event.tags,
+      chatEnabled: event.chatEnabled,
     );
     result.fold(
       (f) => emit(state.copyWith(isUpdating: false, updateError: f.message)),
@@ -278,6 +283,55 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     result.fold(
       (f) => emit(state.copyWith(myBidsLoading: false)),
       (bids) => emit(state.copyWith(myBidsLoading: false, myBids: bids)),
+    );
+  }
+
+  Future<void> _onChatLoadRequested(
+    AuctionChatLoadRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isChatLoading: true, clearChatError: true));
+    final result = await _repository.getAuctionComments(event.auctionId);
+    result.fold(
+      (f) => emit(state.copyWith(isChatLoading: false, chatError: f.message)),
+      (comments) => emit(state.copyWith(isChatLoading: false, chatComments: comments)),
+    );
+  }
+
+  Future<void> _onCommentPosted(
+    AuctionCommentPosted event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isSendingComment: true, clearChatError: true));
+    final result = await _repository.postAuctionComment(
+      event.auctionId,
+      event.body,
+      event.isAnnouncement,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(isSendingComment: false, chatError: f.message)),
+      (comment) => emit(state.copyWith(
+        isSendingComment: false,
+        chatComments: [...state.chatComments, comment],
+      )),
+    );
+  }
+
+  Future<void> _onChatToggleRequested(
+    AuctionChatToggleRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    emit(state.copyWith(isUpdating: true, clearUpdateError: true));
+    final result = await _repository.updateAuction(
+      event.auctionId,
+      chatEnabled: event.chatEnabled,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(isUpdating: false, updateError: f.message)),
+      (auction) {
+        final updated = state.auctions.map((a) => a.id == auction.id ? auction : a).toList();
+        emit(state.copyWith(isUpdating: false, selectedAuction: auction, auctions: updated));
+      },
     );
   }
 }

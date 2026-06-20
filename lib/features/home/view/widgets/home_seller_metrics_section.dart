@@ -192,6 +192,19 @@ class HomeSellerMetricsSection extends StatelessWidget {
 
           const SizedBox(height: 10),
 
+          // ── Engagement / trust quick-stats ────────────────────────────────
+          if (s != null &&
+              (s.followersCount > 0 ||
+                  s.totalBidsReceived > 0 ||
+                  s.averageRating != null))
+            _EngagementRow(summary: s),
+
+          if (s != null &&
+              (s.followersCount > 0 ||
+                  s.totalBidsReceived > 0 ||
+                  s.averageRating != null))
+            const SizedBox(height: 10),
+
           // ── Tools tile ────────────────────────────────────────────────────
           _ToolsNavTile(
             notifCount: s?.notificationsNewCount ?? 0,
@@ -369,6 +382,104 @@ class _ListingRow extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ── Engagement / trust quick-stats row ───────────────────────────────────────
+
+class _EngagementRow extends StatelessWidget {
+  final SellerHomeSummary summary;
+
+  const _EngagementRow({required this.summary});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = summary;
+    final rating = s.averageRating;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          if (s.followersCount > 0)
+            _StatCell(
+              icon: Icons.people_rounded,
+              color: AppColors.blue,
+              value: '${s.followersCount}',
+              label: 'متابع',
+            ),
+          if (s.followersCount > 0 && s.totalBidsReceived > 0)
+            const _VertDivider(),
+          if (s.totalBidsReceived > 0)
+            _StatCell(
+              icon: Icons.gavel_rounded,
+              color: AppColors.primary,
+              value: '${s.totalBidsReceived}',
+              label: 'مزايدة',
+            ),
+          if (s.totalBidsReceived > 0 && rating != null)
+            const _VertDivider(),
+          if (rating != null)
+            _StatCell(
+              icon: Icons.star_rounded,
+              color: AppColors.orange,
+              value: rating.toStringAsFixed(1),
+              label: 'تقييم',
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatCell extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String value;
+  final String label;
+
+  const _StatCell({
+    required this.icon,
+    required this.color,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+        ),
+      ],
+    );
+  }
+}
+
+class _VertDivider extends StatelessWidget {
+  const _VertDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(width: 1, height: 40, color: AppColors.border);
   }
 }
 

@@ -6,6 +6,7 @@ import '../../../../../core/di/injection.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
+import '../widgets/auction_chat_section.dart';
 import 'auction_edit_page.dart';
 import 'auction_item_detail_page.dart';
 
@@ -25,6 +26,19 @@ class AuctionDetailPage extends StatelessWidget {
 
 class _AuctionOverviewView extends StatelessWidget {
   const _AuctionOverviewView();
+
+  void _openChat(BuildContext context, AuctionModel auction) {
+    final bloc = context.read<AuctionsBloc>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => BlocProvider.value(
+        value: bloc,
+        child: AuctionChatSection(auction: auction),
+      ),
+    );
+  }
 
   void _confirmCancel(BuildContext context, int auctionId) {
     showDialog(
@@ -76,14 +90,47 @@ class _AuctionOverviewView extends StatelessWidget {
             buildWhen: (p, c) =>
                 p.selectedAuction?.isOwner != c.selectedAuction?.isOwner ||
                 p.selectedAuction?.status != c.selectedAuction?.status ||
-                p.isCancelling != c.isCancelling,
+                p.selectedAuction?.chatEnabled != c.selectedAuction?.chatEnabled ||
+                p.isCancelling != c.isCancelling ||
+                p.isUpdating != c.isUpdating,
             builder: (context, state) {
               final auction = state.selectedAuction;
-              if (auction == null || !auction.isOwner) return const SizedBox.shrink();
+              if (auction == null) return const SizedBox.shrink();
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (auction.isActive) ...[
+                  if (auction.isOwner)
+                    IconButton(
+                      icon: state.isUpdating
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white))
+                          : Icon(
+                              auction.chatEnabled
+                                  ? Icons.chat_bubble_rounded
+                                  : Icons.chat_bubble_outline_rounded,
+                              color: Colors.white,
+                            ),
+                      tooltip: auction.chatEnabled ? 'تعطيل الشات' : 'تفعيل الشات',
+                      onPressed: state.isUpdating
+                          ? null
+                          : () => context.read<AuctionsBloc>().add(
+                                AuctionChatToggleRequested(
+                                  auctionId: auction.id,
+                                  chatEnabled: !auction.chatEnabled,
+                                ),
+                              ),
+                    )
+                  else if (auction.chatEnabled)
+                    IconButton(
+                      icon: const Icon(Icons.chat_bubble_outline_rounded,
+                          color: Colors.white),
+                      tooltip: 'شات المزاد',
+                      onPressed: () => _openChat(context, auction),
+                    ),
+                  if (auction.isOwner && auction.isActive) ...[
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, color: Colors.white),
                       tooltip: 'تعديل',
@@ -457,6 +504,9 @@ class _AuctionItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bird = item.bird;
     final thumb = bird.imageUrls.isNotEmpty ? bird.imageUrls.first : null;
+    final isDone = item.isSold ||
+        item.status == 'unsold' ||
+        item.status == 'cancelled';
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -480,7 +530,9 @@ class _AuctionItemCard extends StatelessWidget {
                 offset: const Offset(0, 2))
           ],
         ),
-        child: Row(
+        child: Stack(
+          children: [
+            Row(
           children: [
             // ── thumbnail ──
             ClipRRect(
@@ -603,6 +655,52 @@ class _AuctionItemCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        if (isDone) ...[
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                  color: Colors.black.withValues(alpha: 0.06)),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                color: item.isSold
+                    ? AppColors.primary.withValues(alpha: 0.88)
+                    : AppColors.textSecondary.withValues(alpha: 0.88),
+                borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(14)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    item.isSold
+                        ? Icons.check_circle_rounded
+                        : Icons.block_rounded,
+                    color: Colors.white,
+                    size: 13,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _statusLabel,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
         ),
       ),
     );

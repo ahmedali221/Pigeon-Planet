@@ -90,6 +90,9 @@ import '../../features/promotions/model/datasources/real_promotions_remote_datas
 import '../../features/promotions/model/promotions_repository.dart';
 import '../../features/promotions/model/promotions_repository_impl.dart';
 import '../../features/promotions/viewmodel/promotions_bloc.dart';
+import '../../features/loyalty/model/datasources/loyalty_remote_datasource.dart';
+import '../../features/loyalty/model/datasources/real_loyalty_remote_datasource.dart';
+import '../../features/loyalty/viewmodel/badges_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -105,7 +108,7 @@ void setupDependencies() {
     () => RealAuthRemoteDataSource(sl(), sl()),
   );
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
-  sl.registerFactory(() => AuthBloc(repository: sl()));
+  sl.registerLazySingleton(() => AuthBloc(repository: sl()));
 
   // ── Auctions ──────────────────────────────────────────────────────────
   sl.registerLazySingleton<AuctionsRemoteDataSource>(
@@ -144,7 +147,7 @@ void setupDependencies() {
     () => RealCartRemoteDataSource(sl()),
   );
   sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(sl()));
-  sl.registerFactory(() => CartBloc(repository: sl()));
+  sl.registerLazySingleton(() => CartBloc(repository: sl()));
 
   // ── Profile ───────────────────────────────────────────────────────────────
   sl.registerLazySingleton<ProfileRemoteDataSource>(
@@ -250,6 +253,12 @@ void setupDependencies() {
     () => PromotionsRepositoryImpl(sl()),
   );
   sl.registerFactory(() => PromotionsBloc(repository: sl()));
+
+  // ── Loyalty / Badges ─────────────────────────────────────────────────────
+  sl.registerLazySingleton<LoyaltyRemoteDataSource>(
+    () => RealLoyaltyRemoteDataSource(sl()),
+  );
+  sl.registerFactory(() => BadgesBloc(datasource: sl()));
 
   // ── Home ──────────────────────────────────────────────────────────────────
   sl.registerFactory(

@@ -23,3 +23,24 @@ class ProfileDeleteRequested extends ProfileEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ProfileRoomsLoadRequested extends ProfileEvent {
+  const ProfileRoomsLoadRequested();
+  @override
+  List<Object?> get props => [];
+}
+
+class ProfileCreateRoomRequested extends ProfileEvent {
+  final String nickname;
+  final String description;
+  final String country;
+  final String currency;
+  const ProfileCreateRoomRequested({
+    required this.nickname,
+    required this.description,
+    required this.country,
+    required this.currency,
+  });
+  @override
+  List<Object?> get props => [nickname, description, country, currency];
+}

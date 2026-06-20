@@ -1,7 +1,9 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'https://ppw-backend.vercel.app/api';
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  // static const String baseUrl = 'http://127.0.0.1:8000/api';
+  // static const String baseUrl = 'https://ppw-backend.vercel.app/api';
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   static const String login = '/auth/login/';
@@ -55,6 +57,7 @@ class ApiConstants {
   static const String bids = '/auctions/bids/';
   static const String myBids = '/auctions/bids/my_bids/';
   static const String auctionEvents = '/auctions/events/';
+  static const String auctionComments = '/auctions/comments/';
 
   // ── Packages ──────────────────────────────────────────────────────────────
   static const String packages = '/packages/';
@@ -124,6 +127,7 @@ class ApiConstants {
   // ── Feed ──────────────────────────────────────────────────────────────────
   static const String feedAuctions = '/feed/auctions/';
   static const String feedMarket = '/feed/market/';
+  static const String feedSellersList = '/feed/sellers/';
   static const String peopleYouMayKnow = '/feed/people-you-may-know/';
   static String followSeller(int sellerId) => '/feed/sellers/$sellerId/follow/';
   static String unfollowSeller(int sellerId) =>

@@ -123,6 +123,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, UserModel>> switchProfileById(int profileId) async {
+    try {
+      final user = await remoteDataSource.switchProfileById(profileId);
+      return Right(user);
+    } on ApiException catch (e) {
+      return Left(_mapApiException(e));
+    } catch (e, st) {
+      dev.log('switchProfileById error', error: e, stackTrace: st, name: 'AuthRepo');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> createSellerProfile() async {
     try {
       await remoteDataSource.createSellerProfile();
@@ -131,6 +144,19 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(_mapApiException(e));
     } catch (e, st) {
       dev.log('createSellerProfile error', error: e, stackTrace: st, name: 'AuthRepo');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<int>>> fetchMySellerProfileIds() async {
+    try {
+      final ids = await remoteDataSource.fetchMySellerProfileIds();
+      return Right(ids);
+    } on ApiException catch (e) {
+      return Left(_mapApiException(e));
+    } catch (e, st) {
+      dev.log('fetchMySellerProfileIds error', error: e, stackTrace: st, name: 'AuthRepo');
       return Left(ServerFailure(e.toString()));
     }
   }

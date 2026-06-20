@@ -181,6 +181,44 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel> switchProfileById(int profileId) async {
+    final response = await _dio.post(
+      ApiConstants.switchProfile,
+      data: {'profile_id': profileId},
+    );
+    final access = response.data['access'] as String;
+    final refresh = response.data['refresh'] as String;
+    await _tokenStorage.saveTokens(access: access, refresh: refresh);
+    final payload = DioClient.decodeJwtPayload(access);
+    final userId = payload['user_id'] as int? ?? 0;
+    final profileType = response.data['profile'] as String? ?? 'Seller';
+    final avatarUrl = _avatarUrlFrom(payload);
+    return UserModel(
+      id: userId,
+      phoneNumber: '',
+      profileType: profileType,
+      accessToken: access,
+      refreshToken: refresh,
+      avatarUrl: avatarUrl,
+    );
+  }
+
+  @override
+  Future<List<int>> fetchMySellerProfileIds() async {
+    final response = await _dio.get(ApiConstants.mySellers);
+    final data = response.data;
+    final List list;
+    if (data is Map && data.containsKey('results')) {
+      list = data['results'] as List;
+    } else if (data is List) {
+      list = data;
+    } else {
+      return [];
+    }
+    return list.map((e) => (e as Map)['id'] as int).toList();
+  }
+
+  @override
   Future<void> createSellerProfile() async {
     var meta = await _tokenStorage.getCustomerMeta();
 

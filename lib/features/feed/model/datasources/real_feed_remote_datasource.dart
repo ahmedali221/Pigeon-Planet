@@ -7,6 +7,8 @@ import '../seller_block_model.dart';
 import '../seller_follow_model.dart';
 import 'feed_remote_datasource.dart';
 
+export 'feed_remote_datasource.dart' show SellerListResult;
+
 class RealFeedRemoteDataSource implements FeedRemoteDataSource {
   final DioClient _dio;
 
@@ -110,6 +112,29 @@ class RealFeedRemoteDataSource implements FeedRemoteDataSource {
       rethrow;
     } catch (e) {
       throw ApiException('فشل في إلغاء الحظر');
+    }
+  }
+
+  @override
+  Future<SellerListResult> getSellersList(int page) async {
+    try {
+      final response = await _dio.get(
+        ApiConstants.feedSellersList,
+        queryParameters: {'page': page, 'page_size': 20},
+      );
+      final data = response.data as Map<String, dynamic>;
+      final list = (data['results'] as List<dynamic>? ?? []);
+      return SellerListResult(
+        sellers: list
+            .map((e) => SellerModel.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        count: data['count'] as int? ?? 0,
+        hasMore: data['has_more'] as bool? ?? false,
+      );
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException('فشل تحميل قائمة المربّين');
     }
   }
 

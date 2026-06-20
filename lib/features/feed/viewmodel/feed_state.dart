@@ -7,6 +7,8 @@ import '../model/seller_follow_model.dart';
 
 enum FeedStatus { initial, loading, loaded, error }
 
+enum SellersListStatus { initial, loading, loaded, loadingMore, error }
+
 class FeedState extends Equatable {
   final FeedStatus status;
   final List<SellerFollowModel> following;
@@ -20,6 +22,11 @@ class FeedState extends Equatable {
   final Set<int> blockedProfileIds;
   final String? errorMessage;
   final String? actionError;
+  // Sellers list (غرف tab)
+  final List<SellerModel> sellersList;
+  final int sellersPage;
+  final bool sellersHasMore;
+  final SellersListStatus sellersStatus;
 
   const FeedState({
     this.status = FeedStatus.initial,
@@ -34,6 +41,10 @@ class FeedState extends Equatable {
     this.blockedProfileIds = const {},
     this.errorMessage,
     this.actionError,
+    this.sellersList = const [],
+    this.sellersPage = 1,
+    this.sellersHasMore = false,
+    this.sellersStatus = SellersListStatus.initial,
   });
 
   FeedState copyWith({
@@ -51,6 +62,10 @@ class FeedState extends Equatable {
     String? actionError,
     bool clearAuctionCursor = false,
     bool clearActionError = false,
+    List<SellerModel>? sellersList,
+    int? sellersPage,
+    bool? sellersHasMore,
+    SellersListStatus? sellersStatus,
   }) =>
       FeedState(
         status: status ?? this.status,
@@ -65,6 +80,10 @@ class FeedState extends Equatable {
         blockedProfileIds: blockedProfileIds ?? this.blockedProfileIds,
         errorMessage: errorMessage ?? this.errorMessage,
         actionError: clearActionError ? null : (actionError ?? this.actionError),
+        sellersList: sellersList ?? this.sellersList,
+        sellersPage: sellersPage ?? this.sellersPage,
+        sellersHasMore: sellersHasMore ?? this.sellersHasMore,
+        sellersStatus: sellersStatus ?? this.sellersStatus,
       );
 
   bool isFollowing(int sellerId) => followedSellerIds.contains(sellerId);
@@ -84,5 +103,9 @@ class FeedState extends Equatable {
         blockedProfileIds,
         errorMessage,
         actionError,
+        sellersList,
+        sellersPage,
+        sellersHasMore,
+        sellersStatus,
       ];
 }

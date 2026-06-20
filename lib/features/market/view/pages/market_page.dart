@@ -234,14 +234,6 @@ class _MarketHeader extends StatelessWidget {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
         ],
       ),
     );

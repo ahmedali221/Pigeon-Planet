@@ -87,15 +87,48 @@ class AuctionUpdateRequested extends AuctionsEvent {
   final String? title;
   final String? description;
   final String? tags;
+  final bool? chatEnabled;
   const AuctionUpdateRequested({
     required this.auctionId,
     this.title,
     this.description,
     this.tags,
+    this.chatEnabled,
   });
 
   @override
-  List<Object?> get props => [auctionId, title, description, tags];
+  List<Object?> get props => [auctionId, title, description, tags, chatEnabled];
+}
+
+class AuctionChatLoadRequested extends AuctionsEvent {
+  final int auctionId;
+  const AuctionChatLoadRequested(this.auctionId);
+
+  @override
+  List<Object?> get props => [auctionId];
+}
+
+class AuctionCommentPosted extends AuctionsEvent {
+  final int auctionId;
+  final String body;
+  final bool isAnnouncement;
+  const AuctionCommentPosted({
+    required this.auctionId,
+    required this.body,
+    this.isAnnouncement = false,
+  });
+
+  @override
+  List<Object?> get props => [auctionId, body, isAnnouncement];
+}
+
+class AuctionChatToggleRequested extends AuctionsEvent {
+  final int auctionId;
+  final bool chatEnabled;
+  const AuctionChatToggleRequested({required this.auctionId, required this.chatEnabled});
+
+  @override
+  List<Object?> get props => [auctionId, chatEnabled];
 }
 
 class AuctionBuyNowRequested extends AuctionsEvent {

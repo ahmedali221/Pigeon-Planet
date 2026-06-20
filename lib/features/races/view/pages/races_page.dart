@@ -58,6 +58,7 @@ class _RacesViewState extends State<_RacesView>
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         title: const Text(
           'النتائج والسباقات',
           style: TextStyle(fontWeight: FontWeight.bold),

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../core/error/failures.dart';
 import 'asset_rating_model.dart';
+import 'auction_comment_model.dart';
 import 'auction_model.dart';
 import 'auction_create_payload.dart';
 import 'bid_model.dart';
@@ -16,7 +17,7 @@ abstract class AuctionsRepository {
   Future<Either<Failure, List<BidModel>>> getBidsForItem(int itemId);
   Future<Either<Failure, AuctionModel>> createAuction(AuctionCreatePayload payload);
   Future<Either<Failure, void>> cancelAuction(int id);
-  Future<Either<Failure, AuctionModel>> updateAuction(int id, {String? title, String? description, String? tags});
+  Future<Either<Failure, AuctionModel>> updateAuction(int id, {String? title, String? description, String? tags, bool? chatEnabled});
   Future<Either<Failure, void>> buyNow(int itemId);
   Future<Either<Failure, List<BidModel>>> getMyBids();
   Future<Either<Failure, List<BirdSummaryModel>>> getSellerBirds({
@@ -24,4 +25,6 @@ abstract class AuctionsRepository {
     bool availableForAuction = false,
   });
   Future<Either<Failure, List<AssetRatingModel>>> getAssetRatings(int assetId);
+  Future<Either<Failure, List<AuctionCommentModel>>> getAuctionComments(int auctionId);
+  Future<Either<Failure, AuctionCommentModel>> postAuctionComment(int auctionId, String body, bool isAnnouncement);
 }

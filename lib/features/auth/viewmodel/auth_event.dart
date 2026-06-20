@@ -97,6 +97,15 @@ class AuthBecomeSellerRequested extends AuthEvent {
   const AuthBecomeSellerRequested();
 }
 
+/// Switch to a specific seller room by its profile ID.
+class AuthSwitchProfileByIdRequested extends AuthEvent {
+  final int profileId;
+  const AuthSwitchProfileByIdRequested(this.profileId);
+
+  @override
+  List<Object?> get props => [profileId];
+}
+
 class AuthProfileSwitchFailureAcknowledged extends AuthEvent {
   const AuthProfileSwitchFailureAcknowledged();
 }

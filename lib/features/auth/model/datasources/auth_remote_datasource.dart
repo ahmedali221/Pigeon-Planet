@@ -26,7 +26,11 @@ abstract class AuthRemoteDataSource {
 
   Future<UserModel> switchProfile(String newProfile);
 
+  Future<UserModel> switchProfileById(int profileId);
+
   Future<void> createSellerProfile();
+
+  Future<List<int>> fetchMySellerProfileIds();
 
   Future<UserModel?> getStoredUser();
 
@@ -111,7 +115,22 @@ class DemoAuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel> switchProfileById(int profileId) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return UserModel(
+      id: 1,
+      phoneNumber: '+201234567890',
+      profileType: 'Seller',
+      accessToken: 'demo_access_${DateTime.now().millisecondsSinceEpoch}',
+      refreshToken: 'demo_refresh_${DateTime.now().millisecondsSinceEpoch}',
+    );
+  }
+
+  @override
   Future<void> createSellerProfile() async {}
+
+  @override
+  Future<List<int>> fetchMySellerProfileIds() async => [];
 
   @override
   Future<UserModel?> getStoredUser() async => null;

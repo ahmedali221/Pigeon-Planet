@@ -1,7 +1,9 @@
 class SellerModel {
   final int id;
+  final int userId;
   final String username;
   final String nickname;
+  final String description;
   final String country;
   final double avgRating;
   final int ratingsCount;
@@ -11,8 +13,10 @@ class SellerModel {
 
   const SellerModel({
     required this.id,
+    required this.userId,
     required this.username,
     required this.nickname,
+    this.description = '',
     required this.country,
     this.avgRating = 0.0,
     this.ratingsCount = 0,
@@ -23,8 +27,10 @@ class SellerModel {
 
   factory SellerModel.fromJson(Map<String, dynamic> json) => SellerModel(
         id: json['id'] as int,
+        userId: json['user_id'] as int? ?? 0,
         username: json['username'] as String? ?? '',
         nickname: json['nickname'] as String? ?? '',
+        description: json['description'] as String? ?? '',
         country: json['country'] as String? ?? '',
         avgRating: json['avg_rating'] != null
             ? double.tryParse(json['avg_rating'].toString()) ?? 0.0

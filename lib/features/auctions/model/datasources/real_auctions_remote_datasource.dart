@@ -1,6 +1,7 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../asset_rating_model.dart';
+import '../auction_comment_model.dart';
 import '../auction_model.dart';
 import '../auction_create_payload.dart';
 import '../bid_model.dart';
@@ -106,14 +107,44 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   }
 
   @override
-  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags}) async {
+  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags, bool? chatEnabled}) async {
     final data = <String, dynamic>{
       'title': ?title,
       'description': ?description,
       'tags': ?tags,
+      'chat_enabled': ?chatEnabled,
     };
     final response = await _dio.patch(ApiConstants.auctionDetail(id), data: data);
     return AuctionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<List<AuctionCommentModel>> getAuctionComments(int auctionId) async {
+    final response = await _dio.get(
+      ApiConstants.auctionComments,
+      queryParameters: {'auction_id': auctionId},
+    );
+    final data = response.data;
+    if (data == null) return [];
+    final items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data is List ? data : []);
+    return items
+        .map((j) => AuctionCommentModel.fromJson(j as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<AuctionCommentModel> postAuctionComment(int auctionId, String body, bool isAnnouncement) async {
+    final response = await _dio.post(
+      ApiConstants.auctionComments,
+      data: {
+        'auction_id': auctionId,
+        'body': body,
+        'is_announcement': isAnnouncement,
+      },
+    );
+    return AuctionCommentModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override

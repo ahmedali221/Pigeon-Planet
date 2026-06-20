@@ -503,40 +503,74 @@ class _ChatButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authState = context.read<AuthBloc>().state;
-    final isSeller =
-        authState is AuthSuccess && authState.user.isSeller;
+    final isSeller = authState is AuthSuccess && authState.user.isSeller;
     if (isSeller) return const SizedBox.shrink();
 
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: OutlinedButton.icon(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (_) => sl<ChatBloc>()
-                ..add(const ChatStarted(profileType: 'Customer')),
-              child: ChatRoomPage(
-                receiverProfileId: sellerId,
-                partnerNickname: sellerNickname,
+    final isFollowing = context.select<FeedBloc, bool>(
+      (bloc) => bloc.state.followedSellerIds.contains(sellerId),
+    );
+
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: isFollowing
+                ? () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => sl<ChatBloc>()
+                            ..add(const ChatStarted(profileType: 'Customer')),
+                          child: ChatRoomPage(
+                            receiverProfileId: sellerId,
+                            partnerNickname: sellerNickname,
+                          ),
+                        ),
+                      ),
+                    )
+                : () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('يجب متابعة البائع أولاً للتواصل معه'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    ),
+            icon: Icon(
+              Icons.chat_bubble_outline_rounded,
+              size: 20,
+              color: isFollowing ? AppColors.primary : AppColors.textHint,
+            ),
+            label: Text(
+              'تواصل مع البائع',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: isFollowing ? AppColors.primary : AppColors.textHint,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor:
+                  isFollowing ? AppColors.primary : AppColors.textHint,
+              side: BorderSide(
+                color: isFollowing ? AppColors.primary : AppColors.border,
+                width: 1.5,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
               ),
             ),
           ),
         ),
-        icon: const Icon(Icons.chat_bubble_outline_rounded, size: 20),
-        label: const Text(
-          'تواصل مع البائع',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+        if (!isFollowing)
+          const Padding(
+            padding: EdgeInsets.only(top: 6),
+            child: Text(
+              'تابع هذا البائع للتواصل معه',
+              style: TextStyle(fontSize: 12, color: AppColors.textHint),
+            ),
           ),
-        ),
-      ),
+      ],
     );
   }
 }

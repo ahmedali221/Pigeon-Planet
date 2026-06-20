@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/error/failures.dart';
 import 'asset_rating_model.dart';
+import 'auction_comment_model.dart';
 import 'auction_model.dart';
 import 'auction_create_payload.dart';
 import 'auctions_repository.dart';
@@ -52,8 +53,16 @@ class AuctionsRepositoryImpl implements AuctionsRepository {
       _wrap(() => _dataSource.cancelAuction(id));
 
   @override
-  Future<Either<Failure, AuctionModel>> updateAuction(int id, {String? title, String? description, String? tags}) =>
-      _wrap(() => _dataSource.updateAuction(id, title: title, description: description, tags: tags));
+  Future<Either<Failure, AuctionModel>> updateAuction(int id, {String? title, String? description, String? tags, bool? chatEnabled}) =>
+      _wrap(() => _dataSource.updateAuction(id, title: title, description: description, tags: tags, chatEnabled: chatEnabled));
+
+  @override
+  Future<Either<Failure, List<AuctionCommentModel>>> getAuctionComments(int auctionId) =>
+      _wrap(() => _dataSource.getAuctionComments(auctionId));
+
+  @override
+  Future<Either<Failure, AuctionCommentModel>> postAuctionComment(int auctionId, String body, bool isAnnouncement) =>
+      _wrap(() => _dataSource.postAuctionComment(auctionId, body, isAnnouncement));
 
   @override
   Future<Either<Failure, void>> buyNow(int itemId) =>

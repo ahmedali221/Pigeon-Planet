@@ -12,22 +12,15 @@ import '../widgets/home_coming_soon_section.dart';
 import '../widgets/home_fixed_price_birds_section.dart';
 import '../widgets/home_hero_banner.dart';
 import '../widgets/home_seller_metrics_section.dart';
-import '../widgets/home_bottom_nav_bar.dart';
 import '../widgets/home_insights_preview_section.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/points_system_modal.dart';
 import '../widgets/home_demo_cards_section.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_create_page.dart';
-import '../../../auctions/view/pages/auctions_page.dart';
 import '../../../auctions/view/pages/bird_detail_page.dart';
 import '../../../auctions/viewmodel/auctions_bloc.dart';
-import '../../../cart/view/pages/cart_page.dart';
-import '../../../cart/view/pages/orders_page.dart';
-import '../../../cart/view/pages/seller_orders_page.dart';
-import '../../../payments/view/pages/payments_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
-import '../../../market/view/pages/market_page.dart';
 import '../../../profile/view/pages/profile_page.dart';
 import '../../../profile/viewmodel/profile_bloc.dart';
 import '../../../profile/model/profile_repository.dart';
@@ -35,16 +28,13 @@ import '../../../pigeon_id/view/pages/bird_qr_scanner_page.dart';
 import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
 import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 
-import '../../../../../core/locale/locale_service.dart';
 import '../../../auth/model/user_model.dart';
 import '../../../auth/view/pages/account_type_page.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
-import '../../../notifications/view/pages/notifications_page.dart';
-import '../../../races/view/pages/races_page.dart';
+import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../../seller_products/view/pages/seller_products_page.dart';
 import '../../../subscription/view/pages/packages_page.dart';
-import '../../../rooms/view/pages/rooms_page.dart';
-import '../../../feed/viewmodel/feed_bloc.dart';
+import '../widgets/home_drawer.dart';
 
 UserModel? _homeAuthUserForUi(AuthState authState) {
   if (authState is AuthSuccess) return authState.user;
@@ -67,14 +57,8 @@ class HomePage extends StatelessWidget {
               sl<HomeBloc>()
                 ..add(HomeStarted(isSeller: isSeller)),
         ),
-        BlocProvider(create: (_) => sl<CartBloc>()..add(const CartStarted())),
-        // FeedBloc is customer-only; sellers get an idle instance (never started)
         BlocProvider(
-          create: (_) {
-            final bloc = sl<FeedBloc>();
-            if (!isSeller) bloc.add(const FeedStarted());
-            return bloc;
-          },
+          create: (_) => sl<FeedBloc>()..add(const FeedStarted()),
         ),
       ],
       child: const _HomeView(),
@@ -90,10 +74,9 @@ class _HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<_HomeView> {
-  int _navIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String? _profileDisplayName;
-  String? _loadedProfileType;
+  String? _loadedProfileKey;
 
   // ── Adapters: model → map for existing widgets ────────────────────────────
 
@@ -171,12 +154,15 @@ class _HomeViewState extends State<_HomeView> {
     return authUser?.phoneNumber.trim() ?? '';
   }
 
-  Future<void> _ensureProfileDisplayName(String profileType) async {
-    if (_loadedProfileType == profileType) return;
-    _loadedProfileType = profileType;
+  Future<void> _ensureProfileDisplayName(
+    String profileType,
+    String profileKey,
+  ) async {
+    if (_loadedProfileKey == profileKey) return;
+    _loadedProfileKey = profileKey;
 
     final result = await sl<ProfileRepository>().getProfile(profileType);
-    if (!mounted || _loadedProfileType != profileType) return;
+    if (!mounted || _loadedProfileKey != profileKey) return;
 
     result.fold(
       (_) => setState(() => _profileDisplayName = null),
@@ -197,333 +183,7 @@ class _HomeViewState extends State<_HomeView> {
     return buf.toString().split('').reversed.join();
   }
 
-  Widget _buildDrawer(
-    BuildContext context,
-    UserModel? authUser,
-    bool isSeller,
-    int unreadCount,
-  ) {
-    return Drawer(
-      child: Column(
-        children: [
-          // Header
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 52, 16, 24),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1B5E20), AppColors.primary],
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-              ),
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.person_rounded,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isSeller ? 'بائع' : 'مشتري',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if ((authUser?.phoneNumber ?? '').isNotEmpty)
-                        Text(
-                          authUser!.phoneNumber,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Items
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              children: [
-                // Notifications
-                ListTile(
-                  leading: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const Icon(
-                        Icons.notifications_outlined,
-                        color: AppColors.textPrimary,
-                        size: 24,
-                      ),
-                      if (unreadCount > 0)
-                        Positioned(
-                          top: -3,
-                          right: -3,
-                          child: Container(
-                            width: 14,
-                            height: 14,
-                            decoration: const BoxDecoration(
-                              color: AppColors.orange,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                unreadCount > 99 ? '99+' : '$unreadCount',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  title: const Text('الإشعارات'),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const NotificationsPage(),
-                      ),
-                    );
-                    if (context.mounted) {
-                      context.read<HomeBloc>().add(
-                            HomeRefreshRequested(isSeller: isSeller),
-                          );
-                    }
-                  },
-                ),
-                // My Package (sellers only)
-                if (isSeller)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.workspace_premium_rounded,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                    title: const Text('باقتي'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PackagesPage(),
-                        ),
-                      );
-                    },
-                  ),
-                // Seller: customer order items
-                if (isSeller)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.receipt_long_outlined,
-                      color: AppColors.textPrimary,
-                      size: 24,
-                    ),
-                    title: const Text('طلبات العملاء'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<CartBloc>(),
-                            child: const SellerOrdersPage(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                // Seller: payment requests
-                if (isSeller)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.payment_rounded,
-                      color: AppColors.textPrimary,
-                      size: 24,
-                    ),
-                    title: const Text('طلبات الدفع'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PaymentsPage(),
-                        ),
-                      );
-                    },
-                  ),
-                // Cart (customers only)
-                if (!isSeller)
-                  BlocBuilder<CartBloc, CartState>(
-                    builder: (context, cartState) => ListTile(
-                      leading: Badge(
-                        isLabelVisible: cartState.itemsCount > 0,
-                        label: Text('${cartState.itemsCount}'),
-                        child: const Icon(
-                          Icons.shopping_cart_outlined,
-                          color: AppColors.textPrimary,
-                          size: 24,
-                        ),
-                      ),
-                      title: const Text('سلة الشراء'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: context.read<CartBloc>(),
-                              child: const CartPage(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                // Orders history (customers only)
-                if (!isSeller)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.inventory_2_outlined,
-                      color: AppColors.textPrimary,
-                      size: 24,
-                    ),
-                    title: const Text('طلباتي'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<CartBloc>(),
-                            child: const OrdersPage(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                // Customer: payment requests
-                if (!isSeller)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.payment_rounded,
-                      color: AppColors.textPrimary,
-                      size: 24,
-                    ),
-                    title: const Text('طلبات الدفع'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PaymentsPage(),
-                        ),
-                      );
-                    },
-                  ),
-                // Language
-                ValueListenableBuilder<Locale>(
-                  valueListenable: LocaleService.notifier,
-                  builder: (_, locale, _) {
-                    final isAr = locale.languageCode == 'ar';
-                    return ListTile(
-                      leading: const Icon(
-                        Icons.language_rounded,
-                        color: AppColors.textPrimary,
-                        size: 24,
-                      ),
-                      title: const Text('اللغة'),
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Text(
-                          isAr ? 'EN' : 'ع',
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      onTap: LocaleService.toggle,
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          // Logout
-          ListTile(
-            leading: Icon(
-              Icons.logout_rounded,
-              color: Colors.red.shade400,
-              size: 24,
-            ),
-            title: Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: Colors.red.shade400),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('تسجيل الخروج'),
-                  content: const Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('إلغاء'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        context.read<AuthBloc>().add(AuthLogoutRequested());
-                      },
-                      child: Text(
-                        'تسجيل خروج',
-                        style: TextStyle(color: Colors.red.shade400),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
+
 
   void _showSellerAddSheet(BuildContext context) {
     showModalBottomSheet(
@@ -724,7 +384,10 @@ class _HomeViewState extends State<_HomeView> {
               final isSeller = authUser?.isSeller ?? false;
               final profileType = isSeller ? 'Seller' : 'Customer';
               if (authUser != null) {
-                _ensureProfileDisplayName(profileType);
+                _ensureProfileDisplayName(
+                  profileType,
+                  '$profileType:${authUser.accessToken}',
+                );
               }
               final displayName = _profileDisplayName?.trim().isNotEmpty == true
                   ? _profileDisplayName!
@@ -738,11 +401,10 @@ class _HomeViewState extends State<_HomeView> {
               return Scaffold(
                 key: _scaffoldKey,
                 backgroundColor: AppColors.pageBackground,
-                endDrawer: _buildDrawer(
-                  context,
-                  authUser,
-                  isSeller,
-                  homeState.unreadNotificationCount,
+                endDrawer: HomeDrawer(
+                  authUser: authUser,
+                  isSeller: isSeller,
+                  unreadCount: homeState.unreadNotificationCount,
                 ),
                 body: SafeArea(
                   child: Stack(
@@ -947,61 +609,6 @@ class _HomeViewState extends State<_HomeView> {
                         ),
                     ],
                   ),
-                ),
-                bottomNavigationBar: HomeBottomNavBar(
-                  currentIndex: _navIndex,
-                  onTap: (i) {
-                    if (i == 1) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AuctionsPage()),
-                      );
-                      return;
-                    }
-                    if (i == 2) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<CartBloc>(),
-                            child: const MarketPage(),
-                          ),
-                        ),
-                      );
-                      return;
-                    }
-                    if (i == 3) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RoomsPage(),
-                        ),
-                      );
-                      return;
-                    }
-                    // النتائج (4)
-                    if (i == 4) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RacesPage(),
-                        ),
-                      );
-                      return;
-                    }
-                    // الساعة (5), البرنامج (6) — coming soon
-                    if (i >= 5) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('قريباً'),
-                          duration: Duration(seconds: 1),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                      return;
-                    }
-                    setState(() => _navIndex = i);
-                  },
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: 'fab_points',

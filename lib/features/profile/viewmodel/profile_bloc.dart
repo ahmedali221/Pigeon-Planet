@@ -16,6 +16,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileStarted>(_onStarted);
     on<ProfileUpdateRequested>(_onUpdateRequested);
     on<ProfileDeleteRequested>(_onDeleteRequested);
+    on<ProfileRoomsLoadRequested>(_onRoomsLoad);
+    on<ProfileCreateRoomRequested>(_onCreateRoom);
   }
 
   Future<void> _onStarted(
@@ -51,6 +53,37 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       (f) => emit(state.copyWith(
           status: ProfileStatus.error, errorMessage: f.message)),
       (_) => emit(state.copyWith(status: ProfileStatus.deleted)),
+    );
+  }
+
+  Future<void> _onRoomsLoad(
+      ProfileRoomsLoadRequested event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(roomsStatus: RoomsStatus.loading));
+    final result = await _repository.fetchAllSellerProfiles();
+    result.fold(
+      (f) => emit(state.copyWith(roomsStatus: RoomsStatus.error)),
+      (rooms) => emit(state.copyWith(
+        roomsStatus: RoomsStatus.loaded,
+        rooms: rooms,
+      )),
+    );
+  }
+
+  Future<void> _onCreateRoom(
+      ProfileCreateRoomRequested event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(roomsStatus: RoomsStatus.creating));
+    final result = await _repository.createRoom(
+      nickname: event.nickname,
+      description: event.description,
+      country: event.country,
+      currency: event.currency,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(
+        roomsStatus: RoomsStatus.error,
+        errorMessage: f.message,
+      )),
+      (_) => emit(state.copyWith(roomsStatus: RoomsStatus.created)),
     );
   }
 }

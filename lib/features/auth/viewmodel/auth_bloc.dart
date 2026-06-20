@@ -20,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthOtpVerifyRequested>(_onOtpVerify);
     on<AuthResendOtpRequested>(_onResendOtp);
     on<AuthSwitchProfileRequested>(_onSwitchProfile);
+    on<AuthSwitchProfileByIdRequested>(_onSwitchProfileById);
     on<AuthBecomeSellerRequested>(_onBecomeSeller);
     on<AuthProfileSwitchFailureAcknowledged>(
       _onProfileSwitchFailureAcknowledged,
@@ -148,6 +149,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  Future<void> _onSwitchProfileById(
+    AuthSwitchProfileByIdRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state is AuthSwitchingProfile) return;
+
+    UserModel? previous;
+    if (state is AuthSuccess) {
+      previous = (state as AuthSuccess).user;
+    } else if (state is AuthProfileSwitchFailure) {
+      previous = (state as AuthProfileSwitchFailure).user;
+    }
+    if (previous == null) return;
+
+    emit(AuthSwitchingProfile(previous));
+    final result = await _repository.switchProfileById(event.profileId);
+    result.fold(
+      (failure) => emit(AuthProfileSwitchFailure(previous!, failure.message)),
+      (user) => emit(AuthSuccess(user)),
+    );
+  }
+
   Future<void> _onBecomeSeller(
     AuthBecomeSellerRequested event,
     Emitter<AuthState> emit,
@@ -165,13 +188,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(AuthSwitchingProfile(sessionUser));
 
-    // Step 1: create seller profile (idempotent — 400 "already exists" is swallowed)
-    final firstSwitchResult = await _repository.switchProfile('Seller');
-    if (firstSwitchResult.isRight()) {
-      firstSwitchResult.fold((_) {}, (user) => emit(AuthSuccess(user)));
+    // Fetch existing seller profiles — switch to first (earliest-created) if any.
+    final idsResult = await _repository.fetchMySellerProfileIds();
+    if (idsResult.isLeft()) {
+      final message = idsResult.fold((f) => f.message, (_) => '');
+      emit(AuthProfileSwitchFailure(sessionUser, message));
+      return;
+    }
+    final ids = idsResult.getOrElse(() => []);
+
+    if (ids.isNotEmpty) {
+      final switchResult = await _repository.switchProfileById(ids.first);
+      switchResult.fold(
+        (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
+        (user) => emit(AuthSuccess(user)),
+      );
       return;
     }
 
+    // No seller profile yet — create one then switch.
     final createResult = await _repository.createSellerProfile();
     if (createResult.isLeft()) {
       final message = createResult.fold((f) => f.message, (_) => '');
@@ -179,8 +214,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    // Step 2: switch active profile to Seller
-    final switchResult = await _repository.switchProfile('Seller');
+    final idsAfterCreate = await _repository.fetchMySellerProfileIds();
+    if (idsAfterCreate.isLeft() || idsAfterCreate.getOrElse(() => []).isEmpty) {
+      emit(AuthProfileSwitchFailure(sessionUser, 'فشل في إنشاء الملف الشخصي'));
+      return;
+    }
+
+    final switchResult = await _repository.switchProfileById(
+      idsAfterCreate.getOrElse(() => []).first,
+    );
     switchResult.fold(
       (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
       (user) => emit(AuthSuccess(user)),

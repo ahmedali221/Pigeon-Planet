@@ -30,6 +30,10 @@ class AuctionsState extends Equatable {
   final String? updateError;
   final List<BidModel> myBids;
   final bool myBidsLoading;
+  final List<AuctionCommentModel> chatComments;
+  final bool isChatLoading;
+  final bool isSendingComment;
+  final String? chatError;
 
   const AuctionsState({
     this.status = AuctionsStatus.initial,
@@ -57,6 +61,10 @@ class AuctionsState extends Equatable {
     this.updateError,
     this.myBids = const [],
     this.myBidsLoading = false,
+    this.chatComments = const [],
+    this.isChatLoading = false,
+    this.isSendingComment = false,
+    this.chatError,
   });
 
   AuctionsState copyWith({
@@ -93,6 +101,11 @@ class AuctionsState extends Equatable {
     bool clearUpdateError = false,
     List<BidModel>? myBids,
     bool? myBidsLoading,
+    List<AuctionCommentModel>? chatComments,
+    bool? isChatLoading,
+    bool? isSendingComment,
+    String? chatError,
+    bool clearChatError = false,
   }) =>
       AuctionsState(
         status: status ?? this.status,
@@ -122,6 +135,10 @@ class AuctionsState extends Equatable {
         updateError: clearUpdateError ? null : (updateError ?? this.updateError),
         myBids: myBids ?? this.myBids,
         myBidsLoading: myBidsLoading ?? this.myBidsLoading,
+        chatComments: chatComments ?? this.chatComments,
+        isChatLoading: isChatLoading ?? this.isChatLoading,
+        isSendingComment: isSendingComment ?? this.isSendingComment,
+        chatError: clearChatError ? null : (chatError ?? this.chatError),
       );
 
   @override
@@ -151,5 +168,9 @@ class AuctionsState extends Equatable {
         updateError,
         myBids,
         myBidsLoading,
+        chatComments,
+        isChatLoading,
+        isSendingComment,
+        chatError,
       ];
 }

@@ -1,0 +1,280 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
+import '../../model/profile_model.dart';
+import '../../viewmodel/profile_bloc.dart';
+import 'create_room_page.dart';
+
+class ProfileSwitcherPage extends StatelessWidget {
+  const ProfileSwitcherPage({super.key});
+
+  static Route<void> route(AuthBloc authBloc) => MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => sl<ProfileBloc>()
+            ..add(const ProfileRoomsLoadRequested()),
+          child: BlocProvider.value(
+            value: authBloc,
+            child: const ProfileSwitcherPage(),
+          ),
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.pageBackground,
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'تبديل الملف الشخصي',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: BlocListener<AuthBloc, AuthState>(
+        listenWhen: (previous, current) =>
+            previous is AuthSwitchingProfile && current is AuthSuccess,
+        listener: (context, state) {
+          context.read<ProfileBloc>().add(const ProfileRoomsLoadRequested());
+        },
+        child: BlocConsumer<ProfileBloc, ProfileState>(
+          listenWhen: (p, c) => p.roomsStatus != c.roomsStatus,
+          listener: (context, state) {
+          if (state.roomsStatus == RoomsStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تعذّر تحميل الغرف'),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+          },
+          buildWhen: (p, c) =>
+              p.roomsStatus != c.roomsStatus || p.rooms != c.rooms,
+          builder: (context, state) {
+          if (state.roomsStatus == RoomsStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final rooms = state.rooms;
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+                  itemCount: rooms.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (context, i) =>
+                      _RoomTile(room: rooms[i]),
+                ),
+              ),
+              _AddRoomButton(rooms: rooms),
+            ],
+          );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _RoomTile extends StatelessWidget {
+  final ProfileModel room;
+
+  const _RoomTile({required this.room});
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = room.isActive;
+    final isPending = !room.activated;
+
+    return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (p, c) => c is AuthSwitchingProfile || c is AuthSuccess,
+      builder: (context, authState) {
+        final isSwitching = authState is AuthSwitchingProfile;
+        return GestureDetector(
+          onTap: isActive || isSwitching
+              ? null
+              : () => context
+                  .read<AuthBloc>()
+                  .add(AuthSwitchProfileByIdRequested(room.id)),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? AppColors.primary.withValues(alpha: 0.08)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isActive ? AppColors.primary : AppColors.border,
+                width: isActive ? 2 : 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: isActive
+                      ? AppColors.primary
+                      : AppColors.primaryLight,
+                  child: Text(
+                    room.displayName.isNotEmpty
+                        ? room.displayName[0]
+                        : '؟',
+                    style: TextStyle(
+                      color: isActive ? Colors.white : AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        room.displayName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: isActive
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                      if (room.country.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          room.countryName,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textHint,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (isActive)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'الحالية',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else if (isPending)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.orange.shade300),
+                    ),
+                    child: Text(
+                      'قيد المراجعة',
+                      style: TextStyle(
+                        color: Colors.orange.shade700,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                else if (isSwitching)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                else
+                  const Icon(
+                    Icons.chevron_left_rounded,
+                    color: AppColors.textHint,
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _AddRoomButton extends StatelessWidget {
+  final List<ProfileModel> rooms;
+
+  const _AddRoomButton({required this.rooms});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () async {
+              final bloc = context.read<ProfileBloc>();
+              final active = rooms.firstWhere(
+                (r) => r.isActive,
+                orElse: () => rooms.first,
+              );
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: bloc,
+                    child: CreateRoomPage(
+                      country: active.country,
+                      currency: active.currency,
+                    ),
+                  ),
+                ),
+              );
+              if (context.mounted) {
+                bloc.add(const ProfileRoomsLoadRequested());
+              }
+            },
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('إضافة غرفة جديدة'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: const BorderSide(color: AppColors.primary),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

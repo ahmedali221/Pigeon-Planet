@@ -278,11 +278,6 @@ class _AuctionsHeader extends StatelessWidget {
           top: topPadding + 12, bottom: 14, left: 16, right: 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back_ios_rounded,
-                color: Colors.white, size: 20),
-          ),
           const Expanded(
             child: Column(
               children: [

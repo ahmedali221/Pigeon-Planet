@@ -25,11 +25,6 @@ class ConversationsPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(8, 4, 16, 14),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios_rounded,
-                          size: 20, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
                     const Expanded(
                       child: Text(
                         'المحادثات',
@@ -41,7 +36,6 @@ class ConversationsPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48),
                   ],
                 ),
               ),

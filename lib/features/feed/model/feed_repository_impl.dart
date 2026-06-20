@@ -9,6 +9,8 @@ import 'feed_repository.dart';
 import 'seller_block_model.dart';
 import 'seller_follow_model.dart';
 
+export 'datasources/feed_remote_datasource.dart' show SellerListResult;
+
 class FeedRepositoryImpl implements FeedRepository {
   final FeedRemoteDataSource _dataSource;
 
@@ -110,6 +112,17 @@ class FeedRepositoryImpl implements FeedRepository {
   }) async {
     try {
       return Right(await _dataSource.getAuctionFeed(cursor: cursor));
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, SellerListResult>> getSellersList(int page) async {
+    try {
+      return Right(await _dataSource.getSellersList(page));
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {

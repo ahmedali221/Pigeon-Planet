@@ -22,6 +22,7 @@ class AuctionModel {
   final bool isOwner;
   final String? thumbnailUrl;
   final String? tags;
+  final bool chatEnabled;
 
   const AuctionModel({
     required this.id,
@@ -45,6 +46,7 @@ class AuctionModel {
     this.isOwner = false,
     this.thumbnailUrl,
     this.tags,
+    this.chatEnabled = false,
   });
 
   double get currentPrice =>
@@ -86,6 +88,7 @@ class AuctionModel {
       isOwner: json['is_owner'] as bool? ?? false,
       thumbnailUrl: json['thumbnail_url'] as String?,
       tags: json['tags'] as String?,
+      chatEnabled: json['chat_enabled'] as bool? ?? false,
     );
   }
 }

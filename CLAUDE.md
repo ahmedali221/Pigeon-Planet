@@ -138,6 +138,27 @@ The mobile app (`pigeon_planet/`) serves **customers and sellers only**. Manager
 
 ---
 
+## Requirements Audit Workflow
+
+When the user shares PDF requirement images for a module, follow this order strictly — **before any code**:
+
+1. **Extract requirements** — read the images and list every rule, condition, and constraint verbatim.
+2. **Cross-check AGENTS.md** — read the relevant section in `../PPW/AGENTS.md` and identify related modules (e.g., auction chat touching both `chat` and `auctions` apps).
+3. **Scan Flutter code** — find the feature folder(s) in `lib/features/` and audit current implementation.
+4. **Write gap tables to `../REQUIREMENTS_AUDIT.md`** — backend gaps only:
+   - Requirements extracted from the PDF
+   - Backend gap table (requirement vs actual backend), with file + line citations
+   - Proposed implementation order
+5. **List Flutter/UI gaps in the chat** — do NOT write Flutter gaps to the MD file. Report them conversationally so the user can see what's pending.
+6. **Wait for confirmation** — do NOT write any code until the user explicitly approves.
+7. **Implement** — backend first, then Flutter UI, following the architecture rules below. Report Flutter progress in the chat as each piece is done.
+8. **Fill Post-Implementation Notes** in `../REQUIREMENTS_AUDIT.md` — backend changes only (what was built, what changed, why).
+9. **Update audit files** — `../MOBILE_BACKEND_AUDIT.md` and `../PPW/BACKEND_CHANGELOG.md`.
+
+The `../REQUIREMENTS_AUDIT.md` file tracks backend gaps and post-implementation notes only. Flutter UI work is discussed and confirmed in the chat.
+
+---
+
 ## Module Implementation Workflow
 
 For every backend module tackled in the mobile app, follow this order strictly:

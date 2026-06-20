@@ -1,4 +1,5 @@
 import '../asset_rating_model.dart';
+import '../auction_comment_model.dart';
 import '../auction_model.dart';
 import '../bid_model.dart';
 import '../auction_create_payload.dart';
@@ -14,7 +15,7 @@ abstract class AuctionsRemoteDataSource {
   Future<List<BidModel>> getBidsForItem(int itemId);
   Future<AuctionModel> createAuction(AuctionCreatePayload payload);
   Future<void> cancelAuction(int id);
-  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags});
+  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags, bool? chatEnabled});
   Future<void> buyNow(int itemId);
   Future<List<BidModel>> getMyBids();
   Future<List<BirdSummaryModel>> getSellerBirds({
@@ -22,4 +23,6 @@ abstract class AuctionsRemoteDataSource {
     bool availableForAuction = false,
   });
   Future<List<AssetRatingModel>> getAssetRatings(int assetId);
+  Future<List<AuctionCommentModel>> getAuctionComments(int auctionId);
+  Future<AuctionCommentModel> postAuctionComment(int auctionId, String body, bool isAnnouncement);
 }

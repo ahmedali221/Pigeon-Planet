@@ -172,37 +172,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required int unreadCount,
   }) {
     final activeAuctions = myAuctions.where((a) => a.isActive).length;
+    final closedAuctions = myAuctions.where((a) => a.isEnded).length;
     return SellerHomeSummary(
       nickname: '',
       balance: '0',
       currency: 'EGP',
-      subscriptionTier: null,
-      pointsBalance: pointsBalance,
       profileActivated: true,
+      pointsBalance: pointsBalance,
       activeLiveAuctions: activeAuctions,
+      auctionClosedCount: closedAuctions,
       myActiveListings: myBirds.length,
-      salesToday: 0,
       pendingOrderItems: 0,
       notifications: const [],
       notificationsNewCount: unreadCount,
-      providerNotes: [
-        const SellerProviderNote(
-          key: 'backend_summary',
-          title: 'بيانات مباشرة',
-          subtitle: 'تم تجميع الملخص من المزادات والطيور والنقاط المتاحة',
-          accent: 'primary',
-          done: true,
-        ),
-        SellerProviderNote(
-          key: 'points',
-          title: 'النقاط',
-          subtitle: pointsBalance == null
-              ? 'لا توجد بيانات نقاط بعد'
-              : '$pointsBalance نقطة متاحة',
-          accent: pointsBalance == null ? 'orange' : 'primary',
-          done: pointsBalance != null,
-        ),
-      ],
+      providerNotes: const [],
     );
   }
 

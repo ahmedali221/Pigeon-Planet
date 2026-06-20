@@ -26,7 +26,7 @@ class SellerStatsPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   _BalancePointsRow(summary: s),
                   const SizedBox(height: 20),
-                  _WeeklyPerformance(salesToday: s?.salesToday ?? 0),
+                  _WeeklyPerformance(totalSoldCount: s?.totalSoldCount ?? 0),
                   const SizedBox(height: 20),
                   _AccountHealth(summary: s),
                   if (s?.notifications.isNotEmpty == true) ...[
@@ -211,7 +211,7 @@ class _StatsAppBar extends StatelessWidget {
                           const _VertDivider(),
                           _MiniKpi(
                             icon: Icons.trending_up_rounded,
-                            value: '${s?.salesToday ?? 0}',
+                            value: '${s?.totalSoldCount ?? 0}',
                             label: 'مبيعات',
                           ),
                           const _VertDivider(),
@@ -273,12 +273,12 @@ class _KpiGrid extends StatelessWidget {
               trendUp: true,
             ),
             _KpiCard(
-              value: '${s?.salesToday ?? 0}',
-              label: 'مبيعات اليوم',
+              value: '${s?.totalSoldCount ?? 0}',
+              label: 'إجمالي المبيعات',
               icon: Icons.trending_up_rounded,
               color: const Color(0xFF00897B),
               bg: const Color(0xFFE0F2F1),
-              trend: 'منذ بداية اليوم',
+              trend: 'المزاد + المتجر',
               trendUp: true,
             ),
             _KpiCard(
@@ -509,13 +509,13 @@ class _FinanceCard extends StatelessWidget {
 // Weekly performance bar chart
 // ─────────────────────────────────────────────────────────────────────────────
 class _WeeklyPerformance extends StatelessWidget {
-  final int salesToday;
-  const _WeeklyPerformance({required this.salesToday});
+  final int totalSoldCount;
+  const _WeeklyPerformance({required this.totalSoldCount});
 
   static const _days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
 
   List<int> _bars() {
-    final today = salesToday.clamp(0, 20);
+    final today = totalSoldCount.clamp(0, 20);
     return [3, 6, 2, 8, 4, 5, today == 0 ? 7 : today];
   }
 

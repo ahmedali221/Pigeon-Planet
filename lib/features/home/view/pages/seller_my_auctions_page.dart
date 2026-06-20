@@ -6,6 +6,7 @@ import '../../../../../core/di/injection.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_create_page.dart';
 import '../../../auctions/view/pages/auction_detail_page.dart';
+import '../../../auctions/view/pages/auction_edit_page.dart';
 import '../../../auctions/viewmodel/auctions_bloc.dart';
 
 class SellerMyAuctionsPage extends StatelessWidget {
@@ -28,7 +29,22 @@ class _SellerMyAuctionsView extends StatefulWidget {
   State<_SellerMyAuctionsView> createState() => _SellerMyAuctionsViewState();
 }
 
-class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView> {
+class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
   void _openCreateAuction() async {
     await Navigator.push(
       context,
@@ -46,73 +62,149 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView> {
     }
   }
 
+  void _refresh() =>
+      context.read<AuctionsBloc>().add(const AuctionsFilterChanged('my_auctions'));
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.pageBackground,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openCreateAuction,
-        backgroundColor: AppColors.orange,
-        icon: const Icon(Icons.gavel_rounded, color: Colors.white),
-        label: const Text(
-          'مزاد جديد',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: BlocBuilder<AuctionsBloc, AuctionsState>(
+    return BlocListener<AuctionsBloc, AuctionsState>(
+      listenWhen: (p, c) =>
+          (p.isCancelling && !c.isCancelling) ||
+          (c.cancelError != null && c.cancelError != p.cancelError),
+      listener: (context, state) {
+        if (!state.isCancelling && state.cancelError == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم إلغاء المزاد'),
+              backgroundColor: AppColors.primary,
+            ),
+          );
+          _refresh();
+        } else if (state.cancelError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.cancelError!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<AuctionsBloc, AuctionsState>(
         builder: (context, state) {
-          final count = state.auctions.length;
+          final all = state.auctions;
+          final active = all.where((a) => a.isActive).toList();
+          final ended = all.where((a) => a.isEnded).toList();
+          final totalCount = all.length;
 
-          return NestedScrollView(
-            headerSliverBuilder: (context, _) => [
-              SliverAppBar(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.primary,
-                surfaceTintColor: Colors.transparent,
-                elevation: 0,
-                pinned: true,
-                title: Text(
-                  count > 0 ? 'مزاداتي ($count)' : 'مزاداتي',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: AppColors.primary,
-                  ),
-                ),
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.refresh_rounded, size: 20),
-                    onPressed: () => context
-                        .read<AuctionsBloc>()
-                        .add(const AuctionsFilterChanged('my_auctions')),
-                  ),
-                ],
+          return Scaffold(
+            backgroundColor: AppColors.pageBackground,
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: _openCreateAuction,
+              backgroundColor: AppColors.orange,
+              icon: const Icon(Icons.gavel_rounded, color: Colors.white),
+              label: const Text(
+                'مزاد جديد',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
-            ],
-            body: state.status == AuctionsStatus.loading
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  )
-                : state.auctions.isEmpty
-                    ? _EmptyState(onAdd: _openCreateAuction)
-                    : RefreshIndicator(
-                        color: AppColors.primary,
-                        onRefresh: () async => context
-                            .read<AuctionsBloc>()
-                            .add(const AuctionsFilterChanged('my_auctions')),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                          itemCount: state.auctions.length,
-                          itemBuilder: (context, i) =>
-                              _AuctionListTile(auction: state.auctions[i]),
+            ),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, _) => [
+                SliverAppBar(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.primary,
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
+                  pinned: true,
+                  title: Text(
+                    totalCount > 0 ? 'مزاداتي ($totalCount)' : 'مزاداتي',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.refresh_rounded, size: 20),
+                      onPressed: _refresh,
+                    ),
+                  ],
+                  bottom: TabBar(
+                    controller: _tabs,
+                    labelColor: AppColors.primary,
+                    unselectedLabelColor: AppColors.textSecondary,
+                    indicatorColor: AppColors.primary,
+                    indicatorWeight: 2.5,
+                    tabs: [
+                      Tab(text: 'نشطة (${active.length})'),
+                      Tab(text: 'منتهية (${ended.length})'),
+                    ],
+                  ),
+                ),
+              ],
+              body: state.status == AuctionsStatus.loading
+                  ? const Center(
+                      child:
+                          CircularProgressIndicator(color: AppColors.primary),
+                    )
+                  : TabBarView(
+                      controller: _tabs,
+                      children: [
+                        _AuctionList(
+                          auctions: active,
+                          isEnded: false,
+                          onRefresh: _refresh,
+                          onAdd: _openCreateAuction,
                         ),
-                      ),
+                        _AuctionList(
+                          auctions: ended,
+                          isEnded: true,
+                          onRefresh: _refresh,
+                          onAdd: _openCreateAuction,
+                        ),
+                      ],
+                    ),
+            ),
           );
         },
+      ),
+    );
+  }
+}
+
+// ── Tab list ──────────────────────────────────────────────────────────────────
+
+class _AuctionList extends StatelessWidget {
+  final List<AuctionModel> auctions;
+  final bool isEnded;
+  final VoidCallback onRefresh;
+  final VoidCallback onAdd;
+
+  const _AuctionList({
+    required this.auctions,
+    required this.isEnded,
+    required this.onRefresh,
+    required this.onAdd,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (auctions.isEmpty) {
+      return _EmptyState(isEnded: isEnded, onAdd: onAdd);
+    }
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async => onRefresh(),
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+        itemCount: auctions.length,
+        itemBuilder: (context, i) =>
+            _AuctionListTile(auction: auctions[i]),
       ),
     );
   }
@@ -121,8 +213,10 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView> {
 // ── Empty state ───────────────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
+  final bool isEnded;
   final VoidCallback onAdd;
-  const _EmptyState({required this.onAdd});
+
+  const _EmptyState({required this.isEnded, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -135,29 +229,32 @@ class _EmptyState extends StatelessWidget {
             Container(
               width: 110,
               height: 110,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.gavel_rounded,
+              child: Icon(
+                isEnded ? Icons.history_rounded : Icons.gavel_rounded,
                 size: 52,
                 color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'لا توجد مزادات بعد',
-              style: TextStyle(
+            Text(
+              isEnded ? 'لا توجد مزادات منتهية' : 'لا توجد مزادات نشطة',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'أنشئ مزادك الأول لعرض طيورك',
-              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            Text(
+              isEnded
+                  ? 'ستظهر هنا المزادات بعد انتهائها'
+                  : 'أنشئ مزادك الأول لعرض طيورك',
+              style: const TextStyle(
+                  fontSize: 13, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -171,15 +268,45 @@ class _EmptyState extends StatelessWidget {
 
 class _AuctionListTile extends StatelessWidget {
   final AuctionModel auction;
+
   const _AuctionListTile({required this.auction});
+
+  void _confirmCancel(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('إلغاء المزاد'),
+        content: const Text(
+            'هل أنت متأكد من إلغاء هذا المزاد؟ لا يمكن التراجع عن هذا الإجراء.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('تراجع'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context
+                  .read<AuctionsBloc>()
+                  .add(AuctionCancelRequested(auction.id));
+            },
+            child: Text(
+              'إلغاء المزاد',
+              style: TextStyle(color: Colors.red.shade600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final a = auction;
-    final ring = a.items.isNotEmpty ? a.items.first.bird.ringNumber : a.title;
-    final bids = a.items.isNotEmpty
-        ? a.items.first.bids.length
-        : a.itemCount;
+    final ring =
+        a.items.isNotEmpty ? a.items.first.bird.ringNumber : a.title;
+    final bids =
+        a.items.isNotEmpty ? a.items.first.bids.length : a.itemCount;
 
     final statusColor = a.isActive
         ? AppColors.primary
@@ -192,31 +319,31 @@ class _AuctionListTile extends StatelessWidget {
             ? 'منتهي'
             : 'قادم';
 
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => AuctionDetailPage(auctionId: a.id),
-        ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+      child: Row(
+        children: [
+          // thumbnail
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AuctionDetailPage(auctionId: a.id),
+              ),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // thumbnail
-            ClipRRect(
+            child: ClipRRect(
               borderRadius:
                   const BorderRadius.horizontal(right: Radius.circular(15)),
               child: SizedBox(
@@ -226,7 +353,7 @@ class _AuctionListTile extends StatelessWidget {
                     ? Image.network(
                         a.thumbnailUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: AppColors.primaryLight,
                           child: const Icon(Icons.gavel_rounded,
                               color: AppColors.primary, size: 32),
@@ -239,8 +366,17 @@ class _AuctionListTile extends StatelessWidget {
                       ),
               ),
             ),
-            const SizedBox(width: 14),
-            Expanded(
+          ),
+          const SizedBox(width: 14),
+          // info
+          Expanded(
+            child: GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AuctionDetailPage(auctionId: a.id),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 child: Column(
@@ -305,7 +441,8 @@ class _AuctionListTile extends StatelessWidget {
                         Text(
                           '$bids مزايدة',
                           style: const TextStyle(
-                              fontSize: 11, color: AppColors.textSecondary),
+                              fontSize: 11,
+                              color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -313,16 +450,74 @@ class _AuctionListTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(end: 14),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: AppColors.primary,
+          ),
+          // actions menu
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded,
+                color: AppColors.textSecondary, size: 20),
+            onSelected: (value) {
+              if (value == 'edit') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<AuctionsBloc>(),
+                      child: AuctionEditPage(auction: a),
+                    ),
+                  ),
+                );
+              } else if (value == 'cancel') {
+                _confirmCancel(context);
+              } else if (value == 'detail') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AuctionDetailPage(auctionId: a.id),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (_) => [
+              if (a.isActive) ...[
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit_outlined,
+                          size: 18, color: AppColors.primary),
+                      SizedBox(width: 8),
+                      Text('تعديل'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'cancel',
+                  child: Row(
+                    children: [
+                      Icon(Icons.cancel_outlined,
+                          size: 18, color: Colors.red.shade400),
+                      const SizedBox(width: 8),
+                      Text('إلغاء',
+                          style: TextStyle(color: Colors.red.shade400)),
+                    ],
+                  ),
+                ),
+              ],
+              const PopupMenuItem(
+                value: 'detail',
+                child: Row(
+                  children: [
+                    Icon(Icons.visibility_outlined,
+                        size: 18, color: AppColors.textSecondary),
+                    SizedBox(width: 8),
+                    Text('عرض التفاصيل'),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(width: 4),
+        ],
       ),
     );
   }

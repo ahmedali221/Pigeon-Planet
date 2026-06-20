@@ -15,6 +15,24 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _wrap(() => _dataSource.getProfile(profileType));
 
   @override
+  Future<Either<Failure, List<ProfileModel>>> fetchAllSellerProfiles() =>
+      _wrap(() => _dataSource.fetchAllSellerProfiles());
+
+  @override
+  Future<Either<Failure, void>> createRoom({
+    required String nickname,
+    required String description,
+    required String country,
+    required String currency,
+  }) =>
+      _wrapVoid(() => _dataSource.createRoom(
+            nickname: nickname,
+            description: description,
+            country: country,
+            currency: currency,
+          ));
+
+  @override
   Future<Either<Failure, ProfileModel>> updateProfile(ProfileModel profile) =>
       _wrap(() => _dataSource.updateProfile(profile));
 

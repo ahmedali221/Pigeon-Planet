@@ -12,7 +12,14 @@ class RealSellerHomeRemoteDataSource implements SellerHomeRemoteDataSource {
 
   @override
   Future<SellerHomeSummary?> fetchHomeSummary() async {
-    return null;
+    try {
+      final response = await _dio.get(ApiConstants.insightsSellerHome);
+      final data = response.data;
+      if (data == null) return null;
+      return SellerHomeSummary.fromJson(data as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
