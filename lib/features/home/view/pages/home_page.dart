@@ -415,6 +415,7 @@ class _HomeViewState extends State<_HomeView> {
                           children: [
                             HomeTopBar(
                               avatarUrl: authUser?.avatarUrl,
+                              unreadCount: homeState.unreadNotificationCount,
                               onQrScanPressed: () =>
                                   BirdQrScannerPage.push(context),
                               onMenuPressed: () =>

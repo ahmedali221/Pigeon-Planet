@@ -6,6 +6,7 @@ class HomeTopBar extends StatelessWidget {
   final VoidCallback? onAvatarTap;
   final VoidCallback? onQrScanPressed;
   final String? avatarUrl;
+  final int unreadCount;
 
   const HomeTopBar({
     super.key,
@@ -13,6 +14,7 @@ class HomeTopBar extends StatelessWidget {
     this.onAvatarTap,
     this.onQrScanPressed,
     this.avatarUrl,
+    this.unreadCount = 0,
   });
 
   @override
@@ -101,17 +103,57 @@ class HomeTopBar extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           // Hamburger — opens drawer (leftmost in RTL)
-          IconButton(
-            icon: const Icon(
-              Icons.menu_rounded,
-              color: Colors.white,
-              size: 26,
-            ),
-            onPressed: onMenuPressed,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.menu_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
+                onPressed: onMenuPressed,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              if (unreadCount > 0)
+                Positioned(
+                  top: -2,
+                  right: -4,
+                  child: _NotificationBadge(count: unreadCount),
+                ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NotificationBadge extends StatelessWidget {
+  final int count;
+
+  const _NotificationBadge({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    final label = count > 99 ? '99+' : '$count';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      decoration: const BoxDecoration(
+        color: AppColors.orange,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          height: 1,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
