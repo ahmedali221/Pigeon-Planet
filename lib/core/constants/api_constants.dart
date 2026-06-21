@@ -28,10 +28,10 @@ class ApiConstants {
   static const String loyaltyMyBadges = '/loyalty/badges/my/';
 
   // ── Notifications ─────────────────────────────────────────────────────────
-  static const String notifications = '/core/notifications/';
-  static const String notificationsUnreadCount =
-      '/core/notifications/unread-count/';
-  static String notificationRead(int id) => '/core/notifications/$id/read/';
+  static const String notifications = '/notifications/';
+  static const String notificationsUnreadCount = '/notifications/unread-count/';
+  static const String notificationsMarkAllRead = '/notifications/mark-all-read/';
+  static String notificationMarkRead(int id) => '/notifications/$id/mark-read/';
 
   // ── Assets ────────────────────────────────────────────────────────────────
   static const String birds = '/assets/birds/';

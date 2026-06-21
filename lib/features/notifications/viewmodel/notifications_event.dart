@@ -20,3 +20,7 @@ class NotificationMarkReadRequested extends NotificationsEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class NotificationMarkAllReadRequested extends NotificationsEvent {
+  const NotificationMarkAllReadRequested();
+}

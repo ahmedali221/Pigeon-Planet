@@ -50,4 +50,15 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       return const Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, int>> markAllRead() async {
+    try {
+      return Right(await _dataSource.markAllRead());
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
 }

@@ -16,6 +16,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     on<NotificationsStarted>(_onStarted);
     on<NotificationsRefreshRequested>(_onRefresh);
     on<NotificationMarkReadRequested>(_onMarkRead);
+    on<NotificationMarkAllReadRequested>(_onMarkAllRead);
   }
 
   Future<void> _onStarted(
@@ -35,11 +36,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   Future<void> _load(Emitter<NotificationsState> emit) async {
-    final listFut = _repository.getNotifications();
-    final countFut = _repository.getUnreadCount();
-
-    final listResult = await listFut;
-    final countResult = await countFut;
+    final listResult = await _repository.getNotifications();
+    final countResult = await _repository.getUnreadCount();
 
     final notifications = listResult.fold((_) => <NotificationModel>[], (l) => l);
     final unreadCount = countResult.fold((_) => 0, (c) => c);
@@ -63,8 +61,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     NotificationMarkReadRequested event,
     Emitter<NotificationsState> emit,
   ) async {
-    // Optimistic update — mark locally first
-    final updated = state.notifications
+    final before = state.notifications;
+    final updated = before
         .map((n) => n.id == event.id ? n.markRead() : n)
         .toList();
     emit(NotificationsState(
@@ -76,28 +74,33 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
 
     final result = await _repository.markRead(event.id);
     result.fold(
-      (f) {
-        // Roll back optimistic update on failure
-        emit(state.copyWith(
-          notifications: state.notifications
-              .map((n) => n.id == event.id
-                  ? NotificationModel(
-                      id: n.id,
-                      kind: n.kind,
-                      title: n.title,
-                      body: n.body,
-                      isRead: false,
-                      profileType: n.profileType,
-                      created: n.created,
-                    )
-                  : n)
-              .toList(),
-          isActing: false,
-          actionError: f.message,
-          unreadCount: state.unreadCount + 1,
-        ));
-      },
-      (_) => emit(state.copyWith(isActing: false)),
+      (f) => emit(state.copyWith(
+        notifications: before,
+        isActing: false,
+        actionError: f.message,
+        unreadCount: state.unreadCount + 1,
+      )),
+      (_) => emit(state.copyWith(isActing: false, actionError: null)),
+    );
+  }
+
+  Future<void> _onMarkAllRead(
+    NotificationMarkAllReadRequested event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    final before = state.notifications;
+    final allRead = before.map((n) => n.markRead()).toList();
+    emit(state.copyWith(notifications: allRead, unreadCount: 0, isActing: true));
+
+    final result = await _repository.markAllRead();
+    result.fold(
+      (f) => emit(state.copyWith(
+        notifications: before,
+        unreadCount: before.where((n) => !n.isRead).length,
+        isActing: false,
+        actionError: f.message,
+      )),
+      (_) => emit(state.copyWith(isActing: false, actionError: null)),
     );
   }
 }

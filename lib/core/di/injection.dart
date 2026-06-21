@@ -93,6 +93,9 @@ import '../../features/promotions/viewmodel/promotions_bloc.dart';
 import '../../features/loyalty/model/datasources/loyalty_remote_datasource.dart';
 import '../../features/loyalty/model/datasources/real_loyalty_remote_datasource.dart';
 import '../../features/loyalty/viewmodel/badges_bloc.dart';
+import '../../features/lucky_wheel/model/datasources/lucky_wheel_datasource.dart';
+import '../../features/lucky_wheel/model/datasources/mock_lucky_wheel_datasource.dart';
+import '../../features/lucky_wheel/viewmodel/lucky_wheel_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -268,4 +271,10 @@ void setupDependencies() {
       pointsRemote: sl(),
     ),
   );
+
+  // ── Lucky Wheel ───────────────────────────────────────────────────────────
+  sl.registerLazySingleton<LuckyWheelDataSource>(
+    () => MockLuckyWheelDataSource(),
+  );
+  sl.registerFactory(() => LuckyWheelBloc(datasource: sl()));
 }

@@ -1,42 +1,68 @@
-enum NotificationType { auctionWon, bidAccepted, newBid, newBadge, payment, order }
+enum NotificationType {
+  chatMessageReceived,
+  paymentRequestCreated,
+  paymentRequestApproved,
+  paymentRequestRejected,
+  orderItemApproved,
+  orderItemRejected,
+  auctionWon,
+  auctionOutbid,
+  complaintCreated,
+  complaintStatusUpdated,
+  cashbackEarned,
+  badgeAwarded,
+  packageExpiringSoon,
+  unknown,
+}
 
 class NotificationModel {
   final int id;
-  final String kind;
+  final String notificationType;
   final String title;
   final String body;
   final bool isRead;
-  final String profileType; // 'Seller' | 'Customer' | 'All' | ''
   final DateTime created;
 
   const NotificationModel({
     required this.id,
-    required this.kind,
+    required this.notificationType,
     required this.title,
     required this.body,
     required this.isRead,
-    required this.profileType,
     required this.created,
   });
 
-  // ── Computed UI properties ────────────────────────────────────────────────
-
   NotificationType get type {
-    final k = kind.toLowerCase();
-    if (k.contains('won') || k.contains('sold') || k.contains('auction')) {
-      return NotificationType.auctionWon;
+    switch (notificationType) {
+      case 'chat_message_received':
+        return NotificationType.chatMessageReceived;
+      case 'payment_request_created':
+        return NotificationType.paymentRequestCreated;
+      case 'payment_request_approved':
+        return NotificationType.paymentRequestApproved;
+      case 'payment_request_rejected':
+        return NotificationType.paymentRequestRejected;
+      case 'order_item_approved':
+        return NotificationType.orderItemApproved;
+      case 'order_item_rejected':
+        return NotificationType.orderItemRejected;
+      case 'auction_won':
+        return NotificationType.auctionWon;
+      case 'auction_outbid':
+        return NotificationType.auctionOutbid;
+      case 'complaint_created':
+        return NotificationType.complaintCreated;
+      case 'complaint_status_updated':
+        return NotificationType.complaintStatusUpdated;
+      case 'cashback_earned':
+        return NotificationType.cashbackEarned;
+      case 'badge_awarded':
+        return NotificationType.badgeAwarded;
+      case 'package_expiring_soon':
+        return NotificationType.packageExpiringSoon;
+      default:
+        return NotificationType.unknown;
     }
-    if (k.contains('payment')) return NotificationType.payment;
-    if (k.contains('order')) return NotificationType.order;
-    if (k.contains('accept') || k.contains('bid')) return NotificationType.bidAccepted;
-    if (k.contains('badge') || k.contains('وسام')) return NotificationType.newBadge;
-    return NotificationType.newBid;
-  }
-
-  String get tag {
-    if (profileType == 'Seller') return 'بائع';
-    if (profileType == 'Customer') return 'مشتري';
-    return 'عام';
   }
 
   String get timeAgo {
@@ -61,13 +87,12 @@ class NotificationModel {
     final createdRaw = json['created'] as String?;
     return NotificationModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
-      kind: json['kind'] as String? ?? '',
+      notificationType: json['notification_type'] as String? ?? '',
       title: json['title'] as String? ?? '',
       body: (json['body'] as String?)?.isNotEmpty == true
           ? json['body'] as String
-          : ' ',
+          : '',
       isRead: json['is_read'] as bool? ?? (readAt != null),
-      profileType: json['profile_type'] as String? ?? 'All',
       created: createdRaw != null
           ? DateTime.tryParse(createdRaw) ?? DateTime.now()
           : DateTime.now(),
@@ -76,11 +101,10 @@ class NotificationModel {
 
   NotificationModel markRead() => NotificationModel(
         id: id,
-        kind: kind,
+        notificationType: notificationType,
         title: title,
         body: body,
         isRead: true,
-        profileType: profileType,
         created: created,
       );
 }

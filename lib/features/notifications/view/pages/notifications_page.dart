@@ -5,7 +5,6 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
 import '../../model/notification_model.dart';
 import '../../viewmodel/notifications_bloc.dart';
-import '../data/notifications_mock_data.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
@@ -13,30 +12,14 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NotificationsBloc>(
-      create: (_) =>
-          sl<NotificationsBloc>()..add(const NotificationsStarted()),
+      create: (_) => sl<NotificationsBloc>()..add(const NotificationsStarted()),
       child: const _NotificationsView(),
     );
   }
 }
 
-class _NotificationsView extends StatefulWidget {
+class _NotificationsView extends StatelessWidget {
   const _NotificationsView();
-
-  @override
-  State<_NotificationsView> createState() => _NotificationsViewState();
-}
-
-class _NotificationsViewState extends State<_NotificationsView> {
-  int _tabIndex = 0;
-
-  List<NotificationModel> _filtered(List<NotificationModel> all) {
-    return all.where((n) {
-      if (n.profileType == 'All' || n.profileType.isEmpty) return true;
-      if (_tabIndex == 0) return n.profileType == 'Customer';
-      return n.profileType == 'Seller';
-    }).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,37 +34,36 @@ class _NotificationsViewState extends State<_NotificationsView> {
           ));
         }
       },
+      buildWhen: (p, c) =>
+          p.status != c.status ||
+          p.notifications != c.notifications ||
+          p.unreadCount != c.unreadCount,
       builder: (context, state) {
         final isLoading = state.status == NotificationsStatus.loading;
-
-        final showMock = state.status == NotificationsStatus.initial;
-        final items = _filtered(
-          showMock ? NotificationsMockData.forTab(_tabIndex) : state.notifications,
-        );
-        final unread = items.where((n) => !n.isRead).length;
+        final unread = state.unreadCount;
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           body: Column(
             children: [
               _NotificationsHeader(
+                unreadCount: unread,
+                isLoading: isLoading,
                 onBack: () => Navigator.pop(context),
-                onRefresh: isLoading
-                    ? null
-                    : () => context
+                onRefresh: () => context
+                    .read<NotificationsBloc>()
+                    .add(const NotificationsRefreshRequested()),
+                onMarkAll: unread > 0
+                    ? () => context
                         .read<NotificationsBloc>()
-                        .add(const NotificationsRefreshRequested()),
+                        .add(const NotificationMarkAllReadRequested())
+                    : null,
               ),
-              _TabBar(
-                selectedIndex: _tabIndex,
-                onTap: (i) => setState(() => _tabIndex = i),
-              ),
-              if (unread > 0) _UnreadBanner(count: unread),
               Expanded(
                 child: isLoading
                     ? const Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.primary),
+                        child: CircularProgressIndicator(
+                            color: AppColors.primary),
                       )
                     : state.status == NotificationsStatus.error &&
                             state.notifications.isEmpty
@@ -91,7 +73,7 @@ class _NotificationsViewState extends State<_NotificationsView> {
                                 .read<NotificationsBloc>()
                                 .add(const NotificationsRefreshRequested()),
                           )
-                        : items.isEmpty
+                        : state.notifications.isEmpty
                             ? const _EmptyView()
                             : RefreshIndicator(
                                 color: AppColors.primary,
@@ -99,9 +81,9 @@ class _NotificationsViewState extends State<_NotificationsView> {
                                     .read<NotificationsBloc>()
                                     .add(const NotificationsRefreshRequested()),
                                 child: ListView.separated(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8),
-                                  itemCount: items.length,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  itemCount: state.notifications.length,
                                   separatorBuilder: (_, _) => const Divider(
                                     height: 1,
                                     indent: 16,
@@ -109,10 +91,10 @@ class _NotificationsViewState extends State<_NotificationsView> {
                                     color: AppColors.divider,
                                   ),
                                   itemBuilder: (context, i) {
-                                    final item = items[i];
+                                    final item = state.notifications[i];
                                     return _NotificationTile(
                                       item: item,
-                                      onMarkRead: item.id > 0 && !item.isRead
+                                      onMarkRead: !item.isRead
                                           ? () => context
                                               .read<NotificationsBloc>()
                                               .add(NotificationMarkReadRequested(
@@ -134,10 +116,19 @@ class _NotificationsViewState extends State<_NotificationsView> {
 // ── Header ────────────────────────────────────────────────────────────────────
 
 class _NotificationsHeader extends StatelessWidget {
+  final int unreadCount;
+  final bool isLoading;
   final VoidCallback onBack;
-  final VoidCallback? onRefresh;
+  final VoidCallback onRefresh;
+  final VoidCallback? onMarkAll;
 
-  const _NotificationsHeader({required this.onBack, this.onRefresh});
+  const _NotificationsHeader({
+    required this.unreadCount,
+    required this.isLoading,
+    required this.onBack,
+    required this.onRefresh,
+    this.onMarkAll,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -146,122 +137,68 @@ class _NotificationsHeader extends StatelessWidget {
       color: AppColors.primary,
       padding: EdgeInsets.only(
         top: topPadding + 12,
-        bottom: 14,
+        bottom: unreadCount > 0 ? 0 : 14,
         left: 16,
         right: 16,
       ),
-      child: Row(
+      child: Column(
         children: [
-          GestureDetector(
-            onTap: onBack,
-            child: const Icon(Icons.arrow_forward_ios_rounded,
-                color: Colors.white, size: 20),
-          ),
-          const Expanded(
-            child: Center(
-              child: Text(
-                'الإشعارات',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onBack,
+                child: const Icon(Icons.arrow_forward_ios_rounded,
+                    color: Colors.white, size: 20),
               ),
-            ),
-          ),
-          if (onRefresh != null)
-            IconButton(
-              onPressed: onRefresh,
-              icon:
-                  const Icon(Icons.refresh_rounded, color: Colors.white),
-            )
-          else
-            const SizedBox(width: 48),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Tab bar ───────────────────────────────────────────────────────────────────
-
-class _TabBar extends StatelessWidget {
-  final int selectedIndex;
-  final ValueChanged<int> onTap;
-
-  const _TabBar({required this.selectedIndex, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    const tabs = ['مشتري', 'بائع'];
-    return Container(
-      color: AppColors.primary,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.25),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: List.generate(tabs.length, (i) {
-            final selected = selectedIndex == i;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => onTap(i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.all(4),
-                  padding: const EdgeInsets.symmetric(vertical: 9),
-                  decoration: BoxDecoration(
-                    color: selected ? Colors.white : Colors.transparent,
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Center(
-                    child: Text(
-                      tabs[i],
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: selected
-                              ? AppColors.primary
-                              : Colors.white),
-                    ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'الإشعارات',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Unread banner ─────────────────────────────────────────────────────────────
-
-class _UnreadBanner extends StatelessWidget {
-  final int count;
-  const _UnreadBanner({required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.primary,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Text(
-          'لديك $count إشعار غير مقروء',
-          textAlign: TextAlign.start,
-          style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600),
-        ),
+              if (onMarkAll != null)
+                TextButton(
+                  onPressed: onMarkAll,
+                  child: const Text(
+                    'قراءة الكل',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
+                  ),
+                )
+              else
+                IconButton(
+                  onPressed: isLoading ? null : onRefresh,
+                  icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                ),
+            ],
+          ),
+          if (unreadCount > 0)
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.fromLTRB(0, 8, 0, 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'لديك $unreadCount إشعار غير مقروء',
+                textAlign: TextAlign.start,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -304,8 +241,7 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline,
-                size: 48, color: AppColors.error),
+            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
             const SizedBox(height: 12),
             Text(message ?? 'فشل تحميل الإشعارات',
                 textAlign: TextAlign.center,
@@ -363,46 +299,27 @@ class _NotificationTile extends StatelessWidget {
                               : FontWeight.bold,
                           color: AppColors.textPrimary),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.body,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                          height: 1.5),
-                    ),
+                    if (item.body.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        item.body,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            height: 1.5),
+                      ),
+                    ],
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            item.tag,
-                            style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          item.timeAgo,
-                          style: const TextStyle(
-                              fontSize: 11, color: AppColors.textHint),
-                        ),
-                      ],
+                    Text(
+                      item.timeAgo,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.textHint),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsetsDirectional.only(top: 6, start: 10),
+                padding: const EdgeInsetsDirectional.only(top: 6, start: 10),
                 child: Container(
                   width: 8,
                   height: 8,
@@ -436,30 +353,70 @@ class _NotificationIcon extends StatelessWidget {
         const Color(0xFFFFF8E1),
         const Color(0xFFF9A825),
       ),
-      NotificationType.bidAccepted => (
-        Icons.check_circle_rounded,
-        AppColors.primaryLight,
-        AppColors.primary,
-      ),
-      NotificationType.newBid => (
+      NotificationType.auctionOutbid => (
         Icons.trending_up_rounded,
         const Color(0xFFFFEBEE),
         const Color(0xFFE53935),
       ),
-      NotificationType.newBadge => (
-        Icons.military_tech_rounded,
-        const Color(0xFFFFF8E1),
-        const Color(0xFFF9A825),
+      NotificationType.orderItemApproved => (
+        Icons.check_circle_rounded,
+        AppColors.primaryLight,
+        AppColors.primary,
       ),
-      NotificationType.payment => (
+      NotificationType.orderItemRejected => (
+        Icons.cancel_rounded,
+        const Color(0xFFFFEBEE),
+        const Color(0xFFE53935),
+      ),
+      NotificationType.paymentRequestCreated => (
         Icons.payment_rounded,
         AppColors.blueLight,
         AppColors.blue,
       ),
-      NotificationType.order => (
-        Icons.shopping_bag_outlined,
+      NotificationType.paymentRequestApproved => (
+        Icons.verified_rounded,
         AppColors.primaryLight,
         AppColors.primary,
+      ),
+      NotificationType.paymentRequestRejected => (
+        Icons.money_off_rounded,
+        const Color(0xFFFFEBEE),
+        const Color(0xFFE53935),
+      ),
+      NotificationType.chatMessageReceived => (
+        Icons.chat_bubble_rounded,
+        AppColors.blueLight,
+        AppColors.blue,
+      ),
+      NotificationType.complaintCreated => (
+        Icons.report_rounded,
+        const Color(0xFFFFF3E0),
+        const Color(0xFFE65100),
+      ),
+      NotificationType.complaintStatusUpdated => (
+        Icons.update_rounded,
+        const Color(0xFFFFF3E0),
+        const Color(0xFFE65100),
+      ),
+      NotificationType.cashbackEarned => (
+        Icons.savings_rounded,
+        const Color(0xFFE8F5E9),
+        const Color(0xFF2E7D32),
+      ),
+      NotificationType.badgeAwarded => (
+        Icons.military_tech_rounded,
+        const Color(0xFFFFF8E1),
+        const Color(0xFFF9A825),
+      ),
+      NotificationType.packageExpiringSoon => (
+        Icons.timer_rounded,
+        const Color(0xFFFFF3E0),
+        const Color(0xFFE65100),
+      ),
+      NotificationType.unknown => (
+        Icons.notifications_rounded,
+        AppColors.pageBackground,
+        AppColors.textSecondary,
       ),
     };
 

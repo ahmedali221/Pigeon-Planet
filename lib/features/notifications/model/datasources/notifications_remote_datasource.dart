@@ -6,6 +6,7 @@ abstract class NotificationsRemoteDataSource {
   Future<List<NotificationModel>> getNotifications();
   Future<int> getUnreadCount();
   Future<void> markRead(int id);
+  Future<int> markAllRead();
 }
 
 class RealNotificationsRemoteDataSource implements NotificationsRemoteDataSource {
@@ -35,12 +36,24 @@ class RealNotificationsRemoteDataSource implements NotificationsRemoteDataSource
     final response = await _dio.get(ApiConstants.notificationsUnreadCount);
     final data = response.data;
     if (data is int) return data;
-    if (data is Map) return (data['count'] as num?)?.toInt() ?? 0;
+    if (data is Map) {
+      return (data['unread_count'] as num?)?.toInt() ??
+          (data['count'] as num?)?.toInt() ??
+          0;
+    }
     return 0;
   }
 
   @override
   Future<void> markRead(int id) async {
-    await _dio.post(ApiConstants.notificationRead(id));
+    await _dio.post(ApiConstants.notificationMarkRead(id));
+  }
+
+  @override
+  Future<int> markAllRead() async {
+    final response = await _dio.post(ApiConstants.notificationsMarkAllRead);
+    final data = response.data;
+    if (data is Map) return (data['updated_count'] as num?)?.toInt() ?? 0;
+    return 0;
   }
 }

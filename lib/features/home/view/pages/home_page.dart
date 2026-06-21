@@ -32,6 +32,7 @@ import '../../../auth/model/user_model.dart';
 import '../../../auth/view/pages/account_type_page.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
+import '../../../lucky_wheel/view/pages/lucky_wheel_page.dart';
 import '../../../seller_products/view/pages/seller_products_page.dart';
 import '../../../subscription/view/pages/packages_page.dart';
 import '../widgets/home_drawer.dart';
@@ -607,6 +608,20 @@ class _HomeViewState extends State<_HomeView> {
                             ),
                           ),
                         ),
+                      // Lucky wheel floating icon — left side
+                      Positioned(
+                        bottom: 88,
+                        left: 16,
+                        child: _WheelFloatingIcon(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  LuckyWheelPage(isSeller: isSeller),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -771,6 +786,74 @@ class HomeWelcomeBanner extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Lucky Wheel floating icon ─────────────────────────────────────────────────
+
+class _WheelFloatingIcon extends StatefulWidget {
+  final VoidCallback onTap;
+
+  const _WheelFloatingIcon({required this.onTap});
+
+  @override
+  State<_WheelFloatingIcon> createState() => _WheelFloatingIconState();
+}
+
+class _WheelFloatingIconState extends State<_WheelFloatingIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+    _scale = Tween<double>(begin: 1.0, end: 1.12).animate(
+      CurvedAnimation(parent: _pulse, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: AnimatedBuilder(
+        animation: _scale,
+        builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.45),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Text('🎡', style: TextStyle(fontSize: 24)),
+          ),
         ),
       ),
     );
