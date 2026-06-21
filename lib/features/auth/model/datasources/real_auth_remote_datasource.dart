@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/error/exceptions.dart';
 import '../../../../core/services/cloudinary_service.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/token_storage.dart';
@@ -32,6 +33,10 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = payload['profile'] as String? ?? 'Customer';
     final avatarUrl = _avatarUrlFrom(payload);
+
+    if (profileType == 'Manager') {
+      throw const ForbiddenException('هذا التطبيق مخصص للمشترين والبائعين فقط');
+    }
 
     return UserModel(
       id: userId,
@@ -170,10 +175,13 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       if (expiry.isBefore(DateTime.now())) return null;
     }
 
+    final storedProfileType = payload['profile'] as String? ?? 'Customer';
+    if (storedProfileType == 'Manager') return null;
+
     return UserModel(
       id: userId,
       phoneNumber: '',
-      profileType: payload['profile'] as String? ?? 'Customer',
+      profileType: storedProfileType,
       accessToken: access,
       refreshToken: refresh,
       avatarUrl: _avatarUrlFrom(payload),
