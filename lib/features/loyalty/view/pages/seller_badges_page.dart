@@ -3,31 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
-import '../../model/badge_model.dart';
+import '../../../home/model/datasources/points_remote_datasource.dart';
 import '../../viewmodel/badges_bloc.dart';
 
-class SellerBadgesPage extends StatelessWidget {
-  const SellerBadgesPage({super.key});
+class BadgesPage extends StatelessWidget {
+  const BadgesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<BadgesBloc>()..add(const BadgesLoadRequested()),
-      child: const _SellerBadgesView(),
+      child: const _BadgesView(),
     );
   }
 }
 
-class _SellerBadgesView extends StatelessWidget {
-  const _SellerBadgesView();
+// Alias keeps existing NavigatorPush calls compiling without changes.
+typedef SellerBadgesPage = BadgesPage;
+
+class _BadgesView extends StatelessWidget {
+  const _BadgesView();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.pageBackground,
-      body: BlocBuilder<BadgesBloc, BadgesState>(
-        builder: (context, state) {
-          return NestedScrollView(
+    return BlocBuilder<BadgesBloc, BadgesState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.pageBackground,
+          body: NestedScrollView(
             headerSliverBuilder: (_, _) => [
               SliverAppBar(
                 backgroundColor: Colors.white,
@@ -50,6 +53,32 @@ class _SellerBadgesView extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 4),
+                    child: TextButton.icon(
+                      onPressed: () => context
+                          .read<BadgesBloc>()
+                          .add(const BadgesIncludeExpiredToggled()),
+                      icon: Icon(
+                        state.includeExpired
+                            ? Icons.history_toggle_off_rounded
+                            : Icons.history_rounded,
+                        size: 18,
+                        color: state.includeExpired
+                            ? AppColors.primary
+                            : AppColors.textSecondary,
+                      ),
+                      label: Text(
+                        state.includeExpired ? 'النشطة فقط' : 'السابقة',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: state.includeExpired
+                              ? AppColors.primary
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.refresh_rounded, size: 20),
                     onPressed: () => context
@@ -60,9 +89,9 @@ class _SellerBadgesView extends StatelessWidget {
               ),
             ],
             body: _buildBody(context, state),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -91,8 +120,8 @@ class _SellerBadgesView extends StatelessWidget {
                 onPressed: () => context
                     .read<BadgesBloc>()
                     .add(const BadgesLoadRequested()),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                 child: const Text('إعادة المحاولة',
                     style: TextStyle(color: Colors.white)),
               ),
@@ -114,7 +143,7 @@ class _SellerBadgesView extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.9,
+          childAspectRatio: 0.85,
         ),
         itemCount: state.badges.length,
         itemBuilder: (context, i) => _BadgeCard(badge: state.badges[i]),
@@ -174,30 +203,67 @@ class _EmptyBadges extends StatelessWidget {
 // ── Badge card ────────────────────────────────────────────────────────────────
 
 class _BadgeCard extends StatelessWidget {
-  final BadgeModel badge;
+  final BadgeAwardModel badge;
 
   const _BadgeCard({required this.badge});
 
-  IconData _iconForKey(String key) {
-    switch (key) {
-      case 'first_order':
-        return Icons.shopping_bag_rounded;
-      case 'points_starter':
-        return Icons.stars_rounded;
-      case 'seller_starter':
-        return Icons.storefront_rounded;
-      default:
-        return Icons.military_tech_rounded;
+  static IconData _icon(String type) => switch (type) {
+        'first_order' => Icons.shopping_bag_rounded,
+        'points_starter' => Icons.stars_rounded,
+        'seller_starter' => Icons.storefront_rounded,
+        'WELCOME_BUYER' => Icons.waving_hand_rounded,
+        'WELCOME_SELLER' => Icons.store_rounded,
+        'FIRST_BIDDER' => Icons.gavel_rounded,
+        'LAST_MINUTE_FIGHTER' => Icons.timer_rounded,
+        'AUCTION_PURCHASE_CONFIRMED' => Icons.emoji_events_rounded,
+        'MARKET_PURCHASE_CONFIRMED' => Icons.shopping_cart_checkout_rounded,
+        'REVIEWER_BUYER' => Icons.rate_review_rounded,
+        'LOYAL_FOLLOWER' => Icons.favorite_rounded,
+        'FIRST_AUCTION_PUBLISHED' => Icons.public_rounded,
+        'FIRST_MARKET_ITEM_LISTED' => Icons.add_business_rounded,
+        'FIRST_AUCTION_SALE_CONFIRMED' => Icons.sell_rounded,
+        'FIRST_MARKET_SALE_CONFIRMED' => Icons.point_of_sale_rounded,
+        'TRUSTED_BUYER' => Icons.verified_user_rounded,
+        'TRUSTED_SELLER' => Icons.verified_rounded,
+        _ => Icons.military_tech_rounded,
+      };
+
+  static String _shortDate(String iso) {
+    try {
+      final d = DateTime.parse(iso);
+      return '${d.day}/${d.month}/${d.year}';
+    } catch (_) {
+      return iso;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isRevoked = badge.revokedAt != null;
+    final isExpired = !badge.isActive && !isRevoked;
+
+    final Color borderColor;
+    final Color bgColor;
+    final Color iconColor;
+    if (isRevoked) {
+      borderColor = AppColors.error.withValues(alpha: 0.3);
+      bgColor = const Color(0xFFFFEBEE);
+      iconColor = AppColors.error;
+    } else if (isExpired) {
+      borderColor = AppColors.textHint.withValues(alpha: 0.4);
+      bgColor = AppColors.inputBg;
+      iconColor = AppColors.textHint;
+    } else {
+      borderColor = AppColors.primary.withValues(alpha: 0.3);
+      bgColor = AppColors.primaryLight;
+      iconColor = AppColors.primary;
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: borderColor, width: isRevoked ? 1.5 : 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -207,58 +273,81 @@ class _BadgeCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Status chip
             Container(
-              width: 64,
-              height: 64,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                shape: BoxShape.circle,
-                border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.3), width: 2),
+                color: isRevoked
+                    ? AppColors.error.withValues(alpha: 0.1)
+                    : isExpired
+                        ? AppColors.inputBg
+                        : AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: badge.iconUrl != null && badge.iconUrl!.isNotEmpty
+              child: Text(
+                isRevoked ? 'مُلغى' : isExpired ? 'منتهٍ' : 'نشط',
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  color: isRevoked
+                      ? AppColors.error
+                      : isExpired
+                          ? AppColors.textHint
+                          : AppColors.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Icon circle
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: bgColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: borderColor, width: 2),
+              ),
+              child: badge.iconUrl.isNotEmpty
                   ? ClipOval(
                       child: Image.network(
-                        badge.iconUrl!,
+                        badge.iconUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => Icon(
-                          _iconForKey(badge.key),
-                          size: 32,
-                          color: AppColors.primary,
+                          _icon(badge.badgeType),
+                          size: 28,
+                          color: iconColor,
                         ),
                       ),
                     )
-                  : Icon(
-                      _iconForKey(badge.key),
-                      size: 32,
-                      color: AppColors.primary,
-                    ),
+                  : Icon(_icon(badge.badgeType), size: 28, color: iconColor),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Text(
-              badge.name.isNotEmpty ? badge.name : badge.key,
-              style: const TextStyle(
-                fontSize: 14,
+              badge.name.isNotEmpty ? badge.name : badge.badgeType,
+              style: TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: isRevoked || isExpired
+                    ? AppColors.textSecondary
+                    : AppColors.textPrimary,
+                decoration: isRevoked ? TextDecoration.lineThrough : null,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            if (badge.description.isNotEmpty) ...[
+            // Expiry hint for active temporary badges
+            if (badge.expiresAt != null && !isRevoked && !isExpired) ...[
               const SizedBox(height: 4),
               Text(
-                badge.description,
+                'ينتهي ${_shortDate(badge.expiresAt!)}',
                 style: const TextStyle(
-                    fontSize: 11, color: AppColors.textSecondary),
+                    fontSize: 10, color: AppColors.textHint),
                 textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ],

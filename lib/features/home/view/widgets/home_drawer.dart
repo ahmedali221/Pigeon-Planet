@@ -48,7 +48,7 @@ class HomeDrawer extends StatelessWidget {
                 _ConversationsTile(isSeller: isSeller),
                 if (isSeller) const _ProfileSwitcherTile(),
                 if (isSeller) const _PackageTile(),
-                if (isSeller) const _BadgesTile(),
+                const _BadgesTile(),
                 if (isSeller) const _SellerOrdersTile(),
                 if (isSeller) const _SellerPaymentsTile(),
                 if (!isSeller) const _CartTile(),

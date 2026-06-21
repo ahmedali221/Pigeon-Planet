@@ -261,7 +261,7 @@ void setupDependencies() {
   sl.registerLazySingleton<LoyaltyRemoteDataSource>(
     () => RealLoyaltyRemoteDataSource(sl()),
   );
-  sl.registerFactory(() => BadgesBloc(datasource: sl()));
+  sl.registerFactory(() => BadgesBloc(datasource: sl<PointsRemoteDataSource>()));
 
   // ── Home ──────────────────────────────────────────────────────────────────
   sl.registerFactory(

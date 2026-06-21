@@ -1370,6 +1370,21 @@ class _BadgeAwardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRevoked = badge.revokedAt != null;
+    final isExpired = !badge.isActive && !isRevoked;
+    final Color iconBg;
+    final Color iconFg;
+    if (isRevoked) {
+      iconBg = const Color(0xFFFFEBEE);
+      iconFg = AppColors.error;
+    } else if (isExpired) {
+      iconBg = AppColors.inputBg;
+      iconFg = AppColors.textHint;
+    } else {
+      iconBg = AppColors.purpleLight;
+      iconFg = AppColors.purple;
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
@@ -1384,14 +1399,10 @@ class _BadgeAwardTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.purpleLight,
+              color: iconBg,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.workspace_premium_rounded,
-              color: AppColors.purple,
-              size: 22,
-            ),
+            child: Icon(Icons.workspace_premium_rounded, color: iconFg, size: 22),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1400,10 +1411,13 @@ class _BadgeAwardTile extends StatelessWidget {
               children: [
                 Text(
                   badge.name.isEmpty ? badge.badgeType : badge.name,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
+                  style: TextStyle(
+                    color: isRevoked || isExpired
+                        ? AppColors.textSecondary
+                        : AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
+                    decoration: isRevoked ? TextDecoration.lineThrough : null,
                   ),
                 ),
                 if (badge.description.isNotEmpty) ...[
@@ -1419,6 +1433,30 @@ class _BadgeAwardTile extends StatelessWidget {
                   ),
                 ],
               ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            decoration: BoxDecoration(
+              color: isRevoked
+                  ? AppColors.error.withValues(alpha: 0.1)
+                  : isExpired
+                      ? AppColors.inputBg
+                      : AppColors.purpleLight,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              isRevoked ? 'مُلغى' : isExpired ? 'منتهٍ' : 'نشط',
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: isRevoked
+                    ? AppColors.error
+                    : isExpired
+                        ? AppColors.textHint
+                        : AppColors.purple,
+              ),
             ),
           ),
         ],

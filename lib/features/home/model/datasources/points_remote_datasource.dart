@@ -7,6 +7,8 @@ class PointTransactionModel {
   final int points;
   final int balanceAfter;
   final String reason;
+  final String? sourceType;
+  final String? sourceId;
   final String created;
 
   const PointTransactionModel({
@@ -15,6 +17,8 @@ class PointTransactionModel {
     required this.points,
     required this.balanceAfter,
     required this.reason,
+    this.sourceType,
+    this.sourceId,
     required this.created,
   });
 
@@ -25,6 +29,8 @@ class PointTransactionModel {
       points: (json['points'] as num?)?.toInt() ?? 0,
       balanceAfter: (json['balance_after'] as num?)?.toInt() ?? 0,
       reason: json['reason'] as String? ?? '',
+      sourceType: json['source_type'] as String?,
+      sourceId: json['source_id'] as String?,
       created: json['created'] as String? ?? '',
     );
   }
@@ -35,7 +41,10 @@ class BadgeAwardModel {
   final String badgeType;
   final String name;
   final String description;
+  final bool isActive;
   final String awardedAt;
+  final String? expiresAt;
+  final String? revokedAt;
   final String iconUrl;
 
   const BadgeAwardModel({
@@ -43,7 +52,10 @@ class BadgeAwardModel {
     required this.badgeType,
     required this.name,
     required this.description,
+    required this.isActive,
     required this.awardedAt,
+    this.expiresAt,
+    this.revokedAt,
     required this.iconUrl,
   });
 
@@ -53,7 +65,10 @@ class BadgeAwardModel {
       badgeType: json['badge_type'] as String? ?? '',
       name: json['name'] as String? ?? '',
       description: json['description'] as String? ?? '',
+      isActive: (json['is_active'] as bool?) ?? true,
       awardedAt: json['awarded_at'] as String? ?? '',
+      expiresAt: json['expires_at'] as String?,
+      revokedAt: json['revoked_at'] as String?,
       iconUrl: json['icon_url'] as String? ?? '',
     );
   }
@@ -119,7 +134,7 @@ abstract class PointsRemoteDataSource {
   Future<int?> fetchLoyaltyBalance();
   Future<int?> fetchPackageBalance();
   Future<List<PointTransactionModel>> fetchTransactions();
-  Future<List<BadgeAwardModel>> fetchMyBadges();
+  Future<List<BadgeAwardModel>> fetchMyBadges({bool includeExpired = false});
   Future<List<BadgeCatalogItem>> fetchBadgeCatalog();
   Future<LoyaltySnapshot> fetchSnapshot({bool includePackageBalance = true});
 }
@@ -176,8 +191,11 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
   }
 
   @override
-  Future<List<BadgeAwardModel>> fetchMyBadges() async {
-    final response = await _dio.get(ApiConstants.loyaltyMyBadges);
+  Future<List<BadgeAwardModel>> fetchMyBadges({bool includeExpired = false}) async {
+    final response = await _dio.get(
+      ApiConstants.loyaltyMyBadges,
+      queryParameters: includeExpired ? {'include_expired': 'true'} : null,
+    );
     return _readList(response.data)
         .map((item) => BadgeAwardModel.fromJson(item as Map<String, dynamic>))
         .toList();
