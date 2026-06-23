@@ -12,6 +12,11 @@ enum NotificationType {
   cashbackEarned,
   badgeAwarded,
   packageExpiringSoon,
+  manualManagerNotification,
+  auctionBidPlaced,
+  auctionBuyNowSuccess,
+  orderItemPendingSeller,
+  orderItemAutoCancelled,
   unknown,
 }
 
@@ -22,6 +27,7 @@ class NotificationModel {
   final String body;
   final bool isRead;
   final DateTime created;
+  final Map<String, dynamic> metadata;
 
   const NotificationModel({
     required this.id,
@@ -30,6 +36,7 @@ class NotificationModel {
     required this.body,
     required this.isRead,
     required this.created,
+    this.metadata = const {},
   });
 
   NotificationType get type {
@@ -60,6 +67,16 @@ class NotificationModel {
         return NotificationType.badgeAwarded;
       case 'package_expiring_soon':
         return NotificationType.packageExpiringSoon;
+      case 'manual_manager_notification':
+        return NotificationType.manualManagerNotification;
+      case 'auction_bid_placed':
+        return NotificationType.auctionBidPlaced;
+      case 'auction_buy_now_success':
+        return NotificationType.auctionBuyNowSuccess;
+      case 'order_item_pending_seller':
+        return NotificationType.orderItemPendingSeller;
+      case 'order_item_auto_cancelled':
+        return NotificationType.orderItemAutoCancelled;
       default:
         return NotificationType.unknown;
     }
@@ -96,6 +113,7 @@ class NotificationModel {
       created: createdRaw != null
           ? DateTime.tryParse(createdRaw) ?? DateTime.now()
           : DateTime.now(),
+      metadata: (json['metadata'] as Map<String, dynamic>?) ?? const {},
     );
   }
 
@@ -106,5 +124,6 @@ class NotificationModel {
         body: body,
         isRead: true,
         created: created,
+        metadata: metadata,
       );
 }

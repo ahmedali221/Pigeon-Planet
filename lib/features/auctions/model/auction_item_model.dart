@@ -15,6 +15,7 @@ class AuctionItemModel {
   final List<BidModel> bids;
   final int? winnerId;
   final String? winnerUsername;
+  final int? winnerPaymentRequestId;
 
   const AuctionItemModel({
     required this.id,
@@ -30,6 +31,7 @@ class AuctionItemModel {
     this.bids = const [],
     this.winnerId,
     this.winnerUsername,
+    this.winnerPaymentRequestId,
   });
 
   bool get isSold => status == 'sold';
@@ -56,6 +58,7 @@ class AuctionItemModel {
           .toList(),
       winnerId: json['winner'] as int?,
       winnerUsername: json['winner_username'] as String?,
+      winnerPaymentRequestId: json['winner_payment_request_id'] as int?,
     );
   }
 }

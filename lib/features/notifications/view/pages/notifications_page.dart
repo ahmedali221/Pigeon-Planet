@@ -413,6 +413,31 @@ class _NotificationIcon extends StatelessWidget {
         const Color(0xFFFFF3E0),
         const Color(0xFFE65100),
       ),
+      NotificationType.manualManagerNotification => (
+        Icons.admin_panel_settings_rounded,
+        const Color(0xFFEDE7F6),
+        const Color(0xFF6A1B9A),
+      ),
+      NotificationType.auctionBidPlaced => (
+        Icons.gavel_rounded,
+        AppColors.primaryLight,
+        AppColors.primary,
+      ),
+      NotificationType.auctionBuyNowSuccess => (
+        Icons.flash_on_rounded,
+        const Color(0xFFFFF3E0),
+        const Color(0xFFEF6C00),
+      ),
+      NotificationType.orderItemPendingSeller => (
+        Icons.hourglass_top_rounded,
+        AppColors.blueLight,
+        AppColors.blue,
+      ),
+      NotificationType.orderItemAutoCancelled => (
+        Icons.cancel_schedule_send_rounded,
+        const Color(0xFFFFEBEE),
+        const Color(0xFFE53935),
+      ),
       NotificationType.unknown => (
         Icons.notifications_rounded,
         AppColors.pageBackground,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,10 +15,15 @@ import '../model/seller_model.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
+class _UnreadCountTick extends HomeEvent {
+  const _UnreadCountTick();
+}
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final AuctionsRepository _auctionsRepository;
   final SellerHomeRemoteDataSource _sellerHomeRemote;
   final PointsRemoteDataSource _pointsRemote;
+  Timer? _pollTimer;
 
   HomeBloc({
     required AuctionsRepository auctionsRepository,
@@ -28,6 +35,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
        super(const HomeState()) {
     on<HomeStarted>(_onStarted);
     on<HomeRefreshRequested>(_onStarted);
+    on<_UnreadCountTick>(_onUnreadCountTick);
+  }
+
+  @override
+  Future<void> close() {
+    _pollTimer?.cancel();
+    return super.close();
   }
 
   Future<void> _onStarted(HomeEvent event, Emitter<HomeState> emit) async {
@@ -163,6 +177,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         errorMessage: errorMessage,
       ),
     );
+
+    _pollTimer ??= Timer.periodic(const Duration(seconds: 30), (_) {
+      if (!isClosed) add(const _UnreadCountTick());
+    });
+  }
+
+  Future<void> _onUnreadCountTick(
+    _UnreadCountTick event,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      final count = await _sellerHomeRemote.fetchUnreadNotificationCount();
+      emit(state.copyWith(unreadNotificationCount: count));
+    } catch (_) {}
   }
 
   SellerHomeSummary _buildSellerSummary({

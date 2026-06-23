@@ -7,6 +7,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/locale/locale_service.dart';
 import 'features/auth/viewmodel/auth_bloc.dart';
+import 'features/chat/viewmodel/chat_badge_cubit.dart';
 
 import 'core/network/dio_client.dart';
 import 'core/services/permission_service.dart';
@@ -29,8 +30,15 @@ class PigeonPlanetApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>()..add(const AuthCheckRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) => sl<AuthBloc>()..add(const AuthCheckRequested()),
+        ),
+        BlocProvider<ChatBadgeCubit>(
+          create: (_) => sl<ChatBadgeCubit>(),
+        ),
+      ],
       child: ValueListenableBuilder<Locale>(
         valueListenable: LocaleService.notifier,
         builder: (_, locale, _) {

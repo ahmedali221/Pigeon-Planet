@@ -28,6 +28,16 @@ class ProductModel {
   final double? flyingSpeed;
   final String staminaAbility;
 
+  final String? sellerNickname;
+  final String? saleChannel;
+
+  bool get isAvailable => status == 'available';
+  bool get isSold => status == 'sold';
+  bool get isInactive => status == 'inactive';
+  bool get isPlatformProduct => saleChannel == 'PLATFORM';
+  String get displaySellerName =>
+      isPlatformProduct ? 'متجر بيجن بلانيت' : (sellerNickname ?? '');
+
   const ProductModel({
     required this.id,
     required this.categoryId,
@@ -51,11 +61,9 @@ class ProductModel {
     this.achievements = '',
     this.flyingSpeed,
     this.staminaAbility = '',
+    this.sellerNickname,
+    this.saleChannel,
   });
-
-  bool get isAvailable => status == 'available';
-  bool get isSold => status == 'sold';
-  bool get isInactive => status == 'inactive';
 
   factory ProductModel.fromJson(Map<String, dynamic> json, String categoryId) {
     final id = json['id']?.toString() ?? '';
@@ -68,6 +76,12 @@ class ProductModel {
         .toList();
     final primary = imagesList.where((e) => e['is_primary'] == true).firstOrNull;
     final thumbUrl = (primary ?? (imagesList.isNotEmpty ? imagesList.first : null))?['media_url'] as String?;
+
+    // seller_nickname: direct field on non-bird assets, nested on birds
+    final sellerNode = json['seller'];
+    final sellerNickname = sellerNode is Map<String, dynamic>
+        ? sellerNode['nickname'] as String?
+        : json['seller_nickname'] as String?;
 
     return ProductModel(
       id: id,
@@ -94,10 +108,18 @@ class ProductModel {
           ? double.tryParse(json['flying_speed'].toString())
           : null,
       staminaAbility: json['stamina_ability'] as String? ?? '',
+      sellerNickname: sellerNickname,
+      saleChannel: json['sale_channel'] as String?,
     );
   }
 
-  ProductModel copyWith({bool? isFavorite, double? price, String? status}) =>
+  ProductModel copyWith({
+    bool? isFavorite,
+    double? price,
+    String? status,
+    String? sellerNickname,
+    String? saleChannel,
+  }) =>
       ProductModel(
         id: id,
         categoryId: categoryId,
@@ -121,5 +143,7 @@ class ProductModel {
         achievements: achievements,
         flyingSpeed: flyingSpeed,
         staminaAbility: staminaAbility,
+        sellerNickname: sellerNickname ?? this.sellerNickname,
+        saleChannel: saleChannel ?? this.saleChannel,
       );
 }

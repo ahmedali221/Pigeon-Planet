@@ -91,7 +91,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           );
         }
         if (state.roomStatus == ChatRoomStatus.error &&
-            state.errorMessage != null) {
+            state.errorMessage != null &&
+            !state.requiresFollow) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
@@ -156,6 +157,47 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     if (state.roomStatus == ChatRoomStatus.loading &&
         state.messages.isEmpty) {
       return const Center(child: CircularProgressIndicator());
+    }
+    if (state.requiresFollow) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.person_add_alt_1_rounded,
+                  size: 64, color: AppColors.textHint),
+              const SizedBox(height: 16),
+              const Text(
+                'يجب متابعة البائع أولاً',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'تابع هذا البائع لتتمكن من التواصل معه',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 13, color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: const Text('العودة'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
     if (state.roomStatus == ChatRoomStatus.error &&
         state.messages.isEmpty) {

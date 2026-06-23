@@ -79,6 +79,7 @@ import '../../features/chat/model/datasources/chat_remote_datasource.dart';
 import '../../features/chat/model/datasources/real_chat_remote_datasource.dart';
 import '../../features/chat/model/chat_repository.dart';
 import '../../features/chat/model/chat_repository_impl.dart';
+import '../../features/chat/viewmodel/chat_badge_cubit.dart';
 import '../../features/chat/viewmodel/chat_bloc.dart';
 import '../../features/feed/model/datasources/feed_remote_datasource.dart';
 import '../../features/feed/model/datasources/real_feed_remote_datasource.dart';
@@ -240,6 +241,7 @@ void setupDependencies() {
   );
   sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
   sl.registerFactory(() => ChatBloc(repository: sl()));
+  sl.registerLazySingleton(() => ChatBadgeCubit(repository: sl()));
 
   // ── Feed ──────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<FeedRemoteDataSource>(

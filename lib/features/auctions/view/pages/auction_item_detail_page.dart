@@ -337,26 +337,50 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                         child: SizedBox(
                           width: double.infinity,
                           height: 50,
-                          child: ElevatedButton.icon(
-                            onPressed: () => _confirmPaymentRequest(
-                              context,
-                              widget.item.id,
-                              widget.item.currentPrice,
-                            ),
-                            icon: const Icon(Icons.payment_rounded,
-                                color: Colors.white, size: 18),
-                            label: const Text('إرسال طلب دفع',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.blue,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                              elevation: 0,
-                            ),
-                          ),
+                          child: widget.item.winnerPaymentRequestId != null
+                              ? ElevatedButton.icon(
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PaymentsPage(
+                                        pendingAuctionItemId: widget.item.id,
+                                      ),
+                                    ),
+                                  ),
+                                  icon: const Icon(Icons.receipt_long_rounded,
+                                      color: Colors.white, size: 18),
+                                  label: const Text('عرض تفاصيل الدفع',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                    elevation: 0,
+                                  ),
+                                )
+                              : ElevatedButton.icon(
+                                  onPressed: () => _confirmPaymentRequest(
+                                    context,
+                                    widget.item.id,
+                                    widget.item.currentPrice,
+                                  ),
+                                  icon: const Icon(Icons.payment_rounded,
+                                      color: Colors.white, size: 18),
+                                  label: const Text('إرسال طلب دفع',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.blue,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                    elevation: 0,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

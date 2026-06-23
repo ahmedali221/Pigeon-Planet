@@ -31,6 +31,7 @@ import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 import '../../../auth/model/user_model.dart';
 import '../../../auth/view/pages/account_type_page.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
+import '../../../chat/viewmodel/chat_badge_cubit.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../../lucky_wheel/view/pages/lucky_wheel_page.dart';
 import '../../../seller_products/view/pages/seller_products_page.dart';
@@ -399,14 +400,15 @@ class _HomeViewState extends State<_HomeView> {
                   homeState.sellerSummary?.pointsBalance ??
                   0;
 
-              return Scaffold(
-                key: _scaffoldKey,
-                backgroundColor: AppColors.pageBackground,
-                endDrawer: HomeDrawer(
-                  authUser: authUser,
-                  isSeller: isSeller,
-                  unreadCount: homeState.unreadNotificationCount,
-                ),
+              return BlocBuilder<ChatBadgeCubit, int>(
+                builder: (context, chatUnread) => Scaffold(
+                  key: _scaffoldKey,
+                  backgroundColor: AppColors.pageBackground,
+                  endDrawer: HomeDrawer(
+                    authUser: authUser,
+                    isSeller: isSeller,
+                    unreadCount: homeState.unreadNotificationCount,
+                  ),
                 body: SafeArea(
                   child: Stack(
                     children: [
@@ -415,7 +417,8 @@ class _HomeViewState extends State<_HomeView> {
                           children: [
                             HomeTopBar(
                               avatarUrl: authUser?.avatarUrl,
-                              unreadCount: homeState.unreadNotificationCount,
+                              unreadCount: homeState.unreadNotificationCount +
+                                  chatUnread,
                               onQrScanPressed: () =>
                                   BirdQrScannerPage.push(context),
                               onMenuPressed: () =>
@@ -641,6 +644,7 @@ class _HomeViewState extends State<_HomeView> {
                     size: 28,
                   ),
                 ),
+              ),
               );
             },
           );

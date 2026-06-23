@@ -11,6 +11,7 @@ import '../../../../features/cart/view/pages/orders_page.dart';
 import '../../../../features/cart/view/pages/seller_orders_page.dart';
 import '../../../../features/cart/viewmodel/cart_bloc.dart';
 import '../../../../features/chat/view/pages/conversations_page.dart';
+import '../../../../features/chat/viewmodel/chat_badge_cubit.dart';
 import '../../../../features/chat/viewmodel/chat_bloc.dart';
 import '../../../../features/notifications/view/pages/notifications_page.dart';
 import '../../../../features/payments/view/pages/payments_page.dart';
@@ -188,28 +189,60 @@ class _ConversationsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: const Icon(
-        Icons.chat_bubble_outline_rounded,
-        color: AppColors.textPrimary,
-        size: 24,
-      ),
-      title: const Text('محادثاتي'),
-      onTap: () {
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (_) => sl<ChatBloc>()
-                ..add(ChatStarted(
-                  profileType: isSeller ? 'Seller' : 'Customer',
-                )),
-              child: const ConversationsPage(),
+    return BlocBuilder<ChatBadgeCubit, int>(
+      builder: (context, chatUnread) => ListTile(
+        leading: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            const Icon(
+              Icons.chat_bubble_outline_rounded,
+              color: AppColors.textPrimary,
+              size: 24,
             ),
-          ),
-        );
-      },
+            if (chatUnread > 0)
+              Positioned(
+                top: -3,
+                right: -3,
+                child: Container(
+                  width: 14,
+                  height: 14,
+                  decoration: const BoxDecoration(
+                    color: AppColors.blue,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      chatUnread > 99 ? '99+' : '$chatUnread',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 7,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        title: const Text('محادثاتي'),
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => sl<ChatBloc>()
+                  ..add(ChatStarted(
+                    profileType: isSeller ? 'Seller' : 'Customer',
+                  )),
+                child: const ConversationsPage(),
+              ),
+            ),
+          ).then((_) {
+            if (context.mounted) sl<ChatBadgeCubit>().refresh();
+          });
+        },
+      ),
     );
   }
 }

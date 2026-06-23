@@ -104,14 +104,19 @@ class FollowingPage extends StatelessWidget {
                       CircleAvatar(
                         radius: 24,
                         backgroundColor: AppColors.primaryLight,
-                        child: Text(
-                          seller.nickname.isNotEmpty
-                              ? seller.nickname[0]
-                              : '؟',
-                          style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        backgroundImage: seller.avatarUrl != null
+                            ? NetworkImage(seller.avatarUrl!)
+                            : null,
+                        child: seller.avatarUrl == null
+                            ? Text(
+                                seller.nickname.isNotEmpty
+                                    ? seller.nickname[0]
+                                    : '؟',
+                                style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : null,
                       ),
                       const SizedBox(width: 12),
                       Expanded(

@@ -21,6 +21,7 @@ class ChatState extends Equatable {
   final ChatSendStatus sendStatus;
   final String? sendError;
   final String? errorMessage;
+  final bool requiresFollow;
 
   const ChatState({
     this.conversationsStatus = ChatStatus.initial,
@@ -32,6 +33,7 @@ class ChatState extends Equatable {
     this.sendStatus = ChatSendStatus.idle,
     this.sendError,
     this.errorMessage,
+    this.requiresFollow = false,
   });
 
   int myProfileIdFor(ChatConversationModel conv) =>
@@ -57,6 +59,7 @@ class ChatState extends Equatable {
     String? sendError,
     bool clearSendError = false,
     String? errorMessage,
+    bool? requiresFollow,
   }) {
     return ChatState(
       conversationsStatus: conversationsStatus ?? this.conversationsStatus,
@@ -68,6 +71,7 @@ class ChatState extends Equatable {
       sendStatus: sendStatus ?? this.sendStatus,
       sendError: clearSendError ? null : (sendError ?? this.sendError),
       errorMessage: errorMessage ?? this.errorMessage,
+      requiresFollow: requiresFollow ?? this.requiresFollow,
     );
   }
 
@@ -82,5 +86,6 @@ class ChatState extends Equatable {
         sendStatus,
         sendError,
         errorMessage,
+        requiresFollow,
       ];
 }

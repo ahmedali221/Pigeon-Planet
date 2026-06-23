@@ -257,6 +257,25 @@ class _ProductHeader extends StatelessWidget {
                   color: AppColors.textSecondary,
                 ),
               ),
+              if (product.displaySellerName.isNotEmpty) ...[
+                const SizedBox(width: 12),
+                const Text('·',
+                    style: TextStyle(color: AppColors.textHint)),
+                const SizedBox(width: 12),
+                const Icon(Icons.storefront_rounded,
+                    size: 14, color: AppColors.textHint),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    product.displaySellerName,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ],
           ),
         ],

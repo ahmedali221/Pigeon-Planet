@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/error/failures.dart';
 import '../model/chat_repository.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
@@ -9,14 +10,19 @@ import 'chat_state.dart';
 export 'chat_event.dart';
 export 'chat_state.dart';
 
-// Internal polling tick — defined here so it stays private to this file.
+// Internal polling ticks — defined here so they stay private to this file.
 class _PollTick extends ChatEvent {
   const _PollTick();
+}
+
+class _ConversationsPollTick extends ChatEvent {
+  const _ConversationsPollTick();
 }
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatRepository _repository;
   Timer? _pollTimer;
+  Timer? _conversationsPollTimer;
 
   ChatBloc({required ChatRepository repository})
       : _repository = repository,
@@ -26,6 +32,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatRoomOpened>(_onRoomOpened);
     on<ChatRoomClosed>(_onRoomClosed);
     on<_PollTick>(_onPollTick);
+    on<_ConversationsPollTick>(_onConversationsPollTick);
     on<ChatMessageSent>(_onMessageSent);
     on<ChatMarkReadRequested>(_onMarkRead);
   }
@@ -33,6 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   @override
   Future<void> close() {
     _pollTimer?.cancel();
+    _conversationsPollTimer?.cancel();
     return super.close();
   }
 
@@ -47,10 +55,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         conversationsStatus: ChatStatus.error,
         errorMessage: f.message,
       )),
-      (convs) => emit(state.copyWith(
-        conversationsStatus: ChatStatus.loaded,
-        conversations: convs,
-      )),
+      (convs) {
+        emit(state.copyWith(
+          conversationsStatus: ChatStatus.loaded,
+          conversations: convs,
+        ));
+        _conversationsPollTimer?.cancel();
+        _conversationsPollTimer = Timer.periodic(
+          const Duration(seconds: 30),
+          (_) { if (!isClosed) add(const _ConversationsPollTick()); },
+        );
+      },
+    );
+  }
+
+  Future<void> _onConversationsPollTick(
+      _ConversationsPollTick e, Emitter<ChatState> emit) async {
+    final result = await _repository.listConversations();
+    result.fold(
+      (_) {},
+      (convs) => emit(state.copyWith(conversations: convs)),
     );
   }
 
@@ -59,10 +83,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(state.copyWith(roomStatus: ChatRoomStatus.loading));
     final result = await _repository.getOrCreateConversation(e.receiverProfileId);
     result.fold(
-      (f) => emit(state.copyWith(
-        roomStatus: ChatRoomStatus.error,
-        errorMessage: f.message,
-      )),
+      (f) {
+        final isFollowGate = f is ValidationFailure &&
+            f.message.toLowerCase().contains('follow');
+        emit(state.copyWith(
+          roomStatus: ChatRoomStatus.error,
+          errorMessage: f.message,
+          requiresFollow: isFollowGate,
+        ));
+      },
       (conv) {
         final exists = state.conversations.any((c) => c.id == conv.id);
         final updated =

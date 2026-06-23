@@ -259,14 +259,21 @@ class _SellerCard extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 25,
                   backgroundColor: AppColors.primaryLight,
-                  child: Text(
-                    seller.nickname.isNotEmpty ? seller.nickname[0] : '؟',
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
+                  backgroundImage: seller.avatarUrl != null
+                      ? NetworkImage(seller.avatarUrl!)
+                      : null,
+                  child: seller.avatarUrl == null
+                      ? Text(
+                          seller.nickname.isNotEmpty
+                              ? seller.nickname[0]
+                              : '؟',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        )
+                      : null,
                 ),
               ),
             ),
