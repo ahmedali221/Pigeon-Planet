@@ -3,27 +3,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/subscription_package_model.dart';
 import '../../viewmodel/packages_bloc.dart';
 import '../../viewmodel/packages_event.dart';
 import '../../viewmodel/packages_state.dart';
 import '../widgets/package_card.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PackagesPage extends StatelessWidget {
-  const PackagesPage({super.key});
+  PackagesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => PackagesBloc(datasource: sl())
         ..add(PackagesLoadRequested()),
-      child: const _PackagesView(),
+      child: _PackagesView(),
     );
   }
 }
 
 class _PackagesView extends StatefulWidget {
-  const _PackagesView();
+  _PackagesView();
 
   @override
   State<_PackagesView> createState() => _PackagesViewState();
@@ -98,12 +100,12 @@ class _PackagesViewState extends State<_PackagesView> {
   void _showSnackBar(BuildContext context, String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: const TextStyle(fontSize: 14)),
+        content: Text(message, style: TextStyle(fontSize: 14)),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 4),
+        duration: Duration(seconds: 4),
       ),
     );
   }
@@ -136,11 +138,11 @@ class _PackagesViewState extends State<_PackagesView> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
+          appBar: PPWAppBar(
             backgroundColor: Colors.white,
+            foregroundColor: AppColors.textPrimary,
             elevation: 0.5,
-            automaticallyImplyLeading: false,
-            title: const Column(
+            titleWidget: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
@@ -162,7 +164,7 @@ class _PackagesViewState extends State<_PackagesView> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.refresh_rounded,
                   color: AppColors.textPrimary,
                   size: 22,
@@ -171,19 +173,11 @@ class _PackagesViewState extends State<_PackagesView> {
                     ? null
                     : () => bloc.add(PackagesLoadRequested()),
               ),
-              IconButton(
-                icon: const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: AppColors.textPrimary,
-                  size: 20,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
             ],
           ),
           body: switch (state.status) {
             PackagesStatus.loading || PackagesStatus.initial =>
-              const Center(child: CircularProgressIndicator()),
+              Center(child: CircularProgressIndicator()),
             PackagesStatus.error => _ErrorView(
                 message: state.errorMessage ?? 'حدث خطأ غير متوقع',
                 onRetry: () => bloc.add(PackagesLoadRequested()),
@@ -202,7 +196,7 @@ class _PackagesViewState extends State<_PackagesView> {
     bool isRequesting,
   ) {
     if (state.packages.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'لا توجد باقات متاحة حالياً',
           style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
@@ -211,16 +205,16 @@ class _PackagesViewState extends State<_PackagesView> {
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
-        // Active package banner
-        if (state.activePackage != null) ...[
-          _ActivePackageBanner(
-            active: state.activePackage!,
-            periodStr: _periodStr,
-          ),
-          const SizedBox(height: 20),
-          const Text(
+        // Active package banners (one per active package — multiple now allowed)
+        if (state.activePackages.isNotEmpty) ...[
+          for (final active in state.activePackages) ...[
+            _ActivePackageBanner(active: active, periodStr: _periodStr),
+            SizedBox(height: 12),
+          ],
+          SizedBox(height: 8),
+          Text(
             'الباقات المتاحة',
             style: TextStyle(
               fontSize: 15,
@@ -228,7 +222,7 @@ class _PackagesViewState extends State<_PackagesView> {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
         ],
 
         // Pending package card
@@ -240,7 +234,7 @@ class _PackagesViewState extends State<_PackagesView> {
               PackageCancelRequested(state.pendingPackage!.id),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
         ],
 
         // Package cards
@@ -283,7 +277,7 @@ class _PendingPackageBanner extends StatelessWidget {
   final bool cancelling;
   final VoidCallback onCancel;
 
-  const _PendingPackageBanner({
+  _PendingPackageBanner({
     required this.pending,
     required this.cancelling,
     required this.onCancel,
@@ -292,7 +286,7 @@ class _PendingPackageBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -301,7 +295,7 @@ class _PendingPackageBanner extends StatelessWidget {
           BoxShadow(
             color: AppColors.orange.withValues(alpha: 0.08),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -314,18 +308,18 @@ class _PendingPackageBanner extends StatelessWidget {
               color: AppColors.orangeLight,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.hourglass_top_rounded,
               color: AppColors.orange,
               size: 20,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'طلب اشتراك معلق',
                   style: TextStyle(
                     fontSize: 13,
@@ -333,12 +327,12 @@ class _PendingPackageBanner extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   pending.packageName.isNotEmpty
                       ? pending.packageName
                       : 'بانتظار تفعيل المشرف',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,
                   ),
@@ -346,9 +340,9 @@ class _PendingPackageBanner extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           cancelling
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -360,7 +354,7 @@ class _PendingPackageBanner extends StatelessWidget {
                   onPressed: onCancel,
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.error,
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 10, vertical: 6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -368,8 +362,8 @@ class _PendingPackageBanner extends StatelessWidget {
                           color: AppColors.error.withValues(alpha: 0.4)),
                     ),
                   ),
-                  child: const Text(
-                    'إلغاء',
+                  child: Text(
+                    AppLocalizations.of(context).cancel,
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -385,13 +379,13 @@ class _ActivePackageBanner extends StatelessWidget {
   final ActiveSellerPackageModel active;
   final String Function(int) periodStr;
 
-  const _ActivePackageBanner({
+  _ActivePackageBanner({
     required this.active,
     required this.periodStr,
   });
 
   String _formatDate(DateTime dt) {
-    const months = [
+    final months = [
       'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
       'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
     ];
@@ -406,9 +400,9 @@ class _ActivePackageBanner extends StatelessWidget {
     final isLow = progress < 0.25;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [AppColors.primary, AppColors.primaryDark],
           begin: AlignmentDirectional.topStart,
           end: AlignmentDirectional.bottomEnd,
@@ -418,7 +412,7 @@ class _ActivePackageBanner extends StatelessWidget {
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -428,12 +422,12 @@ class _ActivePackageBanner extends StatelessWidget {
           // Title
           Row(
             children: [
-              const Icon(Icons.verified_rounded, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              Icon(Icons.verified_rounded, color: Colors.white, size: 20),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'باقتك الحالية: ${active.package.name}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -442,7 +436,7 @@ class _ActivePackageBanner extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
 
           // Points progress label
           Row(
@@ -457,7 +451,7 @@ class _ActivePackageBanner extends StatelessWidget {
               ),
               Text(
                 '$remaining / $total',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -465,7 +459,7 @@ class _ActivePackageBanner extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -477,7 +471,7 @@ class _ActivePackageBanner extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Cost chips + expiry
           Row(
@@ -486,12 +480,12 @@ class _ActivePackageBanner extends StatelessWidget {
                 icon: Icons.gavel_rounded,
                 label: 'مزاد: ${active.auctionCost} نقطة',
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               _Chip(
                 icon: Icons.inventory_2_rounded,
                 label: 'منتج: ${active.productCost} نقطة',
               ),
-              const Spacer(),
+              Spacer(),
               if (active.expiresAt != null)
                 Text(
                   'تنتهي ${_formatDate(active.expiresAt!)}',
@@ -505,10 +499,10 @@ class _ActivePackageBanner extends StatelessWidget {
 
           // Low-points warning
           if (isLow) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
@@ -516,7 +510,7 @@ class _ActivePackageBanner extends StatelessWidget {
                   color: AppColors.orange.withValues(alpha: 0.5),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.warning_amber_rounded,
@@ -544,12 +538,12 @@ class _Chip extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _Chip({required this.icon, required this.label});
+  _Chip({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
@@ -558,9 +552,9 @@ class _Chip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.white, size: 13),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(label,
-              style: const TextStyle(color: Colors.white, fontSize: 11)),
+              style: TextStyle(color: Colors.white, fontSize: 11)),
         ],
       ),
     );
@@ -573,30 +567,30 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.message, required this.onRetry});
+  _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_rounded,
+            Icon(Icons.cloud_off_rounded,
                 size: 56, color: AppColors.textHint),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                   color: AppColors.textSecondary, fontSize: 14),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('إعادة المحاولة'),
+              icon: Icon(Icons.refresh_rounded, size: 18),
+              label: Text(AppLocalizations.of(context).retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,

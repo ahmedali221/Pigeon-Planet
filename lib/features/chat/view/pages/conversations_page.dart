@@ -7,8 +7,9 @@ import '../../model/chat_conversation_model.dart';
 import '../../viewmodel/chat_bloc.dart';
 import 'chat_room_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ConversationsPage extends StatelessWidget {
-  const ConversationsPage({super.key});
+  ConversationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,12 @@ class ConversationsPage extends StatelessWidget {
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 4, 16, 14),
+                padding: EdgeInsets.fromLTRB(8, 4, 16, 14),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'المحادثات',
+                        AppLocalizations.of(context).conversationsTitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -47,27 +48,27 @@ class ConversationsPage extends StatelessWidget {
             child: BlocBuilder<ChatBloc, ChatState>(
               builder: (context, state) {
                 if (state.conversationsStatus == ChatStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 }
                 if (state.conversationsStatus == ChatStatus.error) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline_rounded,
+                        Icon(Icons.error_outline_rounded,
                             color: AppColors.error, size: 48),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Text(
                           state.errorMessage ?? 'حدث خطأ',
-                          style: const TextStyle(color: AppColors.textSecondary),
+                          style: TextStyle(color: AppColors.textSecondary),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         TextButton(
                           onPressed: () => context.read<ChatBloc>().add(
                               ChatStarted(
                                   profileType: state.myProfileType)),
-                          child: const Text('إعادة المحاولة'),
+                          child: Text(AppLocalizations.of(context).retry),
                         ),
                       ],
                     ),
@@ -79,16 +80,16 @@ class ConversationsPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: const BoxDecoration(
+                          padding: EdgeInsets.all(24),
+                          decoration: BoxDecoration(
                             color: AppColors.primaryLight,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.chat_bubble_outline_rounded,
+                          child: Icon(Icons.chat_bubble_outline_rounded,
                               size: 52, color: AppColors.primary),
                         ),
-                        const SizedBox(height: 16),
-                        const Text(
+                        SizedBox(height: 16),
+                        Text(
                           'لا توجد محادثات بعد',
                           style: TextStyle(
                             fontSize: 16,
@@ -96,8 +97,8 @@ class ConversationsPage extends StatelessWidget {
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        const Text(
+                        SizedBox(height: 8),
+                        Text(
                           'تواصل مع البائعين من صفحة ملفاتهم الشخصية',
                           style: TextStyle(
                               fontSize: 13, color: AppColors.textSecondary),
@@ -111,9 +112,9 @@ class ConversationsPage extends StatelessWidget {
                   onRefresh: () async => context.read<ChatBloc>().add(
                       ChatStarted(profileType: state.myProfileType)),
                   child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     itemCount: state.conversations.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => SizedBox(height: 10),
                     itemBuilder: (context, i) {
                       final conv = state.conversations[i];
                       return _ConversationTile(
@@ -155,7 +156,7 @@ class _ConversationTile extends StatelessWidget {
   final String partnerNickname;
   final VoidCallback onTap;
 
-  const _ConversationTile({
+  _ConversationTile({
     required this.conversation,
     required this.partnerNickname,
     required this.onTap,
@@ -177,7 +178,7 @@ class _ConversationTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -185,7 +186,7 @@ class _ConversationTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -199,7 +200,7 @@ class _ConversationTile extends StatelessWidget {
                 partnerNickname.isNotEmpty
                     ? partnerNickname.characters.first
                     : '؟',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -207,7 +208,7 @@ class _ConversationTile extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
 
             // Name + last message — center
             Expanded(
@@ -226,7 +227,7 @@ class _ConversationTile extends StatelessWidget {
                   ),
                   if (conversation.lastMessage != null &&
                       conversation.lastMessage!.isNotEmpty) ...[
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(
                       conversation.lastMessage!,
                       style: TextStyle(
@@ -244,7 +245,7 @@ class _ConversationTile extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
 
             // Time + unread badge — leftmost in RTL
             Column(
@@ -258,10 +259,10 @@ class _ConversationTile extends StatelessWidget {
                   ),
                 ),
                 if (hasUnread) ...[
-                  const SizedBox(height: 5),
+                  SizedBox(height: 5),
                   Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),
@@ -269,7 +270,7 @@ class _ConversationTile extends StatelessWidget {
                       conversation.unreadCount > 99
                           ? '99+'
                           : '${conversation.unreadCount}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,

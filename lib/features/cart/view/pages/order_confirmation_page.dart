@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/order_item_model.dart';
 import '../../model/order_model.dart';
 
@@ -10,17 +12,12 @@ class OrderConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'تأكيد الطلب',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
-        automaticallyImplyLeading: false,
+      appBar: PPWAppBar(
+        title: l.orderConfirmationTitle,
+        showBackButton: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -40,18 +37,18 @@ class OrderConfirmationPage extends StatelessWidget {
                   const Icon(Icons.check_circle_rounded,
                       color: AppColors.success, size: 56),
                   const SizedBox(height: 12),
-                  const Text(
-                    'تم إرسال طلبك بنجاح!',
-                    style: TextStyle(
+                  Text(
+                    l.orderSentSuccess,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    'في انتظار موافقة البائع',
-                    style: TextStyle(
+                  Text(
+                    l.awaitingSellerApproval,
+                    style: const TextStyle(
                         fontSize: 13, color: AppColors.textSecondary),
                   ),
                 ],
@@ -72,9 +69,9 @@ class OrderConfirmationPage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'رقم الطلب',
-                        style: TextStyle(
+                      Text(
+                        l.orderNumber(order.id),
+                        style: const TextStyle(
                             fontSize: 13, color: AppColors.textSecondary),
                       ),
                       const Spacer(),
@@ -91,9 +88,9 @@ class OrderConfirmationPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Text(
-                        'الحالة',
-                        style: TextStyle(
+                      Text(
+                        l.statusLabel,
+                        style: const TextStyle(
                             fontSize: 13, color: AppColors.textSecondary),
                       ),
                       const Spacer(),
@@ -118,9 +115,9 @@ class OrderConfirmationPage extends StatelessWidget {
                   const Divider(height: 24),
                   Row(
                     children: [
-                      const Text(
-                        'الإجمالي',
-                        style: TextStyle(
+                      Text(
+                        l.total,
+                        style: const TextStyle(
                             fontSize: 14, color: AppColors.textSecondary),
                       ),
                       const Spacer(),
@@ -141,9 +138,9 @@ class OrderConfirmationPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── Order items ─────────────────────────────────────────
-            const Text(
-              'المنتجات',
-              style: TextStyle(
+            Text(
+              l.products,
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -170,9 +167,9 @@ class OrderConfirmationPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text(
-                  'العودة للرئيسية',
-                  style: TextStyle(
+                child: Text(
+                  l.backToHome,
+                  style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -190,6 +187,7 @@ class _OrderItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -246,7 +244,7 @@ class _OrderItemRow extends StatelessWidget {
                 ),
               ),
               Text(
-                'الكمية: ${item.quantity}',
+                l.quantityLabel(item.quantity),
                 style: const TextStyle(
                     fontSize: 11, color: AppColors.textHint),
               ),

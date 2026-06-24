@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AuctionPriceSection extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -7,6 +8,7 @@ class AuctionPriceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -28,8 +30,8 @@ class AuctionPriceSection extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('السعر الخاص',
-                          style: TextStyle(
+                      Text(l.specialPrice,
+                          style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary)),
                       const SizedBox(height: 2),
@@ -56,7 +58,7 @@ class AuctionPriceSection extends StatelessWidget {
                               style: TextStyle(fontSize: 12)),
                           const SizedBox(width: 4),
                           Text(
-                            'توفير ${data['savings']} ج.م',
+                            l.savingsAmount(data['savings'].toString()),
                             style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColors.primary,
@@ -75,7 +77,7 @@ class AuctionPriceSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'خصم\n${data['discountPercent']}%',
+                      l.discountPercent(data['discountPercent']),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           color: Colors.white,
@@ -103,7 +105,7 @@ class AuctionPriceSection extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            '${data['liveViewers']} شخص يشاهدون الآن',
+                            l.liveViewersCount(data['liveViewers']),
                             style: const TextStyle(
                                 fontSize: 12, color: AppColors.textSecondary),
                             overflow: TextOverflow.ellipsis,
@@ -121,7 +123,7 @@ class AuctionPriceSection extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            '${data['todayRequests']} طلب اليوم',
+                            l.todayRequestsCount(data['todayRequests']),
                             style: const TextStyle(
                                 fontSize: 12, color: AppColors.textSecondary),
                             overflow: TextOverflow.ellipsis,
@@ -151,9 +153,9 @@ class AuctionPriceSection extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    '🛒 اشتري الآن - عرض لفترة محدودة!',
-                    style: TextStyle(
+                  child: Text(
+                    l.buyNowLimitedOffer,
+                    style: const TextStyle(
                         fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -168,16 +170,16 @@ class AuctionPriceSection extends StatelessWidget {
               child: Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 4,
-                children: const [
-                  Text('توصيل مجاني لجميع المحافظات 🚚',
-                      style: TextStyle(
+                children: [
+                  Text(l.freeDelivery,
+                      style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textSecondary)),
-                  Text('|',
+                  const Text('|',
                       style: TextStyle(
                           color: AppColors.border, fontSize: 11)),
-                  Text('الدفع عند الاستلام متاح 💳',
-                      style: TextStyle(
+                  Text(l.cashOnDelivery,
+                      style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textSecondary)),
                 ],

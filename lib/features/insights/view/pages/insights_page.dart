@@ -5,20 +5,21 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
 import '../../viewmodel/insights_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class InsightsPage extends StatelessWidget {
-  const InsightsPage({super.key});
+  InsightsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<InsightsBloc>(
-      create: (_) => sl<InsightsBloc>()..add(const InsightsStarted()),
-      child: const _InsightsView(),
+      create: (_) => sl<InsightsBloc>()..add(InsightsStarted()),
+      child: _InsightsView(),
     );
   }
 }
 
 class _InsightsView extends StatelessWidget {
-  const _InsightsView();
+  _InsightsView();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class _InsightsView extends StatelessWidget {
                     ? null
                     : () => context
                         .read<InsightsBloc>()
-                        .add(const InsightsRefreshRequested()),
+                        .add(InsightsRefreshRequested()),
               ),
               Expanded(child: _buildBody(context, state)),
             ],
@@ -46,7 +47,7 @@ class _InsightsView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, InsightsState state) {
     if (state.status == InsightsStatus.loading && state.insights == null) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
@@ -54,72 +55,72 @@ class _InsightsView extends StatelessWidget {
       return _ErrorView(
         message: state.errorMessage,
         onRetry: () =>
-            context.read<InsightsBloc>().add(const InsightsRefreshRequested()),
+            context.read<InsightsBloc>().add(InsightsRefreshRequested()),
       );
     }
     final insights = state.insights;
     if (insights == null) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () async =>
-          context.read<InsightsBloc>().add(const InsightsRefreshRequested()),
+          context.read<InsightsBloc>().add(InsightsRefreshRequested()),
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
           _SectionCard(
             icon: Icons.gavel_rounded,
             iconBg: AppColors.blueLight,
             iconColor: AppColors.blue,
-            title: 'المزادات',
+            title: AppLocalizations.of(context).auctions,
             children: [
               _StatRow(
                   label: 'مزادات نشطة',
                   value: '${insights.auctionSummary.activeCount}'),
               _StatRow(
-                  label: 'مزادات مغلقة',
+                  label: AppLocalizations.of(context).closedAuctions,
                   value: '${insights.auctionSummary.closedCount}'),
               _StatRow(
                   label: 'تنتهي قريباً',
                   value: '${insights.auctionSummary.endingSoonCount}'),
               _StatRow(
-                  label: 'إجمالي العروض المستلمة',
+                  label: AppLocalizations.of(context).totalOffersReceived,
                   value: '${insights.auctionSummary.totalBidsReceived}'),
               _StatRow(
-                  label: 'مزايدون فريدون',
+                  label: AppLocalizations.of(context).uniqueBidders,
                   value: '${insights.auctionSummary.uniqueBiddersCount}'),
               _StatRow(
-                  label: 'مبيعات مكتملة',
+                  label: AppLocalizations.of(context).completedSales,
                   value: '${insights.auctionSummary.soldItemsCount}'),
               _StatRow(
-                  label: 'طلبات دفع معلقة',
+                  label: AppLocalizations.of(context).pendingPaymentRequests,
                   value: '${insights.auctionSummary.pendingPaymentCount}'),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _SectionCard(
             icon: Icons.storefront_rounded,
             iconBg: AppColors.primaryLight,
             iconColor: AppColors.primary,
-            title: 'المتجر',
+            title: AppLocalizations.of(context).market,
             children: [
               _StatRow(
-                  label: 'منتجات معروضة',
+                  label: AppLocalizations.of(context).listedProducts,
                   value: '${insights.marketSummary.activeListingsCount}'),
               _StatRow(
-                  label: 'مبيعات مكتملة',
+                  label: AppLocalizations.of(context).completedSales,
                   value: '${insights.marketSummary.soldItemsCount}'),
               _StatRow(
-                  label: 'طلبات معلقة',
+                  label: AppLocalizations.of(context).pendingOrders,
                   value: '${insights.marketSummary.pendingOrderItemsCount}'),
               _StatRow(
-                  label: 'طلبات دفع معلقة',
+                  label: AppLocalizations.of(context).pendingPaymentRequests,
                   value: '${insights.marketSummary.pendingPaymentCount}'),
               _StatRow(
-                  label: 'مخزون منخفض',
+                  label: AppLocalizations.of(context).lowStock,
                   value: '${insights.marketSummary.lowStockProductsCount}',
                   valueColor:
                       insights.marketSummary.lowStockProductsCount > 0
@@ -127,101 +128,101 @@ class _InsightsView extends StatelessWidget {
                           : null),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _SectionCard(
             icon: Icons.people_rounded,
-            iconBg: const Color(0xFFF3EEFE),
+            iconBg: Color(0xFFF3EEFE),
             iconColor: AppColors.purple,
-            title: 'التفاعل',
+            title: AppLocalizations.of(context).engagement,
             children: [
               _StatRow(
-                  label: 'إجمالي المتابعين',
+                  label: AppLocalizations.of(context).totalFollowers,
                   value: '${insights.engagementSummary.followersCount}'),
               _StatRow(
-                  label: 'متابعون جدد (7 أيام)',
+                  label: AppLocalizations.of(context).newFollowers7Days,
                   value: '${insights.engagementSummary.newFollowers7d}'),
               _StatRow(
-                  label: 'محادثات نشطة',
+                  label: AppLocalizations.of(context).activeConversations,
                   value:
                       '${insights.engagementSummary.activeConversationsCount}'),
               _StatRow(
-                  label: 'رسائل غير مقروءة',
+                  label: AppLocalizations.of(context).unreadMessages,
                   value: '${insights.engagementSummary.unreadMessages}'),
               _StatRow(
-                  label: 'مشاهدات الملف (7 أيام)',
+                  label: AppLocalizations.of(context).profileViews7Days,
                   value: '${insights.engagementSummary.profileViews7d}'),
               _StatRow(
-                  label: 'مشاهدات المزادات (7 أيام)',
+                  label: AppLocalizations.of(context).auctionViews7Days,
                   value: '${insights.engagementSummary.auctionViews7d}'),
               _StatRow(
-                  label: 'مشاهدات المتجر (7 أيام)',
+                  label: AppLocalizations.of(context).marketViews7Days,
                   value: '${insights.engagementSummary.marketItemViews7d}'),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _SectionCard(
             icon: Icons.verified_rounded,
-            iconBg: const Color(0xFFFFF8E1),
-            iconColor: const Color(0xFFF9A825),
-            title: 'الموثوقية',
+            iconBg: Color(0xFFFFF8E1),
+            iconColor: Color(0xFFF9A825),
+            title: AppLocalizations.of(context).trust,
             children: [
               _StatRow(
-                  label: 'متوسط التقييم',
+                  label: AppLocalizations.of(context).averageRating,
                   value: insights.trustSummary.averageRating.toStringAsFixed(1)),
               _StatRow(
-                  label: 'عدد التقييمات',
+                  label: AppLocalizations.of(context).ratingsCount,
                   value: '${insights.trustSummary.ratingsCount}'),
               _StatRow(
-                  label: 'مراجعات جديدة (7 أيام)',
+                  label: AppLocalizations.of(context).newReviews7Days,
                   value: '${insights.trustSummary.recentReviewsCount7d}'),
               _StatRow(
-                  label: 'الشارات',
+                  label: AppLocalizations.of(context).badges,
                   value: '${insights.trustSummary.badgesCount}'),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _SectionCard(
             icon: Icons.workspace_premium_rounded,
             iconBg: AppColors.orangeLight,
             iconColor: AppColors.orange,
-            title: 'الباقة',
+            title: AppLocalizations.of(context).package,
             children: [
               _StatRow(
-                  label: 'الباقة الحالية',
+                  label: AppLocalizations.of(context).currentPackage,
                   value: insights.packageSummary.displayName),
               if (insights.packageSummary.activePackageId != null)
                 _StatRow(
-                    label: 'رقم الباقة',
+                    label: AppLocalizations.of(context).packageNumber,
                     value: '${insights.packageSummary.activePackageId}'),
               _StatRow(
-                  label: 'حالة الاشتراك',
+                  label: AppLocalizations.of(context).subscriptionStatus,
                   value:
-                      insights.packageSummary.isActive ? 'نشط' : 'غير نشط',
+                      insights.packageSummary.isActive ? AppLocalizations.of(context).statusActive : AppLocalizations.of(context).inactive,
                   valueColor: insights.packageSummary.isActive
                       ? AppColors.success
                       : AppColors.error),
               if (insights.packageSummary.remainingAuctionQuota != null)
                 _StatRow(
-                    label: 'حصة المزادات المتبقية',
+                    label: AppLocalizations.of(context).remainingAuctionQuota,
                     value: '${insights.packageSummary.remainingAuctionQuota}'),
               if (insights.packageSummary.remainingMarketQuota != null)
                 _StatRow(
-                    label: 'حصة المتجر المتبقية',
+                    label: AppLocalizations.of(context).remainingMarketQuota,
                     value: '${insights.packageSummary.remainingMarketQuota}'),
               if (insights.packageSummary.activePackageRemainingPoints != null)
                 _StatRow(
-                    label: 'نقاط الباقة المتبقية',
+                    label: AppLocalizations.of(context).remainingPackagePoints,
                     value:
                         '${insights.packageSummary.activePackageRemainingPoints}'),
               _StatRow(
-                  label: 'مزادات مروجة',
+                  label: AppLocalizations.of(context).promotedAuctions,
                   value: '${insights.packageSummary.promotedAuctionsCount}'),
               _StatRow(
-                  label: 'منتجات مروجة',
+                  label: AppLocalizations.of(context).promotedProducts,
                   value: '${insights.packageSummary.promotedMarketCount}'),
               if (insights.packageSummary.packageExpiryDate != null)
                 _StatRow(
-                    label: 'تاريخ انتهاء الباقة',
+                    label: AppLocalizations.of(context).packageExpiryDate,
                     value: _formatDate(
                         insights.packageSummary.packageExpiryDate!)),
             ],
@@ -245,7 +246,7 @@ class _InsightsHeader extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback? onRefresh;
 
-  const _InsightsHeader({required this.onBack, this.onRefresh});
+  _InsightsHeader({required this.onBack, this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -262,13 +263,13 @@ class _InsightsHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onBack,
-            child: const Icon(Icons.arrow_forward_ios_rounded,
+            child: Icon(Icons.arrow_forward_ios_rounded,
                 color: Colors.white, size: 20),
           ),
-          const Expanded(
+          Expanded(
             child: Center(
               child: Text(
-                'إحصائياتي',
+                AppLocalizations.of(context).myInsights,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -279,10 +280,10 @@ class _InsightsHeader extends StatelessWidget {
           if (onRefresh != null)
             IconButton(
               onPressed: onRefresh,
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+              icon: Icon(Icons.refresh_rounded, color: Colors.white),
             )
           else
-            const SizedBox(width: 48),
+            SizedBox(width: 48),
         ],
       ),
     );
@@ -298,7 +299,7 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _SectionCard({
+  _SectionCard({
     required this.icon,
     required this.iconBg,
     required this.iconColor,
@@ -317,7 +318,7 @@ class _SectionCard extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+            padding: EdgeInsets.fromLTRB(14, 14, 14, 10),
             child: Row(
               children: [
                 Container(
@@ -329,10 +330,10 @@ class _SectionCard extends StatelessWidget {
                   ),
                   child: Icon(icon, color: iconColor, size: 20),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -341,7 +342,7 @@ class _SectionCard extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.divider),
+          Divider(height: 1, color: AppColors.divider),
           ...children,
         ],
       ),
@@ -356,7 +357,7 @@ class _StatRow extends StatelessWidget {
   final String value;
   final Color? valueColor;
 
-  const _StatRow({
+  _StatRow({
     required this.label,
     required this.value,
     this.valueColor,
@@ -365,13 +366,13 @@ class _StatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
               ),
@@ -397,25 +398,25 @@ class _ErrorView extends StatelessWidget {
   final String? message;
   final VoidCallback onRetry;
 
-  const _ErrorView({this.message, required this.onRetry});
+  _ErrorView({this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-            const SizedBox(height: 12),
+            Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            SizedBox(height: 12),
             Text(
-              message ?? 'فشل تحميل الإحصائيات',
+              message ?? AppLocalizations.of(context).insightsLoadError,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                   color: AppColors.textSecondary, fontSize: 14),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
@@ -424,7 +425,7 @@ class _ErrorView extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('إعادة المحاولة'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),

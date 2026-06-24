@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../model/bid_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
 
@@ -24,25 +26,11 @@ class _MyBidsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'مزايداتي',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold),
-        ),
+      appBar: PPWAppBar(
+        title: l.myBids,
       ),
       body: BlocBuilder<AuctionsBloc, AuctionsState>(
         buildWhen: (p, c) =>
@@ -57,15 +45,15 @@ class _MyBidsView extends StatelessWidget {
             );
           }
           if (state.myBids.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.gavel_rounded, size: 56, color: AppColors.border),
-                  SizedBox(height: 12),
+                  const Icon(Icons.gavel_rounded, size: 56, color: AppColors.border),
+                  const SizedBox(height: 12),
                   Text(
-                    'لا توجد مزايدات بعد',
-                    style: TextStyle(
+                    l.noBidsYet,
+                    style: const TextStyle(
                         fontSize: 15, color: AppColors.textSecondary),
                   ),
                 ],
@@ -139,6 +127,7 @@ class _BidCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -211,9 +200,9 @@ class _BidCard extends StatelessWidget {
                           color: AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          'مزايدة فائزة',
-                          style: TextStyle(
+                        child: Text(
+                          l.winningBid,
+                          style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary),

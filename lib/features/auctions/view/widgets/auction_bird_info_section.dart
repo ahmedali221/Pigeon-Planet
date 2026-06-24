@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AuctionBirdInfoSection extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -7,6 +8,7 @@ class AuctionBirdInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -22,13 +24,13 @@ class AuctionBirdInfoSection extends StatelessWidget {
                 color: AppColors.orange,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('🔥', style: TextStyle(fontSize: 12)),
-                  SizedBox(width: 4),
-                  Text('عرض محدود',
-                      style: TextStyle(
+                  const Text('🔥', style: TextStyle(fontSize: 12)),
+                  const SizedBox(width: 4),
+                  Text(l.limitedOffer,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold)),
@@ -66,17 +68,17 @@ class AuctionBirdInfoSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.blue.withValues(alpha: 0.4)),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('🕐', style: TextStyle(fontSize: 14)),
-                    SizedBox(width: 6),
+                    const Text('🕐', style: TextStyle(fontSize: 14)),
+                    const SizedBox(width: 6),
                     Text(
-                      'عرض محدود - فرصة نادرة',
-                      style: TextStyle(
+                      l.limitedOfferRareOpportunity,
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: AppColors.blue,
@@ -84,15 +86,15 @@ class AuctionBirdInfoSection extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('👤', style: TextStyle(fontSize: 13)),
-                    SizedBox(width: 6),
+                    const Text('👤', style: TextStyle(fontSize: 13)),
+                    const SizedBox(width: 6),
                     Text(
-                      'اقتني بطل اليوم - حقق انتصارات الغد',
-                      style: TextStyle(
+                      l.ownTodaysChampionWinTomorrow,
+                      style: const TextStyle(
                           fontSize: 12, color: AppColors.blue),
                     ),
                   ],

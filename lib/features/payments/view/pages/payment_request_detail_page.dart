@@ -4,15 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../complaints/view/pages/complaint_create_page.dart';
 import '../../model/payment_request_model.dart';
 import '../../viewmodel/payments_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PaymentRequestDetailPage extends StatelessWidget {
   final PaymentRequestModel initialRequest;
 
-  const PaymentRequestDetailPage({super.key, required this.initialRequest});
+  PaymentRequestDetailPage({super.key, required this.initialRequest});
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +38,8 @@ class PaymentRequestDetailPage extends StatelessWidget {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تمت العملية بنجاح'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).operationSuccessful),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -53,40 +55,34 @@ class PaymentRequestDetailPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: Text(
-              'طلب دفع #${request.id}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
+          appBar: PPWAppBar(
+            title: 'طلب دفع #${request.id}',
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             children: [
               _StatusCard(request: request),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               _DetailsCard(request: request),
               if (request.buyerNote != null || request.sellerNote != null) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _NotesCard(request: request),
               ],
               if (request.paymentProofUrl != null) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _ProofCard(url: request.paymentProofUrl!),
               ],
               if (request.isApproved || request.isRejected) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _ComplaintActionCard(request: request),
               ],
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               if (isSeller && request.isPending) ...[
                 _SellerActions(request: request, isActing: state.isActing),
               ] else if (!isSeller && request.canUpdate) ...[
                 _BuyerNoteEditor(request: request, isActing: state.isActing),
               ],
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
             ],
           ),
         );
@@ -98,12 +94,12 @@ class PaymentRequestDetailPage extends StatelessWidget {
 class _ComplaintActionCard extends StatelessWidget {
   final PaymentRequestModel request;
 
-  const _ComplaintActionCard({required this.request});
+  _ComplaintActionCard({required this.request});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -112,7 +108,7 @@ class _ComplaintActionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الشكاوى',
             style: TextStyle(
               fontSize: 14,
@@ -120,7 +116,7 @@ class _ComplaintActionCard extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
@@ -130,17 +126,17 @@ class _ComplaintActionCard extends StatelessWidget {
                   builder: (_) => ComplaintCreatePage(paymentRequest: request),
                 ),
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.report_problem_outlined,
                 color: AppColors.orange,
               ),
-              label: const Text(
+              label: Text(
                 'تقديم شكوى',
                 style: TextStyle(color: AppColors.orange),
               ),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                side: const BorderSide(color: AppColors.orange),
+                padding: EdgeInsets.symmetric(vertical: 14),
+                side: BorderSide(color: AppColors.orange),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -157,7 +153,7 @@ class _ComplaintActionCard extends StatelessWidget {
 
 class _StatusCard extends StatelessWidget {
   final PaymentRequestModel request;
-  const _StatusCard({required this.request});
+  _StatusCard({required this.request});
 
   Color get _color => switch (request.status) {
     'pending' => AppColors.orange,
@@ -170,7 +166,7 @@ class _StatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _color;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -193,18 +189,18 @@ class _StatusCard extends StatelessWidget {
               size: 30,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             '${request.amount.toStringAsFixed(2)} ج.م',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
@@ -229,7 +225,7 @@ class _StatusCard extends StatelessWidget {
 
 class _DetailsCard extends StatelessWidget {
   final PaymentRequestModel request;
-  const _DetailsCard({required this.request});
+  _DetailsCard({required this.request});
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +243,7 @@ class _DetailsCard extends StatelessWidget {
             label: 'رقم الطلب',
             value: '#${request.id}',
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _Row(
             icon: request.isAuction
                 ? Icons.gavel_rounded
@@ -256,7 +252,7 @@ class _DetailsCard extends StatelessWidget {
             value: request.typeLabel,
           ),
           if (request.assetTitle.isNotEmpty) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.pets_rounded,
               label: 'المنتج',
@@ -264,7 +260,7 @@ class _DetailsCard extends StatelessWidget {
             ),
           ],
           if (request.assetCategory.isNotEmpty) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.category_outlined,
               label: 'الفئة',
@@ -272,21 +268,21 @@ class _DetailsCard extends StatelessWidget {
             ),
           ],
           if (request.buyerProfileId != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.person_outline_rounded,
               label: 'رقم المشتري',
               value: '#${request.buyerProfileId}',
             ),
           ],
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           if (request.auctionItemId != null) ...[
             _Row(
               icon: Icons.inventory_2_outlined,
               label: 'رقم قطعة المزاد',
               value: '#${request.auctionItemId}',
             ),
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
           ],
           if (request.orderItemId != null) ...[
             _Row(
@@ -294,7 +290,7 @@ class _DetailsCard extends StatelessWidget {
               label: 'رقم عنصر الطلب',
               value: '#${request.orderItemId}',
             ),
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
           ],
           _Row(
             icon: Icons.calendar_today_outlined,
@@ -302,7 +298,7 @@ class _DetailsCard extends StatelessWidget {
             value: fmt.format(request.created),
           ),
           if (request.approvedAt != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.check_circle_outline_rounded,
               label: 'تاريخ القبول',
@@ -310,7 +306,7 @@ class _DetailsCard extends StatelessWidget {
             ),
           ],
           if (request.rejectedAt != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.cancel_outlined,
               label: 'تاريخ الرفض',
@@ -328,27 +324,27 @@ class _Row extends StatelessWidget {
   final String label;
   final String value;
 
-  const _Row({required this.icon, required this.label, required this.value});
+  _Row({required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Icon(icon, color: AppColors.primary, size: 18),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
             ),
           ),
-          const Spacer(),
+          Spacer(),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -364,12 +360,12 @@ class _Row extends StatelessWidget {
 
 class _NotesCard extends StatelessWidget {
   final PaymentRequestModel request;
-  const _NotesCard({required this.request});
+  _NotesCard({required this.request});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -378,7 +374,7 @@ class _NotesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الملاحظات',
             style: TextStyle(
               fontSize: 14,
@@ -387,11 +383,11 @@ class _NotesCard extends StatelessWidget {
             ),
           ),
           if (request.buyerNote != null) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _NoteChip(label: 'ملاحظة المشتري', text: request.buyerNote!),
           ],
           if (request.sellerNote != null) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _NoteChip(
               label: 'ملاحظة البائع',
               text: request.sellerNote!,
@@ -409,7 +405,7 @@ class _NoteChip extends StatelessWidget {
   final String text;
   final bool isRed;
 
-  const _NoteChip({
+  _NoteChip({
     required this.label,
     required this.text,
     this.isRed = false,
@@ -420,7 +416,7 @@ class _NoteChip extends StatelessWidget {
     final color = isRed ? AppColors.error : AppColors.primary;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(10),
@@ -437,10 +433,10 @@ class _NoteChip extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             text,
-            style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
+            style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
           ),
         ],
       ),
@@ -452,7 +448,7 @@ class _NoteChip extends StatelessWidget {
 
 class _ProofCard extends StatelessWidget {
   final String url;
-  const _ProofCard({required this.url});
+  _ProofCard({required this.url});
 
   bool get _isImage =>
       url.toLowerCase().endsWith('.jpg') ||
@@ -462,7 +458,7 @@ class _ProofCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -471,7 +467,7 @@ class _ProofCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'إثبات الدفع',
             style: TextStyle(
               fontSize: 14,
@@ -479,14 +475,14 @@ class _ProofCard extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (_isImage)
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 url,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const _ProofFallbackLink(label: 'فتح الصورة'),
+                errorBuilder: (_, _, _) => _ProofFallbackLink(label: 'فتح الصورة'),
               ),
             )
           else
@@ -499,18 +495,18 @@ class _ProofCard extends StatelessWidget {
 
 class _ProofFallbackLink extends StatelessWidget {
   final String label;
-  const _ProofFallbackLink({required this.label});
+  _ProofFallbackLink({required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.insert_drive_file_rounded, color: AppColors.primary, size: 20),
-        const SizedBox(width: 8),
+        Icon(Icons.insert_drive_file_rounded, color: AppColors.primary, size: 20),
+        SizedBox(width: 8),
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.primary,
               decoration: TextDecoration.underline,
@@ -529,7 +525,7 @@ class _SellerActions extends StatefulWidget {
   final PaymentRequestModel request;
   final bool isActing;
 
-  const _SellerActions({required this.request, required this.isActing});
+  _SellerActions({required this.request, required this.isActing});
 
   @override
   State<_SellerActions> createState() => _SellerActionsState();
@@ -558,7 +554,7 @@ class _SellerActionsState extends State<_SellerActions> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -567,7 +563,7 @@ class _SellerActionsState extends State<_SellerActions> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'إجراء البائع',
             style: TextStyle(
               fontSize: 14,
@@ -575,12 +571,12 @@ class _SellerActionsState extends State<_SellerActions> {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           TextField(
             controller: _noteCtrl,
-            decoration: const InputDecoration(
-              labelText: 'ملاحظة الرفض (اختياري)',
-              hintText: 'سبب الرفض إن وجد…',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).rejectionNoteLabel,
+              hintText: AppLocalizations.of(context).rejectionNoteHint,
               border: OutlineInputBorder(),
               filled: true,
               fillColor: AppColors.pageBackground,
@@ -588,9 +584,9 @@ class _SellerActionsState extends State<_SellerActions> {
             maxLines: 2,
             textInputAction: TextInputAction.done,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (widget.isActing)
-            const Center(
+            Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
           else
@@ -599,37 +595,37 @@ class _SellerActionsState extends State<_SellerActions> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _reject(context),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.close_rounded,
                       color: AppColors.error,
                     ),
-                    label: const Text(
-                      'رفض',
+                    label: Text(
+                      AppLocalizations.of(context).reject,
                       style: TextStyle(color: AppColors.error),
                     ),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: AppColors.error),
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(color: AppColors.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => context.read<PaymentsBloc>().add(
                       PaymentApproveRequested(widget.request.id),
                     ),
-                    icon: const Icon(Icons.check_rounded, color: Colors.white),
-                    label: const Text(
-                      'قبول',
+                    icon: Icon(Icons.check_rounded, color: Colors.white),
+                    label: Text(
+                      AppLocalizations.of(context).accept,
                       style: TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.success,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -651,7 +647,7 @@ class _BuyerNoteEditor extends StatefulWidget {
   final PaymentRequestModel request;
   final bool isActing;
 
-  const _BuyerNoteEditor({required this.request, required this.isActing});
+  _BuyerNoteEditor({required this.request, required this.isActing});
 
   @override
   State<_BuyerNoteEditor> createState() => _BuyerNoteEditorState();
@@ -686,7 +682,7 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -695,7 +691,7 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'تحديث ملاحظتك',
             style: TextStyle(
               fontSize: 14,
@@ -703,12 +699,12 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           TextField(
             controller: _ctrl,
-            decoration: const InputDecoration(
-              labelText: 'ملاحظتك للبائع',
-              hintText: 'أضف أي تعليق أو توضيح…',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).noteForBuyerLabel,
+              hintText: AppLocalizations.of(context).noteForBuyerHint,
               border: OutlineInputBorder(),
               filled: true,
               fillColor: AppColors.pageBackground,
@@ -716,10 +712,10 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
             maxLines: 3,
             textInputAction: TextInputAction.done,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: _pickFile,
-            icon: const Icon(Icons.attach_file_rounded, size: 18),
+            icon: Icon(Icons.attach_file_rounded, size: 18),
             label: Text(
               _proofFile == null ? 'إرفاق إثبات الدفع' : _proofFile!.name,
               overflow: TextOverflow.ellipsis,
@@ -731,19 +727,19 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 14),
             ),
           ),
           if (_proofFile != null) ...[
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Text(
               'الملف: ${_proofFile!.name} (${(_proofFile!.size / 1024).toStringAsFixed(1)} KB)',
-              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
           ],
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (widget.isActing)
-            const Center(
+            Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
           else
@@ -762,13 +758,13 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   elevation: 0,
                 ),
-                child: const Text('حفظ'),
+                child: Text(AppLocalizations.of(context).save),
               ),
             ),
         ],

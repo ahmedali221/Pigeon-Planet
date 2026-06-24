@@ -23,20 +23,19 @@ class PackagesBloc extends Bloc<PackagesEvent, PackagesState> {
     emit(state.copyWith(status: PackagesStatus.loading));
     try {
       List<PackageModel>? packages;
-      ActiveSellerPackageModel? activePackage;
+      List<ActiveSellerPackageModel>? activePackages;
       PendingSellerPackageModel? pendingPackage;
 
       await Future.wait([
         _datasource.fetchPackages().then((v) => packages = v),
-        _datasource.fetchActivePackage().then((v) => activePackage = v),
+        _datasource.fetchActivePackages().then((v) => activePackages = v),
         _datasource.fetchPendingPackage().then((v) => pendingPackage = v),
       ]);
 
       emit(state.copyWith(
         status: PackagesStatus.loaded,
         packages: packages ?? [],
-        activePackage: activePackage,
-        clearActivePackage: activePackage == null,
+        activePackages: activePackages ?? [],
         pendingPackage: pendingPackage,
         clearPendingPackage: pendingPackage == null,
       ));

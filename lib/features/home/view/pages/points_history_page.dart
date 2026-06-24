@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/datasources/points_remote_datasource.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PointsHistoryPage extends StatefulWidget {
-  const PointsHistoryPage({super.key});
+  PointsHistoryPage({super.key});
 
   @override
   State<PointsHistoryPage> createState() => _PointsHistoryPageState();
 }
 
 class _PointsHistoryPageState extends State<PointsHistoryPage> {
-  static const int _pageSize = 20;
+  static int _pageSize = 20;
 
   int _page = 1;
   int _count = 0;
@@ -54,38 +56,26 @@ class _PointsHistoryPageState extends State<PointsHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'سجل النقاط',
-          style: TextStyle(
-              color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
-        ),
+      appBar: PPWAppBar(
+        title: 'سجل النقاط',
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+            icon: Icon(Icons.refresh_rounded, color: Colors.white),
             onPressed: _loading ? null : () => _load(page: _page),
           ),
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : _error != null
               ? _ErrorState(message: _error!, onRetry: () => _load(page: _page))
               : _items.isEmpty
-                  ? const _EmptyState()
+                  ? _EmptyState()
                   : Column(
                       children: [
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                             itemCount: _items.length,
                             itemBuilder: (_, i) =>
                                 _TransactionTile(tx: _items[i]),
@@ -117,7 +107,7 @@ class _PaginationBar extends StatelessWidget {
   final VoidCallback? onPrev;
   final VoidCallback? onNext;
 
-  const _PaginationBar({
+  _PaginationBar({
     required this.page,
     required this.totalPages,
     required this.count,
@@ -131,8 +121,8 @@ class _PaginationBar extends StatelessWidget {
     final from = (page - 1) * pageSize + 1;
     final to = (page * pageSize).clamp(0, count);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),
@@ -140,30 +130,30 @@ class _PaginationBar extends StatelessWidget {
         children: [
           Text(
             '$from–$to من $count',
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
           ),
-          const Spacer(),
+          Spacer(),
           IconButton(
-            icon: const Icon(Icons.chevron_right_rounded),
+            icon: Icon(Icons.chevron_right_rounded),
             color: onPrev != null ? AppColors.primary : AppColors.textHint,
             onPressed: onPrev,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            constraints: BoxConstraints(minWidth: 36, minHeight: 36),
           ),
           Text(
             '$page / $totalPages',
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_left_rounded),
+            icon: Icon(Icons.chevron_left_rounded),
             color: onNext != null ? AppColors.primary : AppColors.textHint,
             onPressed: onNext,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            constraints: BoxConstraints(minWidth: 36, minHeight: 36),
           ),
         ],
       ),
@@ -176,7 +166,7 @@ class _PaginationBar extends StatelessWidget {
 class _TransactionTile extends StatelessWidget {
   final PointTransactionModel tx;
 
-  const _TransactionTile({required this.tx});
+  _TransactionTile({required this.tx});
 
   bool get _isEarn => tx.transactionType == 'earn';
 
@@ -186,8 +176,8 @@ class _TransactionTile extends StatelessWidget {
     final sign = _isEarn ? '+' : '-';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -208,14 +198,14 @@ class _TransactionTile extends StatelessWidget {
               size: 20,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   tx.reason.isEmpty ? 'معاملة نقاط' : tx.reason,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -223,10 +213,10 @@ class _TransactionTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   tx.created.length >= 10 ? tx.created.substring(0, 10) : tx.created,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 11,
                   ),
@@ -247,7 +237,7 @@ class _TransactionTile extends StatelessWidget {
               ),
               Text(
                 'الرصيد: ${tx.balanceAfter}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 10,
                 ),
@@ -263,11 +253,11 @@ class _TransactionTile extends StatelessWidget {
 // ── Empty / Error states ───────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+  _EmptyState();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -288,30 +278,30 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorState({required this.message, required this.onRetry});
+  _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_rounded,
+            Icon(Icons.cloud_off_rounded,
                 size: 56, color: AppColors.textHint),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                   color: AppColors.textSecondary, fontSize: 14),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('إعادة المحاولة'),
+              icon: Icon(Icons.refresh_rounded, size: 18),
+              label: Text(AppLocalizations.of(context).retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,

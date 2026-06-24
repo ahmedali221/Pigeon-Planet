@@ -6,14 +6,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../core/services/permission_service.dart';
 
 import '../../viewmodel/pigeon_id_bloc.dart';
 import '../widgets/pigeon_id_shared_widgets.dart';
 import 'zajel_scanner_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PigeonIdPhotosPage extends StatelessWidget {
-  const PigeonIdPhotosPage({super.key});
+  PigeonIdPhotosPage({super.key});
 
   Future<void> _pickPhoto(BuildContext context) async {
     final granted = await PermissionService.requestGalleryPermission();
@@ -44,13 +46,13 @@ class PigeonIdPhotosPage extends StatelessWidget {
   void _showPickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (_) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Container(
               width: 40,
               height: 4,
@@ -59,26 +61,26 @@ class PigeonIdPhotosPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ListTile(
-              leading: const Icon(Icons.camera_alt_rounded,
+              leading: Icon(Icons.camera_alt_rounded,
                   color: AppColors.primary),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context).capturePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _takePhoto(context);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library_rounded,
+              leading: Icon(Icons.photo_library_rounded,
                   color: AppColors.primary),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context).chooseFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 _pickPhoto(context);
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
           ],
         ),
       ),
@@ -91,7 +93,7 @@ class PigeonIdPhotosPage extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: context.read<PigeonIdBloc>(),
-          child: const ZajelScannerPage(),
+          child: ZajelScannerPage(),
         ),
       ),
     );
@@ -106,48 +108,35 @@ class PigeonIdPhotosPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'صور الحمامة',
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
+          appBar: const PPWAppBar(
+            title: 'صور الحمامة',
           ),
           body: Column(
             children: [
               PigeonStepHeader(
-                  current: 2, total: 4, label: 'إضافة الصور'),
+                  current: 2, total: 4, label: AppLocalizations.of(context).addPhotos),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ── Info banner ──────────────────────────────────
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline_rounded,
+                            Icon(Icons.info_outline_rounded,
                                 color: AppColors.primary, size: 20),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 'يجب إضافة ٤ صور على الأقل (حد أقصى ٨ صور)\nمن زوايا مختلفة: جانبي، أمامي، من فوق، الحلقة',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 12,
                                     color: AppColors.primary,
                                     height: 1.5),
@@ -157,28 +146,28 @@ class PigeonIdPhotosPage extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Counter ──────────────────────────────────────
                       Row(
                         children: [
                           Text(
                             '${photos.length} / ٨ صور',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          const Spacer(),
+                          Spacer(),
                           if (remaining > 0)
                             Text(
                               'متبقي $remaining صور إلزامية',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 12, color: AppColors.error),
                             )
                           else
-                            const Row(
+                            Row(
                               children: [
                                 Icon(Icons.check_circle_rounded,
                                     color: AppColors.success, size: 16),
@@ -195,14 +184,14 @@ class PigeonIdPhotosPage extends StatelessWidget {
                         ],
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       // ── Photo grid ───────────────────────────────────
                       GridView.builder(
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics: NeverScrollableScrollPhysics(),
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                            SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
@@ -228,7 +217,7 @@ class PigeonIdPhotosPage extends StatelessWidget {
                         },
                       ),
 
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32),
                     ],
                   ),
                 ),
@@ -252,7 +241,7 @@ class _PhotoSlot extends StatelessWidget {
   final bool isMandatory;
   final VoidCallback onRemove;
 
-  const _PhotoSlot(
+  _PhotoSlot(
       {required this.path,
       required this.isMandatory,
       required this.onRemove});
@@ -283,12 +272,12 @@ class _PhotoSlot extends StatelessWidget {
             right: 6,
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text('إلزامي',
+              child: Text(AppLocalizations.of(context).requiredField,
                   style: TextStyle(color: Colors.white, fontSize: 9)),
             ),
           ),
@@ -300,11 +289,11 @@ class _PhotoSlot extends StatelessWidget {
             child: Container(
               width: 24,
               height: 24,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.black54,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close_rounded,
+              child: Icon(Icons.close_rounded,
                   color: Colors.white, size: 14),
             ),
           ),
@@ -318,7 +307,7 @@ class _AddPhotoSlot extends StatelessWidget {
   final bool isMandatory;
   final VoidCallback onTap;
 
-  const _AddPhotoSlot({required this.isMandatory, required this.onTap});
+  _AddPhotoSlot({required this.isMandatory, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -343,9 +332,9 @@ class _AddPhotoSlot extends StatelessWidget {
               color:
                   isMandatory ? AppColors.primary : AppColors.textHint,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
-              isMandatory ? 'إلزامي' : 'اختياري',
+              isMandatory ? AppLocalizations.of(context).requiredField : 'اختياري',
               style: TextStyle(
                 fontSize: 10,
                 color: isMandatory

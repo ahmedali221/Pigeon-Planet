@@ -30,7 +30,8 @@ class ApiConstants {
   // ── Notifications ─────────────────────────────────────────────────────────
   static const String notifications = '/notifications/';
   static const String notificationsUnreadCount = '/notifications/unread-count/';
-  static const String notificationsMarkAllRead = '/notifications/mark-all-read/';
+  static const String notificationsMarkAllRead =
+      '/notifications/mark-all-read/';
   static String notificationMarkRead(int id) => '/notifications/$id/mark-read/';
 
   // ── Assets ────────────────────────────────────────────────────────────────
@@ -148,6 +149,11 @@ class ApiConstants {
   static String unfollowSeller(int sellerId) =>
       '/feed/sellers/$sellerId/unfollow/';
   static const String following = '/feed/sellers/following/';
+  static String followSellerPackage(int packageId) =>
+      '/feed/seller-packages/$packageId/follow/';
+  static String unfollowSellerPackage(int packageId) =>
+      '/feed/seller-packages/$packageId/unfollow/';
+  static const String followingPackages = '/feed/seller-packages/following/';
   static const String blocks = '/feed/blocks/customer-seller/';
   // Unblock uses the opposite profile's id, not the block record id
   static String unblock(int profileId) =>

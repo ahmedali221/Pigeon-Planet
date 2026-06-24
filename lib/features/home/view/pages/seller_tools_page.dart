@@ -6,10 +6,11 @@ import '../widgets/home_provider_features_section.dart';
 import '../widgets/home_seller_demo_section.dart';
 import '../widgets/home_seller_notifications_section.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerToolsPage extends StatelessWidget {
   final SellerHomeSummary? summary;
 
-  const SellerToolsPage({super.key, this.summary});
+  SellerToolsPage({super.key, this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +29,10 @@ class SellerToolsPage extends StatelessWidget {
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
-              stretchModes: const [StretchMode.zoomBackground],
+              stretchModes: [StretchMode.zoomBackground],
               title: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.tune_rounded, color: Colors.white, size: 15),
                   SizedBox(width: 5),
                   Text(
@@ -48,7 +49,7 @@ class SellerToolsPage extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   // Gradient
-                  const DecoratedBox(
+                  DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xFF1B5E20), AppColors.primary],
@@ -76,7 +77,7 @@ class SellerToolsPage extends StatelessWidget {
                   // Content — supplementary only (no title text)
                   SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 52),
+                      padding: EdgeInsets.fromLTRB(20, 6, 20, 52),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,12 +96,12 @@ class SellerToolsPage extends StatelessWidget {
                                     color: Colors.white.withValues(alpha: 0.2),
                                   ),
                                 ),
-                                child: const Icon(Icons.tune_rounded,
+                                child: Icon(Icons.tune_rounded,
                                     color: Colors.white, size: 24),
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               // Tagline
-                              const Expanded(
+                              Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -126,7 +127,7 @@ class SellerToolsPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           // Section chips
                           Wrap(
                             spacing: 6,
@@ -134,14 +135,14 @@ class SellerToolsPage extends StatelessWidget {
                             children: [
                               _ToolsChip(
                                 icon: Icons.notifications_rounded,
-                                label: 'الإشعارات',
+                                label: AppLocalizations.of(context).notifications,
                                 count: s?.notificationsNewCount ?? 0,
                               ),
-                              const _ToolsChip(
+                              _ToolsChip(
                                 icon: Icons.verified_rounded,
                                 label: 'المميزات',
                               ),
-                              const _ToolsChip(
+                              _ToolsChip(
                                 icon: Icons.gavel_rounded,
                                 label: 'الأدوات',
                               ),
@@ -160,12 +161,12 @@ class SellerToolsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                const _MyProductsCard(),
+                SizedBox(height: 8),
+                _MyProductsCard(),
                 HomeSellerNotificationsSection(summary: summary),
                 HomeProviderFeaturesSection(summary: summary),
-                const HomeSellerDemoSection(),
-                const SizedBox(height: 80),
+                HomeSellerDemoSection(),
+                SizedBox(height: 80),
               ],
             ),
           ),
@@ -178,7 +179,7 @@ class SellerToolsPage extends StatelessWidget {
 class _ToolsDecorCircle extends StatelessWidget {
   final double size;
   final double opacity;
-  const _ToolsDecorCircle({required this.size, required this.opacity});
+  _ToolsDecorCircle({required this.size, required this.opacity});
 
   @override
   Widget build(BuildContext context) {
@@ -198,12 +199,12 @@ class _ToolsChip extends StatelessWidget {
   final String label;
   final int count;
 
-  const _ToolsChip({required this.icon, required this.label, this.count = 0});
+  _ToolsChip({required this.icon, required this.label, this.count = 0});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
@@ -213,22 +214,22 @@ class _ToolsChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.white, size: 11),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(color: Colors.white, fontSize: 11),
+            style: TextStyle(color: Colors.white, fontSize: 11),
           ),
           if (count > 0) ...[
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
                 color: AppColors.red,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 '$count',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 9,
                   fontWeight: FontWeight.bold,
@@ -245,18 +246,18 @@ class _ToolsChip extends StatelessWidget {
 // ── My Products entry card ────────────────────────────────────────────────────
 
 class _MyProductsCard extends StatelessWidget {
-  const _MyProductsCard();
+  _MyProductsCard();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const SellerProductsPage()),
+        MaterialPageRoute(builder: (_) => SellerProductsPage()),
       ),
       child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -264,7 +265,7 @@ class _MyProductsCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -278,11 +279,11 @@ class _MyProductsCard extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.inventory_2_outlined,
+              child: Icon(Icons.inventory_2_outlined,
                   color: AppColors.primary, size: 24),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -303,7 +304,7 @@ class _MyProductsCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_left_rounded,
+            Icon(Icons.chevron_left_rounded,
                 color: AppColors.primary, size: 22),
           ],
         ),

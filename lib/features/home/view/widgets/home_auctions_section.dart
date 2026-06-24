@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../auctions/view/pages/auction_detail_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeAuctionsSection extends StatelessWidget {
   final List<Map<String, dynamic>> auctions;
 
-  const HomeAuctionsSection({super.key, required this.auctions});
+  HomeAuctionsSection({super.key, required this.auctions});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: auctions.map((auction) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(bottom: 16),
             child: _AuctionCard(auction: auction),
           );
         }).toList(),
@@ -26,7 +27,7 @@ class HomeAuctionsSection extends StatelessWidget {
 class _AuctionCard extends StatelessWidget {
   final Map<String, dynamic> auction;
 
-  const _AuctionCard({required this.auction});
+  _AuctionCard({required this.auction});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _AuctionCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -60,7 +61,7 @@ class _AuctionCard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
@@ -73,7 +74,7 @@ class _AuctionCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => Container(
                             color: placeholderColor,
-                            child: const Center(
+                            child: Center(
                               child: Icon(Icons.flutter_dash,
                                   color: Colors.white54, size: 50),
                             ),
@@ -81,7 +82,7 @@ class _AuctionCard extends StatelessWidget {
                         )
                       : Container(
                           color: placeholderColor,
-                          child: const Center(
+                          child: Center(
                             child: Icon(Icons.flutter_dash,
                                 color: Colors.white54, size: 50),
                           ),
@@ -97,24 +98,24 @@ class _AuctionCard extends StatelessWidget {
                     _OverlayChip(
                       child: Row(
                         children: [
-                          const Icon(Icons.star_rounded,
+                          Icon(Icons.star_rounded,
                               color: Colors.amber, size: 13),
-                          const SizedBox(width: 3),
+                          SizedBox(width: 3),
                           Text(auction['rating'] as String,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   color: Colors.white, fontSize: 12)),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     _OverlayChip(
                       child: Row(
                         children: [
-                          const Icon(Icons.visibility_outlined,
+                          Icon(Icons.visibility_outlined,
                               color: Colors.white70, size: 12),
-                          const SizedBox(width: 3),
+                          SizedBox(width: 3),
                           Text(auction['views'] as String,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   color: Colors.white, fontSize: 12)),
                         ],
                       ),
@@ -128,7 +129,7 @@ class _AuctionCard extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                       vertical: 8, horizontal: 12),
                   color: AppColors.primary.withValues(alpha: 0.92),
                   child: Row(
@@ -156,55 +157,55 @@ class _AuctionCard extends StatelessWidget {
 
           // details
           Padding(
-            padding: const EdgeInsets.all(14),
+            padding: EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   auction['name'] as String,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(auction['origin'] as String,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 12, color: AppColors.textSecondary)),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(auction['note'] as String,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 12, color: AppColors.textSecondary)),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.notifications_none_rounded,
+                        icon: Icon(Icons.notifications_none_rounded,
                             size: 16),
-                        label: const Text('أخبرني عند النزول',
+                        label: Text(AppLocalizations.of(context).notifyWhenAvailable,
                             style: TextStyle(fontSize: 12)),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.primary,
-                          side: const BorderSide(color: AppColors.primary),
+                          side: BorderSide(color: AppColors.primary),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text('السعر المتوقع',
+                        Text(AppLocalizations.of(context).expectedPrice,
                             style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textSecondary)),
                         Text(
                           'ج.م ${auction['price']}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
@@ -214,19 +215,19 @@ class _AuctionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       auction['seller'] as String,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w500),
                     ),
-                    const SizedBox(width: 6),
-                    const CircleAvatar(
+                    SizedBox(width: 6),
+                    CircleAvatar(
                       radius: 10,
                       backgroundColor: AppColors.primaryLight,
                       child: Text('م',
@@ -244,7 +245,7 @@ class _AuctionCard extends StatelessWidget {
     );
   }
 
-  Widget _sep() => const Padding(
+  Widget _sep() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 6),
         child: Text(':',
             style: TextStyle(
@@ -258,7 +259,7 @@ class _CountdownUnit extends StatelessWidget {
   final String value;
   final String label;
 
-  const _CountdownUnit({required this.value, required this.label});
+  _CountdownUnit({required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -274,15 +275,15 @@ class _CountdownUnit extends StatelessWidget {
           ),
           child: Center(
             child: Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 9)),
+            style: TextStyle(color: Colors.white70, fontSize: 9)),
       ],
     );
   }
@@ -290,12 +291,12 @@ class _CountdownUnit extends StatelessWidget {
 
 class _OverlayChip extends StatelessWidget {
   final Widget child;
-  const _OverlayChip({required this.child});
+  _OverlayChip({required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(6),

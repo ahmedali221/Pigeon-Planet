@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../viewmodel/auth_bloc.dart';
 import '../../../home/view/pages/home_page.dart';
@@ -13,7 +13,7 @@ import '../widgets/country_city_picker.dart';
 import '../widgets/register_header.dart';
 
 class RegisterPersonalPage extends StatefulWidget {
-  const RegisterPersonalPage({super.key});
+  RegisterPersonalPage({super.key});
 
   @override
   State<RegisterPersonalPage> createState() => _RegisterPersonalPageState();
@@ -47,7 +47,7 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
       return;
     }
     if (!_agreedToTerms) {
-      _showError(context, AppStrings.mustAgreeToTerms);
+      _showError(context, l.mustAgreeToTerms);
       return;
     }
 
@@ -70,43 +70,26 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
+      appBar: PPWAppBar(
+        title: l.personalAccount,
         backgroundColor: AppColors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          AppStrings.personalAccount,
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
+        foregroundColor: AppColors.textPrimary,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(AppStrings.registerSuccess),
+                SnackBar(
+                  content: Text(l.registerSuccess),
                   backgroundColor: AppColors.success,
                 ),
               );
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
+                MaterialPageRoute(builder: (_) => HomePage()),
                 (_) => false,
               );
             }
@@ -125,8 +108,8 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                     RegisterHeader(
                       icon: Icons.person_rounded,
                       color: AppColors.primary,
-                      title: AppStrings.personalAccount,
-                      subtitle: AppStrings.personalAccountSub,
+                      title: l.personalAccount,
+                      subtitle: l.personalAccountSub,
                     ),
 
                     const SizedBox(height: 20),
@@ -139,8 +122,8 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                     const SizedBox(height: 20),
 
                     AppTextField(
-                      label: AppStrings.username,
-                      hint: AppStrings.usernameHint,
+                      label: l.username,
+                      hint: l.usernameHint,
                       controller: _usernameCtrl,
                       keyboardType: TextInputType.text,
                       validator: AppValidators.username,
@@ -149,8 +132,8 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                     const SizedBox(height: 16),
 
                     AppTextField(
-                      label: AppStrings.phoneNumber,
-                      hint: AppStrings.phoneHint,
+                      label: l.phoneNumber,
+                      hint: l.phoneHint,
                       controller: _phoneCtrl,
                       keyboardType: TextInputType.phone,
                       validator: AppValidators.phone,
@@ -166,8 +149,8 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                     const SizedBox(height: 16),
 
                     AppPasswordField(
-                      label: AppStrings.password,
-                      hint: AppStrings.passwordHint,
+                      label: l.password,
+                      hint: l.passwordHint,
                       controller: _passwordCtrl,
                       validator: AppValidators.password,
                     ),
@@ -175,8 +158,8 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                     const SizedBox(height: 16),
 
                     AppPasswordField(
-                      label: AppStrings.confirmPassword,
-                      hint: AppStrings.confirmPasswordHint,
+                      label: l.confirmPassword,
+                      hint: l.confirmPasswordHint,
                       controller: _confirmPasswordCtrl,
                       validator: (v) => AppValidators.confirmPassword(
                         v,
@@ -208,7 +191,7 @@ class _RegisterPersonalPageState extends State<RegisterPersonalPage> {
                                   strokeWidth: 2.5,
                                 ),
                               )
-                            : const Text(AppStrings.createAccount),
+                            : Text(l.register),
                       ),
                     ),
 

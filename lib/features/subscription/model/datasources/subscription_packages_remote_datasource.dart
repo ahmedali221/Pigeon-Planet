@@ -1,13 +1,10 @@
-import 'package:dio/dio.dart';
-
 import '../../../../core/constants/api_constants.dart';
-import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../subscription_package_model.dart';
 
 abstract class SubscriptionPackagesRemoteDataSource {
   Future<List<PackageModel>> fetchPackages();
-  Future<ActiveSellerPackageModel?> fetchActivePackage();
+  Future<List<ActiveSellerPackageModel>> fetchActivePackages();
   Future<void> requestPackage(int packageId);
   Future<PendingSellerPackageModel?> fetchPendingPackage();
   Future<void> cancelPackage(int id);
@@ -35,20 +32,26 @@ class RealSubscriptionPackagesRemoteDataSource
   }
 
   @override
-  Future<ActiveSellerPackageModel?> fetchActivePackage() async {
+  Future<List<ActiveSellerPackageModel>> fetchActivePackages() async {
     try {
       final response = await _dio.get(
         ApiConstants.mySellerPackages,
-        queryParameters: {'active': 'true'},
+        queryParameters: {'status': 'active'},
       );
       final data = response.data;
-      if (data is Map<String, dynamic>) {
-        return ActiveSellerPackageModel.fromJson(data);
-      }
-      return null;
-    } on DioException catch (e) {
-      if (e.error is NotFoundException) return null;
-      rethrow;
+      final List<dynamic> raw = data is Map && data['results'] is List
+          ? data['results'] as List<dynamic>
+          : data is List
+              ? data
+              : [];
+      return raw
+          .whereType<Map>()
+          .map((e) => ActiveSellerPackageModel.fromJson(
+                Map<String, dynamic>.from(e),
+              ))
+          .toList();
+    } catch (_) {
+      return [];
     }
   }
 

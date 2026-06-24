@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -29,47 +30,48 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
   VideoPlayerController? _controller;
   bool _videoLoading = false;
 
-  static const _photoLabels = [
-    'صورة الطير',
-    'الجناح',
-    'العين',
-    'رقم الدبلة',
-  ];
+  List<_MediaItem> _buildItems(AppLocalizations l) {
+    final photoLabels = [
+      l.birdPhoto,
+      l.birdWing,
+      l.birdEye,
+      l.ringNumberThumbnail,
+    ];
 
-  List<_MediaItem> get _items {
     final items = <_MediaItem>[];
     for (int i = 0; i < widget.imageUrls.length && i < 4; i++) {
       final label =
-          i < _photoLabels.length ? _photoLabels[i] : 'صورة ${i + 1}';
+          i < photoLabels.length ? photoLabels[i] : l.photoNumber(i + 1);
       items.add(
           _MediaItem(url: widget.imageUrls[i], isVideo: false, label: label));
     }
     if (widget.videoUrl != null) {
       items.add(
-          _MediaItem(url: widget.videoUrl!, isVideo: true, label: 'فيديو الطير'));
+          _MediaItem(url: widget.videoUrl!, isVideo: true, label: l.birdVideo));
     }
     if (items.isEmpty) {
-      items.add(_MediaItem(url: '', isVideo: false, label: 'صورة الطير'));
+      items.add(_MediaItem(url: '', isVideo: false, label: l.birdPhoto));
     }
     return items;
   }
 
-  int get _videoIndex {
-    final items = _items;
+  int _videoIndex(List<_MediaItem> items) {
     for (int i = 0; i < items.length; i++) {
       if (items[i].isVideo) return i;
     }
     return -1;
   }
 
-  bool get _isOnVideoTab =>
-      widget.currentImage == _videoIndex && _videoIndex != -1;
+  bool _isOnVideoTab(List<_MediaItem> items) =>
+      widget.currentImage == _videoIndex(items) && _videoIndex(items) != -1;
 
   @override
   void didUpdateWidget(AuctionMediaSection old) {
     super.didUpdateWidget(old);
     // Stop video when user swipes away to an image tab
-    if (!_isOnVideoTab && _controller != null) {
+    final l = AppLocalizations.of(context);
+    final items = _buildItems(l);
+    if (!_isOnVideoTab(items) && _controller != null) {
       _stopVideo();
     }
   }
@@ -118,7 +120,8 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
 
   @override
   Widget build(BuildContext context) {
-    final items = _items;
+    final l = AppLocalizations.of(context);
+    final items = _buildItems(l);
     final safeIndex = widget.currentImage.clamp(0, items.length - 1);
     final current = items[safeIndex];
 
@@ -133,7 +136,7 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
                 height: 260,
                 width: double.infinity,
                 child: current.isVideo
-                    ? _buildVideoView(current.url)
+                    ? _buildVideoView(current.url, l)
                     : _BirdImage(url: current.url),
               ),
               // views — top right (start in RTL)
@@ -147,14 +150,14 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
                     color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('0 مشاهدة',
+                      Text(l.zeroViews,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 11)),
-                      SizedBox(width: 4),
-                      Icon(Icons.visibility_outlined,
+                              const TextStyle(color: Colors.white, fontSize: 11)),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.visibility_outlined,
                           color: Colors.white70, size: 13),
                     ],
                   ),
@@ -288,7 +291,7 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
 
   bool get isFavorite => widget.isFavorite;
 
-  Widget _buildVideoView(String url) {
+  Widget _buildVideoView(String url, AppLocalizations l) {
     // Initialized and ready
     if (_controller != null && _controller!.value.isInitialized) {
       return GestureDetector(
@@ -353,15 +356,15 @@ class _AuctionMediaSectionState extends State<AuctionMediaSection> {
       onTap: () => _startVideo(url),
       child: Container(
         color: Colors.black87,
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.play_circle_outline_rounded,
+              const Icon(Icons.play_circle_outline_rounded,
                   color: Colors.white70, size: 64),
-              SizedBox(height: 10),
-              Text('اضغط لعرض الفيديو',
-                  style: TextStyle(color: Colors.white60, fontSize: 13)),
+              const SizedBox(height: 10),
+              Text(l.tapToWatchVideo,
+                  style: const TextStyle(color: Colors.white60, fontSize: 13)),
             ],
           ),
         ),

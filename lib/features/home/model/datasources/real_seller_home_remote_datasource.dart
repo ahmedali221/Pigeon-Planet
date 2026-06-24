@@ -34,7 +34,7 @@ class RealSellerHomeRemoteDataSource implements SellerHomeRemoteDataSource {
           await _dio.get(ApiConstants.notificationsUnreadCount);
       final data = response.data;
       if (data is int) return data;
-      if (data is Map) return (data['count'] as num?)?.toInt() ?? 0;
+      if (data is Map) return (data['unread_count'] as num?)?.toInt() ?? 0;
       return 0;
     } catch (_) {
       return 0;
@@ -44,7 +44,7 @@ class RealSellerHomeRemoteDataSource implements SellerHomeRemoteDataSource {
   @override
   Future<List<SellerModel>> fetchSellers({int page = 1}) async {
     final response = await _dio.get(
-      ApiConstants.mySellers,
+      ApiConstants.feedSellersList,
       queryParameters: {'page': page},
     );
     final data = response.data;

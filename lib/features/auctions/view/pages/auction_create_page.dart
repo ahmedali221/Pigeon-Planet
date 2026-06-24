@@ -6,11 +6,15 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/services/permission_service.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../model/auction_create_payload.dart';
 import '../../model/bird_summary_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
 import '../../../home/view/pages/seller_my_auctions_page.dart';
+import '../../../subscription/model/datasources/subscription_packages_remote_datasource.dart';
+import '../../../subscription/model/subscription_package_model.dart';
 import '../../../subscription/view/pages/packages_page.dart';
 import '../../../pigeon_id/model/pigeon_model.dart';
 import '../../../pigeon_id/model/pigeon_repository.dart';
@@ -18,7 +22,7 @@ import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
 import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 
 class AuctionCreatePage extends StatefulWidget {
-  const AuctionCreatePage({super.key});
+  AuctionCreatePage({super.key});
 
   @override
   State<AuctionCreatePage> createState() => _AuctionCreatePageState();
@@ -38,6 +42,23 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   String? _thumbnailPath;
   final _picker = ImagePicker();
 
+  // ── Package selection ─────────────────────────────────────────────────────
+  late final Future<List<ActiveSellerPackageModel>> _activePackagesFuture;
+  int? _selectedPackageId;
+
+  @override
+  void initState() {
+    super.initState();
+    _activePackagesFuture = sl<SubscriptionPackagesRemoteDataSource>()
+        .fetchActivePackages()
+        .then((list) {
+      if (list.length == 1 && mounted) {
+        setState(() => _selectedPackageId = list.first.id);
+      }
+      return list;
+    });
+  }
+
   // ── Step 2 controllers ────────────────────────────────────────────────────
   bool _autoExtend = false;
   final _autoExtendMinCtrl = TextEditingController(text: '5');
@@ -50,6 +71,66 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   final List<_ItemRow> _items = [];
 
   bool get _isPairType => _auctionType == 'pair' || _auctionType == 'breeding';
+
+  int? get _maxItems {
+    switch (_auctionType) {
+      case 'single':
+        return 1;
+      case 'multi':
+        return 10;
+      case 'pair':
+      case 'breeding':
+        return 1;
+      default:
+        return null; // racing: no cap
+    }
+  }
+
+  bool get _canAddMore {
+    final max = _maxItems;
+    return max == null || _items.length < max;
+  }
+
+  ({IconData icon, Color color, String text, String? counter}) get _typeHint {
+    final count = _items.length;
+    switch (_auctionType) {
+      case 'single':
+        return (
+          icon: Icons.looks_one_rounded,
+          color: AppColors.primary,
+          text: 'هذا المزاد يقبل طائراً واحداً فقط',
+          counter: '$count / 1',
+        );
+      case 'multi':
+        return (
+          icon: Icons.format_list_numbered_rounded,
+          color: AppColors.blue,
+          text: 'أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل',
+          counter: '$count / 10',
+        );
+      case 'pair':
+        return (
+          icon: Icons.people_alt_rounded,
+          color: AppColors.orange,
+          text: 'أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)',
+          counter: '$count / 1',
+        );
+      case 'breeding':
+        return (
+          icon: Icons.egg_outlined,
+          color: const Color(0xFF7B5EA7),
+          text: 'مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر',
+          counter: '$count / 1',
+        );
+      default: // racing
+        return (
+          icon: Icons.flag_rounded,
+          color: AppColors.error,
+          text: 'أضف طائرين على الأقل لمجموعة السباق',
+          counter: count >= 2 ? null : '$count / 2+',
+        );
+    }
+  }
 
   @override
   void dispose() {
@@ -81,9 +162,9 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   Future<DateTime?> _pickDateTime(BuildContext context, DateTime? initial) async {
     final date = await showDatePicker(
       context: context,
-      initialDate: initial ?? DateTime.now().add(const Duration(hours: 1)),
+      initialDate: initial ?? DateTime.now().add(Duration(hours: 1)),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (date == null || !context.mounted) return null;
     final time = await showTimePicker(
@@ -96,44 +177,46 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 
   // ── Validation ─────────────────────────────────────────────────────────────
   bool _validateStep1() {
+    final l = AppLocalizations.of(context);
     if (_titleCtrl.text.trim().isEmpty) {
-      _showSnack('يرجى إدخال عنوان المزاد');
+      _showSnack(l.pleaseEnterAuctionTitle);
       return false;
     }
     if (_startTime == null) {
-      _showSnack('يرجى تحديد وقت البدء');
+      _showSnack(l.pleaseSelectStartTime);
       return false;
     }
     if (!_startTime!.isAfter(DateTime.now())) {
-      _showSnack('وقت البدء يجب أن يكون في المستقبل');
+      _showSnack(l.startTimeMustBeFuture);
       return false;
     }
     if (_endTime == null) {
-      _showSnack('يرجى تحديد وقت الانتهاء');
+      _showSnack(l.pleaseSelectEndTime);
       return false;
     }
     if (!_endTime!.isAfter(_startTime!)) {
-      _showSnack('وقت الانتهاء يجب أن يكون بعد وقت البدء');
+      _showSnack(l.endTimeAfterStartTime);
       return false;
     }
     final minBid = double.tryParse(_minBidCtrl.text);
     if (minBid == null || minBid <= 0) {
-      _showSnack('يرجى إدخال حد أدنى صحيح للمزايدة');
+      _showSnack(l.pleaseEnterValidMinBid);
       return false;
     }
     return true;
   }
 
   bool _validateStep3() {
+    final l = AppLocalizations.of(context);
     if (_items.isEmpty) {
-      _showSnack('يرجى إضافة طائر واحد على الأقل');
+      _showSnack(l.pleaseAddAtLeastOneBird);
       return false;
     }
     bool hasError = false;
     for (final item in _items) {
       final p = double.tryParse(item.startingPrice);
       if (p == null || p <= 0) {
-        item.priceError = 'أدخل سعراً صحيحاً';
+        item.priceError = l.enterValidPrice;
         hasError = true;
       }
     }
@@ -170,6 +253,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
       paymentDeadlineDays: _depositRequired ? int.tryParse(_deadlineDaysCtrl.text) : null,
       minBidIncrement: _minBidCtrl.text.trim(),
       tags: _tagsCtrl.text.trim().isEmpty ? null : _tagsCtrl.text.trim(),
+      sellerPackageId: _selectedPackageId,
       thumbnailPath: _thumbnailPath,
       items: _items
           .map((i) => AuctionItemInput(
@@ -185,6 +269,46 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   // ── Helpers ────────────────────────────────────────────────────────────────
   String _fmtDt(DateTime dt) =>
       '${dt.day}/${dt.month}/${dt.year}  ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+  void _showAddBirdChoice(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _AddBirdChoiceSheet(
+        onNewBird: () {
+          Navigator.pop(context);
+          _openPigeonForm();
+        },
+        onExistingBird: () {
+          Navigator.pop(context);
+          _showExistingBirdsSheet(context);
+        },
+      ),
+    );
+  }
+
+  void _showExistingBirdsSheet(BuildContext context) {
+    final bloc = context.read<AuctionsBloc>();
+    bloc.add(const AuctionSellerBirdsRequested(availableForAuction: true));
+    final alreadyAddedIds = _items.map((i) => i.bird.id).toSet();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => BlocProvider.value(
+        value: bloc,
+        child: _ExistingBirdsPicker(
+          alreadyAddedIds: alreadyAddedIds,
+          onSelected: (bird) {
+            if (!mounted) return;
+            Navigator.pop(sheetCtx);
+            setState(() => _items.add(_ItemRow(bird: bird)));
+          },
+        ),
+      ),
+    );
+  }
 
   void _openPigeonForm({int? pairedForIndex}) {
     final auctionRoute = ModalRoute.of(context)!;
@@ -218,7 +342,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: pigeonBloc,
-          child: const PigeonIdFormPage(),
+          child: PigeonIdFormPage(),
         ),
       ),
     );
@@ -226,6 +350,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocConsumer<AuctionsBloc, AuctionsState>(
       listenWhen: (p, c) =>
           p.isCreating != c.isCreating ||
@@ -246,12 +371,12 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
               duration: Duration(seconds: isPackageError ? 6 : 4),
               action: isPackageError
                   ? SnackBarAction(
-                      label: 'عرض الباقات',
+                      label: l.viewPackages,
                       textColor: Colors.white,
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const PackagesPage(),
+                          builder: (_) => PackagesPage(),
                         ),
                       ),
                     )
@@ -261,46 +386,37 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
         }
         if (state.createdAuction != null && !state.isCreating) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إنشاء المزاد بنجاح'),
+            SnackBar(
+              content: Text(l.auctionCreatedSuccess),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const SellerMyAuctionsPage()),
+            MaterialPageRoute(builder: (_) => SellerMyAuctionsPage()),
           );
         }
       },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'إنشاء مزاد جديد',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-              onPressed: () {
-                if (_step > 1) {
-                  setState(() => _step--);
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-            ),
+          appBar: PPWAppBar(
+            title: l.createNewAuction,
+            onBackPressed: () {
+              if (_step > 1) {
+                setState(() => _step--);
+              } else {
+                Navigator.pop(context);
+              }
+            },
           ),
           body: Column(
             children: [
               _StepIndicator(current: _step, total: 3),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: _step == 1
                       ? _buildStep1()
                       : _step == 2
@@ -318,60 +434,72 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 
   // ── Step 1: Auction details ────────────────────────────────────────────────
   Widget _buildStep1() {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionCard(
-          title: 'بيانات المزاد',
+          title: l.auctionData,
           children: [
-            _FieldLabel('عنوان المزاد *'),
-            _Input(controller: _titleCtrl, hint: 'مثال: مزاد الحمام البلجيكي'),
-            const SizedBox(height: 14),
-            _FieldLabel('الوصف'),
-            _Input(controller: _descCtrl, hint: 'وصف مختصر للمزاد...', maxLines: 3),
-            const SizedBox(height: 14),
-            _FieldLabel('صورة المزاد'),
+            _FieldLabel(l.auctionTitleFieldLabel),
+            _Input(controller: _titleCtrl, hint: l.auctionTitleExample),
+            SizedBox(height: 14),
+            _FieldLabel(l.description),
+            _Input(controller: _descCtrl, hint: l.auctionDescBriefHint, maxLines: 3),
+            SizedBox(height: 14),
+            _FieldLabel(l.auctionImage),
             _ThumbnailPicker(
               path: _thumbnailPath,
               onPick: _pickThumbnail,
               onRemove: () => setState(() => _thumbnailPath = null),
             ),
-            const SizedBox(height: 14),
-            _FieldLabel('نوع المزاد *'),
+            SizedBox(height: 14),
+            _FieldLabel(l.auctionTypeField),
             _AuctionTypeSelector(
               selected: _auctionType,
               onChanged: (v) => setState(() => _auctionType = v),
             ),
-            const SizedBox(height: 14),
-            _FieldLabel('وقت البدء *'),
+            SizedBox(height: 14),
+            _FieldLabel(l.startTimeField),
             _DateButton(
               value: _startTime != null ? _fmtDt(_startTime!) : null,
-              hint: 'اختر تاريخ ووقت البدء',
+              hint: l.chooseStartDateTime,
               onTap: () async {
                 final dt = await _pickDateTime(context, _startTime);
                 if (dt != null) setState(() => _startTime = dt);
               },
             ),
-            const SizedBox(height: 14),
-            _FieldLabel('وقت الانتهاء *'),
+            SizedBox(height: 14),
+            _FieldLabel(l.endTimeField),
             _DateButton(
               value: _endTime != null ? _fmtDt(_endTime!) : null,
-              hint: 'اختر تاريخ ووقت الانتهاء',
+              hint: l.chooseEndDateTime,
               onTap: () async {
                 final dt = await _pickDateTime(context, _endTime);
                 if (dt != null) setState(() => _endTime = dt);
               },
             ),
-            const SizedBox(height: 14),
-            _FieldLabel('الحد الأدنى للمزايدة *'),
+            SizedBox(height: 14),
+            _FieldLabel(l.minBidField),
             _Input(
               controller: _minBidCtrl,
               hint: '1.00',
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-            const SizedBox(height: 14),
-            _FieldLabel('الوسوم'),
+            SizedBox(height: 14),
+            _FieldLabel(l.tagsFieldLabel),
             _Input(controller: _tagsCtrl, hint: 'racing, champion, ...'),
+            SizedBox(height: 14),
+            _FieldLabel('الباقة المستخدمة'),
+            _PackageSelector(
+              future: _activePackagesFuture,
+              selectedId: _selectedPackageId,
+              onSelected: (id) => setState(() => _selectedPackageId = id),
+              onGoToPackages: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => PackagesPage()),
+              ),
+            ),
           ],
         ),
       ],
@@ -380,56 +508,57 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 
   // ── Step 2: Options ───────────────────────────────────────────────────────
   Widget _buildStep2() {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionCard(
-          title: 'إعدادات المزاد',
+          title: l.auctionSettings,
           children: [
             // Auto extend
             _ToggleRow(
-              label: 'تمديد تلقائي',
-              subtitle: 'تمديد المزاد تلقائياً عند وجود مزايدة في آخر دقائق',
+              label: l.autoExtend,
+              subtitle: l.autoExtendDesc,
               value: _autoExtend,
               onChanged: (v) => setState(() => _autoExtend = v),
             ),
             if (_autoExtend) ...[
-              const SizedBox(height: 10),
-              _FieldLabel('مدة التمديد (دقائق)'),
+              SizedBox(height: 10),
+              _FieldLabel(l.extensionDuration),
               _Input(
                 controller: _autoExtendMinCtrl,
                 hint: '5',
                 keyboardType: TextInputType.number,
               ),
             ],
-            const Divider(height: 28),
+            Divider(height: 28),
             // Buy now
             _ToggleRow(
-              label: 'شراء فوري',
-              subtitle: 'السماح بالشراء الفوري بسعر محدد',
+              label: l.buyNowDialogTitle,
+              subtitle: l.buyNowDesc,
               value: _buyNow,
               onChanged: (v) => setState(() => _buyNow = v),
             ),
             if (_buyNow) ...[
-              const SizedBox(height: 10),
-              _FieldLabel('سعر الشراء الفوري *'),
+              SizedBox(height: 10),
+              _FieldLabel(l.buyNowPriceField),
               _Input(
                 controller: _buyNowPriceCtrl,
                 hint: '0.00',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
             ],
-            const Divider(height: 28),
+            Divider(height: 28),
             // Deposit
             _ToggleRow(
-              label: 'عربون مطلوب',
-              subtitle: 'اشتراط دفع عربون للمشاركة في المزاد',
+              label: l.depositRequired,
+              subtitle: l.depositRequiredDesc,
               value: _depositRequired,
               onChanged: (v) => setState(() => _depositRequired = v),
             ),
             if (_depositRequired) ...[
-              const SizedBox(height: 10),
-              _FieldLabel('مهلة الدفع (أيام)'),
+              SizedBox(height: 10),
+              _FieldLabel(l.paymentDeadlineDays),
               _Input(
                 controller: _deadlineDaysCtrl,
                 hint: '3',
@@ -444,56 +573,107 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 
   // ── Step 3: Birds ─────────────────────────────────────────────────────────
   Widget _buildStep3() {
+    final l = AppLocalizations.of(context);
+    final hint = _typeHint;
+    final canAdd = _canAddMore;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionCard(
-          title: 'الطيور (${_items.length})',
-          trailing: GestureDetector(
-            onTap: _openPigeonForm,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          title: l.birdsCount(_items.length),
+          trailing: canAdd
+              ? GestureDetector(
+                  onTap: () => _showAddBirdChoice(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, color: Colors.white, size: 16),
+                        SizedBox(width: 4),
+                        Text(l.addBirdLabel,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                )
+              : null,
+          children: [
+            // ── Type requirement hint ────────────────────────────────────
+            Container(
+              margin: EdgeInsets.only(bottom: 14),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(20),
+                color: hint.color.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: hint.color.withValues(alpha: 0.25)),
               ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Row(
                 children: [
-                  Icon(Icons.add, color: Colors.white, size: 16),
-                  SizedBox(width: 4),
-                  Text('إضافة طائر',
+                  Icon(hint.icon, color: hint.color, size: 18),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      hint.text,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold)),
+                          fontSize: 12,
+                          color: hint.color,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  if (hint.counter != null) ...[
+                    SizedBox(width: 8),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: hint.color.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        hint.counter!,
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: hint.color),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
-          ),
-          children: [
+
             if (_items.isEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
+                padding: EdgeInsets.symmetric(vertical: 16),
                 child: Center(
                   child: Column(
                     children: [
-                      const Icon(Icons.add_circle_outline_rounded,
+                      Icon(Icons.add_circle_outline_rounded,
                           size: 40, color: AppColors.textHint),
-                      const SizedBox(height: 8),
-                      const Text('لم تتم إضافة طيور بعد',
+                      SizedBox(height: 8),
+                      Text(l.noBirdsAdded,
                           style: TextStyle(color: AppColors.textSecondary)),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       GestureDetector(
-                        onTap: _openPigeonForm,
+                        onTap: () => _showAddBirdChoice(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
                             border: Border.all(color: AppColors.primary),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text('+ إضافة طائر',
-                              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                          child: Text(l.addBirdBtn,
+                              style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ],
@@ -509,10 +689,11 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   }
 
   Widget _buildItemCard(int idx) {
+    final l = AppLocalizations.of(context);
     final item = _items[idx];
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.pageBackground,
         borderRadius: BorderRadius.circular(14),
@@ -523,34 +704,34 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
         children: [
           Row(
             children: [
-              Text('طائر ${idx + 1}',
-                  style: const TextStyle(
+              Text(l.birdNumber(idx + 1),
+                  style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textSecondary)),
-              const Spacer(),
+              Spacer(),
               GestureDetector(
                 onTap: () => setState(() => _items.removeAt(idx)),
-                child: const Icon(Icons.delete_outline_rounded,
+                child: Icon(Icons.delete_outline_rounded,
                     size: 18, color: AppColors.error),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           _BirdChip(bird: item.bird),
           if (_isPairType) ...[
-            const SizedBox(height: 8),
-            const Text('الطائر المزاوج',
+            SizedBox(height: 8),
+            Text(l.pairedBird,
                 style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             if (item.pairedBird != null)
               Row(
                 children: [
                   Expanded(child: _BirdChip(bird: item.pairedBird!)),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   GestureDetector(
                     onTap: () => setState(() => item.pairedBird = null),
-                    child: const Icon(Icons.close_rounded,
+                    child: Icon(Icons.close_rounded,
                         size: 18, color: AppColors.error),
                   ),
                 ],
@@ -560,29 +741,29 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
                 onTap: () => _openPigeonForm(pairedForIndex: idx),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.border),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(
-                    child: Text('+ أضف طائراً مزاوجاً',
+                  child: Center(
+                    child: Text(l.addPairedBird,
                         style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
                   ),
                 ),
               ),
           ],
-          const SizedBox(height: 10),
-          const Text('سعر البدء *',
+          SizedBox(height: 10),
+          Text(l.startingPriceField,
               style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           TextField(
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
             textAlign: TextAlign.start,
             decoration: InputDecoration(
               hintText: '0.00',
-              hintStyle: const TextStyle(color: AppColors.textHint),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              hintStyle: TextStyle(color: AppColors.textHint),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
@@ -608,10 +789,11 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
   }
 
   Widget _buildBottomBar(AuctionsState state) {
+    final l = AppLocalizations.of(context);
     final isLast = _step == 3;
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: SizedBox(
         width: double.infinity,
         height: 50,
@@ -634,15 +816,15 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
             elevation: 0,
           ),
           child: state.isCreating
-              ? const SizedBox(
+              ? SizedBox(
                   width: 22,
                   height: 22,
                   child: CircularProgressIndicator(
                       color: Colors.white, strokeWidth: 2.5),
                 )
               : Text(
-                  isLast ? 'إنشاء المزاد' : 'التالي ←',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  isLast ? l.createAuction : l.nextArrow,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
         ),
       ),
@@ -666,15 +848,15 @@ class _ItemRow {
 class _StepIndicator extends StatelessWidget {
   final int current;
   final int total;
-  const _StepIndicator({required this.current, required this.total});
+  _StepIndicator({required this.current, required this.total});
 
-  static const _labels = ['التفاصيل', 'الإعدادات', 'الطيور'];
-
-  @override
+    @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final labels = [l.details, l.settings, l.birds];
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: List.generate(total, (i) {
           final step = i + 1;
@@ -695,7 +877,7 @@ class _StepIndicator extends StatelessWidget {
                   ),
                   child: Center(
                     child: isDone
-                        ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                        ? Icon(Icons.check_rounded, size: 14, color: Colors.white)
                         : Text('$step',
                             style: TextStyle(
                               fontSize: 12,
@@ -704,10 +886,10 @@ class _StepIndicator extends StatelessWidget {
                             )),
                   ),
                 ),
-                const SizedBox(width: 6),
+                SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    _labels[i],
+                    labels[i],
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
@@ -735,7 +917,7 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final Widget? trailing;
-  const _SectionCard({required this.title, required this.children, this.trailing});
+  _SectionCard({required this.title, required this.children, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -745,19 +927,19 @@ class _SectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Text(title,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-              if (trailing != null) ...[const Spacer(), trailing!],
+              if (trailing != null) ...[Spacer(), trailing!],
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           ...children,
         ],
       ),
@@ -767,14 +949,14 @@ class _SectionCard extends StatelessWidget {
 
 class _FieldLabel extends StatelessWidget {
   final String text;
-  const _FieldLabel(this.text);
+  _FieldLabel(this.text);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: EdgeInsets.only(bottom: 6),
       child: Text(text,
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+          style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
     );
   }
 }
@@ -784,7 +966,7 @@ class _Input extends StatelessWidget {
   final String hint;
   final int maxLines;
   final TextInputType keyboardType;
-  const _Input({
+  _Input({
     required this.controller,
     required this.hint,
     this.maxLines = 1,
@@ -800,10 +982,10 @@ class _Input extends StatelessWidget {
       textAlign: TextAlign.start,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
+        hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
         filled: true,
         fillColor: AppColors.pageBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -817,7 +999,7 @@ class _DateButton extends StatelessWidget {
   final String? value;
   final String hint;
   final VoidCallback onTap;
-  const _DateButton({required this.hint, required this.onTap, this.value});
+  _DateButton({required this.hint, required this.onTap, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -825,15 +1007,15 @@ class _DateButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
           color: AppColors.pageBackground,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textSecondary),
-            const SizedBox(width: 10),
+            Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textSecondary),
+            SizedBox(width: 10),
             Text(
               value ?? hint,
               style: TextStyle(
@@ -852,7 +1034,7 @@ class _ThumbnailPicker extends StatelessWidget {
   final String? path;
   final VoidCallback onPick;
   final VoidCallback onRemove;
-  const _ThumbnailPicker({
+  _ThumbnailPicker({
     required this.path,
     required this.onPick,
     required this.onRemove,
@@ -860,6 +1042,7 @@ class _ThumbnailPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (path == null) {
       return GestureDetector(
         onTap: onPick,
@@ -874,13 +1057,13 @@ class _ThumbnailPicker extends StatelessWidget {
               style: BorderStyle.solid,
             ),
           ),
-          child: const Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_photo_alternate_outlined,
                   size: 32, color: AppColors.textHint),
               SizedBox(height: 6),
-              Text('اختر صورة غلاف للمزاد',
+              Text(l.chooseCoverImage,
                   style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
             ],
           ),
@@ -903,12 +1086,12 @@ class _ThumbnailPicker extends StatelessWidget {
             child: GestureDetector(
               onTap: onRemove,
               child: Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.55),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.close_rounded,
+                child: Icon(Icons.close_rounded,
                     color: Colors.white, size: 18),
               ),
             ),
@@ -919,18 +1102,18 @@ class _ThumbnailPicker extends StatelessWidget {
             child: GestureDetector(
               onTap: onPick,
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                     horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.55),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.edit_rounded, color: Colors.white, size: 14),
                     SizedBox(width: 4),
-                    Text('تغيير',
+                    Text(l.change,
                         style: TextStyle(color: Colors.white, fontSize: 12)),
                   ],
                 ),
@@ -948,7 +1131,7 @@ class _ToggleRow extends StatelessWidget {
   final String subtitle;
   final bool value;
   final ValueChanged<bool> onChanged;
-  const _ToggleRow({
+  _ToggleRow({
     required this.label,
     required this.subtitle,
     required this.value,
@@ -964,11 +1147,11 @@ class _ToggleRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(subtitle,
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
             ],
           ),
         ),
@@ -986,9 +1169,9 @@ class _ToggleRow extends StatelessWidget {
 class _AuctionTypeSelector extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
-  const _AuctionTypeSelector({required this.selected, required this.onChanged});
+  _AuctionTypeSelector({required this.selected, required this.onChanged});
 
-  static const _types = [
+  static final _types = [
     ('single', 'فردي', '🐦'),
     ('multi', 'متعدد', '🐦‍🐦'),
     ('pair', 'زوج', '💑'),
@@ -1006,8 +1189,8 @@ class _AuctionTypeSelector extends StatelessWidget {
         return GestureDetector(
           onTap: () => onChanged(t.$1),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            duration: Duration(milliseconds: 150),
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primaryLight : AppColors.pageBackground,
               borderRadius: BorderRadius.circular(20),
@@ -1027,8 +1210,8 @@ class _AuctionTypeSelector extends StatelessWidget {
                     color: isSelected ? AppColors.primary : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(width: 6),
-                Text(t.$3, style: const TextStyle(fontSize: 14)),
+                SizedBox(width: 6),
+                Text(t.$3, style: TextStyle(fontSize: 14)),
               ],
             ),
           ),
@@ -1040,12 +1223,13 @@ class _AuctionTypeSelector extends StatelessWidget {
 
 class _BirdChip extends StatelessWidget {
   final BirdSummaryModel bird;
-  const _BirdChip({required this.bird});
+  _BirdChip({required this.bird});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -1061,31 +1245,531 @@ class _BirdChip extends StatelessWidget {
             child: bird.thumbnailUrl == null
                 ? Text(
                     bird.name.isNotEmpty ? bird.name[0].toUpperCase() : '?',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13),
                   )
                 : null,
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(bird.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
                 Text(bird.ringNumber,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 11, color: AppColors.textSecondary, fontFamily: 'monospace')),
               ],
             ),
           ),
           Text(
-            bird.gender == 'male' ? 'ذكر' : bird.gender == 'female' ? 'أنثى' : 'صغير',
-            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            bird.gender == 'male' ? l.male : bird.gender == 'female' ? l.female : l.chick,
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Add-bird choice bottom sheet ──────────────────────────────────────────────
+
+class _AddBirdChoiceSheet extends StatelessWidget {
+  final VoidCallback onNewBird;
+  final VoidCallback onExistingBird;
+
+  _AddBirdChoiceSheet({required this.onNewBird, required this.onExistingBird});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l.addBirdLabel,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _ChoiceOptionTile(
+            icon: Icons.add_circle_outline_rounded,
+            iconColor: AppColors.primary,
+            title: 'إضافة طائر جديد',
+            subtitle: 'أنشئ بيانات طائر جديد وأضفه إلى المزاد',
+            onTap: onNewBird,
+          ),
+          const SizedBox(height: 12),
+          _ChoiceOptionTile(
+            icon: Icons.inventory_2_outlined,
+            iconColor: AppColors.blue,
+            title: 'اختيار من طيوري',
+            subtitle: 'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر',
+            onTap: onExistingBird,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChoiceOptionTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  _ChoiceOptionTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.pageBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_left_rounded, color: AppColors.textHint),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Existing-birds picker sheet ───────────────────────────────────────────────
+
+class _ExistingBirdsPicker extends StatelessWidget {
+  final Set<int> alreadyAddedIds;
+  final void Function(BirdSummaryModel) onSelected;
+
+  _ExistingBirdsPicker({
+    required this.alreadyAddedIds,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.75,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'اختر طائراً',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'طيوري المتاحة للإضافة في المزاد',
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 20, color: AppColors.divider),
+          Expanded(
+            child: BlocBuilder<AuctionsBloc, AuctionsState>(
+              buildWhen: (p, c) =>
+                  p.sellerBirds != c.sellerBirds ||
+                  p.sellerBirdsLoading != c.sellerBirdsLoading,
+              builder: (context, state) {
+                if (state.sellerBirdsLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
+                }
+
+                final birds = state.sellerBirds
+                    .where((b) => !alreadyAddedIds.contains(b.id))
+                    .toList();
+
+                if (birds.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.flutter_dash_rounded,
+                              size: 48, color: AppColors.textHint),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'لا توجد طيور متاحة',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'جميع طيورك مدرجة في مزادات أو المتجر',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  itemCount: birds.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                  itemBuilder: (_, i) => _ExistingBirdTile(
+                    bird: birds[i],
+                    onTap: () => onSelected(birds[i]),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExistingBirdTile extends StatelessWidget {
+  final BirdSummaryModel bird;
+  final VoidCallback onTap;
+
+  _ExistingBirdTile({required this.bird, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.pageBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: AppColors.primaryLight,
+              backgroundImage:
+                  bird.thumbnailUrl != null ? NetworkImage(bird.thumbnailUrl!) : null,
+              child: bird.thumbnailUrl == null
+                  ? Text(
+                      bird.name.isNotEmpty ? bird.name[0].toUpperCase() : '?',
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bird.name.isNotEmpty ? bird.name : bird.ringNumber,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    bird.ringNumber,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  bird.gender == 'male'
+                      ? l.male
+                      : bird.gender == 'female'
+                          ? l.female
+                          : l.chick,
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+                if (bird.colour.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    bird.colour,
+                    style: const TextStyle(fontSize: 11, color: AppColors.textHint),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.add_circle_rounded, color: AppColors.primary, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Package selector ──────────────────────────────────────────────────────────
+
+class _PackageSelector extends StatelessWidget {
+  final Future<List<ActiveSellerPackageModel>> future;
+  final int? selectedId;
+  final ValueChanged<int?> onSelected;
+  final VoidCallback onGoToPackages;
+
+  _PackageSelector({
+    required this.future,
+    required this.selectedId,
+    required this.onSelected,
+    required this.onGoToPackages,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<ActiveSellerPackageModel>>(
+      future: future,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return SizedBox(
+            height: 40,
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+        }
+        final packages = snap.data ?? [];
+        if (packages.isEmpty) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.orangeLight,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.orange.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded,
+                    color: AppColors.orange, size: 18),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'لا توجد باقة نشطة — ستُرفض عملية الإنشاء',
+                    style: TextStyle(
+                        color: AppColors.orange,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                TextButton(
+                  onPressed: onGoToPackages,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.orange,
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  child: Text('اشترك', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            ),
+          );
+        }
+        if (packages.length == 1) {
+          final p = packages.first;
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.verified_rounded,
+                    color: AppColors.primary, size: 18),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        p.package.name,
+                        style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '${p.remainingPoints} نقطة متبقية · تكلفة المزاد: ${p.auctionCost} نقطة',
+                        style: TextStyle(
+                            color: AppColors.primary.withValues(alpha: 0.8),
+                            fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        // Multiple active packages — show a picker
+        return Column(
+          children: [
+            for (final p in packages)
+              GestureDetector(
+                onTap: () => onSelected(p.id),
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: selectedId == p.id
+                        ? AppColors.primaryLight
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: selectedId == p.id
+                          ? AppColors.primary
+                          : AppColors.border,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        selectedId == p.id
+                            ? Icons.radio_button_checked_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        color: selectedId == p.id
+                            ? AppColors.primary
+                            : AppColors.textHint,
+                        size: 20,
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              p.package.name,
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary),
+                            ),
+                            Text(
+                              '${p.remainingPoints} نقطة متبقية · تكلفة المزاد: ${p.auctionCost} نقطة',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

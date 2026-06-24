@@ -6,8 +6,9 @@ import '../../viewmodel/market_bloc.dart';
 import '../widgets/market_product_card.dart';
 import 'product_detail_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ProductsPage extends StatelessWidget {
-  const ProductsPage({super.key});
+  ProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +21,8 @@ class ProductsPage extends StatelessWidget {
       listener: (context, state) {
         if (state.status == CartStatus.loaded) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تمت الإضافة إلى السلة'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).addedToCart),
               backgroundColor: AppColors.success,
             ),
           );
@@ -42,14 +43,14 @@ class ProductsPage extends StatelessWidget {
             BlocBuilder<MarketBloc, MarketState>(
               buildWhen: (p, c) => p.selectedCategory != c.selectedCategory,
               builder: (context, state) => _ProductsHeader(
-                title: state.selectedCategory?.name ?? 'المنتجات',
+                title: state.selectedCategory?.name ?? AppLocalizations.of(context).products,
               ),
             ),
 
             // ── Search bar ───────────────────────────────────────────────────
             Container(
               color: AppColors.primary,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
               child: Container(
                 height: 42,
                 decoration: BoxDecoration(
@@ -58,8 +59,8 @@ class ProductsPage extends StatelessWidget {
                 ),
                 child: TextField(
                   textAlign: TextAlign.start,
-                  decoration: const InputDecoration(
-                    hintText: 'ابحث في المنتجات...',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).productSearchHint,
                     hintStyle: TextStyle(
                       color: AppColors.textHint,
                       fontSize: 13,
@@ -85,7 +86,7 @@ class ProductsPage extends StatelessWidget {
                   p.activeOrdering != c.activeOrdering,
               builder: (context, state) => Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
                 ),
@@ -93,19 +94,19 @@ class ProductsPage extends StatelessWidget {
                   children: [
                     Text(
                       '${state.filteredProducts.length} منتج',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     _SortButton(activeOrdering: state.activeOrdering),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 1),
+            SizedBox(height: 1),
 
             // ── Grid ─────────────────────────────────────────────────────────
             Expanded(
@@ -115,9 +116,9 @@ class ProductsPage extends StatelessWidget {
                   final products = state.filteredProducts;
 
                   if (products.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
-                        'لا توجد منتجات',
+                        AppLocalizations.of(context).noProducts,
                         style: TextStyle(
                           fontSize: 15,
                           color: AppColors.textSecondary,
@@ -127,9 +128,9 @@ class ProductsPage extends StatelessWidget {
                   }
 
                   return GridView.builder(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12),
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                        SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
@@ -149,7 +150,7 @@ class ProductsPage extends StatelessWidget {
                               value: context.read<MarketBloc>(),
                               child: BlocProvider.value(
                                 value: context.read<CartBloc>(),
-                                child: const ProductDetailPage(),
+                                child: ProductDetailPage(),
                               ),
                             ),
                           ),
@@ -171,9 +172,9 @@ class ProductsPage extends StatelessWidget {
 
 class _SortButton extends StatelessWidget {
   final String? activeOrdering;
-  const _SortButton({this.activeOrdering});
+  _SortButton({this.activeOrdering});
 
-  static const _options = [
+  static final _options = [
     (label: 'الأحدث', value: null),
     (label: 'السعر: الأقل أولاً', value: 'price'),
     (label: 'السعر: الأعلى أولاً', value: '-price'),
@@ -214,7 +215,7 @@ class _SortButton extends StatelessWidget {
                     ),
                   ),
                   if (o.value == activeOrdering)
-                    const Icon(Icons.check_rounded,
+                    Icon(Icons.check_rounded,
                         color: AppColors.primary, size: 16),
                 ],
               ),
@@ -222,7 +223,7 @@ class _SortButton extends StatelessWidget {
           )
           .toList(),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: isActive ? AppColors.primaryLight : AppColors.inputBg,
           borderRadius: BorderRadius.circular(8),
@@ -238,7 +239,7 @@ class _SortButton extends StatelessWidget {
               size: 15,
               color: isActive ? AppColors.primary : AppColors.textSecondary,
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               _activeLabel,
               style: TextStyle(
@@ -258,7 +259,7 @@ class _SortButton extends StatelessWidget {
 // ── Header ────────────────────────────────────────────────────────────────────
 class _ProductsHeader extends StatelessWidget {
   final String title;
-  const _ProductsHeader({required this.title});
+  _ProductsHeader({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -274,12 +275,12 @@ class _ProductsHeader extends StatelessWidget {
       child: Row(
         children: [
           // cart icon placeholder
-          const SizedBox(width: 36),
+          SizedBox(width: 36),
           Expanded(
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -288,7 +289,7 @@ class _ProductsHeader extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Icon(
+            child: Icon(
               Icons.arrow_back_ios_rounded,
               color: Colors.white,
               size: 20,

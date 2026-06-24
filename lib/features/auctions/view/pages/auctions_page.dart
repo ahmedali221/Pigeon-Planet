@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/shell_scaffold.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../viewmodel/auctions_bloc.dart';
 import '../widgets/auction_card.dart';
@@ -10,7 +11,7 @@ import 'auction_create_page.dart';
 import 'my_bids_page.dart';
 
 class AuctionsPage extends StatelessWidget {
-  const AuctionsPage({super.key});
+  AuctionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                 MaterialPageRoute(
                   builder: (_) => BlocProvider.value(
                     value: context.read<AuctionsBloc>(),
-                    child: const AuctionCreatePage(),
+                    child: AuctionCreatePage(),
                   ),
                 ),
               ),
@@ -317,6 +318,7 @@ class _AuctionsHeader extends StatelessWidget {
           top: topPadding + 12, bottom: 14, left: 16, right: 16),
       child: Row(
         children: [
+          ShellBackButton(color: Colors.white),
           Expanded(
             child: Column(
               children: [

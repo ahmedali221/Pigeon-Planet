@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/pedigree_document_model.dart';
 import '../../viewmodel/pedigrees_bloc.dart';
 import '../../viewmodel/pedigrees_event.dart';
 import '../../viewmodel/pedigrees_state.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PedigreeDetailPage extends StatefulWidget {
   final PedigreeDocumentModel document;
 
-  const PedigreeDetailPage({super.key, required this.document});
+  PedigreeDetailPage({super.key, required this.document});
 
   @override
   State<PedigreeDetailPage> createState() => _PedigreeDetailPageState();
@@ -47,8 +49,8 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
     final desc = _descCtrl.text.trim();
     if (ring.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أدخل رقم الحلقة'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).enterRingNumber),
           backgroundColor: AppColors.error,
         ),
       );
@@ -69,8 +71,8 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
           prev.status == PedigreesStatus.reviewing,
       listener: (context, state) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تمت المراجعة بنجاح'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).reviewSuccess),
             backgroundColor: AppColors.success,
           ),
         );
@@ -86,27 +88,22 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            title: Text(
-              'شهادة نسب #${doc.id}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
+          appBar: PPWAppBar(
+            title: 'شهادة نسب #${doc.id}',
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _StatusCard(doc: doc),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (doc.fileUrl != null) ...[
                   _FilePreviewCard(url: doc.fileUrl!),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                 ],
                 _ExtractedFieldsCard(doc: doc),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (doc.canReview || doc.isReviewed) ...[
                   _ReviewForm(
                     ringCtrl: _ringCtrl,
@@ -118,10 +115,10 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
                 ],
                 if (state.status == PedigreesStatus.error &&
                     state.errorMessage != null) ...[
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   _ErrorBanner(message: state.errorMessage!),
                 ],
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
               ],
             ),
           ),
@@ -135,7 +132,7 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
 
 class _StatusCard extends StatelessWidget {
   final PedigreeDocumentModel doc;
-  const _StatusCard({required this.doc});
+  _StatusCard({required this.doc});
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +164,7 @@ class _StatusCard extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
@@ -176,7 +173,7 @@ class _StatusCard extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: color, size: 32),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,9 +183,9 @@ class _StatusCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                         color: color)),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(desc,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 13, color: AppColors.textSecondary)),
               ],
             ),
@@ -203,7 +200,7 @@ class _StatusCard extends StatelessWidget {
 
 class _FilePreviewCard extends StatelessWidget {
   final String url;
-  const _FilePreviewCard({required this.url});
+  _FilePreviewCard({required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -217,25 +214,25 @@ class _FilePreviewCard extends StatelessWidget {
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2)),
+              offset: Offset(0, 2)),
         ],
       ),
       clipBehavior: Clip.hardEdge,
       child: url.toLowerCase().endsWith('.pdf')
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.picture_as_pdf_rounded,
                       color: AppColors.error, size: 48),
                   SizedBox(height: 8),
-                  Text('ملف PDF',
+                  Text(AppLocalizations.of(context).pdfFile,
                       style: TextStyle(color: AppColors.textSecondary)),
                 ],
               ),
             )
           : Image.network(url, fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const Center(
+              errorBuilder: (_, _, _) => Center(
                 child: Icon(Icons.broken_image_outlined,
                     color: AppColors.textHint, size: 40),
               )),
@@ -247,12 +244,12 @@ class _FilePreviewCard extends StatelessWidget {
 
 class _ExtractedFieldsCard extends StatelessWidget {
   final PedigreeDocumentModel doc;
-  const _ExtractedFieldsCard({required this.doc});
+  _ExtractedFieldsCard({required this.doc});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -260,27 +257,27 @@ class _ExtractedFieldsCard extends StatelessWidget {
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2)),
+              offset: Offset(0, 2)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'البيانات المستخرجة (OCR)',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 color: AppColors.textPrimary),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _FieldRow(
-            label: 'رقم الحلقة',
+            label: AppLocalizations.of(context).ringNumber,
             value: doc.extractedBirdRingNumber,
           ),
-          const Divider(height: 20),
+          Divider(height: 20),
           _FieldRow(
-            label: 'الوصف',
+            label: AppLocalizations.of(context).description,
             value: doc.extractedDescription,
           ),
         ],
@@ -292,7 +289,7 @@ class _ExtractedFieldsCard extends StatelessWidget {
 class _FieldRow extends StatelessWidget {
   final String label;
   final String? value;
-  const _FieldRow({required this.label, this.value});
+  _FieldRow({required this.label, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +297,7 @@ class _FieldRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('$label: ',
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500)),
@@ -329,7 +326,7 @@ class _ReviewForm extends StatelessWidget {
   final bool isReviewed;
   final VoidCallback onSubmit;
 
-  const _ReviewForm({
+  _ReviewForm({
     required this.ringCtrl,
     required this.descCtrl,
     required this.isReviewing,
@@ -340,7 +337,7 @@ class _ReviewForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -348,7 +345,7 @@ class _ReviewForm extends StatelessWidget {
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2)),
+              offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -356,10 +353,10 @@ class _ReviewForm extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.edit_note_rounded,
+              Icon(Icons.edit_note_rounded,
                   color: AppColors.purple, size: 20),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'المراجعة اليدوية',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -367,19 +364,19 @@ class _ReviewForm extends StatelessWidget {
                     color: AppColors.textPrimary),
               ),
               if (isReviewed) ...[
-                const SizedBox(width: 8),
-                const Icon(Icons.check_circle_rounded,
+                SizedBox(width: 8),
+                Icon(Icons.check_circle_rounded,
                     color: AppColors.success, size: 16),
               ],
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           TextField(
             controller: ringCtrl,
             textAlign: TextAlign.start,
             decoration: InputDecoration(
-              labelText: 'رقم حلقة الطائر',
-              hintText: 'مثال: EG-2024-12345',
+              labelText: AppLocalizations.of(context).pedigreeRingLabel,
+              hintText: AppLocalizations.of(context).pedigreeRingHint,
               filled: true,
               fillColor: AppColors.inputBg,
               border: OutlineInputBorder(
@@ -387,17 +384,17 @@ class _ReviewForm extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
               prefixIcon:
-                  const Icon(Icons.tag_rounded, color: AppColors.purple),
+                  Icon(Icons.tag_rounded, color: AppColors.purple),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           TextField(
             controller: descCtrl,
             textAlign: TextAlign.start,
             maxLines: 3,
             decoration: InputDecoration(
-              labelText: 'الوصف',
-              hintText: 'وصف إضافي من شهادة النسب',
+              labelText: AppLocalizations.of(context).description,
+              hintText: AppLocalizations.of(context).pedigreeDescHint,
               filled: true,
               fillColor: AppColors.inputBg,
               border: OutlineInputBorder(
@@ -405,23 +402,23 @@ class _ReviewForm extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
               prefixIcon:
-                  const Icon(Icons.notes_rounded, color: AppColors.purple),
+                  Icon(Icons.notes_rounded, color: AppColors.purple),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             height: 48,
             child: ElevatedButton.icon(
               onPressed: isReviewing ? null : onSubmit,
               icon: isReviewing
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
-                  : const Icon(Icons.save_rounded, size: 18),
+                  : Icon(Icons.save_rounded, size: 18),
               label: Text(isReviewing ? 'جاري الحفظ...' : 'حفظ المراجعة'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.purple,
@@ -442,12 +439,12 @@ class _ReviewForm extends StatelessWidget {
 
 class _ErrorBanner extends StatelessWidget {
   final String message;
-  const _ErrorBanner({required this.message});
+  _ErrorBanner({required this.message});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.redLight,
         borderRadius: BorderRadius.circular(10),
@@ -455,11 +452,11 @@ class _ErrorBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: AppColors.error, size: 18),
-          const SizedBox(width: 10),
+          Icon(Icons.error_outline, color: AppColors.error, size: 18),
+          SizedBox(width: 10),
           Expanded(
             child: Text(message,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.error, fontSize: 13)),
           ),
         ],

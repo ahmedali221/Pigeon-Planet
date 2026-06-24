@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../auctions/model/bird_summary_model.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeFixedPriceBirdsSection extends StatelessWidget {
   final List<BirdSummaryModel> birds;
   final void Function(BirdSummaryModel)? onBirdTap;
 
-  const HomeFixedPriceBirdsSection({
+  HomeFixedPriceBirdsSection({
     super.key,
     required this.birds,
     this.onBirdTap,
@@ -30,10 +31,10 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              const Text(
+              Text(
                 'طيور بسعر ثابت',
                 style: TextStyle(
                   fontSize: 16,
@@ -41,12 +42,12 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               GestureDetector(
                 onTap: () {},
-                child: const Row(
+                child: Row(
                   children: [
-                    Text('الكل',
+                    Text(AppLocalizations.of(context).all,
                         style: TextStyle(
                             color: AppColors.textSecondary, fontSize: 14)),
                     Icon(Icons.chevron_left_rounded,
@@ -58,13 +59,13 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
 
         SizedBox(
           height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             itemCount: birds.length,
             itemBuilder: (context, i) {
               final bird = birds[i];
@@ -73,7 +74,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                 onTap: onBirdTap != null ? () => onBirdTap!(bird) : null,
                 child: Container(
                   width: 160,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  margin: EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
@@ -81,7 +82,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
@@ -91,7 +92,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                       Stack(
                         children: [
                           ClipRRect(
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(14),
                               topRight: Radius.circular(14),
                             ),
@@ -117,25 +118,25 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                                   _OverlayChip(
                                     child: Text(
                                       bird.gender == 'male'
-                                          ? 'ذكر'
+                                          ? AppLocalizations.of(context).male
                                           : bird.gender == 'female'
-                                              ? 'أنثى'
-                                              : 'صغير',
-                                      style: const TextStyle(
+                                              ? AppLocalizations.of(context).female
+                                              : AppLocalizations.of(context).genderYoung,
+                                      style: TextStyle(
                                           color: Colors.white, fontSize: 10),
                                     ),
                                   ),
                                 if (bird.flyingSpeed != null) ...[
-                                  const SizedBox(width: 4),
+                                  SizedBox(width: 4),
                                   _OverlayChip(
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.bolt_rounded,
+                                        Icon(Icons.bolt_rounded,
                                             color: Colors.amber, size: 10),
-                                        const SizedBox(width: 2),
+                                        SizedBox(width: 2),
                                         Text(
                                           '${bird.flyingSpeed!.toStringAsFixed(0)} كم',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 10),
                                         ),
@@ -149,10 +150,10 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                        padding: EdgeInsets.fromLTRB(10, 8, 10, 0),
                         child: Text(
                           bird.name.isNotEmpty ? bird.name : bird.ringNumber,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -163,10 +164,10 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                       ),
                       if (bird.colour.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 2, 10, 0),
+                          padding: EdgeInsets.fromLTRB(10, 2, 10, 0),
                           child: Text(
                             bird.colour,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 10,
                                 color: AppColors.textSecondary),
                             maxLines: 1,
@@ -174,19 +175,19 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           'ج.م ${_fmt(bird.price)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
                         child: SizedBox(
                           width: double.infinity,
                           height: 30,
@@ -201,7 +202,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                               padding: EdgeInsets.zero,
                               elevation: 0,
                             ),
-                            child: const Text('عرض التفاصيل',
+                            child: Text(AppLocalizations.of(context).viewDetails,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 12)),
                           ),
@@ -221,7 +222,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
   Widget _placeholder(BirdSummaryModel bird) {
     return Container(
       color: AppColors.primary.withValues(alpha: 0.15),
-      child: const Center(
+      child: Center(
         child: Icon(Icons.flutter_dash, color: AppColors.primary, size: 40),
       ),
     );
@@ -230,12 +231,12 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
 
 class _OverlayChip extends StatelessWidget {
   final Widget child;
-  const _OverlayChip({required this.child});
+  _OverlayChip({required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(4),

@@ -6,11 +6,15 @@ import 'datasources/feed_remote_datasource.dart';
 import 'feed_auction_item_model.dart';
 import 'seller_block_model.dart';
 import 'seller_follow_model.dart';
+import 'seller_package_follow_model.dart';
 
 abstract class FeedRepository {
   Future<Either<Failure, void>> followSeller(int sellerId);
   Future<Either<Failure, void>> unfollowSeller(int sellerId);
   Future<Either<Failure, List<SellerFollowModel>>> getFollowing();
+  Future<Either<Failure, void>> followSellerPackage(int packageId);
+  Future<Either<Failure, void>> unfollowSellerPackage(int packageId);
+  Future<Either<Failure, List<SellerPackageFollowModel>>> getFollowingPackages();
   Future<Either<Failure, List<SellerModel>>> getSuggestions();
   Future<Either<Failure, List<SellerBlockModel>>> getBlocks();
   Future<Either<Failure, void>> blockProfile(int profileId);

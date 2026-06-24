@@ -136,7 +136,12 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
     Emitter<LuckyWheelState> emit,
   ) async {
     final current = state.current;
-    if (state.hasSpun || current == null || !current.eligible) return;
+    if (state.hasSpun ||
+        current == null ||
+        !current.eligible ||
+        current.segments.isEmpty) {
+      return;
+    }
 
     final segmentIds = current.segments.map((s) => s.id).toList();
     final idempotencyKey = 'spin-${DateTime.now().microsecondsSinceEpoch}';

@@ -49,6 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final shouldLoadSellerPrivateData = event.isSeller;
 
     final sellerFuture = () async {
+      if (!shouldLoadSellerPrivateData) return null;
       try {
         return await _sellerHomeRemote.fetchHomeSummary();
       } catch (_) {
@@ -117,10 +118,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       errorMessage = failure.toString();
       return <AuctionModel>[];
     }, (list) => list as List<AuctionModel>);
-    final endingSoon = endingResult.fold((failure) {
-      errorMessage ??= failure.toString();
-      return <AuctionModel>[];
-    }, (list) => list as List<AuctionModel>);
+    final endingSoon = endingResult.fold(
+      (_) => <AuctionModel>[],
+      (list) => list as List<AuctionModel>,
+    );
     const featuredBirds = <BirdSummaryModel>[];
     final comingSoon = comingSoonResult.fold(
       (_) => <AuctionModel>[],

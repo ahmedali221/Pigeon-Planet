@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/shell_scaffold.dart';
 import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../model/cashback_offer_model.dart';
@@ -11,27 +12,21 @@ import '../../viewmodel/market_bloc.dart';
 import '../widgets/market_category_tile.dart';
 import 'products_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class MarketPage extends StatelessWidget {
-  const MarketPage({super.key});
+  MarketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => sl<MarketBloc>()..add(const MarketStarted()),
-        ),
-        BlocProvider(
-          create: (_) => sl<CartBloc>()..add(const CartStarted()),
-        ),
-      ],
-      child: const _MarketView(),
+    return BlocProvider(
+      create: (_) => sl<MarketBloc>()..add(MarketStarted()),
+      child: _MarketView(),
     );
   }
 }
 
 class _MarketView extends StatelessWidget {
-  const _MarketView();
+  _MarketView();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +40,7 @@ class _MarketView extends StatelessWidget {
           // ── Search bar ────────────────────────────────────────────────────
           Container(
             color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
             child: Container(
               height: 42,
               decoration: BoxDecoration(
@@ -54,8 +49,8 @@ class _MarketView extends StatelessWidget {
               ),
               child: TextField(
                 textAlign: TextAlign.start,
-                decoration: const InputDecoration(
-                  hintText: 'ابحث عن فئة أو منتج...',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context).marketSearchHint,
                   hintStyle: TextStyle(color: AppColors.textHint, fontSize: 13),
                   prefixIcon: Icon(
                     Icons.search_rounded,
@@ -76,7 +71,7 @@ class _MarketView extends StatelessWidget {
               builder: (context, state) {
                 if (state.status == MarketStatus.initial ||
                     state.status == MarketStatus.loading) {
-                  return const Center(
+                  return Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   );
                 }
@@ -88,11 +83,11 @@ class _MarketView extends StatelessWidget {
                           .toList();
 
                 return ListView(
-                  padding: const EdgeInsets.only(top: 16, bottom: 24),
+                  padding: EdgeInsets.only(top: 16, bottom: 24),
                   children: [
                     // ── Stats bar ─────────────────────────────────────────
                     _StatsBar(totalProducts: state.allProducts.length),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
 
                     // ── Active promotions ─────────────────────────────────
                     if (state.discountOffers.isNotEmpty ||
@@ -101,12 +96,12 @@ class _MarketView extends StatelessWidget {
                         discountOffers: state.discountOffers,
                         cashbackOffers: state.cashbackOffers,
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                     ],
 
                     // ── Quality banner ────────────────────────────────────
                     _QualityBanner(),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
 
                     // ── Personalized feed ─────────────────────────────────
                     if (state.feedProducts.isNotEmpty) ...[
@@ -116,9 +111,9 @@ class _MarketView extends StatelessWidget {
                         isLoading: state.feedLoading,
                         onLoadMore: () => context
                             .read<MarketBloc>()
-                            .add(const MarketFeedLoadMoreRequested()),
+                            .add(MarketFeedLoadMoreRequested()),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                     ],
 
                     // ── Categories ────────────────────────────────────────
@@ -141,7 +136,7 @@ class _MarketView extends StatelessWidget {
                                     value: context.read<CartBloc>(),
                                   ),
                                 ],
-                                child: const ProductsPage(),
+                                child: ProductsPage(),
                               ),
                             ),
                           );
@@ -174,6 +169,7 @@ class _MarketHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
+          ShellBackButton(color: Colors.white),
           BlocBuilder<CartBloc, CartState>(
             buildWhen: (p, c) => p.itemsCount != c.itemsCount,
             builder: (context, state) => GestureDetector(
@@ -183,7 +179,7 @@ class _MarketHeader extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
                       value: context.read<CartBloc>(),
-                      child: const CartPage(),
+                      child: CartPage(),
                     ),
                   ),
                 );
@@ -191,7 +187,7 @@ class _MarketHeader extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.shopping_cart_outlined,
                     color: Colors.white,
                     size: 26,
@@ -203,14 +199,14 @@ class _MarketHeader extends StatelessWidget {
                       child: Container(
                         width: 18,
                         height: 18,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppColors.orange,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
                             '${state.itemsCount}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -223,9 +219,9 @@ class _MarketHeader extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Text(
-              'المتجر',
+              AppLocalizations.of(context).market,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -243,51 +239,17 @@ class _MarketHeader extends StatelessWidget {
 // ── Stats bar ─────────────────────────────────────────────────────────────────
 class _StatsBar extends StatelessWidget {
   final int totalProducts;
-  const _StatsBar({required this.totalProducts});
+  _StatsBar({required this.totalProducts});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(
             child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-              child: const Column(
-                children: [
-                  Text('🚚', style: TextStyle(fontSize: 24)),
-                  SizedBox(height: 4),
-                  Text(
-                    'مجاني',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    'توصيل للمنزل',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -300,18 +262,52 @@ class _StatsBar extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Text('📦', style: TextStyle(fontSize: 24)),
-                  const SizedBox(height: 4),
+                  Text('🚚', style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 4),
                   Text(
-                    '$totalProducts',
-                    style: const TextStyle(
+                    AppLocalizations.of(context).free,
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const Text(
-                    'منتج متاح',
+                  Text(
+                    AppLocalizations.of(context).homeDelivery,
+                    style: TextStyle(fontSize: 12, color: AppColors.primary),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text('📦', style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 4),
+                  Text(
+                    '$totalProducts',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context).availableProduct,
                     style: TextStyle(fontSize: 12, color: AppColors.primary),
                   ),
                 ],
@@ -329,9 +325,9 @@ class _QualityBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -346,18 +342,18 @@ class _QualityBanner extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.verified_rounded,
                 color: AppColors.primary,
                 size: 26,
               ),
             ),
-            const SizedBox(width: 12),
-            const Column(
+            SizedBox(width: 12),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'جميع المنتجات عالية الجودة',
+                  AppLocalizations.of(context).allProductsHighQuality,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -366,7 +362,7 @@ class _QualityBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  'منتجات أصلية معتمدة لصحة حمامك',
+                  AppLocalizations.of(context).certifiedOriginalProducts,
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -386,7 +382,7 @@ class _PromotionsStrip extends StatelessWidget {
   final List<DiscountOfferModel> discountOffers;
   final List<CashbackOfferModel> cashbackOffers;
 
-  const _PromotionsStrip({
+  _PromotionsStrip({
     required this.discountOffers,
     required this.cashbackOffers,
   });
@@ -396,10 +392,10 @@ class _PromotionsStrip extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsetsDirectional.only(start: 16),
           child: Text(
-            'عروض نشطة',
+            AppLocalizations.of(context).activeOffers,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -407,12 +403,12 @@ class _PromotionsStrip extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         SizedBox(
           height: 44,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+            padding: EdgeInsetsDirectional.only(start: 16, end: 8),
             children: [
               ...discountOffers.map(
                 (o) => _OfferChip(
@@ -441,7 +437,7 @@ class _OfferChip extends StatelessWidget {
   final Color color;
   final String icon;
 
-  const _OfferChip({
+  _OfferChip({
     required this.label,
     required this.color,
     required this.icon,
@@ -450,8 +446,8 @@ class _OfferChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsetsDirectional.only(end: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      margin: EdgeInsetsDirectional.only(end: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -460,8 +456,8 @@ class _OfferChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: 6),
+          Text(icon, style: TextStyle(fontSize: 14)),
+          SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
@@ -483,7 +479,7 @@ class _FeedSection extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onLoadMore;
 
-  const _FeedSection({
+  _FeedSection({
     required this.products,
     required this.hasMore,
     required this.isLoading,
@@ -495,10 +491,10 @@ class _FeedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsetsDirectional.only(start: 16),
           child: Text(
-            'مقترح لك',
+            AppLocalizations.of(context).suggestedForYou,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -506,18 +502,18 @@ class _FeedSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         SizedBox(
           height: 186,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+            padding: EdgeInsetsDirectional.only(start: 16, end: 8),
             itemCount: products.length + (hasMore ? 1 : 0),
-            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            separatorBuilder: (_, _) => SizedBox(width: 10),
             itemBuilder: (context, i) {
               if (i == products.length) {
                 return isLoading
-                    ? const Center(
+                    ? Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: CircularProgressIndicator(
@@ -530,12 +526,12 @@ class _FeedSection extends StatelessWidget {
                         onTap: onLoadMore,
                         child: Container(
                           width: 72,
-                          margin: const EdgeInsetsDirectional.only(end: 8),
+                          margin: EdgeInsetsDirectional.only(end: 8),
                           decoration: BoxDecoration(
                             color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
@@ -545,7 +541,7 @@ class _FeedSection extends StatelessWidget {
                               ),
                               SizedBox(height: 6),
                               Text(
-                                'المزيد',
+                                AppLocalizations.of(context).more,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.primary,
@@ -568,7 +564,7 @@ class _FeedSection extends StatelessWidget {
 
 class _FeedProductCard extends StatelessWidget {
   final ProductModel product;
-  const _FeedProductCard({required this.product});
+  _FeedProductCard({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -583,7 +579,7 @@ class _FeedProductCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -592,7 +588,7 @@ class _FeedProductCard extends StatelessWidget {
         children: [
           // Thumbnail
           ClipRRect(
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(14),
               topRight: Radius.circular(14),
             ),
@@ -607,7 +603,7 @@ class _FeedProductCard extends StatelessWidget {
                           width: double.infinity,
                           errorBuilder: (_, _, _) => Container(
                             color: AppColors.primaryLight,
-                            child: const Icon(
+                            child: Icon(
                               Icons.storefront_outlined,
                               color: AppColors.primary,
                               size: 28,
@@ -616,7 +612,7 @@ class _FeedProductCard extends StatelessWidget {
                         )
                       : Container(
                           color: AppColors.primaryLight,
-                          child: const Icon(
+                          child: Icon(
                             Icons.storefront_outlined,
                             color: AppColors.primary,
                             size: 28,
@@ -628,14 +624,14 @@ class _FeedProductCard extends StatelessWidget {
                     bottom: 4,
                     right: 4,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
-                        'متابَع',
+                      child: Text(
+                        AppLocalizations.of(context).followedAlt,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 9,
@@ -650,13 +646,13 @@ class _FeedProductCard extends StatelessWidget {
           // Info
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+              padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -664,10 +660,10 @@ class _FeedProductCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
+                  Spacer(),
                   Text(
                     '${product.price.toStringAsFixed(0)} ج.م',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,

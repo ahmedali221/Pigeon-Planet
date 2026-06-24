@@ -4,24 +4,27 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../../core/widgets/shell_scaffold.dart';
 import '../../model/race_model.dart';
 import '../../viewmodel/races_bloc.dart';
 import 'race_detail_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class RacesPage extends StatelessWidget {
-  const RacesPage({super.key});
+  RacesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<RacesBloc>()..add(const RacesStarted()),
-      child: const _RacesView(),
+      create: (_) => sl<RacesBloc>()..add(RacesStarted()),
+      child: _RacesView(),
     );
   }
 }
 
 class _RacesView extends StatefulWidget {
-  const _RacesView();
+  _RacesView();
 
   @override
   State<_RacesView> createState() => _RacesViewState();
@@ -55,22 +58,17 @@ class _RacesViewState extends State<_RacesView>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'النتائج والسباقات',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).racesAndResults,
+        leading: ShellBackButton(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white60,
-          tabs: const [
-            Tab(text: 'السباقات'),
-            Tab(text: 'بحث النتائج'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context).races),
+            Tab(text: AppLocalizations.of(context).searchResults),
           ],
         ),
       ),
@@ -96,7 +94,7 @@ class _RacesListTab extends StatelessWidget {
   final TextEditingController seasonCtrl;
   final TextEditingController stationCtrl;
 
-  const _RacesListTab({
+  _RacesListTab({
     required this.searchCtrl,
     required this.seasonCtrl,
     required this.stationCtrl,
@@ -110,7 +108,7 @@ class _RacesListTab extends StatelessWidget {
           children: [
             _SearchBar(
               controller: searchCtrl,
-              hint: 'بحث في السباقات...',
+              hint: AppLocalizations.of(context).racesSearchHint,
               onChanged: (q) => context
                   .read<RacesBloc>()
                   .add(RacesSearchChanged(q)),
@@ -131,38 +129,38 @@ class _RacesListTab extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, RacesState state) {
     if (state.status == RacesStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator());
     }
     if (state.status == RacesStatus.error) {
       return _ErrorView(
         message: state.errorMessage ?? 'حدث خطأ',
         onRetry: () =>
-            context.read<RacesBloc>().add(const RacesRefreshRequested()),
+            context.read<RacesBloc>().add(RacesRefreshRequested()),
       );
     }
     if (state.status == RacesStatus.searchResults) {
       return _globalResultsList(context, state);
     }
     if (state.races.isEmpty) {
-      return const _EmptyView(message: 'لا توجد سباقات بعد');
+      return _EmptyView(message: AppLocalizations.of(context).noRacesYet);
     }
     final hasFooter = state.hasMore || state.loadingMore;
     return RefreshIndicator(
       onRefresh: () async =>
-          context.read<RacesBloc>().add(const RacesRefreshRequested()),
+          context.read<RacesBloc>().add(RacesRefreshRequested()),
       child: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         itemCount: state.races.length + (hasFooter ? 1 : 0),
         separatorBuilder: (_, i) =>
             i < state.races.length - 1
-                ? const SizedBox(height: 12)
-                : const SizedBox.shrink(),
+                ? SizedBox(height: 12)
+                : SizedBox.shrink(),
         itemBuilder: (ctx, i) {
           if (i == state.races.length) {
             return _LoadMoreButton(
               loading: state.loadingMore,
               onTap: () =>
-                  ctx.read<RacesBloc>().add(const RacesLoadMoreRequested()),
+                  ctx.read<RacesBloc>().add(RacesLoadMoreRequested()),
             );
           }
           return _RaceCard(
@@ -185,20 +183,20 @@ class _RacesListTab extends StatelessWidget {
   Widget _globalResultsList(BuildContext context, RacesState state) {
     final results = state.globalSearchResults;
     if (results.isEmpty) {
-      return const _EmptyView(message: 'لا توجد نتائج');
+      return _EmptyView(message: AppLocalizations.of(context).noResults);
     }
     final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       itemCount: results.length + (hasFooter ? 1 : 0),
-      separatorBuilder: (_, index) => const SizedBox(height: 8),
+      separatorBuilder: (_, index) => SizedBox(height: 8),
       itemBuilder: (context, i) {
         if (i == results.length) {
           return _LoadMoreButton(
             loading: state.resultSearchLoadingMore,
             onTap: () => context
                 .read<RacesBloc>()
-                .add(const RaceResultSearchLoadMoreRequested()),
+                .add(RaceResultSearchLoadMoreRequested()),
           );
         }
         return _ResultRow(result: results[i], showRace: true);
@@ -214,7 +212,7 @@ class _RaceFiltersBar extends StatelessWidget {
   final TextEditingController stationCtrl;
   final RacesState state;
 
-  const _RaceFiltersBar({
+  _RaceFiltersBar({
     required this.seasonCtrl,
     required this.stationCtrl,
     required this.state,
@@ -226,8 +224,8 @@ class _RaceFiltersBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(10),
+      margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -240,20 +238,20 @@ class _RaceFiltersBar extends StatelessWidget {
               Expanded(
                 child: _FilterField(
                   controller: seasonCtrl,
-                  hint: 'الموسم',
+                  hint: AppLocalizations.of(context).season,
                   keyboardType: TextInputType.number,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: _FilterField(
                   controller: stationCtrl,
-                  hint: 'المحطة',
+                  hint: AppLocalizations.of(context).station,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -266,8 +264,8 @@ class _RaceFiltersBar extends StatelessWidget {
                           ),
                         );
                   },
-                  icon: const Icon(Icons.filter_alt_rounded, size: 18),
-                  label: const Text('تطبيق الفلتر'),
+                  icon: Icon(Icons.filter_alt_rounded, size: 18),
+                  label: Text(AppLocalizations.of(context).applyFilter),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -278,7 +276,7 @@ class _RaceFiltersBar extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               OutlinedButton.icon(
                 onPressed: _hasFilters ||
                         seasonCtrl.text.isNotEmpty ||
@@ -287,15 +285,15 @@ class _RaceFiltersBar extends StatelessWidget {
                         seasonCtrl.clear();
                         stationCtrl.clear();
                         context.read<RacesBloc>().add(
-                              const RacesFilterChanged(
+                              RacesFilterChanged(
                                 seasonYear: '',
                                 stationName: '',
                               ),
                             );
                       }
                     : null,
-                icon: const Icon(Icons.close_rounded, size: 18),
-                label: const Text('مسح'),
+                icon: Icon(Icons.close_rounded, size: 18),
+                label: Text(AppLocalizations.of(context).clear),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textPrimary,
                   side: BorderSide(color: AppColors.border),
@@ -317,7 +315,7 @@ class _FilterField extends StatelessWidget {
   final String hint;
   final TextInputType? keyboardType;
 
-  const _FilterField({
+  _FilterField({
     required this.controller,
     required this.hint,
     this.keyboardType,
@@ -337,7 +335,7 @@ class _FilterField extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );
   }
@@ -346,7 +344,7 @@ class _FilterField extends StatelessWidget {
 class _ResultsSearchTab extends StatelessWidget {
   final TextEditingController searchCtrl;
 
-  const _ResultsSearchTab({required this.searchCtrl});
+  _ResultsSearchTab({required this.searchCtrl});
 
   @override
   Widget build(BuildContext context) {
@@ -356,7 +354,7 @@ class _ResultsSearchTab extends StatelessWidget {
           children: [
             _SearchBar(
               controller: searchCtrl,
-              hint: 'رقم الحلقة أو اسم المتسابق...',
+              hint: AppLocalizations.of(context).raceSearchHint,
               onChanged: (q) => context
                   .read<RacesBloc>()
                   .add(RaceResultSearchChanged(q)),
@@ -370,10 +368,10 @@ class _ResultsSearchTab extends StatelessWidget {
 
   Widget _buildBody(RacesState state) {
     if (state.status == RacesStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator());
     }
     if (state.resultSearchQuery.isEmpty) {
-      return const _EmptyView(
+      return _EmptyView(
         icon: Icons.search_rounded,
         message: 'ابحث برقم حلقة الحمام أو اسم المتسابق',
       );
@@ -382,20 +380,20 @@ class _ResultsSearchTab extends StatelessWidget {
       return _ErrorView(message: state.errorMessage ?? 'حدث خطأ');
     }
     if (state.globalSearchResults.isEmpty) {
-      return const _EmptyView(message: 'لا توجد نتائج مطابقة');
+      return _EmptyView(message: 'لا توجد نتائج مطابقة');
     }
     final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       itemCount: state.globalSearchResults.length + (hasFooter ? 1 : 0),
-      separatorBuilder: (_, index) => const SizedBox(height: 8),
+      separatorBuilder: (_, index) => SizedBox(height: 8),
       itemBuilder: (context, i) {
         if (i == state.globalSearchResults.length) {
           return _LoadMoreButton(
             loading: state.resultSearchLoadingMore,
             onTap: () => context
                 .read<RacesBloc>()
-                .add(const RaceResultSearchLoadMoreRequested()),
+                .add(RaceResultSearchLoadMoreRequested()),
           );
         }
         return _ResultRow(
@@ -414,7 +412,7 @@ class _SearchBar extends StatelessWidget {
   final String hint;
   final ValueChanged<String> onChanged;
 
-  const _SearchBar({
+  _SearchBar({
     required this.controller,
     required this.hint,
     required this.onChanged,
@@ -423,17 +421,17 @@ class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
         textAlign: TextAlign.start,
         decoration: InputDecoration(
           hintText: hint,
-          prefixIcon: const Icon(Icons.search_rounded),
+          prefixIcon: Icon(Icons.search_rounded),
           suffixIcon: controller.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded),
+                  icon: Icon(Icons.clear_rounded),
                   onPressed: () {
                     controller.clear();
                     onChanged('');
@@ -447,7 +445,7 @@ class _SearchBar extends StatelessWidget {
             borderSide: BorderSide.none,
           ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );
@@ -458,7 +456,7 @@ class _RaceCard extends StatelessWidget {
   final RaceModel race;
   final VoidCallback onTap;
 
-  const _RaceCard({required this.race, required this.onTap});
+  _RaceCard({required this.race, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -466,7 +464,7 @@ class _RaceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -474,7 +472,7 @@ class _RaceCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -485,25 +483,25 @@ class _RaceCard extends StatelessWidget {
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${race.seasonYear}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     race.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -512,39 +510,39 @@ class _RaceCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.chevron_left_rounded,
                   color: AppColors.textSecondary,
                   size: 20,
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _InfoRow(
               icon: Icons.location_on_rounded,
               label: race.stationName,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             _InfoRow(
               icon: Icons.calendar_today_rounded,
               label: releaseDate,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Row(
               children: [
                 _StatChip(
                   icon: Icons.flutter_dash_rounded,
                   value: '${race.totalBirds}',
-                  label: 'طائر',
+                  label: AppLocalizations.of(context).bird,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 _StatChip(
                   icon: Icons.group_rounded,
                   value: '${race.competitorsCount}',
-                  label: 'متسابق',
+                  label: AppLocalizations.of(context).racer,
                 ),
                 if (race.plannedDistanceKm != null) ...[
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   _StatChip(
                     icon: Icons.straighten_rounded,
                     value: '${race.plannedDistanceKm!.toStringAsFixed(1)} كم',
@@ -564,18 +562,18 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _InfoRow({required this.icon, required this.label});
+  _InfoRow({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Icon(icon, size: 14, color: AppColors.textSecondary),
-        const SizedBox(width: 6),
+        SizedBox(width: 6),
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
             ),
@@ -593,12 +591,12 @@ class _StatChip extends StatelessWidget {
   final String value;
   final String label;
 
-  const _StatChip({required this.icon, required this.value, required this.label});
+  _StatChip({required this.icon, required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.pageBackground,
         borderRadius: BorderRadius.circular(8),
@@ -607,10 +605,10 @@ class _StatChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 13, color: AppColors.primary),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             label.isNotEmpty ? '$value $label' : value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -626,12 +624,12 @@ class _ResultRow extends StatelessWidget {
   final RaceResultModel result;
   final bool showRace;
 
-  const _ResultRow({required this.result, this.showRace = false});
+  _ResultRow({required this.result, this.showRace = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -639,7 +637,7 @@ class _ResultRow extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -656,7 +654,7 @@ class _ResultRow extends StatelessWidget {
             child: Center(
               child: Text(
                 '${result.rank}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -664,32 +662,32 @@ class _ResultRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   result.competitorName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   'حلقة: ${result.birdRingNumber}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 if (showRace && result.raceTitle != null) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     result.raceTitle!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.primary,
                     ),
@@ -705,16 +703,16 @@ class _ResultRow extends StatelessWidget {
             children: [
               Text(
                 '${result.speed.toStringAsFixed(2)} م/ث',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 '${result.distanceKm.toStringAsFixed(2)} كم',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   color: AppColors.textSecondary,
                 ),
@@ -729,11 +727,11 @@ class _ResultRow extends StatelessWidget {
   Color _rankColor(int rank) {
     switch (rank) {
       case 1:
-        return const Color(0xFFFFD700);
+        return Color(0xFFFFD700);
       case 2:
-        return const Color(0xFFC0C0C0);
+        return Color(0xFFC0C0C0);
       case 3:
-        return const Color(0xFFCD7F32);
+        return Color(0xFFCD7F32);
       default:
         return AppColors.primary;
     }
@@ -744,30 +742,30 @@ class _LoadMoreButton extends StatelessWidget {
   final bool loading;
   final VoidCallback onTap;
 
-  const _LoadMoreButton({required this.loading, required this.onTap});
+  _LoadMoreButton({required this.loading, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      padding: EdgeInsets.only(top: 12, bottom: 4),
       child: Center(
         child: loading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2.5),
               )
             : OutlinedButton.icon(
                 onPressed: onTap,
-                icon: const Icon(Icons.expand_more_rounded, size: 18),
-                label: const Text('تحميل المزيد'),
+                icon: Icon(Icons.expand_more_rounded, size: 18),
+                label: Text(AppLocalizations.of(context).loadMore),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
+                  side: BorderSide(color: AppColors.primary),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 10,
                   ),
@@ -782,7 +780,7 @@ class _EmptyView extends StatelessWidget {
   final String message;
   final IconData icon;
 
-  const _EmptyView({
+  _EmptyView({
     required this.message,
     this.icon = Icons.emoji_events_rounded,
   });
@@ -794,7 +792,7 @@ class _EmptyView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             message,
             style: TextStyle(color: Colors.grey.shade500, fontSize: 15),
@@ -810,32 +808,32 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
 
-  const _ErrorView({required this.message, this.onRetry});
+  _ErrorView({required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline_rounded,
+            Icon(Icons.error_outline_rounded,
                 size: 48, color: Colors.redAccent),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: onRetry,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white),
-                child: const Text('إعادة المحاولة'),
+                child: Text(AppLocalizations.of(context).retry),
               ),
             ],
           ],

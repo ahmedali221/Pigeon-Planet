@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AuctionVerificationRow extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -7,6 +8,7 @@ class AuctionVerificationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -15,14 +17,14 @@ class AuctionVerificationRow extends StatelessWidget {
         children: [
           if (data['hasCertifiedPedigree'] as bool)
             AuctionVerifChip(
-                label: 'نسب موثقة', color: AppColors.primary),
+                label: l.verifiedPedigree, color: AppColors.primary),
           const SizedBox(width: 8),
           if (data['hasDNA'] as bool)
-            AuctionVerifChip(label: 'DNA مسجل', color: AppColors.primary),
+            AuctionVerifChip(label: l.dnaRegistered, color: AppColors.primary),
           const SizedBox(width: 8),
           if (data['hasHealthGuarantee'] as bool)
             AuctionVerifChip(
-                label: 'ضمان صحي', color: AppColors.success),
+                label: l.healthGuarantee, color: AppColors.success),
         ],
       ),
     );

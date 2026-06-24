@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import 'public_bird_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class BirdQrScannerPage extends StatefulWidget {
-  const BirdQrScannerPage({super.key});
+  BirdQrScannerPage({super.key});
 
   static Future<void> push(BuildContext context) => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const BirdQrScannerPage()),
+        MaterialPageRoute(builder: (_) => BirdQrScannerPage()),
       );
 
   @override
@@ -54,8 +56,8 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
     final publicId = _extractPublicId(raw);
     if (publicId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('رمز QR غير صالح — لا ينتمي لطائر في كوكب الحمام'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).invalidQrCode),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -77,14 +79,9 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
+      appBar: PPWAppBar(
         backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'مسح رمز QR',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
+        title: 'مسح رمز QR',
         actions: [
           IconButton(
             icon: const Icon(Icons.flash_on_rounded),
@@ -107,10 +104,10 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _ScanFrame(scanning: !_navigating),
-                const SizedBox(height: 28),
+                SizedBox(height: 28),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(24),
@@ -119,7 +116,7 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
                     _navigating
                         ? 'جارٍ تحميل بيانات الطائر...'
                         : 'وجّه الكاميرا نحو رمز QR على بطاقة الطائر',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,
                     ),
@@ -138,13 +135,13 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
 class _ScanFrame extends StatelessWidget {
   final bool scanning;
 
-  const _ScanFrame({required this.scanning});
+  _ScanFrame({required this.scanning});
 
   @override
   Widget build(BuildContext context) {
-    const size = 220.0;
-    const cornerLen = 24.0;
-    const cornerWidth = 3.5;
+    final size = 220.0;
+    final cornerLen = 24.0;
+    final cornerWidth = 3.5;
     final color = scanning ? AppColors.primary : Colors.white54;
 
     return SizedBox(
@@ -193,7 +190,7 @@ class _Corner extends StatelessWidget {
   final bool top;
   final bool start;
 
-  const _Corner({
+  _Corner({
     required this.color,
     required this.len,
     required this.width,
@@ -220,7 +217,7 @@ class _CornerPainter extends CustomPainter {
   final bool top;
   final bool start;
 
-  const _CornerPainter(
+  _CornerPainter(
       {required this.color,
       required this.width,
       required this.top,

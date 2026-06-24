@@ -10,6 +10,7 @@ import 'routes.dart';
 import '../../features/auth/view/pages/account_type_page.dart';
 import '../../features/auth/viewmodel/auth_bloc.dart';
 import '../../features/cart/viewmodel/cart_bloc.dart';
+import '../../features/feed/viewmodel/feed_bloc.dart';
 import '../../features/home/view/pages/home_page.dart';
 import '../../features/auctions/view/pages/auctions_page.dart';
 import '../../features/market/view/pages/market_page.dart';
@@ -74,6 +75,9 @@ class AppRouter {
               BlocProvider<CartBloc>(
                 create: (_) => sl<CartBloc>()..add(const CartStarted()),
               ),
+              BlocProvider<FeedBloc>(
+                create: (_) => sl<FeedBloc>(),
+              ),
             ],
             child: ShellScaffold(navigationShell: navigationShell),
           );
@@ -84,7 +88,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.home,
-                builder: (_, _) => const HomePage(),
+                builder: (_, _) => HomePage(),
               ),
             ],
           ),
@@ -93,7 +97,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.auctions,
-                builder: (_, _) => const AuctionsPage(),
+                builder: (_, _) => AuctionsPage(),
               ),
             ],
           ),
@@ -102,7 +106,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.market,
-                builder: (_, _) => const MarketPage(),
+                builder: (_, _) => MarketPage(),
               ),
             ],
           ),
@@ -111,7 +115,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.rooms,
-                builder: (_, _) => const RoomsPage(),
+                builder: (_, _) => RoomsPage(),
               ),
             ],
           ),
@@ -120,7 +124,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.races,
-                builder: (_, _) => const RacesPage(),
+                builder: (_, _) => RacesPage(),
               ),
             ],
           ),

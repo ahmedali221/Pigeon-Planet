@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'register_personal_page.dart';
 import 'register_provider_page.dart';
@@ -53,7 +54,7 @@ class AccountTypePage extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const RegisterPersonalPage(),
+                        builder: (_) => RegisterPersonalPage(),
                       ),
                     ),
                   ),
@@ -70,7 +71,7 @@ class AccountTypePage extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const RegisterProviderPage(),
+                        builder: (_) => RegisterProviderPage(),
                       ),
                     ),
                   ),
@@ -114,7 +115,7 @@ class AccountTypePage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        MaterialPageRoute(builder: (_) => LoginPage()),
                       ),
                       child: const Text(AppStrings.login),
                     ),
@@ -308,6 +309,7 @@ class _AccountTypeCard extends StatelessWidget {
 class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
@@ -332,7 +334,7 @@ class _Footer extends StatelessWidget {
         const SizedBox(height: 8),
         Text.rich(
           TextSpan(
-            text: 'بالمتابعة، أنت توافق على ',
+            text: l.byProceedingYouAgree,
             style: const TextStyle(fontSize: 11, color: AppColors.textHint),
             children: [
               TextSpan(
@@ -342,7 +344,7 @@ class _Footer extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const TextSpan(text: ' و'),
+              TextSpan(text: l.andConnector),
               TextSpan(
                 text: AppStrings.privacyLink,
                 style: const TextStyle(

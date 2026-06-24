@@ -83,6 +83,7 @@
   "cancelAuctionConfirm": "Are you sure you want to cancel this auction? This action cannot be undone.",
   "auctionCancelledSuccess": "Auction cancelled",
   "auctionUpdatedSuccess": "Auction updated successfully",
+  "editAuction": "Edit Auction",
   "auctionDescriptionLabel": "Auction Description",
   "startingPriceLabel": "Starting Price",
   "currentPrice": "Current Price",
@@ -98,6 +99,8 @@
   "placeBidTitle": "Place a Bid",
   "bidCount": "Bid Count",
   "limitedOffer": "Limited Offer",
+  "limitedOfferRareOpportunity": "Limited Offer - Rare Opportunity",
+  "ownTodaysChampionWinTomorrow": "Own today's champion - achieve tomorrow's victories",
   "tapToWatchVideo": "Tap to watch video",
   "officialAnnouncement": "Official Announcement",
   "noCommentsYet": "No comments yet",
@@ -280,5 +283,534 @@
   "bird": "Bird",
   "racer": "Racer",
   "ringLabel": "Ring: {ring}",
-  "loadMore": "Load More"
+  "loadMore": "Load More",
+  "serviceProviderSubtitle": "For companies and suppliers",
+  "mustAgreeToTerms": "You must agree to the terms and conditions",
+  "registerSuccess": "Account created successfully",
+  "username": "Username",
+  "usernameHint": "Enter username (no spaces)",
+  "passwordHint": "Enter your password",
+  "confirmPasswordHint": "Enter your password again",
+  "personalAccount": "Personal Account",
+  "personalAccountSub": "For breeders and buyers",
+  "phoneHint": "+20 1xx xxx xxxx",
+  "uploadSizeHint": "PNG, JPG up to 10MB",
+  "age": "Age",
+  "location": "Location",
+  "flyingSpeed": "Speed",
+  "kmPerHour": "km/h",
+  "stamina": "Stamina",
+  "achievements": "Achievements",
+  "staminaExcellent": "Excellent",
+  "staminaVeryGood": "Very Good",
+  "staminaGood": "Good",
+  "genderYoung": "Young",
+  "auctionEnded": "Ended",
+  "priceEgpFormat": "EGP {amount}",
+  "unspecified": "Unspecified",
+  "lessThanAYear": "Less than a year",
+  "notAvailable": "Not available",
+  "noDescription": "No description.",
+  "pigeonDetails": "Pigeon Details",
+  "savingsAmount": "Save {amount} EGP",
+  "@savingsAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "discountPercent": "Discount {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveViewersCount": "{count} people watching now",
+  "@liveViewersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "todayRequestsCount": "{count} requests today",
+  "@todayRequestsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "thisBirdIsYours": "This bird is yours",
+  "buyNowLimitedOffer": "🛒 Buy Now - Limited Time Offer!",
+  "dnaRegistered": "DNA Registered",
+  "birdPhoto": "Bird Photo",
+  "birdWing": "Wing",
+  "birdEye": "Eye",
+  "ringNumberThumbnail": "Ring No.",
+  "photoNumber": "Photo {number}",
+  "@photoNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "birdVideo": "Bird Video",
+  "zeroViews": "0 Views",
+  "noReviewsYet": "No reviews yet",
+  "@noReviewsYet": {
+    "description": "Empty state when there are no reviews"
+  },
+  "viewAllReviews": "View all reviews ({count})",
+  "@viewAllReviews": {
+    "description": "Button to view all reviews with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyCartTitle": "Your cart is empty",
+  "@emptyCartTitle": {},
+  "emptyCartSubtitle": "Browse the market and add products to your cart",
+  "@emptyCartSubtitle": {},
+  "completeOrder": "Complete Order",
+  "@completeOrder": {},
+  "@birdNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "byProceedingYouAgree": "By proceeding, you agree to ",
+  "andConnector": " and ",
+  "auctionBidAmountEgp": "{amount} EGP",
+  "@auctionBidAmountEgp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@priceEgpFormat": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "viewAllReviewsText": "View all reviews",
+  "statusActive": "Active",
+  "statusEnded": "Ended",
+  "statusUpcoming": "Upcoming",
+  "statusSold": "Sold",
+  "statusUnsold": "Unsold",
+  "statusCancelled": "Cancelled",
+  "birdsInThisAuction": "Birds in this auction",
+  "daysRemaining": "{count} days remaining",
+  "@daysRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursRemaining": "{count} hours remaining",
+  "@hoursRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesRemaining": "{count} minutes remaining",
+  "@minutesRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minBidLabel": "Minimum: {amount} EGP",
+  "@minBidLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "birdCount": "{count} birds",
+  "@birdCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bidCountLabel": "{count} bids",
+  "@bidCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockSeller": "Block seller",
+  "unblockSeller": "Unblock",
+  "followingNow": "Following now",
+  "contactSeller": "Contact seller",
+  "followSellerToContact": "Follow this seller to contact them",
+  "aboutBreeder": "About the breeder",
+  "noAdditionalInfo": "No additional information",
+  "breederAuctions": "Breeder auctions",
+  "reviews": "Reviews",
+  "averageRating": "Average rating",
+  "activeAuction": "Active auction",
+  "outOfFive": "out of 5",
+  "whatDoYouWantToAdd": "What do you want to add?",
+  "addAuctionBirds": "Add birds to auction",
+  "startAuctionForBirds": "Start an auction for your racing pigeons",
+  "addFixedPriceBirds": "Add fixed-price birds",
+  "directSaleFixedPrice": "Direct sale with a preset price",
+  "addProducts": "Add products",
+  "productsSubtitle": "Medicine, supplements, supplies and more",
+  "manageSubscriptions": "Manage my subscriptions",
+  "subscribeToCreateAuctions": "Subscribe to a package to create auctions",
+  "dataLoadError": "Failed to load data",
+  "discoverAuctionsAndBreeders": "Discover the latest auctions and breeders",
+  "bestSeller": "Best seller",
+  "browseProducts": "Browse products",
+  "free": "Free",
+  "homeDelivery": "Home delivery",
+  "availableProduct": "Available product",
+  "allProductsHighQuality": "All products are high quality",
+  "certifiedOriginalProducts": "Certified original products for your pigeons' health",
+  "activeOffers": "Active offers",
+  "suggestedForYou": "Suggested for you",
+  "more": "More",
+  "followedAlt": "Followed",
+  "noProducts": "No products",
+  "newest": "Newest",
+  "priceLowToHigh": "Price: low to high",
+  "priceHighToLow": "Price: high to low",
+  "sort": "Sort",
+  "benefits": "Benefits",
+  "myInsights": "My Insights",
+  "insightsLoadError": "Failed to load insights",
+  "closedAuctions": "Closed auctions",
+  "totalOffersReceived": "Total offers received",
+  "uniqueBidders": "Unique bidders",
+  "completedSales": "Completed sales",
+  "pendingPaymentRequests": "Pending payment requests",
+  "listedProducts": "Listed products",
+  "pendingOrders": "Pending orders",
+  "lowStock": "Low stock",
+  "engagement": "Engagement",
+  "totalFollowers": "Total followers",
+  "newFollowers7Days": "New followers (7 days)",
+  "activeConversations": "Active conversations",
+  "unreadMessages": "Unread messages",
+  "profileViews7Days": "Profile views (7 days)",
+  "auctionViews7Days": "Auction views (7 days)",
+  "marketViews7Days": "Market views (7 days)",
+  "trust": "Trust",
+  "ratingsCount": "Ratings count",
+  "newReviews7Days": "New reviews (7 days)",
+  "badges": "Badges",
+  "package": "Package",
+  "currentPackage": "Current package",
+  "packageNumber": "Package number",
+  "subscriptionStatus": "Subscription status",
+  "inactive": "Inactive",
+  "remainingAuctionQuota": "Remaining auction quota",
+  "remainingMarketQuota": "Remaining market quota",
+  "remainingPackagePoints": "Remaining package points",
+  "promotedAuctions": "Promoted auctions",
+  "promotedProducts": "Promoted products",
+  "packageExpiryDate": "Package expiry date",
+  "activeOnly": "Active only",
+  "previous": "Previous",
+  "badgesLoadError": "Failed to load badges",
+  "noBadgesYet": "No badges yet",
+  "completeDealsForBadges": "Complete deals and interact with the platform to earn badges",
+  "expired": "Expired",
+  "enterValidPrice": "Please enter a valid price",
+  "viewPackages": "View Packages",
+  "createNewAuction": "Create New Auction",
+  "auctionData": "Auction Data",
+  "auctionTitleFieldLabel": "Auction Title *",
+  "auctionTitleExample": "Example: premium racing pigeon",
+  "auctionDescBriefHint": "Write a brief auction description",
+  "auctionImage": "Auction Image",
+  "auctionTypeField": "Auction Type",
+  "chooseStartDateTime": "Choose start date and time",
+  "chooseEndDateTime": "Choose end date and time",
+  "minBidField": "Minimum Bid",
+  "tagsFieldLabel": "Tags",
+  "auctionSettings": "Auction Settings",
+  "autoExtend": "Auto Extend",
+  "autoExtendDesc": "Automatically extend when bids arrive near the end",
+  "extensionDuration": "Extension Duration",
+  "buyNowDesc": "Allow buy now",
+  "buyNowPriceField": "Buy Now Price",
+  "depositRequired": "Deposit Required",
+  "depositRequiredDesc": "Require a deposit to confirm bids",
+  "paymentDeadlineDays": "Payment Deadline Days",
+  "birdsCount": "Birds: {arg0}",
+  "@birdsCount": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "createAuction": "Create Auction",
+  "nextArrow": "Next →",
+  "settings": "Settings",
+  "birds": "Birds",
+  "chick": "Chick",
+  "buyNowConfirmMessage": "Do you want to buy now for {arg0} EGP?",
+  "@buyNowConfirmMessage": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountDisplay": "Amount: {arg0} EGP",
+  "@amountDisplay": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewPaymentDetails": "View Payment Details",
+  "minBidDisplay": "Minimum bid: {arg0} EGP",
+  "@minBidDisplay": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "yourAuctionCannotBid": "You cannot bid on your own auction",
+  "auctionNotStartedYet": "Auction has not started yet",
+  "wonAuction": "You won auction #{arg0}",
+  "@wonAuction": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "enterValidNumber": "Enter a valid number",
+  "minBidValidation": "Bid must be at least {arg0}",
+  "@minBidValidation": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "minimumLabel": "Minimum",
+  "orderConfirmationTitle": "Order Confirmation",
+  "orderSentSuccess": "Order sent successfully",
+  "awaitingSellerApproval": "Awaiting seller approval",
+  "orderNumber": "Order #{arg0}",
+  "@orderNumber": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "statusLabel": "Status",
+  "backToHome": "Back to Home",
+  "quantityLabel": "Quantity: {arg0}",
+  "@quantityLabel": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderDetails": "Order Details",
+  "sellerName": "Seller: {arg0}",
+  "@sellerName": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "cashbackEarned": "Cashback earned: {arg0}",
+  "@cashbackEarned": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "cashbackRedeemed": "Cashback redeemed: {arg0}",
+  "@cashbackRedeemed": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "statusPending": "Pending",
+  "statusProcessing": "Processing",
+  "statusCompleted": "Completed",
+  "statusPartialRejected": "Partially rejected",
+  "orderSummary": "{arg0} items - {arg1}",
+  "@orderSummary": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      },
+      "arg1": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderItemSummary": "{arg0} × {arg1}",
+  "@orderItemSummary": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      },
+      "arg1": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderTotalSar": "Total: {arg0} SAR",
+  "@orderTotalSar": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "pointsLoyaltyLoadError": "Could not load loyalty data from the server",
+  "pointsSystemTitle": "PP Coins System",
+  "pointsSystemSubtitle": "Earn points and redeem them for exclusive rewards",
+  "currentBalance": "Current balance",
+  "pointsAmount": "{count} points",
+  "@pointsAmount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "pointsTabLabel": "🪙  Points",
+  "rewardsTabLabel": "🎁  Rewards",
+  "totalPoints": "Total points",
+  "loyaltyPoints": "Loyalty points",
+  "packagePoints": "Package points",
+  "pointsLog": "Points log",
+  "noPointTransactions": "No point transactions yet",
+  "viewAllTransactions": "View all transactions",
+  "howEarnPoints": "How do you earn points?",
+  "pointsValue": "Points value",
+  "pointsExpiryNote": "Points are valid for one year from the earning date. They are added automatically after each completed action.",
+  "earnCompleteSalePurchase": "Complete a sale or purchase",
+  "earnCompleteSalePurchaseSub": "For each completed deal",
+  "earnPayOnTime": "Pay on time",
+  "earnPayOnTimeSub": "Within the payment deadline",
+  "earnFiveStarRating": "5-star rating",
+  "earnFiveStarRatingSub": "From the buyer or seller",
+  "earnInviteFriend": "Invite a friend",
+  "earnInviteFriendSub": "When they register and complete their first deal",
+  "earnAddDigitalId": "Add a bird digital ID",
+  "earnAddDigitalIdSub": "First time for each bird",
+  "earnShareAuction": "Share an auction",
+  "earnShareAuctionSub": "Via WhatsApp or Twitter",
+  "earnDailyLogin": "Daily login",
+  "earnDailyLoginSub": "Once per day",
+  "pointsValueDiscountPublish5": "5 SAR discount on publishing fees",
+  "pointsValueDiscountDeal10": "10 SAR discount on any deal",
+  "pointsValueFreeWeek": "Free subscription for one week",
+  "pointsValueAdUpgrade2": "Free ad upgrade × 2",
+  "pointsValueTrustedSellerBadge": "\"Trusted Seller\" badge for one month",
+  "pointsValueFreeMonth": "Free subscription for a full month",
+  "pointsValueHomepageFeaturedAd": "Featured ad on the home page",
+  "pointsValueVipThreeMonths": "VIP membership for 3 months",
+  "myBadgesSection": "My badges",
+  "noEarnedBadges": "No earned badges yet",
+  "availableBadges": "Available badges",
+  "howGetReward": "How do you get a reward?",
+  "membershipLevels": "Membership levels",
+  "rewardAuctionFeeDiscount": "Auction fee discount",
+  "rewardAuctionFeeDiscountSub": "10% discount on publishing any auction",
+  "rewardDiscountsCategory": "Discounts",
+  "rewardFreeWeeklySubscription": "Free weekly subscription",
+  "rewardFreeWeeklySubscriptionSub": "Basic seller package subscription for 7 days",
+  "rewardSubscriptionsCategory": "Subscriptions",
+  "rewardAdUpgrade": "Ad upgrade",
+  "rewardAdUpgradeSub": "Your ad appears at the top of search results for 3 days",
+  "rewardPromotionCategory": "Promotion",
+  "rewardTrustedSellerBadge": "Trusted seller badge",
+  "rewardTrustedSellerBadgeSub": "A blue badge appears beside your name for one month",
+  "rewardFeaturesCategory": "Features",
+  "rewardFreeMonthlySubscription": "Free monthly subscription",
+  "rewardFreeMonthlySubscriptionSub": "Professional seller package subscription for one month",
+  "rewardFeaturedHomepageAd": "Featured ad - home page",
+  "rewardFeaturedHomepageAdSub": "Your auction appears in the home page banner for one day",
+  "rewardVipMembership": "VIP membership",
+  "rewardVipMembershipSub": "All benefits + priority support + permanent 15% discount",
+  "redeem": "Redeem",
+  "howRedeemEarnPoints": "Earn points by completing deals and daily activities",
+  "howRedeemChooseReward": "Choose the reward you want from the catalog below",
+  "howRedeemTapRedeem": "Tap \"Redeem\" and points will be deducted and the reward activated immediately",
+  "howRedeemRewardAppears": "The reward appears automatically in your account within minutes",
+  "tierBronze": "Bronze",
+  "tierBronzeRange": "0-499 points",
+  "tierSilver": "Silver",
+  "tierSilverRange": "500-1,999 points",
+  "tierGold": "Gold",
+  "tierGoldRange": "2,000-4,999 points",
+  "tierVipRange": "5,000+ points",
+  "convertCashbackToPoints": "Convert cashback to PP points",
+  "cashbackConversionRate": "Each 1 cashback = 20 PP points",
+  "cashbackConversionSuccess": "Done! You earned {count} PP points",
+  "@cashbackConversionSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tryAgainError": "An error occurred, please try again",
+  "cashbackBalanceLabel": "Cashback balance:",
+  "cashbackAmountHint": "Enter amount (cashback)",
+  "convertNow": "Convert now",
+  "pointsTransactionFallback": "Points transaction",
+  "balanceAfterTransaction": "Balance after transaction: {balance}",
+  "@balanceAfterTransaction": {
+    "placeholders": {
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
+  "revoked": "Revoked",
+  "thresholdLabel": "Threshold: {value}",
+  "@thresholdLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "earnedBadge": "Earned ✓",
+  "available": "Available"
 }

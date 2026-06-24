@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../model/seller_home_summary.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerStatsPage extends StatelessWidget {
   final SellerHomeSummary? summary;
 
-  const SellerStatsPage({super.key, this.summary});
+  SellerStatsPage({super.key, this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +19,19 @@ class SellerStatsPage extends StatelessWidget {
           _StatsAppBar(summary: s),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 100),
+              padding: EdgeInsets.fromLTRB(16, 20, 16, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _KpiGrid(summary: s),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   _BalancePointsRow(summary: s),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   _WeeklyPerformance(totalSoldCount: s?.totalSoldCount ?? 0),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   _AccountHealth(summary: s),
                   if (s?.notifications.isNotEmpty == true) ...[
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     _RecentActivity(notifications: s!.notifications),
                   ],
                 ],
@@ -48,7 +49,7 @@ class SellerStatsPage extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _StatsAppBar extends StatelessWidget {
   final SellerHomeSummary? summary;
-  const _StatsAppBar({this.summary});
+  _StatsAppBar({this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +68,11 @@ class _StatsAppBar extends StatelessWidget {
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
-        stretchModes: const [StretchMode.zoomBackground],
+        stretchModes: [StretchMode.zoomBackground],
         // Title only here — not repeated in background
         title: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(Icons.bar_chart_rounded, color: Colors.white, size: 15),
             SizedBox(width: 5),
             Text(
@@ -88,7 +89,7 @@ class _StatsAppBar extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Gradient
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF1B5E20), AppColors.primary],
@@ -116,7 +117,7 @@ class _StatsAppBar extends StatelessWidget {
             // Content (NO title text — only supplementary info)
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 60),
+                padding: EdgeInsets.fromLTRB(20, 4, 20, 60),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,10 +134,10 @@ class _StatsAppBar extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: Colors.white24),
                           ),
-                          child: const Icon(Icons.bar_chart_rounded,
+                          child: Icon(Icons.bar_chart_rounded,
                               color: Colors.white, size: 26),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         // Seller name + subtitle
                         Expanded(
                           child: Column(
@@ -145,7 +146,7 @@ class _StatsAppBar extends StatelessWidget {
                             children: [
                               Text(
                                 name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
@@ -153,8 +154,8 @@ class _StatsAppBar extends StatelessWidget {
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
-                              const Text(
+                              SizedBox(height: 2),
+                              Text(
                                 'لوحة الأداء الكاملة',
                                 style: TextStyle(
                                     color: Colors.white70, fontSize: 12),
@@ -164,7 +165,7 @@ class _StatsAppBar extends StatelessWidget {
                         ),
                         // Package badge
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.18),
@@ -174,12 +175,12 @@ class _StatsAppBar extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.workspace_premium_rounded,
+                              Icon(Icons.workspace_premium_rounded,
                                   color: Colors.amber, size: 13),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text(
                                 pkg,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
@@ -190,10 +191,10 @@ class _StatsAppBar extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     // Mini KPI strip
                     Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.12),
@@ -208,19 +209,19 @@ class _StatsAppBar extends StatelessWidget {
                             value: '${s?.activeLiveAuctions ?? 0}',
                             label: 'مزادات',
                           ),
-                          const _VertDivider(),
+                          _VertDivider(),
                           _MiniKpi(
                             icon: Icons.trending_up_rounded,
                             value: '${s?.totalSoldCount ?? 0}',
                             label: 'مبيعات',
                           ),
-                          const _VertDivider(),
+                          _VertDivider(),
                           _MiniKpi(
                             icon: Icons.pending_actions_rounded,
                             value: '${s?.pendingOrderItems ?? 0}',
                             label: 'طلبات',
                           ),
-                          const _VertDivider(),
+                          _VertDivider(),
                           _MiniKpi(
                             icon: Icons.list_alt_rounded,
                             value: '${s?.myActiveListings ?? 0}',
@@ -245,7 +246,7 @@ class _StatsAppBar extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _KpiGrid extends StatelessWidget {
   final SellerHomeSummary? summary;
-  const _KpiGrid({this.summary});
+  _KpiGrid({this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -253,12 +254,12 @@ class _KpiGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(label: 'إحصائيات اليوم', icon: Icons.today_rounded),
-        const SizedBox(height: 12),
+        _SectionTitle(label: 'إحصائيات اليوم', icon: Icons.today_rounded),
+        SizedBox(height: 12),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           childAspectRatio: 1.1,
@@ -276,14 +277,14 @@ class _KpiGrid extends StatelessWidget {
               value: '${s?.totalSoldCount ?? 0}',
               label: 'إجمالي المبيعات',
               icon: Icons.trending_up_rounded,
-              color: const Color(0xFF00897B),
-              bg: const Color(0xFFE0F2F1),
+              color: Color(0xFF00897B),
+              bg: Color(0xFFE0F2F1),
               trend: 'المزاد + المتجر',
               trendUp: true,
             ),
             _KpiCard(
               value: '${s?.pendingOrderItems ?? 0}',
-              label: 'طلبات معلقة',
+              label: AppLocalizations.of(context).pendingOrders,
               icon: Icons.pending_actions_rounded,
               color: AppColors.red,
               bg: AppColors.redLight,
@@ -315,7 +316,7 @@ class _KpiCard extends StatelessWidget {
   final String trend;
   final bool trendUp;
 
-  const _KpiCard({
+  _KpiCard({
     required this.value,
     required this.label,
     required this.icon,
@@ -328,7 +329,7 @@ class _KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -336,7 +337,7 @@ class _KpiCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -354,7 +355,7 @@ class _KpiCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: 17),
               ),
-              const Spacer(),
+              Spacer(),
               Icon(
                 trendUp
                     ? Icons.arrow_upward_rounded
@@ -364,7 +365,7 @@ class _KpiCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
@@ -375,16 +376,16 @@ class _KpiCard extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Text(
             trend,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               color: AppColors.textSecondary,
             ),
@@ -401,7 +402,7 @@ class _KpiCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _BalancePointsRow extends StatelessWidget {
   final SellerHomeSummary? summary;
-  const _BalancePointsRow({this.summary});
+  _BalancePointsRow({this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -409,9 +410,9 @@ class _BalancePointsRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(
+        _SectionTitle(
             label: 'الرصيد والنقاط', icon: Icons.account_balance_wallet_rounded),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Row(
           children: [
             Expanded(
@@ -423,14 +424,14 @@ class _BalancePointsRow extends StatelessWidget {
                 bg: AppColors.primaryLight,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: _FinanceCard(
                 value: '${s?.pointsBalance ?? 0}',
                 label: 'نقاط الولاء',
                 icon: Icons.bolt_rounded,
-                color: const Color(0xFF00897B),
-                bg: const Color(0xFFE0F2F1),
+                color: Color(0xFF00897B),
+                bg: Color(0xFFE0F2F1),
               ),
             ),
           ],
@@ -447,7 +448,7 @@ class _FinanceCard extends StatelessWidget {
   final Color color;
   final Color bg;
 
-  const _FinanceCard({
+  _FinanceCard({
     required this.value,
     required this.label,
     required this.icon,
@@ -458,7 +459,7 @@ class _FinanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -467,7 +468,7 @@ class _FinanceCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -483,7 +484,7 @@ class _FinanceCard extends StatelessWidget {
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
@@ -494,7 +495,7 @@ class _FinanceCard extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               color: AppColors.textSecondary,
             ),
@@ -510,9 +511,9 @@ class _FinanceCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _WeeklyPerformance extends StatelessWidget {
   final int totalSoldCount;
-  const _WeeklyPerformance({required this.totalSoldCount});
+  _WeeklyPerformance({required this.totalSoldCount});
 
-  static const _days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
+  static final _days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
 
   List<int> _bars() {
     final today = totalSoldCount.clamp(0, 20);
@@ -525,7 +526,7 @@ class _WeeklyPerformance extends StatelessWidget {
     final maxVal = bars.reduce((a, b) => a > b ? a : b);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -533,21 +534,21 @@ class _WeeklyPerformance extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
+          _SectionTitle(
               label: 'الأداء الأسبوعي', icon: Icons.show_chart_rounded, inline: true),
-          const SizedBox(height: 4),
-          const Text(
+          SizedBox(height: 4),
+          Text(
             'المبيعات خلال آخر 7 أيام',
             style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           SizedBox(
             height: 130,
             child: Row(
@@ -557,23 +558,23 @@ class _WeeklyPerformance extends StatelessWidget {
                 final ratio = maxVal == 0 ? 0.1 : bars[i] / maxVal;
                 return Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if (isToday) ...[
                           Text(
                             '${bars[i]}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                         ],
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 600),
+                          duration: Duration(milliseconds: 600),
                           curve: Curves.easeOut,
                           height: (100 * ratio).clamp(6, 100).toDouble(),
                           decoration: BoxDecoration(
@@ -583,7 +584,7 @@ class _WeeklyPerformance extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(
                           _days[i],
                           style: TextStyle(
@@ -614,7 +615,7 @@ class _WeeklyPerformance extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _AccountHealth extends StatelessWidget {
   final SellerHomeSummary? summary;
-  const _AccountHealth({this.summary});
+  _AccountHealth({this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -632,7 +633,7 @@ class _AccountHealth extends StatelessWidget {
         icon: Icons.verified_user_rounded,
       ),
       _HealthItem(
-        label: 'الهوية الرقمية',
+        label: AppLocalizations.of(context).digitalId,
         subtitle: 'QR Code + رقم الدبلة',
         done: noteIsDone('identity_qr'),
         icon: Icons.badge_rounded,
@@ -655,7 +656,7 @@ class _AccountHealth extends StatelessWidget {
     final progress = completedCount / items.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -663,16 +664,16 @@ class _AccountHealth extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
+          _SectionTitle(
               label: 'صحة الحساب', icon: Icons.health_and_safety_rounded, inline: true),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -688,7 +689,7 @@ class _AccountHealth extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Text(
                 '$completedCount/${items.length}',
                 style: TextStyle(
@@ -701,7 +702,7 @@ class _AccountHealth extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           ...items.map((item) => _HealthRow(item: item)),
         ],
       ),
@@ -714,7 +715,7 @@ class _HealthItem {
   final String subtitle;
   final bool done;
   final IconData icon;
-  const _HealthItem({
+  _HealthItem({
     required this.label,
     required this.subtitle,
     required this.done,
@@ -724,12 +725,12 @@ class _HealthItem {
 
 class _HealthRow extends StatelessWidget {
   final _HealthItem item;
-  const _HealthRow({required this.item});
+  _HealthRow({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Container(
@@ -745,7 +746,7 @@ class _HealthRow extends StatelessWidget {
               size: 18,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -762,7 +763,7 @@ class _HealthRow extends StatelessWidget {
                 ),
                 Text(
                   item.subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 10, color: AppColors.textSecondary),
                 ),
               ],
@@ -786,7 +787,7 @@ class _HealthRow extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _RecentActivity extends StatelessWidget {
   final List<SellerHomeNotification> notifications;
-  const _RecentActivity({required this.notifications});
+  _RecentActivity({required this.notifications});
 
   static Color _dot(String kind) {
     switch (kind) {
@@ -805,7 +806,7 @@ class _RecentActivity extends StatelessWidget {
     final items = notifications.take(5).toList();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -813,38 +814,38 @@ class _RecentActivity extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
+          _SectionTitle(
               label: 'آخر النشاطات',
               icon: Icons.history_rounded,
               inline: true),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           ...List.generate(items.length, (i) {
             final n = items[i];
             return Column(
               children: [
                 if (i > 0)
-                  const Divider(height: 1, color: AppColors.divider),
+                  Divider(height: 1, color: AppColors.divider),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   child: Row(
                     children: [
                       Container(
                         width: 8,
                         height: 8,
-                        margin: const EdgeInsets.only(top: 2),
+                        margin: EdgeInsets.only(top: 2),
                         decoration: BoxDecoration(
                           color: _dot(n.kind),
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -861,7 +862,7 @@ class _RecentActivity extends StatelessWidget {
                             ),
                             Text(
                               n.timeHint,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 10,
                                   color: AppColors.textSecondary),
                             ),
@@ -870,13 +871,13 @@ class _RecentActivity extends StatelessWidget {
                       ),
                       if (n.isNew)
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Text(
+                          child: Text(
                             'جديد',
                             style: TextStyle(
                               color: AppColors.primary,
@@ -903,7 +904,7 @@ class _RecentActivity extends StatelessWidget {
 class _DecorCircle extends StatelessWidget {
   final double size;
   final double opacity;
-  const _DecorCircle({required this.size, required this.opacity});
+  _DecorCircle({required this.size, required this.opacity});
 
   @override
   Widget build(BuildContext context) {
@@ -922,7 +923,7 @@ class _MiniKpi extends StatelessWidget {
   final IconData icon;
   final String value;
   final String label;
-  const _MiniKpi(
+  _MiniKpi(
       {required this.icon, required this.value, required this.label});
 
   @override
@@ -934,10 +935,10 @@ class _MiniKpi extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: Colors.white70, size: 11),
-            const SizedBox(width: 3),
+            SizedBox(width: 3),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -945,10 +946,10 @@ class _MiniKpi extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 1),
+        SizedBox(height: 1),
         Text(
           label,
-          style: const TextStyle(color: Colors.white60, fontSize: 9),
+          style: TextStyle(color: Colors.white60, fontSize: 9),
         ),
       ],
     );
@@ -956,7 +957,7 @@ class _MiniKpi extends StatelessWidget {
 }
 
 class _VertDivider extends StatelessWidget {
-  const _VertDivider();
+  _VertDivider();
 
   @override
   Widget build(BuildContext context) {
@@ -973,7 +974,7 @@ class _SectionTitle extends StatelessWidget {
   final IconData icon;
   final bool inline;
 
-  const _SectionTitle({
+  _SectionTitle({
     required this.label,
     required this.icon,
     this.inline = false,
@@ -984,7 +985,7 @@ class _SectionTitle extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, color: AppColors.primary, size: inline ? 17 : 18),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           label,
           style: TextStyle(

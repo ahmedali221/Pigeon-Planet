@@ -7,7 +7,7 @@ enum PackagesStatus { initial, loading, loaded, requesting, error }
 class PackagesState extends Equatable {
   final PackagesStatus status;
   final List<PackageModel> packages;
-  final ActiveSellerPackageModel? activePackage;
+  final List<ActiveSellerPackageModel> activePackages;
   final PendingSellerPackageModel? pendingPackage;
   final String? errorMessage;
   final String? requestError;
@@ -18,7 +18,7 @@ class PackagesState extends Equatable {
   const PackagesState({
     this.status = PackagesStatus.initial,
     this.packages = const [],
-    this.activePackage,
+    this.activePackages = const [],
     this.pendingPackage,
     this.errorMessage,
     this.requestError,
@@ -30,8 +30,7 @@ class PackagesState extends Equatable {
   PackagesState copyWith({
     PackagesStatus? status,
     List<PackageModel>? packages,
-    ActiveSellerPackageModel? activePackage,
-    bool clearActivePackage = false,
+    List<ActiveSellerPackageModel>? activePackages,
     PendingSellerPackageModel? pendingPackage,
     bool clearPendingPackage = false,
     String? errorMessage,
@@ -45,8 +44,7 @@ class PackagesState extends Equatable {
     return PackagesState(
       status: status ?? this.status,
       packages: packages ?? this.packages,
-      activePackage:
-          clearActivePackage ? null : (activePackage ?? this.activePackage),
+      activePackages: activePackages ?? this.activePackages,
       pendingPackage:
           clearPendingPackage ? null : (pendingPackage ?? this.pendingPackage),
       errorMessage: errorMessage ?? this.errorMessage,
@@ -62,7 +60,7 @@ class PackagesState extends Equatable {
   List<Object?> get props => [
         status,
         packages,
-        activePackage,
+        activePackages,
         pendingPackage,
         errorMessage,
         requestError,

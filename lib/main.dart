@@ -34,6 +34,7 @@ class PigeonPlanetApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
+          lazy: false,
           create: (_) => sl<AuthBloc>()..add(const AuthCheckRequested()),
         ),
         BlocProvider<ChatBadgeCubit>(

@@ -6,20 +6,21 @@ import '../../../../../core/di/injection.dart';
 import '../../../insights/view/pages/insights_page.dart';
 import '../../../insights/viewmodel/insights_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeInsightsPreviewSection extends StatelessWidget {
-  const HomeInsightsPreviewSection({super.key});
+  HomeInsightsPreviewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<InsightsBloc>(
-      create: (_) => sl<InsightsBloc>()..add(const InsightsStarted()),
-      child: const _InsightsPreview(),
+      create: (_) => sl<InsightsBloc>()..add(InsightsStarted()),
+      child: _InsightsPreview(),
     );
   }
 }
 
 class _InsightsPreview extends StatelessWidget {
-  const _InsightsPreview();
+  _InsightsPreview();
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +31,14 @@ class _InsightsPreview extends StatelessWidget {
             state.status == InsightsStatus.loading && insights == null;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Section header ──────────────────────────────────────────────
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'ملخص نشاطك',
                     style: TextStyle(
                       fontSize: 15,
@@ -45,14 +46,14 @@ class _InsightsPreview extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const Spacer(),
+                  Spacer(),
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const InsightsPage()),
+                          builder: (_) => InsightsPage()),
                     ),
-                    child: const Text(
+                    child: Text(
                       'عرض الكل',
                       style: TextStyle(
                         fontSize: 13,
@@ -63,10 +64,10 @@ class _InsightsPreview extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               // ── Two preview cards ───────────────────────────────────────────
               if (isLoading)
-                const _LoadingCards()
+                _LoadingCards()
               else ...[
                 Row(
                   children: [
@@ -75,7 +76,7 @@ class _InsightsPreview extends StatelessWidget {
                         icon: Icons.gavel_rounded,
                         iconBg: AppColors.blueLight,
                         iconColor: AppColors.blue,
-                        title: 'المزادات',
+                        title: AppLocalizations.of(context).auctions,
                         stats: [
                           _PreviewStat(
                             label: 'نشطة',
@@ -90,13 +91,13 @@ class _InsightsPreview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Expanded(
                       child: _PreviewCard(
                         icon: Icons.storefront_rounded,
                         iconBg: AppColors.primaryLight,
                         iconColor: AppColors.primary,
-                        title: 'المتجر',
+                        title: AppLocalizations.of(context).market,
                         stats: [
                           _PreviewStat(
                             label: 'منتجات',
@@ -104,7 +105,7 @@ class _InsightsPreview extends StatelessWidget {
                                 '${insights?.marketSummary.activeListingsCount ?? '—'}',
                           ),
                           _PreviewStat(
-                            label: 'طلبات معلقة',
+                            label: AppLocalizations.of(context).pendingOrders,
                             value:
                                 '${insights?.marketSummary.pendingOrderItemsCount ?? '—'}',
                           ),
@@ -114,23 +115,23 @@ class _InsightsPreview extends StatelessWidget {
                   ],
                 ),
                 // ── View more button ──────────────────────────────────────────
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 GestureDetector(
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const InsightsPage()),
+                        builder: (_) => InsightsPage()),
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                           color: AppColors.primary.withValues(alpha: 0.35)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.bar_chart_rounded,
@@ -166,7 +167,7 @@ class _PreviewCard extends StatelessWidget {
   final String title;
   final List<_PreviewStat> stats;
 
-  const _PreviewCard({
+  _PreviewCard({
     required this.icon,
     required this.iconBg,
     required this.iconColor,
@@ -177,7 +178,7 @@ class _PreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -197,11 +198,11 @@ class _PreviewCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: iconColor, size: 18),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -210,22 +211,22 @@ class _PreviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           ...stats.map((s) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
+                padding: EdgeInsets.only(bottom: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       s.label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       s.value,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -244,28 +245,28 @@ class _PreviewStat {
   final String label;
   final String value;
 
-  const _PreviewStat({required this.label, required this.value});
+  _PreviewStat({required this.label, required this.value});
 }
 
 // ── Loading placeholder ───────────────────────────────────────────────────────
 
 class _LoadingCards extends StatelessWidget {
-  const _LoadingCards();
+  _LoadingCards();
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: const _ShimmerCard()),
-        const SizedBox(width: 10),
-        Expanded(child: const _ShimmerCard()),
+        Expanded(child: _ShimmerCard()),
+        SizedBox(width: 10),
+        Expanded(child: _ShimmerCard()),
       ],
     );
   }
 }
 
 class _ShimmerCard extends StatelessWidget {
-  const _ShimmerCard();
+  _ShimmerCard();
 
   @override
   Widget build(BuildContext context) {

@@ -3,10 +3,11 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../auctions/view/pages/auction_detail_page.dart';
 import '../../../auctions/view/pages/auctions_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeActiveAuctionsSection extends StatefulWidget {
   final List<Map<String, dynamic>> auctions;
 
-  const HomeActiveAuctionsSection({super.key, required this.auctions});
+  HomeActiveAuctionsSection({super.key, required this.auctions});
 
   @override
   State<HomeActiveAuctionsSection> createState() =>
@@ -15,7 +16,7 @@ class HomeActiveAuctionsSection extends StatefulWidget {
 
 class _HomeActiveAuctionsSectionState
     extends State<HomeActiveAuctionsSection> {
-  static const String _allTypes = 'كل الأنواع';
+  static String _allTypes = 'كل الأنواع';
 
   String _selectedType = _allTypes;
   String _query = '';
@@ -88,27 +89,27 @@ class _HomeActiveAuctionsSectionState
       children: [
         // ── Section header ─────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              const Text(
-                'المزادات النشطة',
+              Text(
+                AppLocalizations.of(context).activeAuctions,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               GestureDetector(
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AuctionsPage()),
+                  MaterialPageRoute(builder: (_) => AuctionsPage()),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
-                      'الكل',
+                      AppLocalizations.of(context).all,
                       style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 14,
@@ -123,18 +124,18 @@ class _HomeActiveAuctionsSectionState
           ),
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
 
         // ── Filter row ─────────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               // type filter dropdown
               Expanded(
                 child: Container(
                   height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -144,11 +145,11 @@ class _HomeActiveAuctionsSectionState
                     child: DropdownButton<String>(
                       value: _selectedType,
                       isExpanded: true,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 13,
                           fontFamily: 'Cairo'),
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                      icon: Icon(Icons.keyboard_arrow_down_rounded,
                           color: AppColors.textSecondary),
                       items: options
                           .map((v) => DropdownMenuItem(
@@ -161,7 +162,7 @@ class _HomeActiveAuctionsSectionState
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               // favorites filter
               _IconBtn(
                 icon: _favoritesOnly
@@ -171,7 +172,7 @@ class _HomeActiveAuctionsSectionState
                 onTap: () =>
                     setState(() => _favoritesOnly = !_favoritesOnly),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               // search toggle
               _IconBtn(
                 icon: _searchOpen ? Icons.close_rounded : Icons.search_rounded,
@@ -190,37 +191,37 @@ class _HomeActiveAuctionsSectionState
 
         // ── Search field (toggled) ─────────────────────────────────────────
         if (_searchOpen) ...[
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               controller: _searchCtrl,
               autofocus: true,
               textAlign: TextAlign.start,
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13),
               decoration: InputDecoration(
-                hintText: 'ابحث بالحلقة أو السلالة أو الوصف...',
+                hintText: AppLocalizations.of(context).searchActiveAuctionsHint,
                 hintStyle:
-                    const TextStyle(color: AppColors.textHint, fontSize: 13),
-                prefixIcon: const Icon(Icons.search_rounded,
+                    TextStyle(color: AppColors.textHint, fontSize: 13),
+                prefixIcon: Icon(Icons.search_rounded,
                     color: AppColors.textSecondary, size: 20),
                 isDense: true,
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: BorderSide(color: AppColors.border),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: BorderSide(color: AppColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide:
-                      const BorderSide(color: AppColors.primary, width: 1.5),
+                      BorderSide(color: AppColors.primary, width: 1.5),
                 ),
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -228,33 +229,33 @@ class _HomeActiveAuctionsSectionState
           ),
         ],
 
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
 
         // ── Count label ────────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'عرض ${filtered.length} من ${widget.auctions.length} مزاد',
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
             textAlign: TextAlign.start,
           ),
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
 
         // ── Grid / empty state ─────────────────────────────────────────────
         if (filtered.isEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            padding: EdgeInsets.symmetric(vertical: 28, horizontal: 16),
             child: Center(
               child: Column(
                 children: [
                   Icon(Icons.search_off_rounded,
                       size: 40,
                       color: AppColors.textHint.withValues(alpha: 0.7)),
-                  const SizedBox(height: 8),
-                  const Text(
+                  SizedBox(height: 8),
+                  Text(
                     'لا توجد مزادات مطابقة',
                     style: TextStyle(
                         fontSize: 13, color: AppColors.textSecondary),
@@ -265,11 +266,11 @@ class _HomeActiveAuctionsSectionState
           )
         else
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             child: GridView.builder(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
@@ -299,7 +300,7 @@ class _IconBtn extends StatelessWidget {
   final VoidCallback onTap;
   final bool active;
 
-  const _IconBtn({required this.icon, required this.onTap, this.active = false});
+  _IconBtn({required this.icon, required this.onTap, this.active = false});
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +329,7 @@ class _ActiveAuctionCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onToggleFavorite;
 
-  const _ActiveAuctionCard({
+  _ActiveAuctionCard({
     required this.auction,
     required this.isFavorite,
     required this.onToggleFavorite,
@@ -358,7 +359,7 @@ class _ActiveAuctionCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -369,7 +370,7 @@ class _ActiveAuctionCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(14),
                     topRight: Radius.circular(14),
                   ),
@@ -391,7 +392,7 @@ class _ActiveAuctionCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: typeColor,
@@ -399,7 +400,7 @@ class _ActiveAuctionCard extends StatelessWidget {
                     ),
                     child: Text(
                       a['type'] as String,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: Colors.white,
                           fontSize: 9,
                           fontWeight: FontWeight.bold),
@@ -415,7 +416,7 @@ class _ActiveAuctionCard extends StatelessWidget {
                     child: Container(
                       width: 28,
                       height: 28,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           color: Colors.white, shape: BoxShape.circle),
                       child: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -431,18 +432,18 @@ class _ActiveAuctionCard extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         vertical: 5, horizontal: 8),
                     color: AppColors.primary.withValues(alpha: 0.92),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.access_time_rounded,
+                        Icon(Icons.access_time_rounded,
                             color: Colors.white, size: 12),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           a['timeLabel'] as String,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w600),
@@ -456,13 +457,13 @@ class _ActiveAuctionCard extends StatelessWidget {
 
             // ── Info area ───────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
+              padding: EdgeInsets.fromLTRB(8, 8, 8, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     a['ring'] as String,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -471,26 +472,26 @@ class _ActiveAuctionCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     a['breed'] as String,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 11, color: AppColors.textSecondary),
                     textAlign: TextAlign.start,
                   ),
-                  const SizedBox(height: 1),
+                  SizedBox(height: 1),
                   Text(
                     a['desc'] as String,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 10, color: AppColors.textHint),
                     textAlign: TextAlign.start,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   Text(
                     'ج.م ${a['price']}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -508,7 +509,7 @@ class _ActiveAuctionCard extends StatelessWidget {
 
   Widget _placeholder(int color) => Container(
         color: Color(color),
-        child: const Center(
+        child: Center(
           child: Icon(Icons.flutter_dash, color: Colors.white54, size: 36),
         ),
       );

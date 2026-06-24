@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/services/permission_service.dart';
@@ -39,6 +40,7 @@ class _UploadBoxWidgetState extends State<UploadBoxWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,9 +108,9 @@ class _UploadBoxWidgetState extends State<UploadBoxWidget> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        '10MB حتى PNG, JPG',
-                        style: TextStyle(
+                      Text(
+                        l.uploadSizeHint,
+                        style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textHint,
                         ),

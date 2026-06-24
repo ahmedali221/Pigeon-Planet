@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../feed/view/pages/sellers_list_page.dart';
 
 class RoomsPage extends StatelessWidget {
-  const RoomsPage({super.key});
+  RoomsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SellersListPage();
+    return SellersListPage();
   }
 }

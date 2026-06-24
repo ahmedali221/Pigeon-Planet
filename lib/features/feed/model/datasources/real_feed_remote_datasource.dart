@@ -5,6 +5,7 @@ import '../../../home/model/seller_model.dart';
 import '../feed_auction_item_model.dart';
 import '../seller_block_model.dart';
 import '../seller_follow_model.dart';
+import '../seller_package_follow_model.dart';
 import 'feed_remote_datasource.dart';
 
 export 'feed_remote_datasource.dart' show SellerListResult;
@@ -33,6 +34,47 @@ class RealFeedRemoteDataSource implements FeedRemoteDataSource {
       rethrow;
     } catch (e) {
       throw ApiException('فشل في إلغاء المتابعة');
+    }
+  }
+
+  @override
+  Future<void> followSellerPackage(int packageId) async {
+    try {
+      await _dio.post(ApiConstants.followSellerPackage(packageId));
+    } on ApiException {
+      rethrow;
+    } catch (_) {
+      throw ApiException('فشل في متابعة الباقة');
+    }
+  }
+
+  @override
+  Future<void> unfollowSellerPackage(int packageId) async {
+    try {
+      await _dio.post(ApiConstants.unfollowSellerPackage(packageId));
+    } on ApiException {
+      rethrow;
+    } catch (_) {
+      throw ApiException('فشل في إلغاء متابعة الباقة');
+    }
+  }
+
+  @override
+  Future<List<SellerPackageFollowModel>> getFollowingPackages() async {
+    try {
+      final response = await _dio.get(ApiConstants.followingPackages);
+      final data = response.data;
+      final list = data is List
+          ? data
+          : (data is Map ? (data['results'] as List? ?? []) : []);
+      return list
+          .map((e) =>
+              SellerPackageFollowModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on ApiException {
+      rethrow;
+    } catch (_) {
+      throw ApiException('فشل تحميل قائمة الباقات المتابعة');
     }
   }
 

@@ -47,6 +47,7 @@ class AuctionCreatePayload {
   final String minBidIncrement;
   final String? tags;
   final List<AuctionItemInput> items;
+  final int? sellerPackageId;
 
   /// Local file path of the cover image to upload to Cloudinary before sending.
   /// Not serialized; the datasource uploads it and injects the resulting URL.
@@ -70,6 +71,7 @@ class AuctionCreatePayload {
     required this.minBidIncrement,
     this.tags,
     required this.items,
+    this.sellerPackageId,
     this.thumbnailPath,
     this.thumbnailUrl,
   });
@@ -89,10 +91,15 @@ class AuctionCreatePayload {
           'payment_deadline_days': paymentDeadlineDays,
         'min_bid_increment': minBidIncrement,
         if (tags != null && tags!.isNotEmpty) 'tags': tags,
+        if (sellerPackageId != null) 'seller_package_id': sellerPackageId,
         'items': items.map((i) => i.toJson()).toList(),
       };
 
-  AuctionCreatePayload copyWith({String? thumbnailUrl}) => AuctionCreatePayload(
+  AuctionCreatePayload copyWith({
+    String? thumbnailUrl,
+    int? sellerPackageId,
+  }) =>
+      AuctionCreatePayload(
         title: title,
         description: description,
         auctionType: auctionType,
@@ -107,6 +114,7 @@ class AuctionCreatePayload {
         minBidIncrement: minBidIncrement,
         tags: tags,
         items: items,
+        sellerPackageId: sellerPackageId ?? this.sellerPackageId,
         thumbnailPath: thumbnailPath,
         thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       );

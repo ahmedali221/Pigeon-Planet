@@ -4,23 +4,24 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../model/seller_product_model.dart';
 import '../../viewmodel/seller_products_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerProductCard extends StatelessWidget {
   final SellerProductModel product;
   final VoidCallback onEdit;
 
-  const SellerProductCard({
+  SellerProductCard({
     super.key,
     required this.product,
     required this.onEdit,
   });
 
-  static const _statusColors = {
+  static final _statusColors = {
     'available': AppColors.success,
     'inactive': AppColors.textHint,
     'sold': AppColors.orange,
   };
 
-  static const _categoryColors = {
+  static final _categoryColors = {
     'supplies': AppColors.primary,
     'accessories': AppColors.purple,
     'feeds': AppColors.orange,
@@ -36,7 +37,7 @@ class SellerProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -44,7 +45,7 @@ class SellerProductCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -53,7 +54,7 @@ class SellerProductCard extends StatelessWidget {
         children: [
           // ── Top row: thumbnail + title + badges ───────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+            padding: EdgeInsets.fromLTRB(14, 12, 14, 8),
             child: Row(
               // RTL: thumbnail rightmost, actions leftmost
               children: [
@@ -69,29 +70,29 @@ class SellerProductCard extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (_, _, _) => Container(
                               color: AppColors.primaryLight,
-                              child: const Icon(Icons.storefront_outlined,
+                              child: Icon(Icons.storefront_outlined,
                                   color: AppColors.primary, size: 22),
                             ),
                           )
                         : Container(
                             color: AppColors.primaryLight,
-                            child: const Icon(Icons.storefront_outlined,
+                            child: Icon(Icons.storefront_outlined,
                                 color: AppColors.primary, size: 22),
                           ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 // category badge
                 _Badge(
                   label: product.categoryDisplayName,
                   color: _categoryColor,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 // title
                 Expanded(
                   child: Text(
                     product.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -103,31 +104,31 @@ class SellerProductCard extends StatelessWidget {
                 // edit icon
                 IconButton(
                   onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined,
+                  icon: Icon(Icons.edit_outlined,
                       color: AppColors.primary, size: 20),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  constraints: BoxConstraints(),
                   splashRadius: 20,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 // delete icon
                 IconButton(
                   onPressed: () => _confirmDelete(context),
-                  icon: const Icon(Icons.delete_outline_rounded,
+                  icon: Icon(Icons.delete_outline_rounded,
                       color: AppColors.error, size: 20),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  constraints: BoxConstraints(),
                   splashRadius: 20,
                 ),
               ],
             ),
           ),
 
-          const Divider(height: 1),
+          Divider(height: 1),
 
           // ── Bottom row: price, count, status, listing ───────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+            padding: EdgeInsets.fromLTRB(14, 10, 14, 12),
             child: Row(
               children: [
                 // price
@@ -136,18 +137,18 @@ class SellerProductCard extends StatelessWidget {
                   label: '${product.price.toStringAsFixed(0)} ج.م',
                   color: AppColors.primary,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 // stock
                 _InfoChip(
                   icon: Icons.inventory_2_outlined,
                   label: '${product.count} قطعة',
                   color: AppColors.textSecondary,
                 ),
-                const Spacer(),
+                Spacer(),
                 // market listed dot
                 if (product.isMarketListed)
-                  const _MarketListedDot(),
-                const SizedBox(width: 8),
+                  _MarketListedDot(),
+                SizedBox(width: 8),
                 // status badge
                 _Badge(
                   label: product.statusDisplayName,
@@ -167,17 +168,17 @@ class SellerProductCard extends StatelessWidget {
     showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('حذف المنتج'),
+        title: Text('حذف المنتج'),
         content: Text('هل تريد حذف "${product.title}"؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('إلغاء'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('حذف'),
+            child: Text(AppLocalizations.of(context).delete),
           ),
         ],
       ),
@@ -199,7 +200,7 @@ class _Badge extends StatelessWidget {
   final Color color;
   final bool small;
 
-  const _Badge({required this.label, required this.color, this.small = false});
+  _Badge({required this.label, required this.color, this.small = false});
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +230,7 @@ class _InfoChip extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _InfoChip(
+  _InfoChip(
       {required this.icon, required this.label, required this.color});
 
   @override
@@ -238,7 +239,7 @@ class _InfoChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: color),
-        const SizedBox(width: 3),
+        SizedBox(width: 3),
         Text(
           label,
           style: TextStyle(
@@ -250,7 +251,7 @@ class _InfoChip extends StatelessWidget {
 }
 
 class _MarketListedDot extends StatelessWidget {
-  const _MarketListedDot();
+  _MarketListedDot();
 
   @override
   Widget build(BuildContext context) {
@@ -260,13 +261,13 @@ class _MarketListedDot extends StatelessWidget {
         Container(
           width: 7,
           height: 7,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.success,
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 4),
-        const Text(
+        SizedBox(width: 4),
+        Text(
           'معروض',
           style: TextStyle(fontSize: 11, color: AppColors.success),
         ),

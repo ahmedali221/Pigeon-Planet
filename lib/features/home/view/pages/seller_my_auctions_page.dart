@@ -9,21 +9,22 @@ import '../../../auctions/view/pages/auction_detail_page.dart';
 import '../../../auctions/view/pages/auction_edit_page.dart';
 import '../../../auctions/viewmodel/auctions_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerMyAuctionsPage extends StatelessWidget {
-  const SellerMyAuctionsPage({super.key});
+  SellerMyAuctionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          sl<AuctionsBloc>()..add(const AuctionsFilterChanged('my_auctions')),
-      child: const _SellerMyAuctionsView(),
+          sl<AuctionsBloc>()..add(AuctionsFilterChanged('my_auctions')),
+      child: _SellerMyAuctionsView(),
     );
   }
 }
 
 class _SellerMyAuctionsView extends StatefulWidget {
-  const _SellerMyAuctionsView();
+  _SellerMyAuctionsView();
 
   @override
   State<_SellerMyAuctionsView> createState() => _SellerMyAuctionsViewState();
@@ -51,19 +52,19 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
       MaterialPageRoute(
         builder: (_) => BlocProvider(
           create: (_) => sl<AuctionsBloc>(),
-          child: const AuctionCreatePage(),
+          child: AuctionCreatePage(),
         ),
       ),
     );
     if (mounted) {
       context
           .read<AuctionsBloc>()
-          .add(const AuctionsFilterChanged('my_auctions'));
+          .add(AuctionsFilterChanged('my_auctions'));
     }
   }
 
   void _refresh() =>
-      context.read<AuctionsBloc>().add(const AuctionsFilterChanged('my_auctions'));
+      context.read<AuctionsBloc>().add(AuctionsFilterChanged('my_auctions'));
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +75,8 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
       listener: (context, state) {
         if (!state.isCancelling && state.cancelError == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إلغاء المزاد'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).auctionCancelledSuccess),
               backgroundColor: AppColors.primary,
             ),
           );
@@ -101,9 +102,9 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
             floatingActionButton: FloatingActionButton.extended(
               onPressed: _openCreateAuction,
               backgroundColor: AppColors.orange,
-              icon: const Icon(Icons.gavel_rounded, color: Colors.white),
-              label: const Text(
-                'مزاد جديد',
+              icon: Icon(Icons.gavel_rounded, color: Colors.white),
+              label: Text(
+                AppLocalizations.of(context).newAuction,
                 style: TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold),
               ),
@@ -117,20 +118,20 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
                   elevation: 0,
                   pinned: true,
                   title: Text(
-                    totalCount > 0 ? 'مزاداتي ($totalCount)' : 'مزاداتي',
-                    style: const TextStyle(
+                    totalCount > 0 ? 'مزاداتي ($totalCount)' : AppLocalizations.of(context).myAuctions,
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
                       color: AppColors.primary,
                     ),
                   ),
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                    icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
                     onPressed: () => Navigator.pop(context),
                   ),
                   actions: [
                     IconButton(
-                      icon: const Icon(Icons.refresh_rounded, size: 20),
+                      icon: Icon(Icons.refresh_rounded, size: 20),
                       onPressed: _refresh,
                     ),
                   ],
@@ -148,7 +149,7 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
                 ),
               ],
               body: state.status == AuctionsStatus.loading
-                  ? const Center(
+                  ? Center(
                       child:
                           CircularProgressIndicator(color: AppColors.primary),
                     )
@@ -185,7 +186,7 @@ class _AuctionList extends StatelessWidget {
   final VoidCallback onRefresh;
   final VoidCallback onAdd;
 
-  const _AuctionList({
+  _AuctionList({
     required this.auctions,
     required this.isEnded,
     required this.onRefresh,
@@ -201,7 +202,7 @@ class _AuctionList extends StatelessWidget {
       color: AppColors.primary,
       onRefresh: () async => onRefresh(),
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 100),
         itemCount: auctions.length,
         itemBuilder: (context, i) =>
             _AuctionListTile(auction: auctions[i]),
@@ -216,20 +217,20 @@ class _EmptyState extends StatelessWidget {
   final bool isEnded;
   final VoidCallback onAdd;
 
-  const _EmptyState({required this.isEnded, required this.onAdd});
+  _EmptyState({required this.isEnded, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 110,
               height: 110,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
@@ -239,21 +240,21 @@ class _EmptyState extends StatelessWidget {
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               isEnded ? 'لا توجد مزادات منتهية' : 'لا توجد مزادات نشطة',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               isEnded
                   ? 'ستظهر هنا المزادات بعد انتهائها'
                   : 'أنشئ مزادك الأول لعرض طيورك',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 13, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
@@ -269,19 +270,19 @@ class _EmptyState extends StatelessWidget {
 class _AuctionListTile extends StatelessWidget {
   final AuctionModel auction;
 
-  const _AuctionListTile({required this.auction});
+  _AuctionListTile({required this.auction});
 
   void _confirmCancel(BuildContext context) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إلغاء المزاد'),
-        content: const Text(
-            'هل أنت متأكد من إلغاء هذا المزاد؟ لا يمكن التراجع عن هذا الإجراء.'),
+        title: Text(AppLocalizations.of(context).cancelAuctionTitle),
+        content: Text(
+            AppLocalizations.of(context).cancelAuctionConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('تراجع'),
+            child: Text(AppLocalizations.of(context).back),
           ),
           TextButton(
             onPressed: () {
@@ -291,7 +292,7 @@ class _AuctionListTile extends StatelessWidget {
                   .add(AuctionCancelRequested(auction.id));
             },
             child: Text(
-              'إلغاء المزاد',
+              AppLocalizations.of(context).cancelAuctionTitle,
               style: TextStyle(color: Colors.red.shade600),
             ),
           ),
@@ -314,13 +315,13 @@ class _AuctionListTile extends StatelessWidget {
             ? AppColors.textSecondary
             : AppColors.orange;
     final statusLabel = a.isActive
-        ? 'نشط'
+        ? AppLocalizations.of(context).statusActive
         : a.isEnded
-            ? 'منتهي'
-            : 'قادم';
+            ? AppLocalizations.of(context).statusEnded
+            : AppLocalizations.of(context).statusUpcoming;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -329,7 +330,7 @@ class _AuctionListTile extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -345,7 +346,7 @@ class _AuctionListTile extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius:
-                  const BorderRadius.horizontal(right: Radius.circular(15)),
+                  BorderRadius.horizontal(right: Radius.circular(15)),
               child: SizedBox(
                 width: 90,
                 height: 96,
@@ -355,19 +356,19 @@ class _AuctionListTile extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => Container(
                           color: AppColors.primaryLight,
-                          child: const Icon(Icons.gavel_rounded,
+                          child: Icon(Icons.gavel_rounded,
                               color: AppColors.primary, size: 32),
                         ),
                       )
                     : Container(
                         color: AppColors.primaryLight,
-                        child: const Icon(Icons.gavel_rounded,
+                        child: Icon(Icons.gavel_rounded,
                             color: AppColors.primary, size: 32),
                       ),
               ),
             ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           // info
           Expanded(
             child: GestureDetector(
@@ -378,7 +379,7 @@ class _AuctionListTile extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(vertical: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -387,7 +388,7 @@ class _AuctionListTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             a.title.isNotEmpty ? a.title : ring,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -395,9 +396,9 @@ class _AuctionListTile extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.1),
@@ -414,33 +415,33 @@ class _AuctionListTile extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5),
                     Text(
                       ring,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                         fontFamily: 'monospace',
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Row(
                       children: [
                         Text(
                           'ج.م ${a.currentPrice.toStringAsFixed(0)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        const Icon(Icons.gavel_rounded,
+                        SizedBox(width: 10),
+                        Icon(Icons.gavel_rounded,
                             size: 12, color: AppColors.textSecondary),
-                        const SizedBox(width: 3),
+                        SizedBox(width: 3),
                         Text(
                           '$bids مزايدة',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary),
                         ),
@@ -453,7 +454,7 @@ class _AuctionListTile extends StatelessWidget {
           ),
           // actions menu
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert_rounded,
+            icon: Icon(Icons.more_vert_rounded,
                 color: AppColors.textSecondary, size: 20),
             onSelected: (value) {
               if (value == 'edit') {
@@ -479,14 +480,14 @@ class _AuctionListTile extends StatelessWidget {
             },
             itemBuilder: (_) => [
               if (a.isActive) ...[
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'edit',
                   child: Row(
                     children: [
                       Icon(Icons.edit_outlined,
                           size: 18, color: AppColors.primary),
                       SizedBox(width: 8),
-                      Text('تعديل'),
+                      Text(AppLocalizations.of(context).edit),
                     ],
                   ),
                 ),
@@ -496,27 +497,27 @@ class _AuctionListTile extends StatelessWidget {
                     children: [
                       Icon(Icons.cancel_outlined,
                           size: 18, color: Colors.red.shade400),
-                      const SizedBox(width: 8),
-                      Text('إلغاء',
+                      SizedBox(width: 8),
+                      Text(AppLocalizations.of(context).cancel,
                           style: TextStyle(color: Colors.red.shade400)),
                     ],
                   ),
                 ),
               ],
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'detail',
                 child: Row(
                   children: [
                     Icon(Icons.visibility_outlined,
                         size: 18, color: AppColors.textSecondary),
                     SizedBox(width: 8),
-                    Text('عرض التفاصيل'),
+                    Text(AppLocalizations.of(context).viewDetails),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
         ],
       ),
     );

@@ -56,6 +56,15 @@ class DioClient {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final skipAuth = options.extra['skipAuth'] == true ||
+        _isAuthEndpoint(options.path) ||
+        options.path == ApiConstants.tokenRefresh;
+    if (skipAuth) {
+      options.headers.remove('Authorization');
+      handler.next(options);
+      return;
+    }
+
     final token = await _tokenStorage.getAccessToken();
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
@@ -68,6 +77,11 @@ class DioClient {
     ErrorInterceptorHandler handler,
   ) async {
     if (error.response?.statusCode == 401) {
+      if (_isAuthEndpoint(error.requestOptions.path)) {
+        handler.reject(_mapError(error));
+        return;
+      }
+
       // Avoid intercepting the refresh call itself
       if (error.requestOptions.path == ApiConstants.tokenRefresh) {
         await _tokenStorage.clearTokens();
@@ -95,7 +109,7 @@ class DioClient {
         final response = await _dio.post(
           ApiConstants.tokenRefresh,
           data: {'refresh': refreshToken},
-          options: Options(headers: {'Authorization': null}),
+          options: Options(extra: {'skipAuth': true}),
         );
 
         final newAccess = response.data['access'] as String;
@@ -143,6 +157,12 @@ class DioClient {
         ),
       );
     });
+  }
+
+  bool _isAuthEndpoint(String path) {
+    final normalized = path.startsWith('/') ? path : '/$path';
+    return normalized == ApiConstants.login ||
+        normalized == ApiConstants.registerCustomer;
   }
 
   DioException _mapError(DioException error) {

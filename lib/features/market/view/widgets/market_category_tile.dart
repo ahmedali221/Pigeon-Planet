@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../model/category_model.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class MarketCategoryTile extends StatelessWidget {
   final CategoryModel category;
   final VoidCallback onTap;
 
-  const MarketCategoryTile({
+  MarketCategoryTile({
     super.key,
     required this.category,
     required this.onTap,
@@ -17,8 +18,8 @@ class MarketCategoryTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -26,7 +27,7 @@ class MarketCategoryTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -43,11 +44,11 @@ class MarketCategoryTile extends StatelessWidget {
               ),
               child: Center(
                 child: Text(category.emoji,
-                    style: const TextStyle(fontSize: 26)),
+                    style: TextStyle(fontSize: 26)),
               ),
             ),
 
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
 
             // name + count
             Column(
@@ -55,25 +56,25 @@ class MarketCategoryTile extends StatelessWidget {
               children: [
                 Text(
                   category.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
-                  'تصفح المنتجات',
-                  style: const TextStyle(
+                  AppLocalizations.of(context).browseProducts,
+                  style: TextStyle(
                       fontSize: 13, color: AppColors.textSecondary),
                 ),
               ],
             ),
 
-            const Spacer(),
+            Spacer(),
 
             // arrow — end (left in RTL)
-            const Icon(Icons.chevron_left_rounded,
+            Icon(Icons.chevron_left_rounded,
                 color: AppColors.primary, size: 22),
           ],
         ),

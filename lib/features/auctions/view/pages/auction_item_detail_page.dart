@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
@@ -209,25 +210,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          d['name'] as String,
-          style: const TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold),
-          overflow: TextOverflow.ellipsis,
-        ),
-        actions: const [],
+      appBar: PPWAppBar(
+        title: d['name'] as String,
       ),
       body: BlocConsumer<AuctionsBloc, AuctionsState>(
         listenWhen: (p, c) =>
@@ -698,7 +682,7 @@ class _WinnerBar extends StatelessWidget {
   }
 }
 
-// ── Bid bottom sheet (identical logic to AuctionDetailPage's sheet) ───────────
+// ── Bid bottom sheet ──────────────────────────────────────────────────────────
 class _BidSheet extends StatefulWidget {
   final AuctionItemModel item;
   final AuctionModel auction;

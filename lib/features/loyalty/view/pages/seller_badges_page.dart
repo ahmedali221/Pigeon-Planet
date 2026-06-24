@@ -6,14 +6,15 @@ import '../../../../../core/di/injection.dart';
 import '../../../home/model/datasources/points_remote_datasource.dart';
 import '../../viewmodel/badges_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class BadgesPage extends StatelessWidget {
-  const BadgesPage({super.key});
+  BadgesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<BadgesBloc>()..add(const BadgesLoadRequested()),
-      child: const _BadgesView(),
+      create: (_) => sl<BadgesBloc>()..add(BadgesLoadRequested()),
+      child: _BadgesView(),
     );
   }
 }
@@ -22,7 +23,7 @@ class BadgesPage extends StatelessWidget {
 typedef SellerBadgesPage = BadgesPage;
 
 class _BadgesView extends StatelessWidget {
-  const _BadgesView();
+  _BadgesView();
 
   @override
   Widget build(BuildContext context) {
@@ -41,24 +42,24 @@ class _BadgesView extends StatelessWidget {
                 title: Text(
                   state.badges.isNotEmpty
                       ? 'الأوسمة (${state.badges.length})'
-                      : 'الأوسمة',
-                  style: const TextStyle(
+                      : AppLocalizations.of(context).badgesTitle,
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
                     color: AppColors.primary,
                   ),
                 ),
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                  icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
                   Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 4),
+                    padding: EdgeInsetsDirectional.only(end: 4),
                     child: TextButton.icon(
                       onPressed: () => context
                           .read<BadgesBloc>()
-                          .add(const BadgesIncludeExpiredToggled()),
+                          .add(BadgesIncludeExpiredToggled()),
                       icon: Icon(
                         state.includeExpired
                             ? Icons.history_toggle_off_rounded
@@ -69,7 +70,7 @@ class _BadgesView extends StatelessWidget {
                             : AppColors.textSecondary,
                       ),
                       label: Text(
-                        state.includeExpired ? 'النشطة فقط' : 'السابقة',
+                        state.includeExpired ? AppLocalizations.of(context).activeOnly : AppLocalizations.of(context).previous,
                         style: TextStyle(
                           fontSize: 12,
                           color: state.includeExpired
@@ -80,10 +81,10 @@ class _BadgesView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.refresh_rounded, size: 20),
+                    icon: Icon(Icons.refresh_rounded, size: 20),
                     onPressed: () => context
                         .read<BadgesBloc>()
-                        .add(const BadgesLoadRequested()),
+                        .add(BadgesLoadRequested()),
                   ),
                 ],
               ),
@@ -97,32 +98,32 @@ class _BadgesView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, BadgesState state) {
     if (state.status == BadgesStatus.loading) {
-      return const Center(
+      return Center(
           child: CircularProgressIndicator(color: AppColors.primary));
     }
     if (state.status == BadgesStatus.error) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline_rounded,
+              Icon(Icons.error_outline_rounded,
                   size: 48, color: AppColors.error),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
-                state.errorMessage ?? 'حدث خطأ في تحميل الأوسمة',
+                state.errorMessage ?? AppLocalizations.of(context).badgesLoadError,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => context
                     .read<BadgesBloc>()
-                    .add(const BadgesLoadRequested()),
+                    .add(BadgesLoadRequested()),
                 style:
                     ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                child: const Text('إعادة المحاولة',
+                child: Text(AppLocalizations.of(context).retry,
                     style: TextStyle(color: Colors.white)),
               ),
             ],
@@ -131,15 +132,15 @@ class _BadgesView extends StatelessWidget {
       );
     }
     if (state.badges.isEmpty) {
-      return const _EmptyBadges();
+      return _EmptyBadges();
     }
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () async =>
-          context.read<BadgesBloc>().add(const BadgesLoadRequested()),
+          context.read<BadgesBloc>().add(BadgesLoadRequested()),
       child: GridView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
@@ -155,41 +156,41 @@ class _BadgesView extends StatelessWidget {
 // ── Empty state ───────────────────────────────────────────────────────────────
 
 class _EmptyBadges extends StatelessWidget {
-  const _EmptyBadges();
+  _EmptyBadges();
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 110,
               height: 110,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.military_tech_rounded,
                 size: 52,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'لا توجد أوسمة بعد',
+            SizedBox(height: 24),
+            Text(
+              AppLocalizations.of(context).noBadgesYet,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'أكمل صفقاتك وتفاعل مع المنصة لتحصل على أوسمة',
+            SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context).completeDealsForBadges,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
             ),
@@ -205,7 +206,7 @@ class _EmptyBadges extends StatelessWidget {
 class _BadgeCard extends StatelessWidget {
   final BadgeAwardModel badge;
 
-  const _BadgeCard({required this.badge});
+  _BadgeCard({required this.badge});
 
   static IconData _icon(String type) => switch (type) {
         'first_order' => Icons.shopping_bag_rounded,
@@ -247,7 +248,7 @@ class _BadgeCard extends StatelessWidget {
     final Color iconColor;
     if (isRevoked) {
       borderColor = AppColors.error.withValues(alpha: 0.3);
-      bgColor = const Color(0xFFFFEBEE);
+      bgColor = Color(0xFFFFEBEE);
       iconColor = AppColors.error;
     } else if (isExpired) {
       borderColor = AppColors.textHint.withValues(alpha: 0.4);
@@ -268,18 +269,18 @@ class _BadgeCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Status chip
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: isRevoked
                     ? AppColors.error.withValues(alpha: 0.1)
@@ -289,7 +290,7 @@ class _BadgeCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                isRevoked ? 'مُلغى' : isExpired ? 'منتهٍ' : 'نشط',
+                isRevoked ? 'مُلغى' : isExpired ? AppLocalizations.of(context).expired : AppLocalizations.of(context).statusActive,
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.bold,
@@ -301,7 +302,7 @@ class _BadgeCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             // Icon circle
             Container(
               width: 56,
@@ -325,7 +326,7 @@ class _BadgeCard extends StatelessWidget {
                     )
                   : Icon(_icon(badge.badgeType), size: 28, color: iconColor),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Text(
               badge.name.isNotEmpty ? badge.name : badge.badgeType,
               style: TextStyle(
@@ -342,10 +343,10 @@ class _BadgeCard extends StatelessWidget {
             ),
             // Expiry hint for active temporary badges
             if (badge.expiresAt != null && !isRevoked && !isExpired) ...[
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text(
                 'ينتهي ${_shortDate(badge.expiresAt!)}',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 10, color: AppColors.textHint),
                 textAlign: TextAlign.center,
               ),

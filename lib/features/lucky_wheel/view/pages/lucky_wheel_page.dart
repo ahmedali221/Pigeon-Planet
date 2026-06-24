@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../core/di/injection.dart';
 import '../../model/wheel_prize_model.dart';
 import '../../viewmodel/lucky_wheel_bloc.dart';
 import '../widgets/spin_result_sheet.dart';
 import '../widgets/wheel_painter.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class LuckyWheelPage extends StatelessWidget {
   final bool isSeller;
 
-  const LuckyWheelPage({super.key, required this.isSeller});
+  LuckyWheelPage({super.key, required this.isSeller});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class LuckyWheelPage extends StatelessWidget {
 class _LuckyWheelView extends StatefulWidget {
   final bool isSeller;
 
-  const _LuckyWheelView({required this.isSeller});
+  _LuckyWheelView({required this.isSeller});
 
   @override
   State<_LuckyWheelView> createState() => _LuckyWheelViewState();
@@ -39,7 +41,7 @@ class _LuckyWheelView extends StatefulWidget {
 class _LuckyWheelViewState extends State<_LuckyWheelView>
     with TickerProviderStateMixin {
   late final AnimationController _controller;
-  Animation<double> _rotation = const AlwaysStoppedAnimation(0.0);
+  Animation<double> _rotation = AlwaysStoppedAnimation(0.0);
   double _currentAngle = 0.0;
 
   @override
@@ -47,7 +49,7 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4500),
+      duration: Duration(milliseconds: 4500),
     );
   }
 
@@ -86,7 +88,7 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           isDismissible: false,
@@ -101,7 +103,7 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
   Widget build(BuildContext context) {
     return BlocListener<LuckyWheelBloc, LuckyWheelState>(
       listenWhen: (prev, curr) =>
-          prev.status != curr.status &&
+          prev.winnerIndex != curr.winnerIndex &&
           curr.status == LuckyWheelStatus.spinning,
       listener: (_, state) {
         if (state.winnerIndex != null) {
@@ -112,22 +114,15 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
         builder: (context, state) {
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
-            appBar: AppBar(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: () => Navigator.pop(context),
-              ),
-              title: const Text(
-                'عجلة الحظ',
-                style: TextStyle(
+            appBar: PPWAppBar(
+              titleWidget: Text(
+                AppLocalizations.of(context).luckyWheelTitle,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
               ),
-              centerTitle: true,
             ),
             body: _buildBody(context, state),
           );
@@ -139,7 +134,7 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
   Widget _buildBody(BuildContext context, LuckyWheelState state) {
     if (state.status == LuckyWheelStatus.initial ||
         state.status == LuckyWheelStatus.loading) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
@@ -153,15 +148,30 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
     }
 
     final isSpinning = state.status == LuckyWheelStatus.spinning;
+    final remainingAttempts = state.current?.remainingAttempts ?? 0;
+    final hasPrizes = state.prizes.isNotEmpty;
+    final canSpin =
+        !state.hasSpun && !isSpinning && remainingAttempts > 0 && hasPrizes;
 
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       child: Column(
         children: [
           // ── Info header ───────────────────────────────────────────────────
-          _WheelInfoHeader(isSeller: widget.isSeller),
+          _WheelInfoHeader(
+            isSeller: widget.isSeller,
+            remainingAttempts: remainingAttempts,
+            hasPrizes: hasPrizes,
+          ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: 12),
+
+          _AttemptsStatusCard(
+            remainingAttempts: remainingAttempts,
+            hasPrizes: hasPrizes,
+          ),
+
+          SizedBox(height: 24),
 
           // ── Wheel + pointer ───────────────────────────────────────────────
           _WheelWithPointer(
@@ -169,26 +179,29 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
             rotation: _rotation,
           ),
 
-          const SizedBox(height: 28),
+          SizedBox(height: 28),
 
           // ── Spin button ───────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: EdgeInsets.symmetric(horizontal: 40),
             child: _SpinButton(
               hasSpun: state.hasSpun,
               isSpinning: isSpinning,
+              canSpin: canSpin,
+              remainingAttempts: remainingAttempts,
+              hasPrizes: hasPrizes,
               onSpin: () => context
                   .read<LuckyWheelBloc>()
-                  .add(const LuckyWheelSpinRequested()),
+                  .add(LuckyWheelSpinRequested()),
             ),
           ),
 
-          const SizedBox(height: 28),
+          SizedBox(height: 28),
 
           // ── Prize slots legend ────────────────────────────────────────────
           _PrizeLegend(prizes: state.prizes),
 
-          const SizedBox(height: 48),
+          SizedBox(height: 48),
         ],
       ),
     );
@@ -199,16 +212,22 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
 
 class _WheelInfoHeader extends StatelessWidget {
   final bool isSeller;
+  final int remainingAttempts;
+  final bool hasPrizes;
 
-  const _WheelInfoHeader({required this.isSeller});
+  _WheelInfoHeader({
+    required this.isSeller,
+    required this.remainingAttempts,
+    required this.hasPrizes,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
@@ -221,7 +240,7 @@ class _WheelInfoHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   '🎰 دورتك متاحة!',
                   style: TextStyle(
                     color: Colors.white,
@@ -229,12 +248,12 @@ class _WheelInfoHeader extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(
                   isSeller
                       ? 'حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة'
                       : 'حصلت على دورة مجانية بعد مشاركتك في المزاد',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
                     height: 1.5,
@@ -243,7 +262,7 @@ class _WheelInfoHeader extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Container(
             width: 48,
             height: 48,
@@ -251,7 +270,7 @@ class _WheelInfoHeader extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Text('🎡', style: TextStyle(fontSize: 24)),
             ),
           ),
@@ -263,17 +282,145 @@ class _WheelInfoHeader extends StatelessWidget {
 
 // ── Wheel + pointer composite ─────────────────────────────────────────────────
 
+class _AttemptsStatusCard extends StatelessWidget {
+  final int remainingAttempts;
+  final bool hasPrizes;
+
+  _AttemptsStatusCard({
+    required this.remainingAttempts,
+    required this.hasPrizes,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final status = !hasPrizes
+        ? 'Wheel prizes are not configured yet.'
+        : remainingAttempts > 0
+            ? 'You can spin the wheel now.'
+            : 'Earn attempts from eligible auction activity.';
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                '$remainingAttempts',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Available attempts',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  status,
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _WheelWithPointer extends StatelessWidget {
   final List<WheelPrizeModel> prizes;
   final Animation<double> rotation;
 
-  const _WheelWithPointer({
+  _WheelWithPointer({
     required this.prizes,
     required this.rotation,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (prizes.isEmpty) {
+      return Container(
+        width: 296,
+        height: 296,
+        margin: EdgeInsets.only(top: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.border, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.casino_outlined,
+              color: AppColors.textSecondary,
+              size: 42,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'No prizes',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 4),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 42),
+              child: Text(
+                'Add active Lucky Wheel prizes to show wheel items.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                  height: 1.35,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -285,7 +432,7 @@ class _WheelWithPointer extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.25),
+                color: Color(0xFF6366F1).withValues(alpha: 0.25),
                 blurRadius: 24,
                 spreadRadius: 4,
               ),
@@ -295,7 +442,7 @@ class _WheelWithPointer extends StatelessWidget {
 
         // Wheel (rotates)
         Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: EdgeInsets.only(top: 20),
           child: AnimatedBuilder(
             animation: rotation,
             builder: (_, child) => Transform.rotate(
@@ -311,7 +458,7 @@ class _WheelWithPointer extends StatelessWidget {
         ),
 
         // Fixed pointer arrow at top
-        const _WheelPointer(),
+        _WheelPointer(),
       ],
     );
   }
@@ -320,7 +467,7 @@ class _WheelWithPointer extends StatelessWidget {
 // ── Pointer triangle ──────────────────────────────────────────────────────────
 
 class _WheelPointer extends StatelessWidget {
-  const _WheelPointer();
+  _WheelPointer();
 
   @override
   Widget build(BuildContext context) {
@@ -328,8 +475,8 @@ class _WheelPointer extends StatelessWidget {
       width: 24,
       height: 36,
       decoration: BoxDecoration(
-        color: const Color(0xFFDC2626),
-        borderRadius: const BorderRadius.vertical(
+        color: Color(0xFFDC2626),
+        borderRadius: BorderRadius.vertical(
           top: Radius.circular(6),
           bottom: Radius.circular(3),
         ),
@@ -337,11 +484,11 @@ class _WheelPointer extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      child: const Icon(
+      child: Icon(
         Icons.arrow_drop_down_rounded,
         color: Colors.white,
         size: 22,
@@ -355,26 +502,41 @@ class _WheelPointer extends StatelessWidget {
 class _SpinButton extends StatelessWidget {
   final bool hasSpun;
   final bool isSpinning;
+  final bool canSpin;
+  final int remainingAttempts;
+  final bool hasPrizes;
   final VoidCallback onSpin;
 
-  const _SpinButton({
+  _SpinButton({
     required this.hasSpun,
     required this.isSpinning,
+    required this.canSpin,
+    required this.remainingAttempts,
+    required this.hasPrizes,
     required this.onSpin,
   });
 
   @override
   Widget build(BuildContext context) {
-    final enabled = !hasSpun && !isSpinning;
+    final enabled = canSpin;
+    final label = isSpinning
+        ? 'Spinning...'
+        : !hasPrizes
+            ? 'No wheel prizes configured'
+            : remainingAttempts <= 0
+                ? 'No attempts available'
+                : hasSpun
+                    ? 'Spin completed'
+                    : 'Spin now';
 
     return GestureDetector(
       onTap: enabled ? onSpin : null,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: Duration(milliseconds: 200),
         height: 56,
         decoration: BoxDecoration(
           gradient: enabled
-              ? const LinearGradient(
+              ? LinearGradient(
                   colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
@@ -385,20 +547,16 @@ class _SpinButton extends StatelessWidget {
           boxShadow: enabled
               ? [
                   BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                    color: Color(0xFF6366F1).withValues(alpha: 0.4),
                     blurRadius: 16,
-                    offset: const Offset(0, 6),
+                    offset: Offset(0, 6),
                   ),
                 ]
               : null,
         ),
         child: Center(
           child: Text(
-            isSpinning
-                ? '⏳ جاري الدوران...'
-                : hasSpun
-                    ? '✅ تم الدوران'
-                    : '🎰 اضغط للدوران!',
+            label,
             style: TextStyle(
               color: enabled ? Colors.white : AppColors.textSecondary,
               fontSize: 16,
@@ -417,22 +575,65 @@ class _SpinButton extends StatelessWidget {
 class _PrizeLegend extends StatelessWidget {
   final List<WheelPrizeModel> prizes;
 
-  const _PrizeLegend({required this.prizes});
+  _PrizeLegend({required this.prizes});
 
   @override
   Widget build(BuildContext context) {
+    if (prizes.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.casino_outlined,
+                color: AppColors.textSecondary,
+                size: 34,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'No wheel prizes yet',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'The server returned an empty prizes list. Add active Lucky Wheel prizes in the backend/admin panel, then refresh this page.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final totalWeight =
         prizes.where((p) => p.isEnabled).fold(0, (s, p) => s + p.weight);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(bottom: 12),
             child: Text(
-              'الجوائز المتاحة',
+              AppLocalizations.of(context).availablePrizes,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -445,7 +646,7 @@ class _PrizeLegend extends StatelessWidget {
                 ? (prize.weight / totalWeight * 100).toStringAsFixed(1)
                 : '0.0';
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.only(bottom: 10),
               child: _PrizeRow(prize: prize, pct: pct),
             );
           }),
@@ -459,13 +660,13 @@ class _PrizeRow extends StatelessWidget {
   final WheelPrizeModel prize;
   final String pct;
 
-  const _PrizeRow({required this.prize, required this.pct});
+  _PrizeRow({required this.prize, required this.pct});
 
   @override
   Widget build(BuildContext context) {
     final active = prize.isEnabled;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -486,7 +687,7 @@ class _PrizeRow extends StatelessWidget {
               color: active ? prize.color : Colors.grey.shade300,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           // Emoji
           Text(
             prize.emoji,
@@ -495,7 +696,7 @@ class _PrizeRow extends StatelessWidget {
               color: active ? null : Colors.grey,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           // Label
           Expanded(
             child: Text(
@@ -522,7 +723,7 @@ class _PrizeRow extends StatelessWidget {
                     fontFamily: 'monospace',
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: LinearProgressIndicator(
@@ -551,30 +752,30 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.message, required this.onRetry});
+  _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline_rounded,
+            Icon(Icons.error_outline_rounded,
                 size: 48, color: AppColors.error),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
               style:
                   ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-              child: const Text('إعادة المحاولة',
+              child: Text(AppLocalizations.of(context).retry,
                   style: TextStyle(color: Colors.white)),
             ),
           ],

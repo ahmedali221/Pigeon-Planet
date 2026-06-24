@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../model/cart_item_model.dart';
 import '../../viewmodel/cart_bloc.dart';
 import 'order_confirmation_page.dart';
@@ -11,6 +13,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocConsumer<CartBloc, CartState>(
       listenWhen: (prev, curr) =>
           curr.status == CartStatus.checkedOut ||
@@ -28,7 +31,7 @@ class CartPage extends StatelessWidget {
         } else if (state.status == CartStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ أثناء إتمام الطلب'),
+              content: Text(state.errorMessage ?? l.checkoutError),
               backgroundColor: AppColors.error,
             ),
           );
@@ -41,15 +44,15 @@ class CartPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: Row(
+          appBar: PPWAppBar(
+            titleWidget: Row(
               children: [
-                const Text(
-                  'عربة التسوق',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                Text(
+                  l.cartTitle,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: Colors.white),
                 ),
                 if (state.itemsCount > 0) ...[
                   const SizedBox(width: 8),
@@ -80,9 +83,9 @@ class CartPage extends StatelessWidget {
                       : () => context
                           .read<CartBloc>()
                           .add(const CartCleared()),
-                  child: const Text(
-                    'إفراغ',
-                    style: TextStyle(color: Colors.white70),
+                  child: Text(
+                    l.clearCartBtn,
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ),
             ],
@@ -141,6 +144,7 @@ class _EmptyCart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -150,18 +154,18 @@ class _EmptyCart extends StatelessWidget {
             Icon(Icons.shopping_cart_outlined,
                 size: 80, color: AppColors.textHint),
             const SizedBox(height: 16),
-            const Text(
-              'عربتك فارغة',
-              style: TextStyle(
+            Text(
+              l.emptyCartTitle,
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'تصفّح السوق وأضف منتجات إلى عربتك',
+            Text(
+              l.emptyCartSubtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -174,7 +178,7 @@ class _EmptyCart extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('تصفّح السوق'),
+              child: Text(l.browseMarket),
             ),
           ],
         ),
@@ -362,6 +366,7 @@ class _CartFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
@@ -380,9 +385,9 @@ class _CartFooter extends StatelessWidget {
           Row(
             children: [
               // Label — rightmost in RTL
-              const Text(
-                'الإجمالي',
-                style: TextStyle(
+              Text(
+                l.total,
+                style: const TextStyle(
                     fontSize: 16, color: AppColors.textSecondary),
               ),
               const Spacer(),
@@ -418,9 +423,9 @@ class _CartFooter extends StatelessWidget {
                       child: CircularProgressIndicator(
                           strokeWidth: 2.5, color: Colors.white),
                     )
-                  : const Text(
-                      'إتمام الطلب',
-                      style: TextStyle(
+                  : Text(
+                      l.completeOrder,
+                      style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
             ),

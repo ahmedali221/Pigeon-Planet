@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../payments/view/pages/payments_page.dart';
 import '../../model/order_item_model.dart';
 import '../../model/order_model.dart';
@@ -25,6 +27,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<CartBloc, CartState>(
       buildWhen: (p, c) =>
           p.selectedOrder != c.selectedOrder ||
@@ -33,24 +36,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: Text(
-              state.selectedOrder != null
-                  ? 'طلب #${state.selectedOrder!.id}'
-                  : 'تفاصيل الطلب',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
+          appBar: PPWAppBar(
+            title: state.selectedOrder != null
+                ? l.orderNumber(state.selectedOrder!.id)
+                : l.orderDetails,
           ),
-          body: _buildBody(state),
+          body: _buildBody(context, state),
         );
       },
     );
   }
 
-  Widget _buildBody(CartState state) {
+  Widget _buildBody(BuildContext context, CartState state) {
+    final l = AppLocalizations.of(context);
     if (state.ordersLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -69,7 +67,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               onPressed: () => context
                   .read<CartBloc>()
                   .add(OrderDetailRequested(widget.orderId)),
-              child: const Text('إعادة المحاولة'),
+              child: Text(l.retry),
             ),
           ],
         ),
@@ -83,9 +81,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       children: [
         _OrderSummaryCard(order: order),
         const SizedBox(height: 16),
-        const Text(
-          'المنتجات',
-          style: TextStyle(
+        Text(
+          l.products,
+          style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
               color: AppColors.textPrimary),
@@ -119,6 +117,7 @@ class _OrderSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = _statusColor(order.status);
     return Container(
       decoration: BoxDecoration(
@@ -134,7 +133,7 @@ class _OrderSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'طلب #${order.id}',
+                  l.orderNumber(order.id),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -164,8 +163,8 @@ class _OrderSummaryCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('عدد المنتجات',
-                  style: TextStyle(
+              Text(l.productCount,
+                  style: const TextStyle(
                       fontSize: 13, color: AppColors.textSecondary)),
               Text('${order.items.length}',
                   style: const TextStyle(
@@ -178,8 +177,8 @@ class _OrderSummaryCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('الإجمالي',
-                  style: TextStyle(
+              Text(l.total,
+                  style: const TextStyle(
                       fontSize: 13, color: AppColors.textSecondary)),
               Text(
                 '${order.totalPrice.toStringAsFixed(2)} ر.س',
@@ -222,6 +221,7 @@ class _OrderItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = _itemStatusColor(item.status);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -264,7 +264,7 @@ class _OrderItemTile extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'البائع: ${item.sellerNickname}',
+            l.sellerName(item.sellerNickname),
             style: const TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
           ),
@@ -273,7 +273,7 @@ class _OrderItemTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'الكمية: ${item.quantity}',
+                l.quantityLabel(item.quantity),
                 style: const TextStyle(
                     fontSize: 12, color: AppColors.textSecondary),
               ),
@@ -315,7 +315,7 @@ class _OrderItemTile extends StatelessWidget {
                     color: AppColors.success, size: 13),
                 const SizedBox(width: 4),
                 Text(
-                  'كاش باك مكتسب: +${item.cashbackEarnedAmount.toStringAsFixed(2)} ر.س',
+                  l.cashbackEarned(item.cashbackEarnedAmount.toStringAsFixed(2)),
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.success),
                 ),
@@ -330,7 +330,7 @@ class _OrderItemTile extends StatelessWidget {
                     color: AppColors.blue, size: 13),
                 const SizedBox(width: 4),
                 Text(
-                  'كاش باك مستخدم: -${item.cashbackRedeemedAmount.toStringAsFixed(2)} ر.س',
+                  l.cashbackRedeemed(item.cashbackRedeemedAmount.toStringAsFixed(2)),
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.blue),
                 ),
@@ -351,8 +351,8 @@ class _OrderItemTile extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.payment_rounded,
                     color: Colors.white, size: 16),
-                label: const Text('إرسال طلب دفع',
-                    style: TextStyle(
+                label: Text(l.sendPaymentRequestBtn,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.bold)),

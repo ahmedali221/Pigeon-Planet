@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/chat_message_model.dart';
 import '../../viewmodel/chat_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ChatRoomPage extends StatefulWidget {
   /// Pass [conversationId] when opening an existing conversation.
   /// Pass [receiverProfileId] when starting a new one.
@@ -13,7 +15,7 @@ class ChatRoomPage extends StatefulWidget {
   final int? receiverProfileId;
   final String partnerNickname;
 
-  const ChatRoomPage({
+  ChatRoomPage({
     super.key,
     this.conversationId,
     this.receiverProfileId,
@@ -29,6 +31,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   final _inputController = TextEditingController();
   final _scrollController = ScrollController();
   bool _inputHasText = false;
+  late ChatBloc _chatBloc;
 
   @override
   void initState() {
@@ -37,17 +40,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       final has = _inputController.text.trim().isNotEmpty;
       if (has != _inputHasText) setState(() => _inputHasText = has);
     });
-    final bloc = context.read<ChatBloc>();
+    _chatBloc = context.read<ChatBloc>();
     if (widget.conversationId != null) {
-      bloc.add(ChatRoomOpened(widget.conversationId!));
+      _chatBloc.add(ChatRoomOpened(widget.conversationId!));
     } else {
-      bloc.add(ChatConversationStartRequested(widget.receiverProfileId!));
+      _chatBloc.add(ChatConversationStartRequested(widget.receiverProfileId!));
     }
   }
 
   @override
   void dispose() {
-    context.read<ChatBloc>().add(const ChatRoomClosed());
+    _chatBloc.add(ChatRoomClosed());
     _inputController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -58,7 +61,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 250),
+          duration: Duration(milliseconds: 250),
           curve: Curves.easeOut,
         );
       }
@@ -110,14 +113,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Column(
+          appBar: PPWAppBar(
+            titleWidget: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -135,7 +132,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   ),
               ],
             ),
-            elevation: 0,
           ),
           body: Column(
             children: [
@@ -156,40 +152,40 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   Widget _buildMessages(BuildContext context, ChatState state, int myId) {
     if (state.roomStatus == ChatRoomStatus.loading &&
         state.messages.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator());
     }
     if (state.requiresFollow) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.person_add_alt_1_rounded,
+              Icon(Icons.person_add_alt_1_rounded,
                   size: 64, color: AppColors.textHint),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 'يجب متابعة البائع أولاً',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                 'تابع هذا البائع لتتمكن من التواصل معه',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 13, color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               OutlinedButton.icon(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_rounded),
-                label: const Text('العودة'),
+                icon: Icon(Icons.arrow_back_rounded),
+                label: Text('العودة'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
+                  side: BorderSide(color: AppColors.primary),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
@@ -204,12 +200,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       return Center(
         child: Text(
           state.errorMessage ?? 'فشل تحميل الرسائل',
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
       );
     }
     if (state.messages.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'ابدأ المحادثة بإرسال رسالة',
           style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
@@ -218,7 +214,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
       itemCount: state.messages.length,
       itemBuilder: (context, i) {
         final msg = state.messages[i];
@@ -245,36 +241,36 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             // Send button — rightmost in RTL
             AnimatedOpacity(
               opacity: _inputHasText && !isSending ? 1.0 : 0.4,
-              duration: const Duration(milliseconds: 180),
+              duration: Duration(milliseconds: 180),
               child: GestureDetector(
                 onTap: _inputHasText && !isSending ? _send : null,
                 child: Container(
                   width: 42,
                   height: 42,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: isSending
-                      ? const Padding(
+                      ? Padding(
                           padding: EdgeInsets.all(10),
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             color: Colors.white,
                           ),
                         )
-                      : const Icon(Icons.send_rounded,
+                      : Icon(Icons.send_rounded,
                           color: Colors.white, size: 20),
                 ),
               ),
             ),
 
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
 
             // TextField — expands
             Expanded(
               child: Container(
-                constraints: const BoxConstraints(maxHeight: 120),
+                constraints: BoxConstraints(maxHeight: 120),
                 decoration: BoxDecoration(
                   color: AppColors.pageBackground,
                   borderRadius: BorderRadius.circular(22),
@@ -284,8 +280,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   controller: _inputController,
                   maxLines: null,
                   textInputAction: TextInputAction.newline,
-                  decoration: const InputDecoration(
-                    hintText: 'اكتب رسالتك...',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).messageInputHint,
                     hintStyle:
                         TextStyle(color: AppColors.textHint, fontSize: 14),
                     border: InputBorder.none,
@@ -307,23 +303,23 @@ class _MessageBubble extends StatelessWidget {
   final ChatMessageModel message;
   final bool isMine;
 
-  const _MessageBubble({required this.message, required this.isMine});
+  _MessageBubble({required this.message, required this.isMine});
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: EdgeInsets.only(bottom: 8),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.72,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: isMine ? AppColors.primary : Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
             bottomLeft: Radius.circular(isMine ? 18 : 4),
             bottomRight: Radius.circular(isMine ? 4 : 18),
           ),
@@ -331,7 +327,7 @@ class _MessageBubble extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 4,
-              offset: const Offset(0, 1),
+              offset: Offset(0, 1),
             ),
           ],
         ),
@@ -348,7 +344,7 @@ class _MessageBubble extends StatelessWidget {
               ),
               textAlign: TextAlign.start,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               _formatTime(message.createdAt),
               style: TextStyle(

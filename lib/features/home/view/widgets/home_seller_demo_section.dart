@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeSellerDemoSection extends StatelessWidget {
-  const HomeSellerDemoSection({super.key});
+  HomeSellerDemoSection({super.key});
 
-  static const Color _accent = AppColors.primary;
-  static const Color _accentDark = AppColors.primaryDark;
-  static const Color _accentLight = AppColors.primaryLight;
-  static const Color _accentMid = Color(0xFF43A047);
+  static Color _accent = AppColors.primary;
+  static Color _accentDark = AppColors.primaryDark;
+  static Color _accentLight = AppColors.primaryLight;
+  static Color _accentMid = Color(0xFF43A047);
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +16,9 @@ class HomeSellerDemoSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
+          padding: EdgeInsets.fromLTRB(16, 20, 16, 10),
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.tune_rounded, color: AppColors.primary, size: 18),
               SizedBox(width: 8),
               Text(
@@ -36,8 +37,8 @@ class HomeSellerDemoSection extends StatelessWidget {
           height: 316,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: const [
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            children: [
               SizedBox(width: 272, child: _MultiRoomCard()),
               SizedBox(width: 12),
               SizedBox(width: 272, child: _OwnershipRegistryCard()),
@@ -55,14 +56,14 @@ class HomeSellerDemoSection extends StatelessWidget {
 // 1. Multi-Room Management Card
 // ─────────────────────────────────────────────────────────────────────────────
 class _MultiRoomCard extends StatelessWidget {
-  const _MultiRoomCard();
+  _MultiRoomCard();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [HomeSellerDemoSection._accentDark, HomeSellerDemoSection._accentMid],
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
@@ -72,7 +73,7 @@ class _MultiRoomCard extends StatelessWidget {
           BoxShadow(
             color: HomeSellerDemoSection._accent.withValues(alpha: 0.25),
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -89,7 +90,7 @@ class _MultiRoomCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Flexible(
+                        Flexible(
                           child: Text(
                             'إدارة الغرف المتعددة',
                             style: TextStyle(
@@ -99,15 +100,15 @@ class _MultiRoomCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFD700),
+                            color: Color(0xFFFFD700),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text('NEW',
+                          child: Text('NEW',
                               style: TextStyle(
                                   color: Colors.black87,
                                   fontSize: 9,
@@ -115,15 +116,15 @@ class _MultiRoomCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
+                    SizedBox(height: 4),
+                    Text(
                       'إنشاء وإدارة عدة غرف مزادات',
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               // chevron on the left
               Container(
                 width: 32,
@@ -132,16 +133,16 @@ class _MultiRoomCard extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.chevron_right,
+                child: Icon(Icons.chevron_right,
                     color: Colors.white, size: 20),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: const [
+            children: [
               _WhiteChip(icon: Icons.shopping_bag_rounded, label: '3 باقات مختلفة'),
               _WhiteChip(icon: Icons.bolt_rounded, label: 'تخصيص كامل'),
               _WhiteChip(icon: Icons.all_inclusive_rounded, label: 'غير محدود'),
@@ -157,7 +158,7 @@ class _MultiRoomCard extends StatelessWidget {
 // 2. Ownership Registry Card
 // ─────────────────────────────────────────────────────────────────────────────
 class _OwnershipRegistryCard extends StatelessWidget {
-  const _OwnershipRegistryCard();
+  _OwnershipRegistryCard();
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +170,7 @@ class _OwnershipRegistryCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -177,8 +178,8 @@ class _OwnershipRegistryCard extends StatelessWidget {
         children: [
           // header — title rightmost, shield leftmost
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-            decoration: const BoxDecoration(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [HomeSellerDemoSection._accentDark, HomeSellerDemoSection._accentMid],
                 begin: Alignment.centerRight,
@@ -188,20 +189,20 @@ class _OwnershipRegistryCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('سجل الملكية',
+                    Text(AppLocalizations.of(context).ownershipRecord,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
-                    Text('نظام محمي وغير قابل للتلاعب',
+                    Text(AppLocalizations.of(context).ownershipRecordDesc,
                         style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
-                const Spacer(),
-                const Icon(Icons.shield_rounded,
+                Spacer(),
+                Icon(Icons.shield_rounded,
                     color: Colors.white70, size: 22),
               ],
             ),
@@ -216,7 +217,7 @@ class _OwnershipRegistryCard extends StatelessWidget {
             lightColor: HomeSellerDemoSection._accentLight,
             onTap: () {},
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _RegistryTile(
             icon: Icons.swap_horiz_rounded,
             title: 'عملية نقل الملكية',
@@ -228,8 +229,8 @@ class _OwnershipRegistryCard extends StatelessWidget {
 
           // protection list
           Container(
-            margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            padding: const EdgeInsets.all(8),
+            margin: EdgeInsets.fromLTRB(12, 8, 12, 8),
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: HomeSellerDemoSection._accentLight,
               borderRadius: BorderRadius.circular(10),
@@ -239,7 +240,7 @@ class _OwnershipRegistryCard extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children: [
                     Icon(Icons.shield_rounded,
                         color: HomeSellerDemoSection._accent, size: 16),
                     SizedBox(width: 6),
@@ -252,11 +253,11 @@ class _OwnershipRegistryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                const _ProtectionItem(label: 'غير قابل للتلاعب'),
-                const _ProtectionItem(label: 'يظهر فقط للبائع والمشتري'),
-                const _ProtectionItem(label: 'حذف تلقائي بعد 7 أيام'),
-                const _ProtectionItem(label: 'حذف يدوي بعد شهر (للبائع)'),
+                SizedBox(height: 4),
+                _ProtectionItem(label: 'غير قابل للتلاعب'),
+                _ProtectionItem(label: 'يظهر فقط للبائع والمشتري'),
+                _ProtectionItem(label: 'حذف تلقائي بعد 7 أيام'),
+                _ProtectionItem(label: 'حذف يدوي بعد شهر (للبائع)'),
               ],
             ),
           ),
@@ -270,7 +271,7 @@ class _OwnershipRegistryCard extends StatelessWidget {
 // 3. Referral Program Card
 // ─────────────────────────────────────────────────────────────────────────────
 class _ReferralCard extends StatefulWidget {
-  const _ReferralCard();
+  _ReferralCard();
 
   @override
   State<_ReferralCard> createState() => _ReferralCardState();
@@ -281,7 +282,7 @@ class _ReferralCardState extends State<_ReferralCard> {
 
   void _copy() {
     setState(() => _copied = true);
-    Future.delayed(const Duration(seconds: 2),
+    Future.delayed(Duration(seconds: 2),
         () => mounted ? setState(() => _copied = false) : null);
   }
 
@@ -295,7 +296,7 @@ class _ReferralCardState extends State<_ReferralCard> {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -303,8 +304,8 @@ class _ReferralCardState extends State<_ReferralCard> {
         children: [
           // header — title rightmost, icon leftmost
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: const BoxDecoration(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [HomeSellerDemoSection._accentDark, HomeSellerDemoSection._accentMid],
                 begin: Alignment.centerRight,
@@ -314,26 +315,26 @@ class _ReferralCardState extends State<_ReferralCard> {
             ),
             child: Row(
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('برنامج المكافآت',
+                    Text(AppLocalizations.of(context).rewardsProgram,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
-                    Text('ادعُ أصدقاءك واكسب',
+                    Text(AppLocalizations.of(context).inviteFriendsEarn,
                         style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
-                const Spacer(),
+                Spacer(),
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.person_add_rounded,
+                  child: Icon(Icons.person_add_rounded,
                       color: Colors.white, size: 18),
                 ),
               ],
@@ -342,9 +343,9 @@ class _ReferralCardState extends State<_ReferralCard> {
 
           // stats — 50/invite rightmost
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             child: Row(
-              children: const [
+              children: [
                 Expanded(
                     child: _StatBox(
                         value: '50',
@@ -360,14 +361,14 @@ class _ReferralCardState extends State<_ReferralCard> {
 
           // referral code
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('كود الدعوة',
+                Text(AppLocalizations.of(context).inviteCode,
                     style: TextStyle(
                         color: AppColors.textSecondary, fontSize: 12)),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.border),
@@ -376,7 +377,7 @@ class _ReferralCardState extends State<_ReferralCard> {
                   child: Row(
                     children: [
                       // code text rightmost
-                      const Expanded(
+                      Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(right: 12),
                           child: Text(
@@ -394,13 +395,13 @@ class _ReferralCardState extends State<_ReferralCard> {
                       GestureDetector(
                         onTap: _copy,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 12, vertical: 12),
                           decoration: BoxDecoration(
                             color: _copied
                                 ? HomeSellerDemoSection._accentLight
                                 : AppColors.inputBg,
-                            borderRadius: const BorderRadius.horizontal(
+                            borderRadius: BorderRadius.horizontal(
                                 right: Radius.circular(10)),
                           ),
                           child: Icon(
@@ -417,33 +418,33 @@ class _ReferralCardState extends State<_ReferralCard> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Row(
                   children: [
                     // واتساب rightmost
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.chat_rounded, size: 16),
-                        label: const Text('واتساب'),
+                        icon: Icon(Icons.chat_rounded, size: 16),
+                        label: Text(AppLocalizations.of(context).whatsapp),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF25D366),
+                          backgroundColor: Color(0xFF25D366),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     // مشاركة leftmost
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.share_rounded, size: 16),
-                        label: const Text('مشاركة'),
+                        icon: Icon(Icons.share_rounded, size: 16),
+                        label: Text(AppLocalizations.of(context).share),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: HomeSellerDemoSection._accent,
-                          side: const BorderSide(
+                          side: BorderSide(
                               color: HomeSellerDemoSection._accent),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -469,12 +470,12 @@ class _WhiteChip extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _WhiteChip({required this.icon, required this.label});
+  _WhiteChip({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(20),
@@ -483,9 +484,9 @@ class _WhiteChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.white, size: 13),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(label,
-              style: const TextStyle(color: Colors.white, fontSize: 11)),
+              style: TextStyle(color: Colors.white, fontSize: 11)),
         ],
       ),
     );
@@ -500,7 +501,7 @@ class _RegistryTile extends StatelessWidget {
   final Color lightColor;
   final VoidCallback onTap;
 
-  const _RegistryTile({
+  _RegistryTile({
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -514,7 +515,7 @@ class _RegistryTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         child: Row(
           children: [
             // title + subtitle rightmost
@@ -528,15 +529,15 @@ class _RegistryTile extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: color),
                       overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 11, color: AppColors.textSecondary),
                       overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             // icon leftmost
             Container(
               width: 40,
@@ -557,20 +558,20 @@ class _RegistryTile extends StatelessWidget {
 class _ProtectionItem extends StatelessWidget {
   final String label;
 
-  const _ProtectionItem({required this.label});
+  _ProtectionItem({required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
+      padding: EdgeInsets.only(bottom: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Icon(Icons.check_box_rounded,
+          Icon(Icons.check_box_rounded,
               color: HomeSellerDemoSection._accent, size: 16),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           Text(label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12, color: AppColors.textPrimary)),
         ],
       ),
@@ -583,7 +584,7 @@ class _StatBox extends StatelessWidget {
   final String label;
   final Color valueColor;
 
-  const _StatBox({
+  _StatBox({
     required this.value,
     required this.label,
     this.valueColor = AppColors.textPrimary,
@@ -598,9 +599,9 @@ class _StatBox extends StatelessWidget {
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: valueColor)),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 11, color: AppColors.textSecondary)),
       ],
     );
@@ -608,7 +609,7 @@ class _StatBox extends StatelessWidget {
 }
 
 class _VDivider extends StatelessWidget {
-  const _VDivider();
+  _VDivider();
 
   @override
   Widget build(BuildContext context) {

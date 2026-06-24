@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/race_model.dart';
 import '../../viewmodel/races_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class RaceDetailPage extends StatefulWidget {
   final int raceId;
 
-  const RaceDetailPage({super.key, required this.raceId});
+  RaceDetailPage({super.key, required this.raceId});
 
   @override
   State<RaceDetailPage> createState() => _RaceDetailPageState();
@@ -26,18 +28,13 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        title: const Text(
-          'تفاصيل السباق',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+      appBar: const PPWAppBar(
+        title: 'تفاصيل السباق',
       ),
       body: BlocBuilder<RacesBloc, RacesState>(
         builder: (context, state) {
           if (state.detailStatus == RacesDetailStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           if (state.detailStatus == RacesDetailStatus.error) {
             return _ErrorBody(
@@ -49,7 +46,7 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
           }
           final race = state.selectedRace;
           if (race == null) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           return _RaceDetailBody(race: race, state: state);
         },
@@ -62,18 +59,18 @@ class _RaceDetailBody extends StatelessWidget {
   final RaceModel race;
   final RacesState state;
 
-  const _RaceDetailBody({required this.race, required this.state});
+  _RaceDetailBody({required this.race, required this.state});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _RaceInfoCard(race: race),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: 20),
+          Text(
             'نتائج السباق',
             style: TextStyle(
               fontSize: 17,
@@ -81,9 +78,9 @@ class _RaceDetailBody extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.detailResults.isEmpty)
-            const _EmptyResults()
+            _EmptyResults()
           else ...[
             _ResultsTable(results: state.detailResults),
             if (state.detailResultsHasMore || state.detailResultsLoadingMore)
@@ -94,7 +91,7 @@ class _RaceDetailBody extends StatelessWidget {
                     .add(RaceDetailResultsLoadMoreRequested(race.id)),
               ),
           ],
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
         ],
       ),
     );
@@ -104,14 +101,14 @@ class _RaceDetailBody extends StatelessWidget {
 class _RaceInfoCard extends StatelessWidget {
   final RaceModel race;
 
-  const _RaceInfoCard({required this.race});
+  _RaceInfoCard({required this.race});
 
   @override
   Widget build(BuildContext context) {
     final releaseDate = _formatDatetime(race.releaseDatetime);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -119,7 +116,7 @@ class _RaceInfoCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -130,25 +127,25 @@ class _RaceInfoCard extends StatelessWidget {
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '${race.seasonYear}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                 child: Text(
                   race.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -157,8 +154,8 @@ class _RaceInfoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          _DetailRow(icon: Icons.location_on_rounded, label: 'المحطة', value: race.stationName),
+          SizedBox(height: 14),
+          _DetailRow(icon: Icons.location_on_rounded, label: AppLocalizations.of(context).station, value: race.stationName),
           _DetailRow(icon: Icons.access_time_rounded, label: 'وقت الإطلاق', value: releaseDate),
           _DetailRow(icon: Icons.flutter_dash_rounded, label: 'عدد الطيور', value: '${race.totalBirds}'),
           _DetailRow(icon: Icons.group_rounded, label: 'عدد المتسابقين', value: '${race.competitorsCount}'),
@@ -187,7 +184,7 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow({
+  _DetailRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -196,15 +193,15 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 16, color: AppColors.primary),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
             '$label: ',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
@@ -213,7 +210,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textPrimary,
               ),
@@ -228,7 +225,7 @@ class _DetailRow extends StatelessWidget {
 class _ResultsTable extends StatelessWidget {
   final List<RaceResultModel> results;
 
-  const _ResultsTable({required this.results});
+  _ResultsTable({required this.results});
 
   @override
   Widget build(BuildContext context) {
@@ -236,13 +233,13 @@ class _ResultsTable extends StatelessWidget {
       children: [
         // Header row
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
-            children: const [
+            children: [
               SizedBox(
                 width: 36,
                 child: Text(
@@ -283,16 +280,16 @@ class _ResultsTable extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         // Result rows
         ...results.asMap().entries.map((entry) {
           final i = entry.key;
           final r = entry.value;
           return Container(
-            margin: const EdgeInsets.only(bottom: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            margin: EdgeInsets.only(bottom: 4),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: i.isEven ? Colors.white : const Color(0xFFF8F8F8),
+              color: i.isEven ? Colors.white : Color(0xFFF8F8F8),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.grey.shade100),
             ),
@@ -309,7 +306,7 @@ class _ResultsTable extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       '${r.rank}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -317,7 +314,7 @@ class _ResultsTable extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   flex: 3,
                   child: Column(
@@ -325,7 +322,7 @@ class _ResultsTable extends StatelessWidget {
                     children: [
                       Text(
                         r.competitorName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
@@ -335,7 +332,7 @@ class _ResultsTable extends StatelessWidget {
                       ),
                       Text(
                         r.birdRingNumber,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: AppColors.textSecondary,
                         ),
@@ -343,7 +340,7 @@ class _ResultsTable extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Expanded(
                   flex: 2,
                   child: Column(
@@ -351,7 +348,7 @@ class _ResultsTable extends StatelessWidget {
                     children: [
                       Text(
                         '${r.speed.toStringAsFixed(2)} م/ث',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
@@ -359,7 +356,7 @@ class _ResultsTable extends StatelessWidget {
                       ),
                       Text(
                         '${r.distanceKm.toStringAsFixed(2)} كم',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: AppColors.textSecondary,
                         ),
@@ -378,11 +375,11 @@ class _ResultsTable extends StatelessWidget {
   Color _rankColor(int rank) {
     switch (rank) {
       case 1:
-        return const Color(0xFFFFD700);
+        return Color(0xFFFFD700);
       case 2:
-        return const Color(0xFFC0C0C0);
+        return Color(0xFFC0C0C0);
       case 3:
-        return const Color(0xFFCD7F32);
+        return Color(0xFFCD7F32);
       default:
         return AppColors.primary;
     }
@@ -390,12 +387,12 @@ class _ResultsTable extends StatelessWidget {
 }
 
 class _EmptyResults extends StatelessWidget {
-  const _EmptyResults();
+  _EmptyResults();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -404,7 +401,7 @@ class _EmptyResults extends StatelessWidget {
         child: Column(
           children: [
             Icon(Icons.list_alt_rounded, size: 48, color: Colors.grey.shade300),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               'لا توجد نتائج لهذا السباق بعد',
               style: TextStyle(color: Colors.grey.shade500),
@@ -420,26 +417,26 @@ class _LoadMoreButton extends StatelessWidget {
   final bool loading;
   final VoidCallback onTap;
 
-  const _LoadMoreButton({required this.loading, required this.onTap});
+  _LoadMoreButton({required this.loading, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: EdgeInsets.only(top: 12),
       child: Center(
         child: loading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2.5),
               )
             : OutlinedButton.icon(
                 onPressed: onTap,
-                icon: const Icon(Icons.expand_more_rounded, size: 18),
-                label: const Text('تحميل المزيد'),
+                icon: Icon(Icons.expand_more_rounded, size: 18),
+                label: Text(AppLocalizations.of(context).loadMore),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
+                  side: BorderSide(color: AppColors.primary),
                 ),
               ),
       ),
@@ -451,27 +448,27 @@ class _ErrorBody extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorBody({required this.message, required this.onRetry});
+  _ErrorBody({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline_rounded,
+            Icon(Icons.error_outline_rounded,
                 size: 48, color: Colors.redAccent),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white),
-              child: const Text('إعادة المحاولة'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),

@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../core/di/injection.dart';
 import '../../model/pigeon_model.dart';
 import '../../model/pigeon_repository.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PublicBirdPage extends StatefulWidget {
   final String publicId;
 
-  const PublicBirdPage({super.key, required this.publicId});
+  PublicBirdPage({super.key, required this.publicId});
 
   static Future<void> push(BuildContext context, String publicId) =>
       Navigator.push(
@@ -56,17 +58,11 @@ class _PublicBirdPageState extends State<PublicBirdPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'بطاقة الطائر',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
+      appBar: const PPWAppBar(
+        title: 'بطاقة الطائر',
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : _error != null
               ? _ErrorView(message: _error!, onRetry: _load)
               : _BirdView(bird: _bird!),
@@ -80,29 +76,29 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.message, required this.onRetry});
+  _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, color: AppColors.error, size: 56),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, color: AppColors.error, size: 56),
+            SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 15, color: AppColors.textSecondary),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('إعادة المحاولة'),
+              icon: Icon(Icons.refresh_rounded),
+              label: Text(AppLocalizations.of(context).retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -122,7 +118,7 @@ class _ErrorView extends StatelessWidget {
 class _BirdView extends StatelessWidget {
   final PigeonModel bird;
 
-  const _BirdView({required this.bird});
+  _BirdView({required this.bird});
 
   @override
   Widget build(BuildContext context) {
@@ -132,29 +128,29 @@ class _BirdView extends StatelessWidget {
         children: [
           _HeroImage(bird: bird),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _IdentityCard(bird: bird),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if ((bird.achievements).isNotEmpty)
                   _DetailCard(
                     icon: Icons.emoji_events_rounded,
-                    title: 'الإنجازات',
+                    title: AppLocalizations.of(context).achievements,
                     content: bird.achievements,
                   ),
                 if (bird.description.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   _DetailCard(
                     icon: Icons.description_outlined,
-                    title: 'الوصف',
+                    title: AppLocalizations.of(context).description,
                     content: bird.description,
                   ),
                 ],
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _QrSection(bird: bird),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
               ],
             ),
           ),
@@ -167,7 +163,7 @@ class _BirdView extends StatelessWidget {
 class _HeroImage extends StatelessWidget {
   final PigeonModel bird;
 
-  const _HeroImage({required this.bird});
+  _HeroImage({required this.bird});
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +176,18 @@ class _HeroImage extends StatelessWidget {
           ? Image.network(
               url,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const _PlaceholderBird(),
+              errorBuilder: (_, _, _) => _PlaceholderBird(),
             )
-          : const _PlaceholderBird(),
+          : _PlaceholderBird(),
     );
   }
 }
 
 class _PlaceholderBird extends StatelessWidget {
-  const _PlaceholderBird();
+  _PlaceholderBird();
 
   @override
-  Widget build(BuildContext context) => const Center(
+  Widget build(BuildContext context) => Center(
         child: Icon(Icons.flutter_dash, size: 80, color: AppColors.border),
       );
 }
@@ -199,7 +195,7 @@ class _PlaceholderBird extends StatelessWidget {
 class _IdentityCard extends StatelessWidget {
   final PigeonModel bird;
 
-  const _IdentityCard({required this.bird});
+  _IdentityCard({required this.bird});
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +207,7 @@ class _IdentityCard extends StatelessWidget {
     final genderLabel = bird.gender.label;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -219,7 +215,7 @@ class _IdentityCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -231,7 +227,7 @@ class _IdentityCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   bird.name.isNotEmpty ? bird.name : bird.ringNumber,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -240,7 +236,7 @@ class _IdentityCard extends StatelessWidget {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: genderColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -256,23 +252,23 @@ class _IdentityCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-          const SizedBox(height: 12),
-          _Row(icon: Icons.tag_rounded, label: 'رقم الحلقة', value: bird.ringNumber),
-          const SizedBox(height: 8),
-          _Row(icon: Icons.pets_rounded, label: 'السلالة', value: bird.breed),
+          SizedBox(height: 12),
+          Divider(height: 1),
+          SizedBox(height: 12),
+          _Row(icon: Icons.tag_rounded, label: AppLocalizations.of(context).ringNumber, value: bird.ringNumber),
+          SizedBox(height: 8),
+          _Row(icon: Icons.pets_rounded, label: AppLocalizations.of(context).breed, value: bird.breed),
           if (bird.hatchDate != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _Row(
               icon: Icons.cake_rounded,
-              label: 'تاريخ الفقس',
+              label: AppLocalizations.of(context).hatchDate,
               value:
                   '${bird.hatchDate!.day}/${bird.hatchDate!.month}/${bird.hatchDate!.year}',
             ),
           ],
           if (bird.flyingSpeed != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _Row(
               icon: Icons.speed_rounded,
               label: 'سرعة الطيران',
@@ -281,7 +277,7 @@ class _IdentityCard extends StatelessWidget {
           ],
           if (bird.staminaAbility != StaminaAbility.good ||
               bird.staminaAbility.label.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _Row(
               icon: Icons.bolt_rounded,
               label: 'القدرة على التحمل',
@@ -289,9 +285,9 @@ class _IdentityCard extends StatelessWidget {
             ),
           ],
           if ((bird.sellerNickname ?? '').isNotEmpty) ...[
-            const SizedBox(height: 8),
-            const Divider(height: 1),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
+            Divider(height: 1),
+            SizedBox(height: 8),
             _Row(
               icon: Icons.storefront_rounded,
               label: 'المربّي',
@@ -309,7 +305,7 @@ class _Row extends StatelessWidget {
   final String label;
   final String value;
 
-  const _Row(
+  _Row(
       {required this.icon, required this.label, required this.value});
 
   @override
@@ -317,16 +313,16 @@ class _Row extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 16, color: AppColors.primary),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
               fontSize: 13, color: AppColors.textSecondary),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary),
@@ -342,14 +338,14 @@ class _DetailCard extends StatelessWidget {
   final String title;
   final String content;
 
-  const _DetailCard(
+  _DetailCard(
       {required this.icon, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -357,7 +353,7 @@ class _DetailCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -367,10 +363,10 @@ class _DetailCard extends StatelessWidget {
           Row(
             children: [
               Icon(icon, size: 16, color: AppColors.primary),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -378,10 +374,10 @@ class _DetailCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
                 height: 1.5),
@@ -395,7 +391,7 @@ class _DetailCard extends StatelessWidget {
 class _QrSection extends StatelessWidget {
   final PigeonModel bird;
 
-  const _QrSection({required this.bird});
+  _QrSection({required this.bird});
 
   @override
   Widget build(BuildContext context) {
@@ -403,7 +399,7 @@ class _QrSection extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const Text(
+          Text(
             'رمز التحقق الرقمي',
             style: TextStyle(
               fontSize: 13,
@@ -411,9 +407,9 @@ class _QrSection extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(14),
@@ -421,7 +417,7 @@ class _QrSection extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 10,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -429,18 +425,18 @@ class _QrSection extends StatelessWidget {
               data: qrData,
               version: QrVersions.auto,
               size: 140,
-              eyeStyle: const QrEyeStyle(
+              eyeStyle: QrEyeStyle(
                 eyeShape: QrEyeShape.square,
                 color: AppColors.primary,
               ),
-              dataModuleStyle: const QrDataModuleStyle(
+              dataModuleStyle: QrDataModuleStyle(
                 dataModuleShape: QrDataModuleShape.square,
                 color: AppColors.textPrimary,
               ),
             ),
           ),
-          const SizedBox(height: 6),
-          const Text(
+          SizedBox(height: 6),
+          Text(
             'هوية رقمية موثّقة — كوكب الحمام',
             style: TextStyle(fontSize: 10, color: AppColors.textHint),
           ),

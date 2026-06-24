@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../model/order_item_model.dart';
 import '../../viewmodel/cart_bloc.dart';
 
@@ -21,16 +23,11 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'طلبات العملاء',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
+      appBar: PPWAppBar(
+        title: l.customerOrders,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -108,6 +105,7 @@ class _LoadMoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: OutlinedButton(
         onPressed: loading ? null : onPressed,
@@ -117,7 +115,7 @@ class _LoadMoreButton extends StatelessWidget {
                 height: 16,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Text('ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯'),
+            : Text(l.loadMore),
       ),
     );
   }
@@ -148,6 +146,7 @@ class _SellerOrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = _statusColor(item.status);
     return Container(
       decoration: BoxDecoration(
@@ -191,13 +190,13 @@ class _SellerOrderItemCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'طلب #${item.id} • الكمية: ${item.quantity}',
+            l.orderItemSummary(item.id, item.quantity),
             style: const TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 2),
           Text(
-            'الإجمالي: ${item.total.toStringAsFixed(2)} ر.س',
+            l.orderTotalSar(item.total.toStringAsFixed(2)),
             style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -227,7 +226,7 @@ class _SellerOrderItemCard extends StatelessWidget {
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: AppColors.error),
                           )
-                        : const Text('رفض'),
+                        : Text(l.reject),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -249,7 +248,7 @@ class _SellerOrderItemCard extends StatelessWidget {
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('قبول'),
+                        : Text(l.accept),
                   ),
                 ),
               ],
@@ -266,15 +265,16 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final l = AppLocalizations.of(context);
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.inbox_outlined, size: 64, color: AppColors.textHint),
-          SizedBox(height: 12),
-          Text('لا توجد طلبات حالياً',
-              style:
-                  TextStyle(color: AppColors.textSecondary, fontSize: 15)),
+          const Icon(Icons.inbox_outlined, size: 64, color: AppColors.textHint),
+          const SizedBox(height: 12),
+          Text(l.noOrdersCurrently,
+              style: const TextStyle(
+                  color: AppColors.textSecondary, fontSize: 15)),
         ],
       ),
     );
@@ -289,6 +289,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -299,7 +300,7 @@ class _ErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: 12),
-          TextButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+          TextButton(onPressed: onRetry, child: Text(l.retry)),
         ],
       ),
     );

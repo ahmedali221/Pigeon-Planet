@@ -4,6 +4,7 @@ import '../../home/model/seller_model.dart';
 import '../model/feed_auction_item_model.dart';
 import '../model/seller_block_model.dart';
 import '../model/seller_follow_model.dart';
+import '../model/seller_package_follow_model.dart';
 
 enum FeedStatus { initial, loading, loaded, error }
 
@@ -19,6 +20,8 @@ class FeedState extends Equatable {
   final bool auctionHasMore;
   final bool auctionLoadingMore;
   final Set<int> followedSellerIds;
+  final Set<int> followedPackageIds;
+  final List<SellerPackageFollowModel> followingPackages;
   final Set<int> blockedProfileIds;
   final String? errorMessage;
   final String? actionError;
@@ -38,6 +41,8 @@ class FeedState extends Equatable {
     this.auctionHasMore = false,
     this.auctionLoadingMore = false,
     this.followedSellerIds = const {},
+    this.followedPackageIds = const {},
+    this.followingPackages = const [],
     this.blockedProfileIds = const {},
     this.errorMessage,
     this.actionError,
@@ -57,6 +62,8 @@ class FeedState extends Equatable {
     bool? auctionHasMore,
     bool? auctionLoadingMore,
     Set<int>? followedSellerIds,
+    Set<int>? followedPackageIds,
+    List<SellerPackageFollowModel>? followingPackages,
     Set<int>? blockedProfileIds,
     String? errorMessage,
     String? actionError,
@@ -77,6 +84,8 @@ class FeedState extends Equatable {
         auctionHasMore: auctionHasMore ?? this.auctionHasMore,
         auctionLoadingMore: auctionLoadingMore ?? this.auctionLoadingMore,
         followedSellerIds: followedSellerIds ?? this.followedSellerIds,
+        followedPackageIds: followedPackageIds ?? this.followedPackageIds,
+        followingPackages: followingPackages ?? this.followingPackages,
         blockedProfileIds: blockedProfileIds ?? this.blockedProfileIds,
         errorMessage: errorMessage ?? this.errorMessage,
         actionError: clearActionError ? null : (actionError ?? this.actionError),
@@ -87,6 +96,7 @@ class FeedState extends Equatable {
       );
 
   bool isFollowing(int sellerId) => followedSellerIds.contains(sellerId);
+  bool isFollowingPackage(int packageId) => followedPackageIds.contains(packageId);
   bool isBlocked(int profileId) => blockedProfileIds.contains(profileId);
 
   @override
@@ -100,6 +110,8 @@ class FeedState extends Equatable {
         auctionHasMore,
         auctionLoadingMore,
         followedSellerIds,
+        followedPackageIds,
+        followingPackages,
         blockedProfileIds,
         errorMessage,
         actionError,

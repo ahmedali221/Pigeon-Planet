@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/pigeon_model.dart';
 import '../../viewmodel/pigeon_id_bloc.dart';
 import '../widgets/pigeon_id_shared_widgets.dart';
 import 'pigeon_id_photos_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PigeonIdFormPage extends StatefulWidget {
   final PigeonModel? initialPigeon;
-  const PigeonIdFormPage({super.key, this.initialPigeon});
+  PigeonIdFormPage({super.key, this.initialPigeon});
 
   @override
   State<PigeonIdFormPage> createState() => _PigeonIdFormPageState();
@@ -66,10 +68,10 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
   void _pickHatchDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 30)),
+      initialDate: DateTime.now().subtract(Duration(days: 30)),
       firstDate: DateTime(2010),
       lastDate: DateTime.now(),
-      helpText: 'تاريخ الفقس',
+      helpText: AppLocalizations.of(context).hatchDate,
     );
     if (picked != null && context.mounted) {
       context.read<PigeonIdBloc>().add(PigeonIdHatchDateChanged(picked));
@@ -79,8 +81,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
   void _next(BuildContext context, PigeonIdState state) {
     if (!state.canProceedToPhotos) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إدخال رقم الحلقة والسلالة والإنجازات'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pigeonFormValidation),
           backgroundColor: AppColors.error,
         ),
       );
@@ -91,7 +93,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: context.read<PigeonIdBloc>(),
-          child: const PigeonIdPhotosPage(),
+          child: PigeonIdPhotosPage(),
         ),
       ),
     );
@@ -108,8 +110,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
         if (state.status == PigeonIdStatus.updated) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم تعديل بيانات الطائر بنجاح'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).birdDataUpdated),
               backgroundColor: AppColors.success,
             ),
           );
@@ -126,22 +128,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
         final isEditMode = state.editingId != null;
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: Text(
-              isEditMode ? 'تعديل الطائر' : 'الهوية الرقمية للحمامة',
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-            actions: [
-              IconButton(
-                icon:
-                    const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
+          appBar: PPWAppBar(
+            title: isEditMode ? 'تعديل الطائر' : 'الهوية الرقمية للحمامة',
           ),
           body: Column(
             children: [
@@ -150,13 +138,13 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                     current: 1, total: 4, label: 'البيانات الأساسية'),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ── Ring number ──────────────────────────────────
-                      const PigeonFieldLabel(text: 'رقم الحلقة *'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'رقم الحلقة *'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _ringCtrl,
                         hint: 'مثال: EG-2024-001',
@@ -165,11 +153,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdRingNumberChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Breed ────────────────────────────────────────
-                      const PigeonFieldLabel(text: 'السلالة / النسب *'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'السلالة / النسب *'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _breedCtrl,
                         hint: 'مثال: زاجل بلجيكي أصيل',
@@ -178,11 +166,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdBreedChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Gender ───────────────────────────────────────
-                      const PigeonFieldLabel(text: 'الجنس *'),
-                      const SizedBox(height: 8),
+                      PigeonFieldLabel(text: 'الجنس *'),
+                      SizedBox(height: 8),
                       _GenderSelector(
                         selected: state.gender,
                         onChanged: (g) => context
@@ -190,14 +178,14 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdGenderChanged(g)),
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Optional divider ─────────────────────────────
                       Row(
                         children: [
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 12),
                             child: Text(
                               'بيانات اختيارية',
@@ -206,20 +194,20 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                                   color: AppColors.textSecondary),
                             ),
                           ),
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                         ],
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Hatch date ───────────────────────────────────
-                      const PigeonFieldLabel(text: 'تاريخ الفقس'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).hatchDate),
+                      SizedBox(height: 6),
                       GestureDetector(
                         onTap: () => _pickHatchDate(context),
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 14, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -228,10 +216,10 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.calendar_today_rounded,
+                              Icon(Icons.calendar_today_rounded,
                                   size: 18,
                                   color: AppColors.textSecondary),
-                              const SizedBox(width: 10),
+                              SizedBox(width: 10),
                               Text(
                                 state.hatchDate != null
                                     ? '${state.hatchDate!.day}/${state.hatchDate!.month}/${state.hatchDate!.year}'
@@ -248,11 +236,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Achievements ─────────────────────────────────
-                      const PigeonFieldLabel(text: 'الإنجازات *'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'الإنجازات *'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _achievementsCtrl,
                         hint: 'مثال: بطل سباق 500كم 2024',
@@ -261,11 +249,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdAchievementsChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Stamina ability ──────────────────────────────
-                      const PigeonFieldLabel(text: 'قدرة التحمل *'),
-                      const SizedBox(height: 8),
+                      PigeonFieldLabel(text: 'قدرة التحمل *'),
+                      SizedBox(height: 8),
                       _StaminaSelector(
                         selected: state.staminaAbility,
                         onChanged: (s) => context
@@ -273,14 +261,14 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdStaminaChanged(s)),
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Optional divider ─────────────────────────────
                       Row(
                         children: [
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'بيانات البيع',
                               style: TextStyle(
@@ -288,15 +276,15 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                                   color: AppColors.textSecondary),
                             ),
                           ),
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                         ],
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Display name ─────────────────────────────────
-                      const PigeonFieldLabel(text: 'اسم العرض'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'اسم العرض'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _nameCtrl,
                         hint: 'مثال: الصاعقة الزرقاء',
@@ -305,25 +293,25 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdNameChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Price ─────────────────────────────────────────
-                      const PigeonFieldLabel(text: 'السعر (ج.م) *'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'السعر (ج.م) *'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _priceCtrl,
                         hint: 'مثال: 5000',
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdPriceChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Description ───────────────────────────────────
-                      const PigeonFieldLabel(text: 'وصف الطائر'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'وصف الطائر'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _descCtrl,
                         hint: 'اكتب وصفاً مختصراً عن الطائر وميزاته...',
@@ -333,15 +321,15 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdDescriptionChanged(v)),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Flying speed ──────────────────────────────────
-                      const PigeonFieldLabel(text: 'سرعة الطيران (كم/ساعة)'),
-                      const SizedBox(height: 6),
+                      PigeonFieldLabel(text: 'سرعة الطيران (كم/ساعة)'),
+                      SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _speedCtrl,
                         hint: 'مثال: 108.5',
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdFlyingSpeedChanged(v)),
@@ -349,9 +337,9 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
 
                       // ── Bird status (edit only) ───────────────────────
                       if (state.editingId != null) ...[
-                        const SizedBox(height: 16),
-                        const PigeonFieldLabel(text: 'حالة الطائر'),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 16),
+                        PigeonFieldLabel(text: 'حالة الطائر'),
+                        SizedBox(height: 8),
                         _BirdStatusSelector(
                           selected: state.birdStatus,
                           onChanged: (s) => context
@@ -360,7 +348,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                         ),
                       ],
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Market listing toggle ─────────────────────────
                       _BirdListingToggle(
@@ -370,14 +358,14 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             .add(PigeonIdMarketListedChanged(v)),
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Parent birds (optional) ───────────────────────
                       Row(
                         children: [
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'بيانات النسب',
                               style: TextStyle(
@@ -385,11 +373,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                                   color: AppColors.textSecondary),
                             ),
                           ),
-                          const Expanded(child: Divider()),
+                          Expanded(child: Divider()),
                         ],
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       Row(
                         children: [
@@ -397,8 +385,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const PigeonFieldLabel(text: 'رقم الأب (اختياري)'),
-                                const SizedBox(height: 6),
+                                PigeonFieldLabel(text: 'رقم الأب (اختياري)'),
+                                SizedBox(height: 6),
                                 PigeonAppInput(
                                   controller: _fatherCtrl,
                                   hint: 'معرّف الطائر',
@@ -410,13 +398,13 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const PigeonFieldLabel(text: 'رقم الأم (اختياري)'),
-                                const SizedBox(height: 6),
+                                PigeonFieldLabel(text: 'رقم الأم (اختياري)'),
+                                SizedBox(height: 6),
                                 PigeonAppInput(
                                   controller: _motherCtrl,
                                   hint: 'معرّف الطائر',
@@ -431,7 +419,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32),
                     ],
                   ),
                 ),
@@ -446,7 +434,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                           state.status != PigeonIdStatus.updating,
                       onTap: () => context
                           .read<PigeonIdBloc>()
-                          .add(const PigeonIdSubmitted()),
+                          .add(PigeonIdSubmitted()),
                     )
                   : PigeonNextButton(
                       label: 'التالي — إضافة الصور',
@@ -467,10 +455,10 @@ class _GenderSelector extends StatelessWidget {
   final PigeonGender selected;
   final ValueChanged<PigeonGender> onChanged;
 
-  const _GenderSelector(
+  _GenderSelector(
       {required this.selected, required this.onChanged});
 
-  static const _options = [
+  static final _options = [
     (PigeonGender.male, 'ذكر', '🔵', AppColors.blue, AppColors.blueLight),
     (PigeonGender.female, 'أنثى', '🔴', AppColors.red, AppColors.redLight),
     (PigeonGender.young, 'صغير', '🟡', AppColors.orange, AppColors.orangeLight),
@@ -508,7 +496,7 @@ class _GenderOption extends StatelessWidget {
   final Color selectedBg;
   final VoidCallback onTap;
 
-  const _GenderOption({
+  _GenderOption({
     required this.label,
     required this.emoji,
     required this.isSelected,
@@ -522,8 +510,8 @@ class _GenderOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        duration: Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: isSelected ? selectedBg : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -534,8 +522,8 @@ class _GenderOption extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 24)),
-            const SizedBox(height: 4),
+            Text(emoji, style: TextStyle(fontSize: 24)),
+            SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
@@ -556,7 +544,7 @@ class _StaminaSelector extends StatelessWidget {
   final StaminaAbility selected;
   final ValueChanged<StaminaAbility> onChanged;
 
-  const _StaminaSelector({required this.selected, required this.onChanged});
+  _StaminaSelector({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -567,11 +555,11 @@ class _StaminaSelector extends StatelessWidget {
           child: GestureDetector(
             onTap: () => onChanged(s),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 200),
               margin: EdgeInsetsDirectional.only(
                 end: s != StaminaAbility.good ? 8 : 0,
               ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryLight : Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -603,13 +591,13 @@ class _BirdStatusSelector extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
 
-  static const _options = [
+  static final _options = [
     ('available', 'متاح', AppColors.success),
     ('inactive', 'غير نشط', AppColors.textSecondary),
     ('sold', 'مباع', AppColors.blue),
   ];
 
-  const _BirdStatusSelector(
+  _BirdStatusSelector(
       {required this.selected, required this.onChanged});
 
   @override
@@ -623,9 +611,9 @@ class _BirdStatusSelector extends StatelessWidget {
           child: GestureDetector(
             onTap: () => onChanged(apiVal),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 200),
               margin: EdgeInsetsDirectional.only(end: idx < 2 ? 8 : 0),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: isSelected ? color.withValues(alpha: 0.12) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -655,12 +643,12 @@ class _BirdListingToggle extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const _BirdListingToggle({required this.value, required this.onChanged});
+  _BirdListingToggle({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -668,7 +656,7 @@ class _BirdListingToggle extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

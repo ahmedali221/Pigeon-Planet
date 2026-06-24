@@ -10,8 +10,9 @@ import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
 import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerMyBirdsPage extends StatelessWidget {
-  const SellerMyBirdsPage({super.key, this.mineOnly = true});
+  SellerMyBirdsPage({super.key, this.mineOnly = true});
 
   final bool mineOnly;
 
@@ -20,14 +21,14 @@ class SellerMyBirdsPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<AuctionsBloc>()
         ..add(AuctionSellerBirdsRequested(mineOnly: mineOnly))
-        ..add(const AuctionAvailableBirdIdsRequested()),
-      child: const _SellerMyBirdsView(),
+        ..add(AuctionAvailableBirdIdsRequested()),
+      child: _SellerMyBirdsView(),
     );
   }
 }
 
 class _SellerMyBirdsView extends StatefulWidget {
-  const _SellerMyBirdsView();
+  _SellerMyBirdsView();
 
   @override
   State<_SellerMyBirdsView> createState() => _SellerMyBirdsViewState();
@@ -40,8 +41,8 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
 
   void _refresh() {
     context.read<AuctionsBloc>()
-      ..add(const AuctionSellerBirdsRequested(mineOnly: true))
-      ..add(const AuctionAvailableBirdIdsRequested());
+      ..add(AuctionSellerBirdsRequested(mineOnly: true))
+      ..add(AuctionAvailableBirdIdsRequested());
   }
 
   void _openAddBird() async {
@@ -50,7 +51,7 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
       MaterialPageRoute(
         builder: (_) => BlocProvider(
           create: (_) => sl<PigeonIdBloc>(),
-          child: const PigeonIdFormPage(),
+          child: PigeonIdFormPage(),
         ),
       ),
     );
@@ -79,9 +80,9 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openAddBird,
         backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text(
-          'إضافة طائر',
+        icon: Icon(Icons.add_rounded, color: Colors.white),
+        label: Text(
+          AppLocalizations.of(context).addBirdLabel,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -109,24 +110,24 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
                 pinned: true,
                 title: Text(
                   titleCount != null ? 'طيوري ($titleCount)' : 'طيوري',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
                     color: AppColors.primary,
                   ),
                 ),
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                  icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.refresh_rounded, size: 20),
+                    icon: Icon(Icons.refresh_rounded, size: 20),
                     onPressed: _refresh,
                   ),
                 ],
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(48),
+                  preferredSize: Size.fromHeight(48),
                   child: _FilterBar(
                     genderFilter: _genderFilter,
                     auctionFilter: _auctionFilter,
@@ -139,7 +140,7 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
               ),
             ],
             body: state.sellerBirdsLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   )
                 : state.sellerBirds.isEmpty
@@ -155,7 +156,7 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
                     color: AppColors.primary,
                     onRefresh: () async => _refresh(),
                     child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, 100),
                       itemCount: filtered.length,
                       itemBuilder: (context, i) =>
                           _BirdListTile(bird: filtered[i]),
@@ -177,7 +178,7 @@ class _FilterBar extends StatelessWidget {
   final ValueChanged<String?> onGenderChanged;
   final ValueChanged<String?> onAuctionChanged;
 
-  const _FilterBar({
+  _FilterBar({
     required this.genderFilter,
     required this.auctionFilter,
     required this.availableIdsLoaded,
@@ -192,26 +193,26 @@ class _FilterBar extends StatelessWidget {
       color: Colors.white,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
             // ── Gender group ──────────────────────────────────────────────
             _FilterChip(
-              label: 'الكل',
+              label: AppLocalizations.of(context).all,
               selected: genderFilter == null,
               onTap: () => onGenderChanged(null),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             _FilterChip(
-              label: 'ذكر',
+              label: AppLocalizations.of(context).male,
               selected: genderFilter == 'male',
               selectedColor: AppColors.blue,
               onTap: () =>
                   onGenderChanged(genderFilter == 'male' ? null : 'male'),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             _FilterChip(
-              label: 'أنثى',
+              label: AppLocalizations.of(context).female,
               selected: genderFilter == 'female',
               selectedColor: AppColors.red,
               onTap: () =>
@@ -222,7 +223,7 @@ class _FilterBar extends StatelessWidget {
             Container(
               width: 1,
               height: 22,
-              margin: const EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               color: AppColors.divider,
             ),
 
@@ -236,7 +237,7 @@ class _FilterBar extends StatelessWidget {
                 auctionFilter == 'available' ? null : 'available',
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             _FilterChip(
               label: 'في مزاد',
               selected: auctionFilter == 'in_auction',
@@ -260,7 +261,7 @@ class _FilterChip extends StatelessWidget {
   final bool loading;
   final VoidCallback onTap;
 
-  const _FilterChip({
+  _FilterChip({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -273,8 +274,8 @@ class _FilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: loading ? null : onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        duration: Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         decoration: BoxDecoration(
           color: selected
               ? selectedColor.withValues(alpha: 0.12)
@@ -306,31 +307,31 @@ class _FilterChip extends StatelessWidget {
 
 class _EmptyState extends StatelessWidget {
   final VoidCallback onAdd;
-  const _EmptyState({required this.onAdd});
+  _EmptyState({required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 110,
               height: 110,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.flutter_dash,
                 size: 58,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            SizedBox(height: 24),
+            Text(
               'لا توجد طيور بعد',
               style: TextStyle(
                 fontSize: 18,
@@ -338,8 +339,8 @@ class _EmptyState extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'أضف طيورك لعرضها في المزادات والسوق',
               style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
@@ -353,7 +354,7 @@ class _EmptyState extends StatelessWidget {
 
 class _NoResultsState extends StatelessWidget {
   final VoidCallback onClear;
-  const _NoResultsState({required this.onClear});
+  _NoResultsState({required this.onClear});
 
   @override
   Widget build(BuildContext context) {
@@ -361,13 +362,13 @@ class _NoResultsState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.filter_list_off_rounded,
             size: 48,
             color: AppColors.textHint,
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'لا توجد طيور بهذا الفلتر',
             style: TextStyle(
               fontSize: 16,
@@ -375,10 +376,10 @@ class _NoResultsState extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           TextButton(
             onPressed: onClear,
-            child: const Text(
+            child: Text(
               'مسح الفلاتر',
               style: TextStyle(color: AppColors.primary),
             ),
@@ -393,15 +394,15 @@ class _NoResultsState extends StatelessWidget {
 
 class _BirdListTile extends StatelessWidget {
   final BirdSummaryModel bird;
-  const _BirdListTile({required this.bird});
+  _BirdListTile({required this.bird});
 
   @override
   Widget build(BuildContext context) {
     final genderLabel = bird.gender == 'male'
-        ? 'ذكر'
+        ? AppLocalizations.of(context).male
         : bird.gender == 'female'
-        ? 'أنثى'
-        : 'صغير';
+        ? AppLocalizations.of(context).female
+        : AppLocalizations.of(context).genderYoung;
     final genderColor = bird.gender == 'male'
         ? AppColors.blue
         : bird.gender == 'female'
@@ -420,7 +421,7 @@ class _BirdListTile extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => sl<CartBloc>()..add(const CartStarted()),
+            create: (_) => sl<CartBloc>()..add(CartStarted()),
             child: BirdDetailPage(
               bird: bird,
               sellerNickname: bird.sellerNickname,
@@ -430,7 +431,7 @@ class _BirdListTile extends StatelessWidget {
         ),
       ),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -439,7 +440,7 @@ class _BirdListTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -447,7 +448,7 @@ class _BirdListTile extends StatelessWidget {
           children: [
             // thumbnail
             ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
+              borderRadius: BorderRadius.horizontal(
                 right: Radius.circular(15),
               ),
               child: SizedBox(
@@ -462,36 +463,36 @@ class _BirdListTile extends StatelessWidget {
                     : _PlaceholderImg(),
               ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(vertical: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       bird.name.isNotEmpty ? bird.name : bird.ringNumber,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       bird.ringNumber,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                         fontFamily: 'monospace',
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Row(
                       children: [
                         // gender badge
                         _Badge(label: genderLabel, color: genderColor),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         // auction status badge
                         if (auctionStatusKnown)
                           _Badge(
@@ -501,10 +502,10 @@ class _BirdListTile extends StatelessWidget {
                                 : AppColors.orange,
                           ),
                         if (bird.price > 0) ...[
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'ج.م ${bird.price.toStringAsFixed(0)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -517,7 +518,7 @@ class _BirdListTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsetsDirectional.only(end: 14),
               child: Icon(
                 Icons.chevron_right_rounded,
@@ -535,12 +536,12 @@ class _BirdListTile extends StatelessWidget {
 class _Badge extends StatelessWidget {
   final String label;
   final Color color;
-  const _Badge({required this.label, required this.color});
+  _Badge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -562,7 +563,7 @@ class _PlaceholderImg extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.primaryLight,
-      child: const Center(
+      child: Center(
         child: Icon(Icons.flutter_dash, color: AppColors.primary, size: 36),
       ),
     );

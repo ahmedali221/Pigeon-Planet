@@ -7,13 +7,14 @@ import '../../../promotions/viewmodel/buy_with_cashback_bloc.dart';
 import '../../model/datasources/points_remote_datasource.dart';
 import '../pages/points_history_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 class PointsSystemModal extends StatelessWidget {
   final int pointsBalance;
   final bool isSeller;
 
-  const PointsSystemModal({
+  PointsSystemModal({
     super.key,
     required this.pointsBalance,
     required this.isSeller,
@@ -55,7 +56,7 @@ class _ModalBody extends StatefulWidget {
   final int pointsBalance;
   final bool isSeller;
 
-  const _ModalBody({
+  _ModalBody({
     required this.pointsBalance,
     required this.isSeller,
   });
@@ -95,7 +96,7 @@ class _ModalBodyState extends State<_ModalBody>
             snapshot.connectionState == ConnectionState.waiting && data == null;
 
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.pageBackground,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
@@ -114,9 +115,9 @@ class _ModalBodyState extends State<_ModalBody>
               ),
 
               if (snapshot.hasError)
-                const _InlineNotice(
+                _InlineNotice(
                   icon: Icons.info_outline_rounded,
-                  text: 'تعذر تحميل بيانات الولاء من الخادم',
+                  text: AppLocalizations.of(context).pointsLoyaltyLoadError,
                 ),
 
               // ── Tab views ───────────────────────────────────────────────────
@@ -126,13 +127,13 @@ class _ModalBodyState extends State<_ModalBody>
                   children: [
                     _PointsTab(
                       isLoading: isLoading,
-                      transactions: data?.transactions ?? const [],
+                      transactions: data?.transactions ?? [],
                       isSeller: widget.isSeller,
                     ),
                     _RewardsTab(
                       isLoading: isLoading,
-                      badges: data?.badges ?? const [],
-                      catalog: data?.catalog ?? const [],
+                      badges: data?.badges ?? [],
+                      catalog: data?.catalog ?? [],
                     ),
                   ],
                 ),
@@ -151,7 +152,7 @@ class _ModalHeader extends StatelessWidget {
   final TabController tabController;
   final int pointsBalance;
 
-  const _ModalHeader({
+  _ModalHeader({
     required this.tabController,
     required this.pointsBalance,
   });
@@ -159,7 +160,7 @@ class _ModalHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryDark, AppColors.primary],
           begin: Alignment.centerRight,
@@ -171,7 +172,7 @@ class _ModalHeader extends StatelessWidget {
         children: [
           // drag handle
           Container(
-            margin: const EdgeInsets.only(top: 10, bottom: 4),
+            margin: EdgeInsets.only(top: 10, bottom: 4),
             width: 36,
             height: 4,
             decoration: BoxDecoration(
@@ -180,7 +181,7 @@ class _ModalHeader extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Row(
               children: [
                 // coin icon (rightmost)
@@ -191,19 +192,19 @@ class _ModalHeader extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.monetization_on_rounded,
                     color: Colors.white,
                     size: 26,
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
+                SizedBox(width: 12),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'نظام PP Coins',
+                        AppLocalizations.of(context).pointsSystemTitle,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 17,
@@ -212,7 +213,7 @@ class _ModalHeader extends StatelessWidget {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'اكسب نقاطاً واستبدلها بجوائز حصرية',
+                        AppLocalizations.of(context).pointsSystemSubtitle,
                         style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ],
@@ -227,7 +228,7 @@ class _ModalHeader extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
                       color: Colors.white,
                       size: 17,
@@ -240,10 +241,10 @@ class _ModalHeader extends StatelessWidget {
 
           // current balance chip
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
@@ -251,27 +252,27 @@ class _ModalHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.account_balance_wallet_rounded,
                     color: Colors.white70,
                     size: 18,
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'رصيدك الحالي',
+                  SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context).currentBalance,
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
-                  const Spacer(),
+                  Spacer(),
                   Text(
-                    '$pointsBalance نقطة',
-                    style: const TextStyle(
+                    AppLocalizations.of(context).pointsAmount(pointsBalance),
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  const Icon(
+                  SizedBox(width: 6),
+                  Icon(
                     Icons.monetization_on_rounded,
                     color: AppColors.orange,
                     size: 18,
@@ -283,7 +284,7 @@ class _ModalHeader extends StatelessWidget {
 
           // tabs
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
@@ -298,18 +299,18 @@ class _ModalHeader extends StatelessWidget {
               dividerColor: Colors.transparent,
               labelColor: AppColors.primary,
               unselectedLabelColor: Colors.white70,
-              labelStyle: const TextStyle(
+              labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
-              unselectedLabelStyle: const TextStyle(fontSize: 14),
-              tabs: const [
-                Tab(text: '🪙  النقاط'),
-                Tab(text: '🎁  الجوائز'),
+              unselectedLabelStyle: TextStyle(fontSize: 14),
+              tabs: [
+                Tab(text: AppLocalizations.of(context).pointsTabLabel),
+                Tab(text: AppLocalizations.of(context).rewardsTabLabel),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
         ],
       ),
     );
@@ -323,7 +324,7 @@ class _BalanceBreakdown extends StatelessWidget {
   final int? loyaltyBalance;
   final int? packageBalance;
 
-  const _BalanceBreakdown({
+  _BalanceBreakdown({
     required this.totalBalance,
     required this.loyaltyBalance,
     required this.packageBalance,
@@ -335,8 +336,8 @@ class _BalanceBreakdown extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -346,23 +347,23 @@ class _BalanceBreakdown extends StatelessWidget {
         children: [
           _BalanceRow(
             icon: Icons.account_balance_wallet_rounded,
-            label: 'إجمالي النقاط',
+            label: AppLocalizations.of(context).totalPoints,
             value: totalBalance,
             color: AppColors.primary,
             isStrong: true,
           ),
-          const Divider(height: 18),
+          Divider(height: 18),
           _BalanceRow(
             icon: Icons.card_giftcard_rounded,
-            label: 'نقاط الولاء',
+            label: AppLocalizations.of(context).loyaltyPoints,
             value: loyaltyBalance ?? 0,
             color: AppColors.orange,
           ),
           if (packagePoints > 0) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _BalanceRow(
               icon: Icons.inventory_2_rounded,
-              label: 'نقاط الباقة',
+              label: AppLocalizations.of(context).packagePoints,
               value: packagePoints,
               color: AppColors.blue,
             ),
@@ -380,7 +381,7 @@ class _BalanceRow extends StatelessWidget {
   final Color color;
   final bool isStrong;
 
-  const _BalanceRow({
+  _BalanceRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -401,7 +402,7 @@ class _BalanceRow extends StatelessWidget {
           ),
           child: Icon(icon, color: color, size: 18),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(
           child: Text(
             label,
@@ -413,7 +414,7 @@ class _BalanceRow extends StatelessWidget {
           ),
         ),
         Text(
-          '$value نقطة',
+          AppLocalizations.of(context).pointsAmount(value),
           style: TextStyle(
             color: color,
             fontSize: isStrong ? 16 : 13,
@@ -430,7 +431,7 @@ class _PointsTab extends StatelessWidget {
   final List<PointTransactionModel> transactions;
   final bool isSeller;
 
-  const _PointsTab({
+  _PointsTab({
     required this.isLoading,
     required this.transactions,
     required this.isSeller,
@@ -439,16 +440,16 @@ class _PointsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       children: [
-        const _SectionTitle(icon: '•', label: 'سجل النقاط'),
-        const SizedBox(height: 10),
+        _SectionTitle(icon: '•', label: AppLocalizations.of(context).pointsLog),
+        SizedBox(height: 10),
         if (isLoading)
-          const _LoadingCard()
+          _LoadingCard()
         else if (transactions.isEmpty)
-          const _InlineNotice(
+          _InlineNotice(
             icon: Icons.receipt_long_rounded,
-            text: 'لا توجد معاملات نقاط بعد',
+            text: AppLocalizations.of(context).noPointTransactions,
           )
         else
           ...transactions
@@ -462,15 +463,15 @@ class _PointsTab extends StatelessWidget {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const PointsHistoryPage(),
+                  builder: (_) => PointsHistoryPage(),
                 ),
               ),
-              icon: const Icon(Icons.history_rounded, size: 16),
-              label: const Text('عرض كل المعاملات'),
+              icon: Icon(Icons.history_rounded, size: 16),
+              label: Text(AppLocalizations.of(context).viewAllTransactions),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                textStyle: const TextStyle(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                textStyle: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -479,109 +480,109 @@ class _PointsTab extends StatelessWidget {
           ),
 
         if (!isSeller) ...[
-          const SizedBox(height: 8),
-          const _ConvertCashbackCard(),
+          SizedBox(height: 8),
+          _ConvertCashbackCard(),
         ],
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // How to earn
-        _SectionTitle(icon: '⚡', label: 'كيف تكسب نقاطاً؟'),
-        const SizedBox(height: 10),
-        ..._earnItems.map((e) => _EarnTile(item: e)),
+        _SectionTitle(icon: '⚡', label: AppLocalizations.of(context).howEarnPoints),
+        SizedBox(height: 10),
+        ..._earnItems(AppLocalizations.of(context)).map((e) => _EarnTile(item: e)),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Points value table
-        _SectionTitle(icon: '📊', label: 'قيمة النقاط'),
-        const SizedBox(height: 10),
+        _SectionTitle(icon: '📊', label: AppLocalizations.of(context).pointsValue),
+        SizedBox(height: 10),
         _PointsValueTable(),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Note
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.orangeLight,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.orange.withValues(alpha: 0.22)),
           ),
           child: Row(
-            children: const [
+            children: [
               Text('💡', style: TextStyle(fontSize: 16)),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'النقاط صالحة لمدة سنة من تاريخ الكسب. تُضاف تلقائياً بعد إتمام كل عملية.',
+                  AppLocalizations.of(context).pointsExpiryNote,
                   style: TextStyle(fontSize: 12, color: AppColors.textPrimary),
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
       ],
     );
   }
 }
 
 // earn items data
-const _earnItems = [
+List<_EarnItem> _earnItems(AppLocalizations l) => [
   _EarnItem(
     icon: Icons.gavel_rounded,
     color: AppColors.primary,
     colorBg: AppColors.primaryLight,
-    title: 'إتمام بيع أو شراء',
-    subtitle: 'لكل صفقة مكتملة',
+    title: l.earnCompleteSalePurchase,
+    subtitle: l.earnCompleteSalePurchaseSub,
     points: 100,
   ),
   _EarnItem(
     icon: Icons.bolt_rounded,
     color: AppColors.orange,
     colorBg: AppColors.orangeLight,
-    title: 'سداد في الوقت المحدد',
-    subtitle: 'خلال مهلة الدفع',
+    title: l.earnPayOnTime,
+    subtitle: l.earnPayOnTimeSub,
     points: 50,
   ),
   _EarnItem(
     icon: Icons.star_rounded,
     color: AppColors.orange,
     colorBg: AppColors.orangeLight,
-    title: 'تقييم 5 نجوم',
-    subtitle: 'من المشتري أو البائع',
+    title: l.earnFiveStarRating,
+    subtitle: l.earnFiveStarRatingSub,
     points: 30,
   ),
   _EarnItem(
     icon: Icons.person_add_rounded,
     color: AppColors.purple,
     colorBg: AppColors.purpleLight,
-    title: 'دعوة صديق',
-    subtitle: 'عند تسجيله وإتمام أول صفقة',
+    title: l.earnInviteFriend,
+    subtitle: l.earnInviteFriendSub,
     points: 30,
   ),
   _EarnItem(
     icon: Icons.badge_rounded,
     color: AppColors.blue,
     colorBg: AppColors.blueLight,
-    title: 'إضافة هوية رقمية للطائر',
-    subtitle: 'أول مرة لكل طائر',
+    title: l.earnAddDigitalId,
+    subtitle: l.earnAddDigitalIdSub,
     points: 20,
   ),
   _EarnItem(
     icon: Icons.share_rounded,
     color: AppColors.primary,
     colorBg: AppColors.primaryLight,
-    title: 'مشاركة مزاد',
-    subtitle: 'عبر واتساب أو تويتر',
+    title: l.earnShareAuction,
+    subtitle: l.earnShareAuctionSub,
     points: 10,
   ),
   _EarnItem(
     icon: Icons.login_rounded,
     color: AppColors.textSecondary,
     colorBg: AppColors.inputBg,
-    title: 'تسجيل الدخول اليومي',
-    subtitle: 'مرة واحدة يومياً',
+    title: l.earnDailyLogin,
+    subtitle: l.earnDailyLoginSub,
     points: 5,
   ),
 ];
@@ -593,7 +594,7 @@ class _EarnItem {
   final String title;
   final String subtitle;
   final int points;
-  const _EarnItem({
+  _EarnItem({
     required this.icon,
     required this.color,
     required this.colorBg,
@@ -605,13 +606,13 @@ class _EarnItem {
 
 class _EarnTile extends StatelessWidget {
   final _EarnItem item;
-  const _EarnTile({required this.item});
+  _EarnTile({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -629,23 +630,23 @@ class _EarnTile extends StatelessWidget {
             ),
             child: Icon(item.icon, color: item.color, size: 20),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   item.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   item.subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,
                   ),
@@ -655,7 +656,7 @@ class _EarnTile extends StatelessWidget {
           ),
           // points badge (leftmost)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: AppColors.orangeLight,
               borderRadius: BorderRadius.circular(20),
@@ -665,14 +666,14 @@ class _EarnTile extends StatelessWidget {
               children: [
                 Text(
                   '+${item.points}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.orange,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                   ),
                 ),
-                const SizedBox(width: 3),
-                const Icon(
+                SizedBox(width: 3),
+                Icon(
                   Icons.monetization_on_rounded,
                   color: AppColors.orange,
                   size: 14,
@@ -687,21 +688,22 @@ class _EarnTile extends StatelessWidget {
 }
 
 class _PointsValueTable extends StatelessWidget {
-  const _PointsValueTable();
+  _PointsValueTable();
 
-  static const _rows = [
-    (50, 'خصم 5 ريال على رسوم النشر'),
-    (100, 'خصم 10 ريال على أي صفقة'),
-    (200, 'اشتراك مجاني لمدة أسبوع'),
-    (500, 'ترقية إعلان مجانية × 2'),
-    (750, 'شارة "بائع موثوق" لمدة شهر'),
-    (1000, 'اشتراك مجاني لمدة شهر كامل'),
-    (2500, 'إعلان مميز على الصفحة الرئيسية'),
-    (5000, 'عضوية VIP لمدة 3 أشهر'),
+  static List<(int, String)> _rows(AppLocalizations l) => [
+    (50, l.pointsValueDiscountPublish5),
+    (100, l.pointsValueDiscountDeal10),
+    (200, l.pointsValueFreeWeek),
+    (500, l.pointsValueAdUpgrade2),
+    (750, l.pointsValueTrustedSellerBadge),
+    (1000, l.pointsValueFreeMonth),
+    (2500, l.pointsValueHomepageFeaturedAd),
+    (5000, l.pointsValueVipThreeMonths),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final rows = _rows(AppLocalizations.of(context));
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -709,13 +711,13 @@ class _PointsValueTable extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        children: List.generate(_rows.length, (i) {
-          final (pts, label) = _rows[i];
-          final isLast = i == _rows.length - 1;
+        children: List.generate(rows.length, (i) {
+          final (pts, label) = rows[i];
+          final isLast = i == rows.length - 1;
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 11,
                 ),
@@ -724,7 +726,7 @@ class _PointsValueTable extends StatelessWidget {
                     // points (rightmost)
                     Container(
                       width: 64,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      padding: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         color: _milestoneColor(pts).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -732,12 +734,12 @@ class _PointsValueTable extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.monetization_on_rounded,
                             color: AppColors.orange,
                             size: 13,
                           ),
-                          const SizedBox(width: 3),
+                          SizedBox(width: 3),
                           Text(
                             '$pts',
                             style: TextStyle(
@@ -749,17 +751,17 @@ class _PointsValueTable extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textPrimary,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 13,
                       color: AppColors.textHint,
@@ -767,7 +769,7 @@ class _PointsValueTable extends StatelessWidget {
                   ],
                 ),
               ),
-              if (!isLast) const Divider(height: 1, indent: 14, endIndent: 14),
+              if (!isLast) Divider(height: 1, indent: 14, endIndent: 14),
             ],
           );
         }),
@@ -790,7 +792,7 @@ class _RewardsTab extends StatelessWidget {
   final List<BadgeAwardModel> badges;
   final List<BadgeCatalogItem> catalog;
 
-  const _RewardsTab({
+  _RewardsTab({
     required this.isLoading,
     required this.badges,
     required this.catalog,
@@ -799,111 +801,111 @@ class _RewardsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       children: [
-        const _SectionTitle(icon: '•', label: 'شاراتي'),
-        const SizedBox(height: 10),
+        _SectionTitle(icon: '•', label: AppLocalizations.of(context).myBadgesSection),
+        SizedBox(height: 10),
         if (isLoading)
-          const _LoadingCard()
+          _LoadingCard()
         else if (badges.isEmpty)
-          const _InlineNotice(
+          _InlineNotice(
             icon: Icons.workspace_premium_rounded,
-            text: 'لا توجد شارات مكتسبة بعد',
+            text: AppLocalizations.of(context).noEarnedBadges,
           )
         else
           ...badges.take(5).map((badge) => _BadgeAwardTile(badge: badge)),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Badge catalog from backend
         if (!isLoading && catalog.isNotEmpty) ...[
-          const _SectionTitle(icon: '🏅', label: 'الشارات المتاحة'),
-          const SizedBox(height: 10),
+          _SectionTitle(icon: '🏅', label: AppLocalizations.of(context).availableBadges),
+          SizedBox(height: 10),
           ...catalog.map((item) => _BadgeCatalogTile(
                 item: item,
                 earned: badges.any((b) => b.badgeType == item.badgeType),
               )),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
         ],
 
         // How to redeem
-        _SectionTitle(icon: '🎁', label: 'كيف تحصل على جائزة؟'),
-        const SizedBox(height: 10),
+        _SectionTitle(icon: '🎁', label: AppLocalizations.of(context).howGetReward),
+        SizedBox(height: 10),
         _HowToRedeemCard(),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Rewards catalogue
-        _SectionTitle(icon: '🏆', label: 'الجوائز المتاحة'),
-        const SizedBox(height: 10),
-        ..._rewardCatalogue.map((r) => _RewardCard(reward: r)),
+        _SectionTitle(icon: '🏆', label: AppLocalizations.of(context).availablePrizes),
+        SizedBox(height: 10),
+        ..._rewardCatalogue(AppLocalizations.of(context)).map((r) => _RewardCard(reward: r)),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Tiers
-        _SectionTitle(icon: '⭐', label: 'مستويات العضوية'),
-        const SizedBox(height: 10),
+        _SectionTitle(icon: '⭐', label: AppLocalizations.of(context).membershipLevels),
+        SizedBox(height: 10),
         _TiersCard(),
 
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
       ],
     );
   }
 }
 
-const _rewardCatalogue = [
+List<_Reward> _rewardCatalogue(AppLocalizations l) => [
   _Reward(
     emoji: '🎟️',
-    title: 'تخفيض على رسوم المزاد',
-    subtitle: 'خصم 10% على رسوم نشر أي مزاد',
+    title: l.rewardAuctionFeeDiscount,
+    subtitle: l.rewardAuctionFeeDiscountSub,
     cost: 100,
-    category: 'خصومات',
+    category: l.rewardDiscountsCategory,
     categoryColor: AppColors.primary,
   ),
   _Reward(
     emoji: '📦',
-    title: 'اشتراك أسبوعي مجاني',
-    subtitle: 'اشتراك في باقة البائع الأساسية لمدة 7 أيام',
+    title: l.rewardFreeWeeklySubscription,
+    subtitle: l.rewardFreeWeeklySubscriptionSub,
     cost: 200,
-    category: 'اشتراكات',
+    category: l.rewardSubscriptionsCategory,
     categoryColor: AppColors.blue,
   ),
   _Reward(
     emoji: '🔝',
-    title: 'ترقية إعلان',
-    subtitle: 'ظهور إعلانك في أعلى نتائج البحث لمدة 3 أيام',
+    title: l.rewardAdUpgrade,
+    subtitle: l.rewardAdUpgradeSub,
     cost: 500,
-    category: 'ترويج',
+    category: l.rewardPromotionCategory,
     categoryColor: AppColors.orange,
   ),
   _Reward(
     emoji: '✅',
-    title: 'شارة البائع الموثوق',
-    subtitle: 'شارة زرقاء تظهر بجانب اسمك لمدة شهر',
+    title: l.rewardTrustedSellerBadge,
+    subtitle: l.rewardTrustedSellerBadgeSub,
     cost: 750,
-    category: 'مميزات',
+    category: l.rewardFeaturesCategory,
     categoryColor: AppColors.purple,
   ),
   _Reward(
     emoji: '🌟',
-    title: 'اشتراك شهري مجاني',
-    subtitle: 'اشتراك في باقة البائع الاحترافية لمدة شهر',
+    title: l.rewardFreeMonthlySubscription,
+    subtitle: l.rewardFreeMonthlySubscriptionSub,
     cost: 1000,
-    category: 'اشتراكات',
+    category: l.rewardSubscriptionsCategory,
     categoryColor: AppColors.blue,
   ),
   _Reward(
     emoji: '📣',
-    title: 'إعلان مميز - الصفحة الرئيسية',
-    subtitle: 'ظهور مزادك في بانر الصفحة الرئيسية لمدة يوم',
+    title: l.rewardFeaturedHomepageAd,
+    subtitle: l.rewardFeaturedHomepageAdSub,
     cost: 2500,
-    category: 'ترويج',
+    category: l.rewardPromotionCategory,
     categoryColor: AppColors.orange,
   ),
   _Reward(
     emoji: '👑',
-    title: 'عضوية VIP',
-    subtitle: 'جميع المزايا + دعم أولوية + خصم دائم 15%',
+    title: l.rewardVipMembership,
+    subtitle: l.rewardVipMembershipSub,
     cost: 5000,
     category: 'VIP',
     categoryColor: Color(0xFFD4A017),
@@ -917,7 +919,7 @@ class _Reward {
   final int cost;
   final String category;
   final Color categoryColor;
-  const _Reward({
+  _Reward({
     required this.emoji,
     required this.title,
     required this.subtitle,
@@ -929,19 +931,19 @@ class _Reward {
 
 class _RewardCard extends StatelessWidget {
   final _Reward reward;
-  const _RewardCard({required this.reward});
+  _RewardCard({required this.reward});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         child: Row(
           children: [
             // emoji circle (rightmost)
@@ -953,10 +955,10 @@ class _RewardCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Center(
-                child: Text(reward.emoji, style: const TextStyle(fontSize: 24)),
+                child: Text(reward.emoji, style: TextStyle(fontSize: 24)),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -965,15 +967,15 @@ class _RewardCard extends StatelessWidget {
                     children: [
                       Text(
                         reward.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 6,
                           vertical: 2,
                         ),
@@ -992,42 +994,42 @@ class _RewardCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(
                     reward.subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   // cost + redeem button
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.monetization_on_rounded,
                         color: AppColors.orange,
                         size: 14,
                       ),
-                      const SizedBox(width: 3),
+                      SizedBox(width: 3),
                       Text(
-                        '${reward.cost} نقطة',
-                        style: const TextStyle(
+                        AppLocalizations.of(context).pointsAmount(reward.cost),
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: AppColors.orange,
                         ),
                       ),
-                      const Spacer(),
+                      Spacer(),
                       GestureDetector(
                         onTap: () => _showComingSoon(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
+                            gradient: LinearGradient(
                               colors: [
                                 AppColors.primaryDark,
                                 AppColors.primary,
@@ -1037,8 +1039,8 @@ class _RewardCard extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
-                            'استبدال',
+                          child: Text(
+                            AppLocalizations.of(context).redeem,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -1060,8 +1062,8 @@ class _RewardCard extends StatelessWidget {
 
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('قريباً — ميزة الاستبدال قيد التطوير'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).pointsRedemptionComingSoon),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -1069,45 +1071,45 @@ class _RewardCard extends StatelessWidget {
 }
 
 class _HowToRedeemCard extends StatelessWidget {
-  const _HowToRedeemCard();
+  _HowToRedeemCard();
 
-  static const _steps = [
+  static List<({IconData icon, Color color, String text})> _steps(AppLocalizations l) => [
     (
       icon: Icons.monetization_on_rounded,
       color: AppColors.orange,
-      text: 'اكسب نقاطاً من خلال إتمام الصفقات والأنشطة اليومية',
+      text: l.howRedeemEarnPoints,
     ),
     (
       icon: Icons.search_rounded,
       color: AppColors.blue,
-      text: 'اختر الجائزة التي تريدها من الكتالوج أدناه',
+      text: l.howRedeemChooseReward,
     ),
     (
       icon: Icons.touch_app_rounded,
       color: AppColors.primary,
-      text: 'اضغط "استبدال" وسيتم خصم النقاط وتفعيل الجائزة فوراً',
+      text: l.howRedeemTapRedeem,
     ),
     (
       icon: Icons.check_circle_rounded,
       color: AppColors.purple,
-      text: 'تظهر الجائزة تلقائياً في حسابك خلال دقائق',
+      text: l.howRedeemRewardAppears,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        children: List.generate(_steps.length, (i) {
-          final s = _steps[i];
+        children: List.generate(_steps(AppLocalizations.of(context)).length, (i) {
+          final s = _steps(AppLocalizations.of(context))[i];
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: EdgeInsets.only(bottom: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1130,15 +1132,15 @@ class _HowToRedeemCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         s.text,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textPrimary,
                         ),
@@ -1146,7 +1148,7 @@ class _HowToRedeemCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Icon(s.icon, color: s.color, size: 20),
               ],
             ),
@@ -1158,34 +1160,34 @@ class _HowToRedeemCard extends StatelessWidget {
 }
 
 class _TiersCard extends StatelessWidget {
-  const _TiersCard();
+  _TiersCard();
 
-  static const _tiers = [
+  static List<({String emoji, String name, String range, Color color, Color bg})> _tiers(AppLocalizations l) => [
     (
       emoji: '🥉',
-      name: 'برونزي',
-      range: '0 – 499 نقطة',
+      name: l.tierBronze,
+      range: l.tierBronzeRange,
       color: Color(0xFFCD7F32),
       bg: Color(0xFFFFF8F0),
     ),
     (
       emoji: '🥈',
-      name: 'فضي',
-      range: '500 – 1,999 نقطة',
+      name: l.tierSilver,
+      range: l.tierSilverRange,
       color: Color(0xFF9E9E9E),
       bg: Color(0xFFF5F5F5),
     ),
     (
       emoji: '🥇',
-      name: 'ذهبي',
-      range: '2,000 – 4,999 نقطة',
+      name: l.tierGold,
+      range: l.tierGoldRange,
       color: Color(0xFFD4A017),
       bg: Color(0xFFFFFDE7),
     ),
     (
       emoji: '💎',
       name: 'VIP',
-      range: '5,000+ نقطة',
+      range: l.tierVipRange,
       color: AppColors.purple,
       bg: AppColors.purpleLight,
     ),
@@ -1200,13 +1202,13 @@ class _TiersCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        children: List.generate(_tiers.length, (i) {
-          final t = _tiers[i];
-          final isLast = i == _tiers.length - 1;
+        children: List.generate(_tiers(AppLocalizations.of(context)).length, (i) {
+          final t = _tiers(AppLocalizations.of(context))[i];
+          final isLast = i == _tiers(AppLocalizations.of(context)).length - 1;
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 12,
                 ),
@@ -1223,11 +1225,11 @@ class _TiersCard extends StatelessWidget {
                       child: Center(
                         child: Text(
                           t.emoji,
-                          style: const TextStyle(fontSize: 22),
+                          style: TextStyle(fontSize: 22),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1242,7 +1244,7 @@ class _TiersCard extends StatelessWidget {
                           ),
                           Text(
                             t.range,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary,
                             ),
@@ -1258,7 +1260,7 @@ class _TiersCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (!isLast) const Divider(height: 1, indent: 14, endIndent: 14),
+              if (!isLast) Divider(height: 1, indent: 14, endIndent: 14),
             ],
           );
         }),
@@ -1270,18 +1272,18 @@ class _TiersCard extends StatelessWidget {
 // ── Shared ────────────────────────────────────────────────────────────────────
 
 class _LoadingCard extends StatelessWidget {
-  const _LoadingCard();
+  _LoadingCard();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
-      child: const Center(
+      child: Center(
         child: SizedBox(
           width: 22,
           height: 22,
@@ -1296,13 +1298,13 @@ class _InlineNotice extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _InlineNotice({required this.icon, required this.text});
+  _InlineNotice({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -1311,11 +1313,11 @@ class _InlineNotice extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: AppColors.textSecondary, size: 18),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
               ),
@@ -1330,7 +1332,7 @@ class _InlineNotice extends StatelessWidget {
 // ── Convert Cashback Card (customer-only) ─────────────────────────────────────
 
 class _ConvertCashbackCard extends StatelessWidget {
-  const _ConvertCashbackCard();
+  _ConvertCashbackCard();
 
   @override
   Widget build(BuildContext context) {
@@ -1339,10 +1341,10 @@ class _ConvertCashbackCard extends StatelessWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
-        builder: (_) => const _BuyWithCashbackSheet(),
+        builder: (_) => _BuyWithCashbackSheet(),
       ),
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -1357,19 +1359,19 @@ class _ConvertCashbackCard extends StatelessWidget {
                 color: AppColors.orangeLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.currency_exchange_rounded,
                 color: AppColors.orange,
                 size: 22,
               ),
             ),
-            const SizedBox(width: 12),
-            const Expanded(
+            SizedBox(width: 12),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'حوّل كاش باك إلى نقاط PP',
+                    AppLocalizations.of(context).convertCashbackToPoints,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -1378,7 +1380,7 @@ class _ConvertCashbackCard extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    'كل 1 كاش باك = 20 نقطة PP',
+                    AppLocalizations.of(context).cashbackConversionRate,
                     style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
@@ -1387,7 +1389,7 @@ class _ConvertCashbackCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
               color: AppColors.textHint,
@@ -1402,7 +1404,7 @@ class _ConvertCashbackCard extends StatelessWidget {
 // ── Buy With Cashback Sheet ───────────────────────────────────────────────────
 
 class _BuyWithCashbackSheet extends StatefulWidget {
-  const _BuyWithCashbackSheet();
+  _BuyWithCashbackSheet();
 
   @override
   State<_BuyWithCashbackSheet> createState() => _BuyWithCashbackSheetState();
@@ -1435,7 +1437,7 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'تم! حصلت على ${state.pointsAwarded} نقطة PP',
+                  AppLocalizations.of(context).cashbackConversionSuccess(state.pointsAwarded ?? 0),
                 ),
                 backgroundColor: AppColors.primary,
                 behavior: SnackBarBehavior.floating,
@@ -1444,7 +1446,7 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
           } else if (state.status == BuyWithCashbackStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'حدث خطأ، حاول مرة أخرى'),
+                content: Text(state.errorMessage ?? AppLocalizations.of(context).tryAgainError),
                 backgroundColor: AppColors.error,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -1457,13 +1459,13 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.pageBackground,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1478,30 +1480,30 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'تحويل كاش باك إلى نقاط PP',
+                    SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context).convertCashbackToPoints,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'كل 1 كاش باك = 20 نقطة PP',
+                    SizedBox(height: 4),
+                    Text(
+                      AppLocalizations.of(context).cashbackConversionRate,
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     FutureBuilder<double>(
                       future: _balanceFuture,
                       builder: (_, snap) {
                         final balance = snap.data;
                         return Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -1509,23 +1511,23 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.account_balance_wallet_rounded,
                                 color: AppColors.orange,
                                 size: 20,
                               ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'رصيد الكاش باك:',
+                              SizedBox(width: 10),
+                              Text(
+                                AppLocalizations.of(context).cashbackBalanceLabel,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.textSecondary,
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               if (snap.connectionState ==
                                   ConnectionState.waiting)
-                                const SizedBox(
+                                SizedBox(
                                   width: 14,
                                   height: 14,
                                   child: CircularProgressIndicator(
@@ -1536,7 +1538,7 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                                   balance != null
                                       ? balance.toStringAsFixed(2)
                                       : '—',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textPrimary,
@@ -1547,37 +1549,37 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextField(
                       controller: _ctrl,
-                      keyboardType: const TextInputType.numberWithOptions(
+                      keyboardType: TextInputType.numberWithOptions(
                           decimal: true),
                       decoration: InputDecoration(
-                        hintText: 'أدخل المبلغ (كاش باك)',
-                        hintStyle: const TextStyle(
+                        hintText: AppLocalizations.of(context).cashbackAmountHint,
+                        hintStyle: TextStyle(
                             color: AppColors.textHint, fontSize: 13),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                             horizontal: 14, vertical: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(color: AppColors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(color: AppColors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.primary),
+                              BorderSide(color: AppColors.primary),
                         ),
-                        prefixIcon: const Icon(Icons.monetization_on_rounded,
+                        prefixIcon: Icon(Icons.monetization_on_rounded,
                             color: AppColors.orange, size: 20),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -1602,7 +1604,7 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                           ),
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
@@ -1610,8 +1612,8 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                'تحويل الآن',
+                            : Text(
+                                AppLocalizations.of(context).convertNow,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -1633,7 +1635,7 @@ class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
 class _TransactionTile extends StatelessWidget {
   final PointTransactionModel transaction;
 
-  const _TransactionTile({required this.transaction});
+  _TransactionTile({required this.transaction});
 
   bool get _isEarn => transaction.transactionType == 'earn';
 
@@ -1642,8 +1644,8 @@ class _TransactionTile extends StatelessWidget {
     final color = _isEarn ? AppColors.primary : AppColors.orange;
     final sign = _isEarn ? '+' : '-';
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -1664,25 +1666,25 @@ class _TransactionTile extends StatelessWidget {
               size: 20,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   transaction.reason.isEmpty
-                      ? 'معاملة نقاط'
+                      ? AppLocalizations.of(context).pointsTransactionFallback
                       : transaction.reason,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
-                  'الرصيد بعد العملية: ${transaction.balanceAfter}',
-                  style: const TextStyle(
+                  AppLocalizations.of(context).balanceAfterTransaction(transaction.balanceAfter),
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 11,
                   ),
@@ -1707,7 +1709,7 @@ class _TransactionTile extends StatelessWidget {
 class _BadgeAwardTile extends StatelessWidget {
   final BadgeAwardModel badge;
 
-  const _BadgeAwardTile({required this.badge});
+  _BadgeAwardTile({required this.badge});
 
   @override
   Widget build(BuildContext context) {
@@ -1716,7 +1718,7 @@ class _BadgeAwardTile extends StatelessWidget {
     final Color iconBg;
     final Color iconFg;
     if (isRevoked) {
-      iconBg = const Color(0xFFFFEBEE);
+      iconBg = Color(0xFFFFEBEE);
       iconFg = AppColors.error;
     } else if (isExpired) {
       iconBg = AppColors.inputBg;
@@ -1727,8 +1729,8 @@ class _BadgeAwardTile extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -1745,7 +1747,7 @@ class _BadgeAwardTile extends StatelessWidget {
             ),
             child: Icon(Icons.workspace_premium_rounded, color: iconFg, size: 22),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1762,12 +1764,12 @@ class _BadgeAwardTile extends StatelessWidget {
                   ),
                 ),
                 if (badge.description.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     badge.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 11,
                     ),
@@ -1776,9 +1778,9 @@ class _BadgeAwardTile extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            padding: EdgeInsets.symmetric(horizontal: 7, vertical: 3),
             decoration: BoxDecoration(
               color: isRevoked
                   ? AppColors.error.withValues(alpha: 0.1)
@@ -1788,7 +1790,7 @@ class _BadgeAwardTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              isRevoked ? 'مُلغى' : isExpired ? 'منتهٍ' : 'نشط',
+              isRevoked ? AppLocalizations.of(context).revoked : isExpired ? AppLocalizations.of(context).expired : AppLocalizations.of(context).statusActive,
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.bold,
@@ -1810,13 +1812,13 @@ class _BadgeCatalogTile extends StatelessWidget {
   final BadgeCatalogItem item;
   final bool earned;
 
-  const _BadgeCatalogTile({required this.item, required this.earned});
+  _BadgeCatalogTile({required this.item, required this.earned});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -1842,36 +1844,36 @@ class _BadgeCatalogTile extends StatelessWidget {
               size: 22,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   item.name.isEmpty ? item.badgeType : item.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 if (item.description.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     item.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 11,
                     ),
                   ),
                 ],
                 if (item.criteriaThreshold != null) ...[
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(
-                    'الحد: ${item.criteriaThreshold}',
-                    style: const TextStyle(
+                    AppLocalizations.of(context).thresholdLabel(item.criteriaThreshold ?? 0),
+                    style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -1881,9 +1883,9 @@ class _BadgeCatalogTile extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: earned
                   ? AppColors.primaryLight
@@ -1891,7 +1893,7 @@ class _BadgeCatalogTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              earned ? 'مكتسبة ✓' : 'متاحة',
+              earned ? AppLocalizations.of(context).earnedBadge : AppLocalizations.of(context).available,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -1908,17 +1910,17 @@ class _BadgeCatalogTile extends StatelessWidget {
 class _SectionTitle extends StatelessWidget {
   final String icon;
   final String label;
-  const _SectionTitle({required this.icon, required this.label});
+  _SectionTitle({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 16)),
-        const SizedBox(width: 8),
+        Text(icon, style: TextStyle(fontSize: 16)),
+        SizedBox(width: 8),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,

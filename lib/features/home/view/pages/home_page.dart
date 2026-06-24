@@ -38,6 +38,7 @@ import '../../../seller_products/view/pages/seller_products_page.dart';
 import '../../../subscription/view/pages/packages_page.dart';
 import '../widgets/home_drawer.dart';
 
+import '../../../../l10n/app_localizations.dart';
 UserModel? _homeAuthUserForUi(AuthState authState) {
   if (authState is AuthSuccess) return authState.user;
   if (authState is AuthSwitchingProfile) return authState.user;
@@ -46,7 +47,7 @@ UserModel? _homeAuthUserForUi(AuthState authState) {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +61,16 @@ class HomePage extends StatelessWidget {
                 ..add(HomeStarted(isSeller: isSeller)),
         ),
         BlocProvider(
-          create: (_) => sl<FeedBloc>()..add(const FeedStarted()),
+          create: (_) => sl<FeedBloc>()..add(FeedStarted()),
         ),
       ],
-      child: const _HomeView(),
+      child: _HomeView(),
     );
   }
 }
 
 class _HomeView extends StatefulWidget {
-  const _HomeView();
+  _HomeView();
 
   @override
   State<_HomeView> createState() => _HomeViewState();
@@ -191,12 +192,12 @@ class _HomeViewState extends State<_HomeView> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          padding: EdgeInsets.fromLTRB(20, 12, 20, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -209,15 +210,15 @@ class _HomeViewState extends State<_HomeView> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Header: placeholder (right) | title (center) | X button (left)
               Row(
                 children: [
-                  const SizedBox(width: 40),
+                  SizedBox(width: 40),
                   Expanded(
                     child: Center(
                       child: Text(
-                        'ماذا تريد أن تضيف؟',
+                        AppLocalizations.of(context).whatDoYouWantToAdd,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -244,12 +245,12 @@ class _HomeViewState extends State<_HomeView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _AddOptionTile(
                 icon: Icons.gavel_rounded,
                 color: AppColors.primary,
-                title: 'إضافة طيور للمزاد',
-                subtitle: 'ابدأ مزاد على حمامك الزاجل',
+                title: AppLocalizations.of(context).addAuctionBirds,
+                subtitle: AppLocalizations.of(context).startAuctionForBirds,
                 onTap: () async {
                   Navigator.pop(ctx);
                   await Navigator.push(
@@ -257,7 +258,7 @@ class _HomeViewState extends State<_HomeView> {
                     MaterialPageRoute(
                       builder: (_) => BlocProvider(
                         create: (_) => sl<AuctionsBloc>(),
-                        child: const AuctionCreatePage(),
+                        child: AuctionCreatePage(),
                       ),
                     ),
                   );
@@ -273,12 +274,12 @@ class _HomeViewState extends State<_HomeView> {
                   }
                 },
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _AddOptionTile(
                 icon: Icons.sell_rounded,
                 color: AppColors.orange,
-                title: 'إضافة طيور بسعر ثابت',
-                subtitle: 'بيع مباشر بسعر محدد مسبقاً',
+                title: AppLocalizations.of(context).addFixedPriceBirds,
+                subtitle: AppLocalizations.of(context).directSaleFixedPrice,
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.push(
@@ -286,40 +287,40 @@ class _HomeViewState extends State<_HomeView> {
                     MaterialPageRoute(
                       builder: (_) => BlocProvider(
                         create: (_) => sl<PigeonIdBloc>(),
-                        child: const PigeonIdFormPage(),
+                        child: PigeonIdFormPage(),
                       ),
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _AddOptionTile(
                 icon: Icons.shopping_bag_rounded,
-                color: const Color(0xFF7B1FA2),
-                title: 'إضافة منتجات',
-                subtitle: 'أدوية، مكملات، مستلزمات وأكثر',
+                color: Color(0xFF7B1FA2),
+                title: AppLocalizations.of(context).addProducts,
+                subtitle: AppLocalizations.of(context).productsSubtitle,
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const SellerProductsPage(),
+                      builder: (_) => SellerProductsPage(),
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _AddOptionTile(
                 icon: Icons.workspace_premium_rounded,
                 color: AppColors.orange,
-                title: 'إدارة اشتراكاتي',
-                subtitle: 'اشترك في باقة لتتمكن من إنشاء المزادات',
+                title: AppLocalizations.of(context).manageSubscriptions,
+                subtitle: AppLocalizations.of(context).subscribeToCreateAuctions,
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const PackagesPage(),
+                      builder: (_) => PackagesPage(),
                     ),
                   );
                 },
@@ -348,7 +349,7 @@ class _HomeViewState extends State<_HomeView> {
       listener: (context, state) {
         if (state is AuthInitial) {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const AccountTypePage()),
+            MaterialPageRoute(builder: (_) => AccountTypePage()),
             (_) => false,
           );
           return;
@@ -362,7 +363,7 @@ class _HomeViewState extends State<_HomeView> {
             ),
           );
           context.read<AuthBloc>().add(
-            const AuthProfileSwitchFailureAcknowledged(),
+            AuthProfileSwitchFailureAcknowledged(),
           );
           return;
         }
@@ -435,7 +436,7 @@ class _HomeViewState extends State<_HomeView> {
                                       create: (_) =>
                                           sl<ProfileBloc>()
                                             ..add(ProfileStarted(profileType)),
-                                      child: const ProfilePage(),
+                                      child: ProfilePage(),
                                     ),
                                   ),
                                 );
@@ -445,6 +446,7 @@ class _HomeViewState extends State<_HomeView> {
                               isServiceProvider: isSeller,
                               isProfileSwitching: isProfileSwitching,
                               pointsLabel: '$currentPointsBalance',
+                              pointsBalance: currentPointsBalance,
                               onToggle: (wantSeller) {
                                 if (isProfileSwitching || authUser == null) {
                                   return;
@@ -453,11 +455,11 @@ class _HomeViewState extends State<_HomeView> {
                                 if (!wantSeller && authUser.isCustomer) return;
                                 if (wantSeller) {
                                   context.read<AuthBloc>().add(
-                                    const AuthBecomeSellerRequested(),
+                                    AuthBecomeSellerRequested(),
                                   );
                                 } else {
                                   context.read<AuthBloc>().add(
-                                    const AuthSwitchProfileRequested(
+                                    AuthSwitchProfileRequested(
                                       'Customer',
                                     ),
                                   );
@@ -472,12 +474,12 @@ class _HomeViewState extends State<_HomeView> {
                                   );
                                 },
                                 child: isLoading
-                                    ? const Center(
+                                    ? Center(
                                         child: CircularProgressIndicator(),
                                       )
                                     : SingleChildScrollView(
                                         physics:
-                                            const AlwaysScrollableScrollPhysics(),
+                                            AlwaysScrollableScrollPhysics(),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -489,13 +491,13 @@ class _HomeViewState extends State<_HomeView> {
                                               HomeWelcomeBanner(
                                                 displayName: displayName,
                                               ),
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
                                               HomeHeroBanner(
                                                 banners: HomeMockData.banners,
                                               ),
-                                              const SizedBox(height: 20),
-                                              const HomeDemoCardsSection(),
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
+                                              HomeDemoCardsSection(),
+                                              SizedBox(height: 20),
                                               HomeBreedersSection(
                                                 sellers: homeState.sellers,
                                               ),
@@ -513,14 +515,14 @@ class _HomeViewState extends State<_HomeView> {
                                                 myBirdsCount:
                                                     homeState.myBirds.length,
                                               ),
-                                              const SizedBox(height: 20),
-                                              const HomeInsightsPreviewSection(),
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
+                                              HomeInsightsPreviewSection(),
+                                              SizedBox(height: 20),
                                               HomeBreedersSection(
                                                 sellers: homeState.sellers,
                                               ),
                                             ],
-                                            const SizedBox(height: 20),
+                                            SizedBox(height: 20),
                                             if (homeState
                                                 .featuredBirds
                                                 .isNotEmpty)
@@ -549,41 +551,41 @@ class _HomeViewState extends State<_HomeView> {
                                             if (homeState
                                                 .featuredBirds
                                                 .isNotEmpty)
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
                                             if (activeAuctions.isNotEmpty)
                                               HomeActiveAuctionsSection(
                                                 auctions: activeAuctions,
                                               ),
                                             if (activeAuctions.isNotEmpty)
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
                                             HomeComingSoonSection(
                                               auctions:
                                                   homeState.comingSoonAuctions,
                                             ),
-                                            const SizedBox(height: 20),
+                                            SizedBox(height: 20),
                                             if (endingSoon.isNotEmpty)
                                               HomeAuctionsSection(
                                                 auctions: endingSoon,
                                               ),
                                             if (endingSoon.isNotEmpty)
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20),
                                             if (homeState.status ==
                                                 HomeStatus.error)
                                               Padding(
-                                                padding: const EdgeInsets.all(
+                                                padding: EdgeInsets.all(
                                                   16,
                                                 ),
                                                 child: Text(
                                                   homeState.errorMessage ??
-                                                      'حدث خطأ في تحميل البيانات',
-                                                  style: const TextStyle(
+                                                      AppLocalizations.of(context).dataLoadError,
+                                                  style: TextStyle(
                                                     color: Colors.red,
                                                     fontSize: 14,
                                                   ),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
-                                            const SizedBox(height: 90),
+                                            SizedBox(height: 90),
                                           ],
                                         ),
                                       ),
@@ -603,8 +605,8 @@ class _HomeViewState extends State<_HomeView> {
                               heroTag: 'fab_add',
                               onPressed: () => _showSellerAddSheet(context),
                               backgroundColor: AppColors.primary,
-                              shape: const CircleBorder(),
-                              child: const Icon(
+                              shape: CircleBorder(),
+                              child: Icon(
                                 Icons.add_rounded,
                                 color: Colors.white,
                                 size: 28,
@@ -637,8 +639,8 @@ class _HomeViewState extends State<_HomeView> {
                     isSeller: isSeller,
                   ),
                   backgroundColor: AppColors.primary,
-                  shape: const CircleBorder(),
-                  child: const Icon(
+                  shape: CircleBorder(),
+                  child: Icon(
                     Icons.monetization_on_rounded,
                     color: AppColors.orangeLight,
                     size: 28,
@@ -661,7 +663,7 @@ class _AddOptionTile extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
 
-  const _AddOptionTile({
+  _AddOptionTile({
     required this.icon,
     required this.color,
     required this.title,
@@ -674,7 +676,7 @@ class _AddOptionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
@@ -692,7 +694,7 @@ class _AddOptionTile extends StatelessWidget {
               ),
               child: Icon(icon, color: Colors.white, size: 34),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
             // Text
             Expanded(
               child: Column(
@@ -700,16 +702,16 @@ class _AddOptionTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
@@ -717,7 +719,7 @@ class _AddOptionTile extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             // Chevron — leftmost in RTL
             Icon(
               Icons.chevron_left_rounded,
@@ -734,7 +736,7 @@ class _AddOptionTile extends StatelessWidget {
 class HomeWelcomeBanner extends StatelessWidget {
   final String displayName;
 
-  const HomeWelcomeBanner({super.key, required this.displayName});
+  HomeWelcomeBanner({super.key, required this.displayName});
 
   @override
   Widget build(BuildContext context) {
@@ -742,12 +744,12 @@ class HomeWelcomeBanner extends StatelessWidget {
     final greeting = name.isEmpty ? 'مرحبا بعودتك!' : 'مرحبا $name 👋';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             colors: [AppColors.primaryDark, AppColors.primary],
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
@@ -762,15 +764,15 @@ class HomeWelcomeBanner extends StatelessWidget {
                 children: [
                   Text(
                     greeting,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'اكتشف أحدث المزادات والمربين',
+                  SizedBox(height: 4),
+                  Text(
+                    AppLocalizations.of(context).discoverAuctionsAndBreeders,
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
@@ -784,7 +786,7 @@ class HomeWelcomeBanner extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white30),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.flutter_dash_rounded,
                 color: Colors.white,
                 size: 22,
@@ -802,7 +804,7 @@ class HomeWelcomeBanner extends StatelessWidget {
 class _WheelFloatingIcon extends StatefulWidget {
   final VoidCallback onTap;
 
-  const _WheelFloatingIcon({required this.onTap});
+  _WheelFloatingIcon({required this.onTap});
 
   @override
   State<_WheelFloatingIcon> createState() => _WheelFloatingIconState();
@@ -818,7 +820,7 @@ class _WheelFloatingIconState extends State<_WheelFloatingIcon>
     super.initState();
     _pulse = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: Duration(milliseconds: 900),
     )..repeat(reverse: true);
     _scale = Tween<double>(begin: 1.0, end: 1.12).animate(
       CurvedAnimation(parent: _pulse, curve: Curves.easeInOut),
@@ -842,7 +844,7 @@ class _WheelFloatingIconState extends State<_WheelFloatingIcon>
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
@@ -850,13 +852,13 @@ class _WheelFloatingIconState extends State<_WheelFloatingIcon>
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.45),
+                color: Color(0xFF6366F1).withValues(alpha: 0.45),
                 blurRadius: 12,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Text('🎡', style: TextStyle(fontSize: 24)),
           ),
         ),

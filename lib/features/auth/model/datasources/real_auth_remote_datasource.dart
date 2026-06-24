@@ -164,18 +164,24 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
 
   @override
   Future<UserModel?> getStoredUser() async {
-    final access = await _tokenStorage.getAccessToken();
-    final refresh = await _tokenStorage.getRefreshToken();
+    var access = await _tokenStorage.getAccessToken();
+    var refresh = await _tokenStorage.getRefreshToken();
     if (access == null || refresh == null) return null;
 
-    final payload = DioClient.decodeJwtPayload(access);
+    var payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int?;
     if (userId == null) return null;
 
     final exp = payload['exp'] as int?;
     if (exp != null) {
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
-      if (expiry.isBefore(DateTime.now())) return null;
+      if (expiry.isBefore(DateTime.now())) {
+        final refreshed = await _refreshStoredTokens(refresh);
+        if (refreshed == null) return null;
+        access = refreshed.access;
+        refresh = refreshed.refresh;
+        payload = DioClient.decodeJwtPayload(access);
+      }
     }
 
     final storedProfileType = payload['profile'] as String? ?? 'Customer';
@@ -189,6 +195,28 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       refreshToken: refresh,
       avatarUrl: _avatarUrlFrom(payload),
     );
+  }
+
+  Future<({String access, String refresh})?> _refreshStoredTokens(
+    String refreshToken,
+  ) async {
+    try {
+      final response = await _dio.post(
+        ApiConstants.tokenRefresh,
+        data: {'refresh': refreshToken},
+        options: Options(extra: {'skipAuth': true}),
+      );
+      final access = response.data['access'] as String;
+      final refresh = response.data['refresh'] as String? ?? refreshToken;
+      await _tokenStorage.saveTokens(access: access, refresh: refresh);
+      return (access: access, refresh: refresh);
+    } on ApiException {
+      await _tokenStorage.clearTokens();
+      return null;
+    } on DioException {
+      await _tokenStorage.clearTokens();
+      return null;
+    }
   }
 
   @override

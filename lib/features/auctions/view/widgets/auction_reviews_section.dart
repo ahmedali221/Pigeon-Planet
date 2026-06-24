@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../model/asset_rating_model.dart';
 
 class AuctionReviewsSection extends StatelessWidget {
   final List<AssetRatingModel> reviews;
 
-  const AuctionReviewsSection({
+  AuctionReviewsSection({
     super.key,
     required this.reviews,
   });
@@ -18,12 +19,13 @@ class AuctionReviewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final avg = _avgRating;
     final count = reviews.length;
     final preview = reviews.take(3).toList();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           // header
@@ -32,22 +34,22 @@ class AuctionReviewsSection extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
-                  const SizedBox(width: 4),
+                  Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                  SizedBox(width: 4),
                   Text(
                     avg > 0 ? avg.toStringAsFixed(1) : '—',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary),
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Text('($count)',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 13, color: AppColors.textSecondary)),
                 ],
               ),
-              const Text('تجارب المشترين',
+              Text(l.buyerReviews,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -56,30 +58,30 @@ class AuctionReviewsSection extends StatelessWidget {
           ),
 
           if (reviews.isEmpty) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Icon(Icons.rate_review_outlined,
                       color: AppColors.textHint, size: 36),
                   SizedBox(height: 8),
-                  Text('لا توجد تقييمات بعد',
+                  Text(l.noReviewsYet,
                       style: TextStyle(
                           fontSize: 13, color: AppColors.textSecondary)),
                 ],
               ),
             ),
           ] else ...[
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             ...preview.asMap().entries.map((e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.only(bottom: 12),
                   child: _ReviewCard(review: e.value, index: e.key),
                 )),
             if (count > 3)
@@ -90,12 +92,12 @@ class AuctionReviewsSection extends StatelessWidget {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
+                    side: BorderSide(color: AppColors.primary),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: Text('عرض جميع التقييمات ($count)',
-                      style: const TextStyle(
+                  child: Text(l.viewAllReviews(count),
+                      style: TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600)),
                 ),
               ),
@@ -110,9 +112,9 @@ class _ReviewCard extends StatelessWidget {
   final AssetRatingModel review;
   final int index;
 
-  const _ReviewCard({required this.review, required this.index});
+  _ReviewCard({required this.review, required this.index});
 
-  static const _avatarColors = [
+  static final _avatarColors = [
     AppColors.primary,
     AppColors.orange,
     AppColors.blue,
@@ -141,7 +143,7 @@ class _ReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -161,19 +163,19 @@ class _ReviewCard extends StatelessWidget {
                     backgroundColor: _avatarColor,
                     child: Text(
                       _initial,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 14),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         _roleLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary),
@@ -195,17 +197,17 @@ class _ReviewCard extends StatelessWidget {
                 ],
               ),
               Text(_formatDate(review.created),
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 11, color: AppColors.textHint)),
             ],
           ),
 
           if (review.commentText != null && review.commentText!.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               review.commentText!,
               textAlign: TextAlign.start,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12,
                   color: AppColors.textSecondary,
                   height: 1.5),

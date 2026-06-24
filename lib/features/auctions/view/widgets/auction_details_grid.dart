@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AuctionDetailsGrid extends StatelessWidget {
   final Map<String, dynamic> data;
   const AuctionDetailsGrid({super.key, required this.data});
 
-  static String _staminaLabel(String v) => switch (v) {
-        'excellent' => 'ممتاز',
-        'verygood'  => 'جيد جداً',
-        'good'      => 'جيد',
+  String _staminaLabel(AppLocalizations l, String v) => switch (v) {
+        'excellent' => l.staminaExcellent,
+        'verygood'  => l.staminaVeryGood,
+        'good'      => l.staminaGood,
         _           => '—',
       };
 
-  static String _genderLabel(String v) => switch (v) {
-        'male'   => 'ذكر',
-        'female' => 'أنثى',
-        'young'  => 'صغير',
+  String _genderLabel(AppLocalizations l, String v) => switch (v) {
+        'male'   => l.male,
+        'female' => l.female,
+        'young'  => l.genderYoung,
         _        => '—',
       };
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final achievements = data['achievements'] as String? ?? '';
 
     return Container(
@@ -33,7 +35,7 @@ class AuctionDetailsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'العمر',
+                  label: l.age,
                   value: data['age'] as String? ?? '—',
                   icon: Icons.cake_rounded,
                 ),
@@ -41,7 +43,7 @@ class AuctionDetailsGrid extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'الموقع',
+                  label: l.location,
                   value: data['location'] as String? ?? '—',
                   icon: Icons.location_on_rounded,
                 ),
@@ -54,7 +56,7 @@ class AuctionDetailsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'رقم الحلقة',
+                  label: l.ringNumber,
                   value: data['ringNumber'] as String? ?? '—',
                   icon: Icons.tag_rounded,
                   iconColor: AppColors.primary,
@@ -63,8 +65,8 @@ class AuctionDetailsGrid extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'الجنس',
-                  value: _genderLabel(data['gender'] as String? ?? ''),
+                  label: l.gender,
+                  value: _genderLabel(l, data['gender'] as String? ?? ''),
                   icon: Icons.pets_rounded,
                 ),
               ),
@@ -76,9 +78,9 @@ class AuctionDetailsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'السرعة',
+                  label: l.flyingSpeed,
                   value: (data['flyingSpeed'] as double?) != null
-                      ? '${(data['flyingSpeed'] as double).toStringAsFixed(1)} كم/س'
+                      ? '${(data['flyingSpeed'] as double).toStringAsFixed(1)} ${l.kmPerHour}'
                       : '—',
                   icon: Icons.bolt_rounded,
                   iconColor: AppColors.orange,
@@ -87,8 +89,8 @@ class AuctionDetailsGrid extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: AuctionDetailCell(
-                  label: 'التحمل',
-                  value: _staminaLabel(data['staminaAbility'] as String? ?? ''),
+                  label: l.stamina,
+                  value: _staminaLabel(l, data['staminaAbility'] as String? ?? ''),
                   icon: Icons.favorite_rounded,
                   iconColor: AppColors.red,
                 ),
@@ -99,7 +101,7 @@ class AuctionDetailsGrid extends StatelessWidget {
           if (achievements.isNotEmpty) ...[
             const SizedBox(height: 10),
             AuctionDetailCell(
-              label: 'الإنجازات',
+              label: l.achievements,
               value: achievements,
               icon: Icons.emoji_events_rounded,
               iconColor: const Color(0xFFD4A017),
@@ -136,8 +138,8 @@ class AuctionDetailsGrid extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('المربي',
-                          style: TextStyle(
+                      Text(l.breeder,
+                          style: const TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary)),
                       const SizedBox(height: 2),

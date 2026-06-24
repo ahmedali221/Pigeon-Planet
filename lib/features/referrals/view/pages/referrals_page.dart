@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../viewmodel/referrals_bloc.dart';
 
 class ReferralsPage extends StatefulWidget {
@@ -62,13 +63,8 @@ class _ReferralsPageState extends State<ReferralsPage> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            title: Text(
-              'برنامج الإحالة',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+          appBar: const PPWAppBar(
+            title: 'برنامج الإحالة',
           ),
           body: ListView(
             padding: EdgeInsets.all(16),

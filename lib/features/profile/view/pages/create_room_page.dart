@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../viewmodel/profile_bloc.dart';
 
 class CreateRoomPage extends StatefulWidget {
@@ -41,18 +42,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'إضافة غرفة جديدة',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: const PPWAppBar(
+        title: 'إضافة غرفة جديدة',
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listenWhen: (p, c) => p.roomsStatus != c.roomsStatus,

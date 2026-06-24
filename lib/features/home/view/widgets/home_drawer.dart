@@ -20,12 +20,13 @@ import '../../../home/viewmodel/home_bloc.dart';
 import '../../../loyalty/view/pages/seller_badges_page.dart';
 import '../../../profile/view/pages/profile_switcher_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeDrawer extends StatelessWidget {
   final UserModel? authUser;
   final bool isSeller;
   final int unreadCount;
 
-  const HomeDrawer({
+  HomeDrawer({
     super.key,
     required this.authUser,
     required this.isSeller,
@@ -40,28 +41,28 @@ class HomeDrawer extends StatelessWidget {
           _DrawerHeader(authUser: authUser, isSeller: isSeller),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: 8),
               children: [
                 _NotificationsTile(
                   unreadCount: unreadCount,
                   isSeller: isSeller,
                 ),
                 _ConversationsTile(isSeller: isSeller),
-                if (isSeller) const _ProfileSwitcherTile(),
-                if (isSeller) const _PackageTile(),
-                const _BadgesTile(),
-                if (isSeller) const _SellerOrdersTile(),
-                if (isSeller) const _SellerPaymentsTile(),
-                if (!isSeller) const _CartTile(),
-                if (!isSeller) const _OrdersTile(),
-                if (!isSeller) const _CustomerPaymentsTile(),
-                const _LanguageTile(),
+                if (isSeller) _ProfileSwitcherTile(),
+                if (isSeller) _PackageTile(),
+                _BadgesTile(),
+                if (isSeller) _SellerOrdersTile(),
+                if (isSeller) _SellerPaymentsTile(),
+                if (!isSeller) _CartTile(),
+                if (!isSeller) _OrdersTile(),
+                if (!isSeller) _CustomerPaymentsTile(),
+                _LanguageTile(),
               ],
             ),
           ),
-          const Divider(height: 1),
-          const _LogoutTile(),
-          const SizedBox(height: 16),
+          Divider(height: 1),
+          _LogoutTile(),
+          SizedBox(height: 16),
         ],
       ),
     );
@@ -72,14 +73,14 @@ class _DrawerHeader extends StatelessWidget {
   final UserModel? authUser;
   final bool isSeller;
 
-  const _DrawerHeader({required this.authUser, required this.isSeller});
+  _DrawerHeader({required this.authUser, required this.isSeller});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 52, 16, 24),
-      decoration: const BoxDecoration(
+      padding: EdgeInsets.fromLTRB(16, 52, 16, 24),
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF1B5E20), AppColors.primary],
           begin: Alignment.topRight,
@@ -88,19 +89,19 @@ class _DrawerHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
             backgroundColor: Colors.white24,
             child: Icon(Icons.person_rounded, color: Colors.white, size: 30),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   isSeller ? 'بائع' : 'مشتري',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -109,7 +110,7 @@ class _DrawerHeader extends StatelessWidget {
                 if ((authUser?.phoneNumber ?? '').isNotEmpty)
                   Text(
                     authUser!.phoneNumber,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
               ],
             ),
@@ -124,7 +125,7 @@ class _NotificationsTile extends StatelessWidget {
   final int unreadCount;
   final bool isSeller;
 
-  const _NotificationsTile({
+  _NotificationsTile({
     required this.unreadCount,
     required this.isSeller,
   });
@@ -135,7 +136,7 @@ class _NotificationsTile extends StatelessWidget {
       leading: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Icon(
+          Icon(
             Icons.notifications_outlined,
             color: AppColors.textPrimary,
             size: 24,
@@ -147,14 +148,14 @@ class _NotificationsTile extends StatelessWidget {
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.orange,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: Text(
                     unreadCount > 99 ? '99+' : '$unreadCount',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 7,
                       fontWeight: FontWeight.bold,
@@ -165,12 +166,12 @@ class _NotificationsTile extends StatelessWidget {
             ),
         ],
       ),
-      title: const Text('الإشعارات'),
+      title: Text(AppLocalizations.of(context).notifications),
       onTap: () async {
         Navigator.pop(context);
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const NotificationsPage()),
+          MaterialPageRoute(builder: (_) => NotificationsPage()),
         );
         if (context.mounted) {
           context
@@ -185,7 +186,7 @@ class _NotificationsTile extends StatelessWidget {
 class _ConversationsTile extends StatelessWidget {
   final bool isSeller;
 
-  const _ConversationsTile({required this.isSeller});
+  _ConversationsTile({required this.isSeller});
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +195,7 @@ class _ConversationsTile extends StatelessWidget {
         leading: Stack(
           clipBehavior: Clip.none,
           children: [
-            const Icon(
+            Icon(
               Icons.chat_bubble_outline_rounded,
               color: AppColors.textPrimary,
               size: 24,
@@ -206,14 +207,14 @@ class _ConversationsTile extends StatelessWidget {
                 child: Container(
                   width: 14,
                   height: 14,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.blue,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
                       chatUnread > 99 ? '99+' : '$chatUnread',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.bold,
@@ -224,7 +225,7 @@ class _ConversationsTile extends StatelessWidget {
               ),
           ],
         ),
-        title: const Text('محادثاتي'),
+        title: Text(AppLocalizations.of(context).myConversations),
         onTap: () {
           Navigator.pop(context);
           Navigator.push(
@@ -235,7 +236,7 @@ class _ConversationsTile extends StatelessWidget {
                   ..add(ChatStarted(
                     profileType: isSeller ? 'Seller' : 'Customer',
                   )),
-                child: const ConversationsPage(),
+                child: ConversationsPage(),
               ),
             ),
           ).then((_) {
@@ -248,17 +249,17 @@ class _ConversationsTile extends StatelessWidget {
 }
 
 class _ProfileSwitcherTile extends StatelessWidget {
-  const _ProfileSwitcherTile();
+  _ProfileSwitcherTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.switch_account_rounded,
         color: AppColors.primary,
         size: 24,
       ),
-      title: const Text('تبديل الملف الشخصي'),
+      title: Text(AppLocalizations.of(context).switchProfile),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
@@ -271,22 +272,22 @@ class _ProfileSwitcherTile extends StatelessWidget {
 }
 
 class _PackageTile extends StatelessWidget {
-  const _PackageTile();
+  _PackageTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.workspace_premium_rounded,
         color: AppColors.primary,
         size: 24,
       ),
-      title: const Text('باقتي'),
+      title: Text(AppLocalizations.of(context).myPackage),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const PackagesPage()),
+          MaterialPageRoute(builder: (_) => PackagesPage()),
         );
       },
     );
@@ -294,22 +295,22 @@ class _PackageTile extends StatelessWidget {
 }
 
 class _BadgesTile extends StatelessWidget {
-  const _BadgesTile();
+  _BadgesTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.military_tech_rounded,
         color: AppColors.orange,
         size: 24,
       ),
-      title: const Text('أوسمتي'),
+      title: Text(AppLocalizations.of(context).myBadges),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const SellerBadgesPage()),
+          MaterialPageRoute(builder: (_) => SellerBadgesPage()),
         );
       },
     );
@@ -317,17 +318,17 @@ class _BadgesTile extends StatelessWidget {
 }
 
 class _SellerOrdersTile extends StatelessWidget {
-  const _SellerOrdersTile();
+  _SellerOrdersTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.receipt_long_outlined,
         color: AppColors.textPrimary,
         size: 24,
       ),
-      title: const Text('طلبات العملاء'),
+      title: Text(AppLocalizations.of(context).customerOrders),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
@@ -335,7 +336,7 @@ class _SellerOrdersTile extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => BlocProvider.value(
               value: context.read<CartBloc>(),
-              child: const SellerOrdersPage(),
+              child: SellerOrdersPage(),
             ),
           ),
         );
@@ -345,22 +346,22 @@ class _SellerOrdersTile extends StatelessWidget {
 }
 
 class _SellerPaymentsTile extends StatelessWidget {
-  const _SellerPaymentsTile();
+  _SellerPaymentsTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.payment_rounded,
         color: AppColors.textPrimary,
         size: 24,
       ),
-      title: const Text('طلبات الدفع'),
+      title: Text(AppLocalizations.of(context).paymentRequests),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const PaymentsPage()),
+          MaterialPageRoute(builder: (_) => PaymentsPage()),
         );
       },
     );
@@ -368,7 +369,7 @@ class _SellerPaymentsTile extends StatelessWidget {
 }
 
 class _CartTile extends StatelessWidget {
-  const _CartTile();
+  _CartTile();
 
   @override
   Widget build(BuildContext context) {
@@ -377,13 +378,13 @@ class _CartTile extends StatelessWidget {
         leading: Badge(
           isLabelVisible: cartState.itemsCount > 0,
           label: Text('${cartState.itemsCount}'),
-          child: const Icon(
+          child: Icon(
             Icons.shopping_cart_outlined,
             color: AppColors.textPrimary,
             size: 24,
           ),
         ),
-        title: const Text('سلة الشراء'),
+        title: Text(AppLocalizations.of(context).shoppingCart),
         onTap: () {
           Navigator.pop(context);
           Navigator.push(
@@ -391,7 +392,7 @@ class _CartTile extends StatelessWidget {
             MaterialPageRoute(
               builder: (_) => BlocProvider.value(
                 value: context.read<CartBloc>(),
-                child: const CartPage(),
+                child: CartPage(),
               ),
             ),
           );
@@ -402,17 +403,17 @@ class _CartTile extends StatelessWidget {
 }
 
 class _OrdersTile extends StatelessWidget {
-  const _OrdersTile();
+  _OrdersTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.inventory_2_outlined,
         color: AppColors.textPrimary,
         size: 24,
       ),
-      title: const Text('طلباتي'),
+      title: Text(AppLocalizations.of(context).myOrders),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
@@ -420,7 +421,7 @@ class _OrdersTile extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => BlocProvider.value(
               value: context.read<CartBloc>(),
-              child: const OrdersPage(),
+              child: OrdersPage(),
             ),
           ),
         );
@@ -430,22 +431,22 @@ class _OrdersTile extends StatelessWidget {
 }
 
 class _CustomerPaymentsTile extends StatelessWidget {
-  const _CustomerPaymentsTile();
+  _CustomerPaymentsTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading: Icon(
         Icons.payment_rounded,
         color: AppColors.textPrimary,
         size: 24,
       ),
-      title: const Text('طلبات الدفع'),
+      title: Text(AppLocalizations.of(context).paymentRequests),
       onTap: () {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const PaymentsPage()),
+          MaterialPageRoute(builder: (_) => PaymentsPage()),
         );
       },
     );
@@ -453,7 +454,7 @@ class _CustomerPaymentsTile extends StatelessWidget {
 }
 
 class _LanguageTile extends StatelessWidget {
-  const _LanguageTile();
+  _LanguageTile();
 
   @override
   Widget build(BuildContext context) {
@@ -462,14 +463,14 @@ class _LanguageTile extends StatelessWidget {
       builder: (_, locale, _) {
         final isAr = locale.languageCode == 'ar';
         return ListTile(
-          leading: const Icon(
+          leading: Icon(
             Icons.language_rounded,
             color: AppColors.textPrimary,
             size: 24,
           ),
-          title: const Text('اللغة'),
+          title: Text(AppLocalizations.of(context).language),
           trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(8),
@@ -479,7 +480,7 @@ class _LanguageTile extends StatelessWidget {
             ),
             child: Text(
               isAr ? 'EN' : 'ع',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -494,32 +495,34 @@ class _LanguageTile extends StatelessWidget {
 }
 
 class _LogoutTile extends StatelessWidget {
-  const _LogoutTile();
+  _LogoutTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.logout_rounded, color: Colors.red.shade400, size: 24),
       title: Text(
-        'تسجيل الخروج',
+        AppLocalizations.of(context).logout,
         style: TextStyle(color: Colors.red.shade400),
       ),
       onTap: () {
+        final authBloc = context.read<AuthBloc>();
+        final l10n = AppLocalizations.of(context);
         Navigator.pop(context);
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('تسجيل الخروج'),
-            content: const Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
+            title: Text(l10n.logout),
+            content: Text(l10n.logoutConfirm),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('إلغاء'),
+                child: Text(l10n.cancel),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(ctx);
-                  context.read<AuthBloc>().add(AuthLogoutRequested());
+                  authBloc.add(AuthLogoutRequested());
                 },
                 child: Text(
                   'تسجيل خروج',

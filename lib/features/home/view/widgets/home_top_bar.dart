@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/shell_scaffold.dart';
 
 class HomeTopBar extends StatelessWidget {
   final VoidCallback? onMenuPressed;
@@ -53,6 +54,7 @@ class HomeTopBar extends StatelessWidget {
               ),
             ),
           ),
+          ShellBackButton(color: Colors.white),
           // Logo (center)
           const Expanded(
             child: Center(

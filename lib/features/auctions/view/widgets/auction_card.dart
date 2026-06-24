@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../model/auction_model.dart';
 import '../pages/auction_detail_page.dart';
 
@@ -15,8 +16,9 @@ class AuctionCard extends StatefulWidget {
 class _AuctionCardState extends State<AuctionCard> {
   bool _isFavorite = false;
 
-  String _formatTimeLeft(int? seconds) {
-    if (seconds == null || seconds <= 0) return 'انتهى';
+  String _formatTimeLeft(BuildContext context, int? seconds) {
+    final l = AppLocalizations.of(context);
+    if (seconds == null || seconds <= 0) return l.auctionEnded;
     final h = seconds ~/ 3600;
     final m = (seconds % 3600) ~/ 60;
     final s = seconds % 60;
@@ -40,6 +42,7 @@ class _AuctionCardState extends State<AuctionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final a = widget.auction;
     final ringNumber = a.items.isNotEmpty ? a.items.first.bird.ringNumber : a.title;
     final bidsCount = a.items.isNotEmpty ? a.items.first.bids.length : a.itemCount;
@@ -204,7 +207,7 @@ class _AuctionCardState extends State<AuctionCard> {
                       color: AppColors.red, size: 12),
                   const SizedBox(width: 3),
                   Text(
-                    _formatTimeLeft(a.timeRemaining),
+                    _formatTimeLeft(context, a.timeRemaining),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -223,13 +226,13 @@ class _AuctionCardState extends State<AuctionCard> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text('السعر الحالي',
-                      style: TextStyle(
+                children: [
+                  Text(l.currentPrice,
+                      style: const TextStyle(
                           fontSize: 10,
                           color: AppColors.textSecondary)),
-                  Text('عدد المزايدات',
-                      style: TextStyle(
+                  Text(l.bidCount,
+                      style: const TextStyle(
                           fontSize: 10,
                           color: AppColors.textSecondary)),
                 ],
@@ -243,7 +246,7 @@ class _AuctionCardState extends State<AuctionCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'ج.م ${_formatPrice(a.currentPrice)}',
+                    l.priceEgpFormat(_formatPrice(a.currentPrice)),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -279,8 +282,8 @@ class _AuctionCardState extends State<AuctionCard> {
                   const Icon(Icons.home_work_rounded,
                       color: AppColors.primary, size: 12),
                   const SizedBox(width: 4),
-                  const Text('برعاية',
-                      style: TextStyle(
+                  Text(l.sponsored,
+                      style: const TextStyle(
                           fontSize: 10,
                           color: AppColors.textSecondary)),
                   const SizedBox(width: 4),

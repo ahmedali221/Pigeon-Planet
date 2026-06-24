@@ -6,6 +6,7 @@ class SellerProductPayload {
   final int count;
   final bool isMarketListed;
   final List<String> imageUrls;
+  final int? sellerPackageId;
 
   const SellerProductPayload({
     required this.category,
@@ -15,6 +16,7 @@ class SellerProductPayload {
     required this.count,
     this.isMarketListed = true,
     this.imageUrls = const [],
+    this.sellerPackageId,
   });
 
   Map<String, dynamic> toJson() => {
@@ -23,6 +25,7 @@ class SellerProductPayload {
         'price': price,
         'count': count,
         'is_market_listed': isMarketListed,
+        if (sellerPackageId != null) 'seller_package_id': sellerPackageId,
         if (imageUrls.isNotEmpty)
           'media': imageUrls.asMap().entries
               .map((e) => {

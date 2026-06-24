@@ -8,6 +8,7 @@ import 'feed_auction_item_model.dart';
 import 'feed_repository.dart';
 import 'seller_block_model.dart';
 import 'seller_follow_model.dart';
+import 'seller_package_follow_model.dart';
 
 export 'datasources/feed_remote_datasource.dart' show SellerListResult;
 
@@ -53,6 +54,41 @@ class FeedRepositoryImpl implements FeedRepository {
   Future<Either<Failure, List<SellerFollowModel>>> getFollowing() async {
     try {
       return Right(await _dataSource.getFollowing());
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> followSellerPackage(int packageId) async {
+    try {
+      await _dataSource.followSellerPackage(packageId);
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unfollowSellerPackage(int packageId) async {
+    try {
+      await _dataSource.unfollowSellerPackage(packageId);
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<SellerPackageFollowModel>>> getFollowingPackages() async {
+    try {
+      return Right(await _dataSource.getFollowingPackages());
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {

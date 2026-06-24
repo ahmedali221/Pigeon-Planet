@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const HomeBottomNavBar({
+  HomeBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
   });
 
-  static const _items = [
+  static final _items = [
     _NavItem(icon: Icons.home_rounded, label: 'الرئيسية'),
     _NavItem(icon: Icons.gavel_rounded, label: 'المزادات'),
     _NavItem(icon: Icons.storefront_rounded, label: 'المتجر'),
     _NavItem(icon: Icons.meeting_room_rounded, label: 'الغرف'),
     _NavItem(icon: Icons.emoji_events_rounded, label: 'النتائج'),
-    _NavItem(icon: Icons.access_time_rounded, label: 'الساعة'),
-    _NavItem(icon: Icons.flutter_dash, label: 'البرنامج'),
   ];
 
   @override
@@ -30,7 +29,7 @@ class HomeBottomNavBar extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 12,
-            offset: const Offset(0, -2),
+            offset: Offset(0, -2),
           ),
         ],
       ),
@@ -51,20 +50,20 @@ class HomeBottomNavBar extends StatelessWidget {
                   child: Column(
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
+                        duration: Duration(milliseconds: 250),
                         height: 3,
                         width: active ? 28 : 0,
                         decoration: BoxDecoration(
                           color: AppColors.primary,
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(3),
                             bottomRight: Radius.circular(3),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Icon(item.icon, size: 22, color: color),
-                      const SizedBox(height: 3),
+                      SizedBox(height: 3),
                       Text(
                         item.label,
                         style: TextStyle(
@@ -89,5 +88,5 @@ class HomeBottomNavBar extends StatelessWidget {
 class _NavItem {
   final IconData icon;
   final String label;
-  const _NavItem({required this.icon, required this.label});
+  _NavItem({required this.icon, required this.label});
 }

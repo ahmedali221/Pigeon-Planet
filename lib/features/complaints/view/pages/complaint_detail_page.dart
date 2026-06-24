@@ -3,15 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/complaint_model.dart';
 import '../../viewmodel/complaints_bloc.dart';
 import '../../viewmodel/complaints_event.dart';
 import '../../viewmodel/complaints_state.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ComplaintDetailPage extends StatelessWidget {
   final ComplaintModel initialComplaint;
 
-  const ComplaintDetailPage({super.key, required this.initialComplaint});
+  ComplaintDetailPage({super.key, required this.initialComplaint});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +32,8 @@ class ComplaintDetailPage extends StatelessWidget {
           );
         } else if (state.cancelSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إلغاء الشكوى'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).complaintCancelledSuccess),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -47,35 +49,29 @@ class ComplaintDetailPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: Text(
-              'شكوى #${complaint.id}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
+          appBar: PPWAppBar(
+            title: 'شكوى #${complaint.id}',
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             children: [
               _StatusCard(complaint: complaint),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               _DetailsCard(complaint: complaint),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               _DescriptionCard(complaint: complaint),
               if (complaint.adminNote != null) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _AdminNoteCard(adminNote: complaint.adminNote!),
               ],
               if (complaint.isOpen) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _CancelCard(
                   isCancelling: cancelling,
                   onCancel: () => _confirmCancel(context, complaint.id),
                 ),
               ],
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
             ],
           ),
         );
@@ -87,12 +83,12 @@ class ComplaintDetailPage extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('إلغاء الشكوى'),
-        content: const Text('هل تريد إلغاء هذه الشكوى؟'),
+        title: Text(AppLocalizations.of(context).cancelComplaintTitle),
+        content: Text(AppLocalizations.of(context).cancelComplaintConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('تراجع'),
+            child: Text(AppLocalizations.of(context).back),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(dialogContext, true),
@@ -100,7 +96,7 @@ class ComplaintDetailPage extends StatelessWidget {
               backgroundColor: AppColors.error,
               foregroundColor: Colors.white,
             ),
-            child: const Text('إلغاء'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
         ],
       ),
@@ -114,7 +110,7 @@ class ComplaintDetailPage extends StatelessWidget {
 class _StatusCard extends StatelessWidget {
   final ComplaintModel complaint;
 
-  const _StatusCard({required this.complaint});
+  _StatusCard({required this.complaint});
 
   Color get _color => switch (complaint.status) {
         'open' => AppColors.orange,
@@ -129,7 +125,7 @@ class _StatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _color;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -147,20 +143,20 @@ class _StatusCard extends StatelessWidget {
             child:
                 Icon(Icons.report_problem_outlined, color: color, size: 30),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             complaint.title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Container(
             padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
@@ -184,7 +180,7 @@ class _StatusCard extends StatelessWidget {
 class _DetailsCard extends StatelessWidget {
   final ComplaintModel complaint;
 
-  const _DetailsCard({required this.complaint});
+  _DetailsCard({required this.complaint});
 
   @override
   Widget build(BuildContext context) {
@@ -202,26 +198,26 @@ class _DetailsCard extends StatelessWidget {
             label: 'رقم الشكوى',
             value: '#${complaint.id}',
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.payment_rounded,
             label: 'طلب الدفع',
             value: '#${complaint.paymentRequestId}',
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.category_outlined,
             label: 'النوع',
             value: complaint.typeLabel,
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.calendar_today_outlined,
             label: 'تاريخ الإنشاء',
             value: fmt.format(complaint.createdAt),
           ),
           if (complaint.resolvedAt != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _DetailRow(
               icon: Icons.check_circle_outline_rounded,
               label: 'تاريخ الحل',
@@ -229,7 +225,7 @@ class _DetailsCard extends StatelessWidget {
             ),
           ],
           if (complaint.cancelledAt != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _DetailRow(
               icon: Icons.cancel_outlined,
               label: 'تاريخ الإلغاء',
@@ -247,7 +243,7 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow({
+  _DetailRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -256,24 +252,24 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Icon(icon, color: AppColors.primary, size: 18),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
             ),
           ),
-          const Spacer(),
+          Spacer(),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -289,13 +285,13 @@ class _DetailRow extends StatelessWidget {
 class _DescriptionCard extends StatelessWidget {
   final ComplaintModel complaint;
 
-  const _DescriptionCard({required this.complaint});
+  _DescriptionCard({required this.complaint});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -304,20 +300,20 @@ class _DescriptionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'الوصف',
+          Text(
+            AppLocalizations.of(context).description,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Text(
             complaint.description?.isNotEmpty == true
                 ? complaint.description!
                 : 'لا يوجد وصف',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               height: 1.5,
               color: AppColors.textSecondary,
@@ -332,13 +328,13 @@ class _DescriptionCard extends StatelessWidget {
 class _AdminNoteCard extends StatelessWidget {
   final String adminNote;
 
-  const _AdminNoteCard({required this.adminNote});
+  _AdminNoteCard({required this.adminNote});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -349,10 +345,10 @@ class _AdminNoteCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.admin_panel_settings_outlined,
+              Icon(Icons.admin_panel_settings_outlined,
                   color: AppColors.blue, size: 16),
-              const SizedBox(width: 6),
-              const Text(
+              SizedBox(width: 6),
+              Text(
                 'ملاحظة الإدارة',
                 style: TextStyle(
                   fontSize: 13,
@@ -362,10 +358,10 @@ class _AdminNoteCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             adminNote,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               height: 1.5,
               color: AppColors.textSecondary,
@@ -381,33 +377,33 @@ class _CancelCard extends StatelessWidget {
   final bool isCancelling;
   final VoidCallback onCancel;
 
-  const _CancelCard({required this.isCancelling, required this.onCancel});
+  _CancelCard({required this.isCancelling, required this.onCancel});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
       child: isCancelling
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
           : SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: onCancel,
-                icon: const Icon(Icons.cancel_outlined, color: AppColors.error),
-                label: const Text(
-                  'إلغاء الشكوى',
+                icon: Icon(Icons.cancel_outlined, color: AppColors.error),
+                label: Text(
+                  AppLocalizations.of(context).cancelComplaintTitle,
                   style: TextStyle(color: AppColors.error),
                 ),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: const BorderSide(color: AppColors.error),
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: AppColors.error),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

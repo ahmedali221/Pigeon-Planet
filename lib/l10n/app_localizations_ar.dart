@@ -261,6 +261,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get auctionUpdatedSuccess => 'تم تحديث المزاد بنجاح';
 
   @override
+  String get editAuction => 'تعديل المزاد';
+
+  @override
   String get auctionDescriptionLabel => 'وصف المزاد';
 
   @override
@@ -308,6 +311,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get limitedOffer => 'عرض محدود';
+
+  @override
+  String get limitedOfferRareOpportunity => 'عرض محدود - فرصة نادرة';
+
+  @override
+  String get ownTodaysChampionWinTomorrow =>
+      'اقتني بطل اليوم - حقق انتصارات الغد';
 
   @override
   String get tapToWatchVideo => 'اضغط لعرض الفيديو';
@@ -871,4 +881,937 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loadMore => 'تحميل المزيد';
+
+  @override
+  String get uploadSizeHint => 'PNG, JPG حتى 10MB';
+
+  @override
+  String get serviceProviderSubtitle => 'للشركات والموردين';
+
+  @override
+  String get mustAgreeToTerms => 'يجب الموافقة على الشروط والأحكام';
+
+  @override
+  String get registerSuccess => 'تم إنشاء الحساب بنجاح';
+
+  @override
+  String get username => 'اسم المستخدم';
+
+  @override
+  String get usernameHint => 'أدخل اسم المستخدم (بدون مسافات)';
+
+  @override
+  String get passwordHint => 'أدخل كلمة المرور';
+
+  @override
+  String get confirmPasswordHint => 'أدخل كلمة المرور مرة أخرى';
+
+  @override
+  String get personalAccount => 'حساب شخصي';
+
+  @override
+  String get personalAccountSub => 'للمربين والمشترين';
+
+  @override
+  String get phoneHint => '+20 1xx xxx xxxx';
+
+  @override
+  String get age => 'العمر';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get flyingSpeed => 'السرعة';
+
+  @override
+  String get kmPerHour => 'كم/س';
+
+  @override
+  String get stamina => 'التحمل';
+
+  @override
+  String get achievements => 'الإنجازات';
+
+  @override
+  String get staminaExcellent => 'ممتاز';
+
+  @override
+  String get staminaVeryGood => 'جيد جداً';
+
+  @override
+  String get staminaGood => 'جيد';
+
+  @override
+  String get genderYoung => 'صغير';
+
+  @override
+  String get auctionEnded => 'انتهى';
+
+  @override
+  String priceEgpFormat(String amount) {
+    return 'ج.م $amount';
+  }
+
+  @override
+  String get unspecified => 'غير محدد';
+
+  @override
+  String get lessThanAYear => 'أقل من سنة';
+
+  @override
+  String get notAvailable => 'غير متاح';
+
+  @override
+  String get noDescription => 'لا يوجد وصف.';
+
+  @override
+  String get pigeonDetails => 'تفاصيل الحمام';
+
+  @override
+  String savingsAmount(String amount) {
+    return 'توفير $amount ج.م';
+  }
+
+  @override
+  String discountPercent(Object percent) {
+    return 'خصم $percent%';
+  }
+
+  @override
+  String liveViewersCount(Object count) {
+    return '$count شخص يشاهدون الآن';
+  }
+
+  @override
+  String todayRequestsCount(Object count) {
+    return '$count طلب اليوم';
+  }
+
+  @override
+  String get thisBirdIsYours => 'هذا الطائر ملكك';
+
+  @override
+  String get buyNowLimitedOffer => '🛒 اشتري الآن - عرض لفترة محدودة!';
+
+  @override
+  String get dnaRegistered => 'DNA مسجل';
+
+  @override
+  String get birdPhoto => 'صورة الطير';
+
+  @override
+  String get birdWing => 'الجناح';
+
+  @override
+  String get birdEye => 'العين';
+
+  @override
+  String get ringNumberThumbnail => 'رقم الدبلة';
+
+  @override
+  String photoNumber(int number) {
+    return 'صورة $number';
+  }
+
+  @override
+  String get birdVideo => 'فيديو الطير';
+
+  @override
+  String get zeroViews => '0 مشاهدة';
+
+  @override
+  String get noReviewsYet => 'لا توجد تقييمات بعد';
+
+  @override
+  String viewAllReviews(int count) {
+    return 'عرض جميع التقييمات ($count)';
+  }
+
+  @override
+  String get emptyCartTitle => 'عربتك فارغة';
+
+  @override
+  String get emptyCartSubtitle => 'تصفّح السوق وأضف منتجات إلى عربتك';
+
+  @override
+  String get completeOrder => 'إتمام الطلب';
+
+  @override
+  String get birdsInThisAuction => 'الطيور في هذا المزاد';
+
+  @override
+  String daysRemaining(int count) {
+    return '$count يوم متبقي';
+  }
+
+  @override
+  String hoursRemaining(int count) {
+    return '$count ساعة متبقية';
+  }
+
+  @override
+  String minutesRemaining(int count) {
+    return '$count دقيقة متبقية';
+  }
+
+  @override
+  String get statusActive => 'نشط';
+
+  @override
+  String get statusEnded => 'منتهي';
+
+  @override
+  String get statusUpcoming => 'قادم';
+
+  @override
+  String get statusSold => 'مُباع';
+
+  @override
+  String get statusUnsold => 'غير مُباع';
+
+  @override
+  String get statusCancelled => 'ملغي';
+
+  @override
+  String minBidLabel(String amount) {
+    return 'حد أدنى: $amount ج.م';
+  }
+
+  @override
+  String birdCount(int count) {
+    return '$count طائر';
+  }
+
+  @override
+  String bidCountLabel(int count) {
+    return '$count مزايدة';
+  }
+
+  @override
+  String get byProceedingYouAgree => 'بالمتابعة، أنت توافق على ';
+
+  @override
+  String get andConnector => ' و';
+
+  @override
+  String auctionBidAmountEgp(String amount) {
+    return '$amount ج.م';
+  }
+
+  @override
+  String get viewAllReviewsText => 'عرض جميع التقييمات';
+
+  @override
+  String get blockSeller => 'حظر البائع';
+
+  @override
+  String get unblockSeller => 'إلغاء الحظر';
+
+  @override
+  String get followingNow => 'تتابع الآن';
+
+  @override
+  String get contactSeller => 'تواصل مع البائع';
+
+  @override
+  String get followSellerToContact => 'تابع هذا البائع للتواصل معه';
+
+  @override
+  String get aboutBreeder => 'نبذة عن المربي';
+
+  @override
+  String get noAdditionalInfo => 'لا توجد معلومات إضافية';
+
+  @override
+  String get breederAuctions => 'مزادات المربي';
+
+  @override
+  String get reviews => 'التقييمات';
+
+  @override
+  String get averageRating => 'متوسط التقييم';
+
+  @override
+  String get activeAuction => 'مزاد نشط';
+
+  @override
+  String get outOfFive => 'من 5';
+
+  @override
+  String get whatDoYouWantToAdd => 'ماذا تريد أن تضيف؟';
+
+  @override
+  String get addAuctionBirds => 'إضافة طيور للمزاد';
+
+  @override
+  String get startAuctionForBirds => 'ابدأ مزاد على حمامك الزاجل';
+
+  @override
+  String get addFixedPriceBirds => 'إضافة طيور بسعر ثابت';
+
+  @override
+  String get directSaleFixedPrice => 'بيع مباشر بسعر محدد مسبقاً';
+
+  @override
+  String get addProducts => 'إضافة منتجات';
+
+  @override
+  String get productsSubtitle => 'أدوية، مكملات، مستلزمات وأكثر';
+
+  @override
+  String get manageSubscriptions => 'إدارة اشتراكاتي';
+
+  @override
+  String get subscribeToCreateAuctions =>
+      'اشترك في باقة لتتمكن من إنشاء المزادات';
+
+  @override
+  String get dataLoadError => 'حدث خطأ في تحميل البيانات';
+
+  @override
+  String get discoverAuctionsAndBreeders => 'اكتشف أحدث المزادات والمربين';
+
+  @override
+  String get bestSeller => 'الأكثر مبيعاً';
+
+  @override
+  String get browseProducts => 'تصفح المنتجات';
+
+  @override
+  String get free => 'مجاني';
+
+  @override
+  String get homeDelivery => 'توصيل للمنزل';
+
+  @override
+  String get availableProduct => 'منتج متاح';
+
+  @override
+  String get allProductsHighQuality => 'جميع المنتجات عالية الجودة';
+
+  @override
+  String get certifiedOriginalProducts => 'منتجات أصلية معتمدة لصحة حمامك';
+
+  @override
+  String get activeOffers => 'عروض نشطة';
+
+  @override
+  String get suggestedForYou => 'مقترح لك';
+
+  @override
+  String get more => 'المزيد';
+
+  @override
+  String get followedAlt => 'متابَع';
+
+  @override
+  String get noProducts => 'لا توجد منتجات';
+
+  @override
+  String get newest => 'الأحدث';
+
+  @override
+  String get priceLowToHigh => 'السعر: الأقل أولاً';
+
+  @override
+  String get priceHighToLow => 'السعر: الأعلى أولاً';
+
+  @override
+  String get sort => 'ترتيب';
+
+  @override
+  String get benefits => 'الفوائد';
+
+  @override
+  String get myInsights => 'إحصائياتي';
+
+  @override
+  String get insightsLoadError => 'فشل تحميل الإحصائيات';
+
+  @override
+  String get closedAuctions => 'مزادات مغلقة';
+
+  @override
+  String get totalOffersReceived => 'إجمالي العروض المستلمة';
+
+  @override
+  String get uniqueBidders => 'مزايدون فريدون';
+
+  @override
+  String get completedSales => 'مبيعات مكتملة';
+
+  @override
+  String get pendingPaymentRequests => 'طلبات دفع معلقة';
+
+  @override
+  String get listedProducts => 'منتجات معروضة';
+
+  @override
+  String get pendingOrders => 'طلبات معلقة';
+
+  @override
+  String get lowStock => 'مخزون منخفض';
+
+  @override
+  String get engagement => 'التفاعل';
+
+  @override
+  String get totalFollowers => 'إجمالي المتابعين';
+
+  @override
+  String get newFollowers7Days => 'متابعون جدد (7 أيام)';
+
+  @override
+  String get activeConversations => 'محادثات نشطة';
+
+  @override
+  String get unreadMessages => 'رسائل غير مقروءة';
+
+  @override
+  String get profileViews7Days => 'مشاهدات الملف (7 أيام)';
+
+  @override
+  String get auctionViews7Days => 'مشاهدات المزادات (7 أيام)';
+
+  @override
+  String get marketViews7Days => 'مشاهدات المتجر (7 أيام)';
+
+  @override
+  String get trust => 'الموثوقية';
+
+  @override
+  String get ratingsCount => 'عدد التقييمات';
+
+  @override
+  String get newReviews7Days => 'مراجعات جديدة (7 أيام)';
+
+  @override
+  String get badges => 'الشارات';
+
+  @override
+  String get package => 'الباقة';
+
+  @override
+  String get currentPackage => 'الباقة الحالية';
+
+  @override
+  String get packageNumber => 'رقم الباقة';
+
+  @override
+  String get subscriptionStatus => 'حالة الاشتراك';
+
+  @override
+  String get inactive => 'غير نشط';
+
+  @override
+  String get remainingAuctionQuota => 'حصة المزادات المتبقية';
+
+  @override
+  String get remainingMarketQuota => 'حصة المتجر المتبقية';
+
+  @override
+  String get remainingPackagePoints => 'نقاط الباقة المتبقية';
+
+  @override
+  String get promotedAuctions => 'مزادات مروجة';
+
+  @override
+  String get promotedProducts => 'منتجات مروجة';
+
+  @override
+  String get packageExpiryDate => 'تاريخ انتهاء الباقة';
+
+  @override
+  String get activeOnly => 'النشطة فقط';
+
+  @override
+  String get previous => 'السابقة';
+
+  @override
+  String get badgesLoadError => 'حدث خطأ في تحميل الأوسمة';
+
+  @override
+  String get noBadgesYet => 'لا توجد أوسمة بعد';
+
+  @override
+  String get completeDealsForBadges =>
+      'أكمل صفقاتك وتفاعل مع المنصة لتحصل على أوسمة';
+
+  @override
+  String get expired => 'منتهٍ';
+
+  @override
+  String get enterValidPrice => 'يرجى إدخال سعر صحيح';
+
+  @override
+  String get viewPackages => 'عرض الباقات';
+
+  @override
+  String get createNewAuction => 'إنشاء مزاد جديد';
+
+  @override
+  String get auctionData => 'بيانات المزاد';
+
+  @override
+  String get auctionTitleFieldLabel => 'عنوان المزاد *';
+
+  @override
+  String get auctionTitleExample => 'مثال: حمام زاجل مميز';
+
+  @override
+  String get auctionDescBriefHint => 'اكتب وصفاً مختصراً للمزاد';
+
+  @override
+  String get auctionImage => 'صورة المزاد';
+
+  @override
+  String get auctionTypeField => 'نوع المزاد';
+
+  @override
+  String get chooseStartDateTime => 'اختر تاريخ ووقت البدء';
+
+  @override
+  String get chooseEndDateTime => 'اختر تاريخ ووقت الانتهاء';
+
+  @override
+  String get minBidField => 'الحد الأدنى للمزايدة';
+
+  @override
+  String get tagsFieldLabel => 'الوسوم';
+
+  @override
+  String get auctionSettings => 'إعدادات المزاد';
+
+  @override
+  String get autoExtend => 'تمديد تلقائي';
+
+  @override
+  String get autoExtendDesc =>
+      'تمديد المزاد تلقائياً عند وجود مزايدات في آخر الدقائق';
+
+  @override
+  String get extensionDuration => 'مدة التمديد';
+
+  @override
+  String get buyNowDesc => 'السماح بالشراء الفوري';
+
+  @override
+  String get buyNowPriceField => 'سعر الشراء الفوري';
+
+  @override
+  String get depositRequired => 'العربون مطلوب';
+
+  @override
+  String get depositRequiredDesc => 'يتطلب المزاد دفع عربون لتأكيد المزايدة';
+
+  @override
+  String get paymentDeadlineDays => 'مهلة الدفع بالأيام';
+
+  @override
+  String birdsCount(Object arg0) {
+    return 'عدد الطيور: $arg0';
+  }
+
+  @override
+  String get createAuction => 'إنشاء المزاد';
+
+  @override
+  String get nextArrow => 'التالي ←';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get birds => 'الطيور';
+
+  @override
+  String get chick => 'فرخ';
+
+  @override
+  String buyNowConfirmMessage(Object arg0) {
+    return 'هل تريد الشراء الآن بسعر $arg0 ج.م؟';
+  }
+
+  @override
+  String amountDisplay(Object arg0) {
+    return 'المبلغ: $arg0 ج.م';
+  }
+
+  @override
+  String get viewPaymentDetails => 'عرض تفاصيل الدفع';
+
+  @override
+  String minBidDisplay(Object arg0) {
+    return 'الحد الأدنى: $arg0 ج.م';
+  }
+
+  @override
+  String get yourAuctionCannotBid => 'لا يمكنك المزايدة على مزادك';
+
+  @override
+  String get auctionNotStartedYet => 'المزاد لم يبدأ بعد';
+
+  @override
+  String wonAuction(Object arg0) {
+    return 'فزت بالمزاد #$arg0';
+  }
+
+  @override
+  String get enterValidNumber => 'أدخل رقماً صحيحاً';
+
+  @override
+  String minBidValidation(Object arg0) {
+    return 'يجب ألا تقل المزايدة عن $arg0';
+  }
+
+  @override
+  String get minimumLabel => 'الحد الأدنى';
+
+  @override
+  String get orderConfirmationTitle => 'تأكيد الطلب';
+
+  @override
+  String get orderSentSuccess => 'تم إرسال الطلب بنجاح';
+
+  @override
+  String get awaitingSellerApproval => 'بانتظار موافقة البائع';
+
+  @override
+  String orderNumber(Object arg0) {
+    return 'طلب #$arg0';
+  }
+
+  @override
+  String get statusLabel => 'الحالة';
+
+  @override
+  String get backToHome => 'العودة للرئيسية';
+
+  @override
+  String quantityLabel(Object arg0) {
+    return 'الكمية: $arg0';
+  }
+
+  @override
+  String get orderDetails => 'تفاصيل الطلب';
+
+  @override
+  String sellerName(Object arg0) {
+    return 'البائع: $arg0';
+  }
+
+  @override
+  String cashbackEarned(Object arg0) {
+    return 'كاش باك مكتسب: $arg0';
+  }
+
+  @override
+  String cashbackRedeemed(Object arg0) {
+    return 'كاش باك مستخدم: $arg0';
+  }
+
+  @override
+  String get statusPending => 'قيد الانتظار';
+
+  @override
+  String get statusProcessing => 'قيد المعالجة';
+
+  @override
+  String get statusCompleted => 'مكتمل';
+
+  @override
+  String get statusPartialRejected => 'مرفوض جزئياً';
+
+  @override
+  String orderSummary(Object arg0, Object arg1) {
+    return '$arg0 منتجات - $arg1';
+  }
+
+  @override
+  String orderItemSummary(Object arg0, Object arg1) {
+    return '$arg0 × $arg1';
+  }
+
+  @override
+  String orderTotalSar(Object arg0) {
+    return 'الإجمالي: $arg0 ر.س';
+  }
+
+  @override
+  String get pointsLoyaltyLoadError => 'تعذر تحميل بيانات الولاء من الخادم';
+
+  @override
+  String get pointsSystemTitle => 'نظام PP Coins';
+
+  @override
+  String get pointsSystemSubtitle => 'اكسب نقاطاً واستبدلها بجوائز حصرية';
+
+  @override
+  String get currentBalance => 'رصيدك الحالي';
+
+  @override
+  String pointsAmount(Object count) {
+    return '$count نقطة';
+  }
+
+  @override
+  String get pointsTabLabel => '🪙  النقاط';
+
+  @override
+  String get rewardsTabLabel => '🎁  الجوائز';
+
+  @override
+  String get totalPoints => 'إجمالي النقاط';
+
+  @override
+  String get loyaltyPoints => 'نقاط الولاء';
+
+  @override
+  String get packagePoints => 'نقاط الباقة';
+
+  @override
+  String get pointsLog => 'سجل النقاط';
+
+  @override
+  String get noPointTransactions => 'لا توجد معاملات نقاط بعد';
+
+  @override
+  String get viewAllTransactions => 'عرض كل المعاملات';
+
+  @override
+  String get howEarnPoints => 'كيف تكسب نقاطاً؟';
+
+  @override
+  String get pointsValue => 'قيمة النقاط';
+
+  @override
+  String get pointsExpiryNote =>
+      'النقاط صالحة لمدة سنة من تاريخ الكسب. تُضاف تلقائياً بعد إتمام كل عملية.';
+
+  @override
+  String get earnCompleteSalePurchase => 'إتمام بيع أو شراء';
+
+  @override
+  String get earnCompleteSalePurchaseSub => 'لكل صفقة مكتملة';
+
+  @override
+  String get earnPayOnTime => 'سداد في الوقت المحدد';
+
+  @override
+  String get earnPayOnTimeSub => 'خلال مهلة الدفع';
+
+  @override
+  String get earnFiveStarRating => 'تقييم 5 نجوم';
+
+  @override
+  String get earnFiveStarRatingSub => 'من المشتري أو البائع';
+
+  @override
+  String get earnInviteFriend => 'دعوة صديق';
+
+  @override
+  String get earnInviteFriendSub => 'عند تسجيله وإتمام أول صفقة';
+
+  @override
+  String get earnAddDigitalId => 'إضافة هوية رقمية للطائر';
+
+  @override
+  String get earnAddDigitalIdSub => 'أول مرة لكل طائر';
+
+  @override
+  String get earnShareAuction => 'مشاركة مزاد';
+
+  @override
+  String get earnShareAuctionSub => 'عبر واتساب أو تويتر';
+
+  @override
+  String get earnDailyLogin => 'تسجيل الدخول اليومي';
+
+  @override
+  String get earnDailyLoginSub => 'مرة واحدة يومياً';
+
+  @override
+  String get pointsValueDiscountPublish5 => 'خصم 5 ريال على رسوم النشر';
+
+  @override
+  String get pointsValueDiscountDeal10 => 'خصم 10 ريال على أي صفقة';
+
+  @override
+  String get pointsValueFreeWeek => 'اشتراك مجاني لمدة أسبوع';
+
+  @override
+  String get pointsValueAdUpgrade2 => 'ترقية إعلان مجانية × 2';
+
+  @override
+  String get pointsValueTrustedSellerBadge => 'شارة \"بائع موثوق\" لمدة شهر';
+
+  @override
+  String get pointsValueFreeMonth => 'اشتراك مجاني لمدة شهر كامل';
+
+  @override
+  String get pointsValueHomepageFeaturedAd => 'إعلان مميز على الصفحة الرئيسية';
+
+  @override
+  String get pointsValueVipThreeMonths => 'عضوية VIP لمدة 3 أشهر';
+
+  @override
+  String get myBadgesSection => 'شاراتي';
+
+  @override
+  String get noEarnedBadges => 'لا توجد شارات مكتسبة بعد';
+
+  @override
+  String get availableBadges => 'الشارات المتاحة';
+
+  @override
+  String get howGetReward => 'كيف تحصل على جائزة؟';
+
+  @override
+  String get membershipLevels => 'مستويات العضوية';
+
+  @override
+  String get rewardAuctionFeeDiscount => 'تخفيض على رسوم المزاد';
+
+  @override
+  String get rewardAuctionFeeDiscountSub => 'خصم 10% على رسوم نشر أي مزاد';
+
+  @override
+  String get rewardDiscountsCategory => 'خصومات';
+
+  @override
+  String get rewardFreeWeeklySubscription => 'اشتراك أسبوعي مجاني';
+
+  @override
+  String get rewardFreeWeeklySubscriptionSub =>
+      'اشتراك في باقة البائع الأساسية لمدة 7 أيام';
+
+  @override
+  String get rewardSubscriptionsCategory => 'اشتراكات';
+
+  @override
+  String get rewardAdUpgrade => 'ترقية إعلان';
+
+  @override
+  String get rewardAdUpgradeSub =>
+      'ظهور إعلانك في أعلى نتائج البحث لمدة 3 أيام';
+
+  @override
+  String get rewardPromotionCategory => 'ترويج';
+
+  @override
+  String get rewardTrustedSellerBadge => 'شارة البائع الموثوق';
+
+  @override
+  String get rewardTrustedSellerBadgeSub =>
+      'شارة زرقاء تظهر بجانب اسمك لمدة شهر';
+
+  @override
+  String get rewardFeaturesCategory => 'مميزات';
+
+  @override
+  String get rewardFreeMonthlySubscription => 'اشتراك شهري مجاني';
+
+  @override
+  String get rewardFreeMonthlySubscriptionSub =>
+      'اشتراك في باقة البائع الاحترافية لمدة شهر';
+
+  @override
+  String get rewardFeaturedHomepageAd => 'إعلان مميز - الصفحة الرئيسية';
+
+  @override
+  String get rewardFeaturedHomepageAdSub =>
+      'ظهور مزادك في بانر الصفحة الرئيسية لمدة يوم';
+
+  @override
+  String get rewardVipMembership => 'عضوية VIP';
+
+  @override
+  String get rewardVipMembershipSub =>
+      'جميع المزايا + دعم أولوية + خصم دائم 15%';
+
+  @override
+  String get redeem => 'استبدال';
+
+  @override
+  String get howRedeemEarnPoints =>
+      'اكسب نقاطاً من خلال إتمام الصفقات والأنشطة اليومية';
+
+  @override
+  String get howRedeemChooseReward =>
+      'اختر الجائزة التي تريدها من الكتالوج أدناه';
+
+  @override
+  String get howRedeemTapRedeem =>
+      'اضغط \"استبدال\" وسيتم خصم النقاط وتفعيل الجائزة فوراً';
+
+  @override
+  String get howRedeemRewardAppears =>
+      'تظهر الجائزة تلقائياً في حسابك خلال دقائق';
+
+  @override
+  String get tierBronze => 'برونزي';
+
+  @override
+  String get tierBronzeRange => '0 – 499 نقطة';
+
+  @override
+  String get tierSilver => 'فضي';
+
+  @override
+  String get tierSilverRange => '500 – 1,999 نقطة';
+
+  @override
+  String get tierGold => 'ذهبي';
+
+  @override
+  String get tierGoldRange => '2,000 – 4,999 نقطة';
+
+  @override
+  String get tierVipRange => '5,000+ نقطة';
+
+  @override
+  String get convertCashbackToPoints => 'حوّل كاش باك إلى نقاط PP';
+
+  @override
+  String get cashbackConversionRate => 'كل 1 كاش باك = 20 نقطة PP';
+
+  @override
+  String cashbackConversionSuccess(Object count) {
+    return 'تم! حصلت على $count نقطة PP';
+  }
+
+  @override
+  String get tryAgainError => 'حدث خطأ، حاول مرة أخرى';
+
+  @override
+  String get cashbackBalanceLabel => 'رصيد الكاش باك:';
+
+  @override
+  String get cashbackAmountHint => 'أدخل المبلغ (كاش باك)';
+
+  @override
+  String get convertNow => 'تحويل الآن';
+
+  @override
+  String get pointsTransactionFallback => 'معاملة نقاط';
+
+  @override
+  String balanceAfterTransaction(Object balance) {
+    return 'الرصيد بعد العملية: $balance';
+  }
+
+  @override
+  String get revoked => 'مُلغى';
+
+  @override
+  String thresholdLabel(Object value) {
+    return 'الحد: $value';
+  }
+
+  @override
+  String get earnedBadge => 'مكتسبة ✓';
+
+  @override
+  String get available => 'متاحة';
 }

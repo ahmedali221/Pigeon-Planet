@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../model/bid_model.dart';
 
 class AuctionBidsSection extends StatelessWidget {
@@ -31,17 +32,18 @@ class AuctionBidsSection extends StatelessWidget {
     return buf.toString().split('').reversed.join();
   }
 
-  String _fmtDate(DateTime dt) {
+  String _fmtDate(DateTime dt, AppLocalizations l) {
     final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 1) return l.now;
+    if (diff.inMinutes < 60) return l.minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.hoursAgo(diff.inHours);
+    return l.daysAgo(diff.inDays);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -68,9 +70,9 @@ class AuctionBidsSection extends StatelessWidget {
                         color: AppColors.primary, size: 18),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'المزايدون',
-                    style: TextStyle(
+                  Text(
+                    l.bidders,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -99,12 +101,12 @@ class AuctionBidsSection extends StatelessWidget {
             const Divider(height: 1, color: AppColors.divider),
 
             if (bids.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Center(
                   child: Text(
-                    'لا توجد مزايدات بعد',
-                    style: TextStyle(
+                    l.noBidsYet,
+                    style: const TextStyle(
                         fontSize: 14, color: AppColors.textSecondary),
                   ),
                 ),
@@ -171,7 +173,7 @@ class AuctionBidsSection extends StatelessWidget {
                               Text(
                                 bid.bidderUsername.isNotEmpty
                                     ? bid.bidderUsername
-                                    : 'مجهول',
+                                    : l.unknown,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -182,7 +184,7 @@ class AuctionBidsSection extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                _fmtDate(bid.created),
+                                _fmtDate(bid.created, l),
                                 style: const TextStyle(
                                     fontSize: 11,
                                     color: AppColors.textSecondary),
@@ -195,7 +197,7 @@ class AuctionBidsSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${_fmtPrice(bid.amount)} ج.م',
+                              l.auctionBidAmountEgp(_fmtPrice(bid.amount)),
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -205,9 +207,9 @@ class AuctionBidsSection extends StatelessWidget {
                               ),
                             ),
                             if (bid.isWinningBid)
-                              const Text(
-                                'أعلى مزايدة',
-                                style: TextStyle(
+                              Text(
+                                l.highestBid,
+                                style: const TextStyle(
                                     fontSize: 10,
                                     color: Color(0xFFD4A017),
                                     fontWeight: FontWeight.w600),

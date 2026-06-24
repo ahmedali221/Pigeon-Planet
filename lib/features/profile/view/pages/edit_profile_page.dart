@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  EditProfilePage({super.key});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -52,24 +54,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('حذف الملف الشخصي'),
-        content: const Text(
+        title: Text('حذف الملف الشخصي'),
+        content: Text(
           'هل أنت متأكد من حذف هذا الملف الشخصي؟ لا يمكن التراجع عن هذا الإجراء.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('إلغاء'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('حذف', style: TextStyle(color: Colors.red.shade600)),
+            child: Text(AppLocalizations.of(context).delete, style: TextStyle(color: Colors.red.shade600)),
           ),
         ],
       ),
     );
     if (confirmed == true && context.mounted) {
-      context.read<ProfileBloc>().add(const ProfileDeleteRequested());
+      context.read<ProfileBloc>().add(ProfileDeleteRequested());
     }
   }
 
@@ -86,7 +88,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (state.status == ProfileStatus.updated) {
           Navigator.pop(context, true);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('تم تحديث الملف الشخصي'),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
@@ -103,7 +105,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (state.status == ProfileStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred),
               backgroundColor: Colors.red.shade600,
               behavior: SnackBarBehavior.floating,
             ),
@@ -113,7 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       builder: (context, state) {
         final profile = state.profile;
         if (profile == null) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
@@ -123,10 +125,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            title: const Text('تعديل الملف الشخصي'),
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).editProfile,
             actions: [
               if (isBusy)
                 const Padding(
@@ -143,7 +143,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ],
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Form(
               key: _formKey,
               child: Column(
@@ -151,7 +151,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   if (profile.isSeller) ...[
                     _sectionLabel('الاسم المعروض'),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     TextFormField(
                       controller: _nicknameCtrl,
                       enabled: !isBusy,
@@ -166,10 +166,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                   ],
-                  _sectionLabel('الدولة'),
-                  const SizedBox(height: 8),
+                  _sectionLabel(AppLocalizations.of(context).country),
+                  SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCountry,
                     isExpanded: true,
@@ -196,9 +196,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             });
                           },
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   _sectionLabel('العملة'),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCurrency.isNotEmpty
                         ? _selectedCurrency
@@ -220,7 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             }
                           },
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -228,13 +228,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: isBusy && state.status == ProfileStatus.updating
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -242,17 +242,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text(
+                          : Text(
                               'حفظ التغييرات',
                               style: TextStyle(fontSize: 16),
                             ),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  const Divider(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 32),
+                  Divider(),
+                  SizedBox(height: 16),
                   _sectionLabel('منطقة الخطر', color: Colors.red.shade700),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
@@ -274,7 +274,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      subtitle: const Text(
+                      subtitle: Text(
                         'سيتم تعطيل هذا الحساب نهائياً',
                         style: TextStyle(fontSize: 12),
                       ),
@@ -285,7 +285,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       onTap: isBusy ? null : () => _confirmDelete(context),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
@@ -322,14 +322,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.primary),
+      borderSide: BorderSide(color: AppColors.primary),
     ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
   );
 }
 
 String _countryNameFor(String code) {
-  const names = {
+  final names = {
     'EG': 'مصر',
     'SA': 'السعودية',
     'AE': 'الإمارات',

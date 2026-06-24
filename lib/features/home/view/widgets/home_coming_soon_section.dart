@@ -3,26 +3,27 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_detail_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeComingSoonSection extends StatelessWidget {
   final List<AuctionModel> auctions;
 
-  const HomeComingSoonSection({super.key, required this.auctions});
+  HomeComingSoonSection({super.key, required this.auctions});
 
   @override
   Widget build(BuildContext context) {
-    if (auctions.isEmpty) return const SizedBox.shrink();
+    if (auctions.isEmpty) return SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         // ── Section header ─────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              const Text('🔥', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 6),
-              const Text(
+              Text('🔥', style: TextStyle(fontSize: 18)),
+              SizedBox(width: 6),
+              Text(
                 'مزادات قادمة',
                 style: TextStyle(
                   fontSize: 17,
@@ -30,13 +31,13 @@ class HomeComingSoonSection extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               GestureDetector(
                 onTap: () {},
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
-                      'الكل',
+                      AppLocalizations.of(context).all,
                       style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 14,
@@ -51,21 +52,21 @@ class HomeComingSoonSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
 
         // ── Alert banner ───────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             width: double.infinity,
             padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                EdgeInsets.symmetric(vertical: 10, horizontal: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFFDE7),
+              color: Color(0xFFFFFDE7),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFFDD835)),
+              border: Border.all(color: Color(0xFFFDD835)),
             ),
-            child: const Text(
+            child: Text(
               'سوف تنزل المزادات قريباً - كن مستعداً!',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -77,15 +78,15 @@ class HomeComingSoonSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
 
         // ── Cards list ─────────────────────────────────────────────────────
         ListView.separated(
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           itemCount: auctions.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
+          separatorBuilder: (_, _) => SizedBox(height: 14),
           itemBuilder: (context, i) =>
               _ComingSoonCard(auction: auctions[i]),
         ),
@@ -98,7 +99,7 @@ class HomeComingSoonSection extends StatelessWidget {
 class _ComingSoonCard extends StatelessWidget {
   final AuctionModel auction;
 
-  const _ComingSoonCard({required this.auction});
+  _ComingSoonCard({required this.auction});
 
   ({int days, int hours, int minutes, int seconds}) _breakdown(
       AuctionModel a) {
@@ -163,7 +164,7 @@ class _ComingSoonCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -173,7 +174,7 @@ class _ComingSoonCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
                     topRight: Radius.circular(16),
                   ),
@@ -195,7 +196,7 @@ class _ComingSoonCard extends StatelessWidget {
                   top: 10,
                   right: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.orange,
@@ -204,8 +205,8 @@ class _ComingSoonCard extends StatelessWidget {
                     child: Text(
                       auction.auctionTypeDisplay.isNotEmpty
                           ? auction.auctionTypeDisplay
-                          : 'قريباً',
-                      style: const TextStyle(
+                          : AppLocalizations.of(context).comingSoon,
+                      style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold),
@@ -218,14 +219,14 @@ class _ComingSoonCard extends StatelessWidget {
                     top: 10,
                     left: 10,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
-                        'نشط',
+                      child: Text(
+                        AppLocalizations.of(context).statusActive,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -239,7 +240,7 @@ class _ComingSoonCard extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         vertical: 8, horizontal: 12),
                     color: AppColors.primary.withValues(alpha: 0.92),
                     child: Row(
@@ -274,7 +275,7 @@ class _ComingSoonCard extends StatelessWidget {
 
             // ── Details ───────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -284,7 +285,7 @@ class _ComingSoonCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -292,7 +293,7 @@ class _ComingSoonCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (bird != null) const SizedBox(width: 4),
+                      if (bird != null) SizedBox(width: 4),
                       if (bird != null)
                         Icon(
                           isMale
@@ -300,41 +301,41 @@ class _ComingSoonCard extends StatelessWidget {
                               : Icons.female_rounded,
                           size: 18,
                           color: isMale
-                              ? const Color(0xFF1565C0)
-                              : const Color(0xFFC62828),
+                              ? Color(0xFF1565C0)
+                              : Color(0xFFC62828),
                         ),
-                      if (ring.isNotEmpty) const SizedBox(width: 6),
+                      if (ring.isNotEmpty) SizedBox(width: 6),
                       if (ring.isNotEmpty)
                         Text(
                           ring,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary),
                         ),
                     ],
                   ),
                   if (breed.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       breed,
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary),
                     ),
                   ],
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Row(
                     children: [
-                      const Text('👤', style: TextStyle(fontSize: 13)),
-                      const SizedBox(width: 4),
+                      Text('👤', style: TextStyle(fontSize: 13)),
+                      SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           pedigree,
                           textAlign: TextAlign.start,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary),
                         ),
@@ -342,7 +343,7 @@ class _ComingSoonCard extends StatelessWidget {
                     ],
                   ),
 
-                  const Divider(height: 18, color: AppColors.divider),
+                  Divider(height: 18, color: AppColors.divider),
 
                   // price row
                   Row(
@@ -351,28 +352,28 @@ class _ComingSoonCard extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {},
-                          icon: const Icon(
+                          icon: Icon(
                               Icons.notifications_active_rounded,
                               size: 16),
-                          label: const Text('أخبرني',
+                          label: Text(AppLocalizations.of(context).notifyMe,
                               style: TextStyle(fontSize: 12)),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primary,
-                            side: const BorderSide(
+                            side: BorderSide(
                                 color: AppColors.primary),
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(10)),
                             padding:
-                                const EdgeInsets.symmetric(vertical: 10),
+                                EdgeInsets.symmetric(vertical: 10),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const Text(
+                          Text(
                             'السعر المبدئي',
                             style: TextStyle(
                                 fontSize: 11,
@@ -380,7 +381,7 @@ class _ComingSoonCard extends StatelessWidget {
                           ),
                           Text(
                             'ج.م ${_fmtPrice(price)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -391,17 +392,17 @@ class _ComingSoonCard extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
 
                   // seller row
                   Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded,
+                      Icon(Icons.check_circle_rounded,
                           color: AppColors.primary, size: 16),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         auction.sellerNickname,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500),
@@ -425,7 +426,7 @@ class _ComingSoonCard extends StatelessWidget {
         ),
       );
 
-  Widget _sep() => const Padding(
+  Widget _sep() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 6),
         child: Text(':',
             style: TextStyle(
@@ -440,7 +441,7 @@ class _CountdownUnit extends StatelessWidget {
   final String value;
   final String label;
 
-  const _CountdownUnit({required this.value, required this.label});
+  _CountdownUnit({required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -456,15 +457,15 @@ class _CountdownUnit extends StatelessWidget {
           ),
           child: Center(
             child: Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.bold)),
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 9)),
+            style: TextStyle(color: Colors.white70, fontSize: 9)),
       ],
     );
   }

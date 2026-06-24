@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../viewmodel/auth_bloc.dart';
 import '../../../home/view/pages/home_page.dart';
@@ -13,7 +13,7 @@ import '../widgets/country_city_picker.dart';
 import '../widgets/register_header.dart';
 
 class RegisterProviderPage extends StatefulWidget {
-  const RegisterProviderPage({super.key});
+  RegisterProviderPage({super.key});
 
   @override
   State<RegisterProviderPage> createState() => _RegisterProviderPageState();
@@ -47,7 +47,7 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
       return;
     }
     if (!_agreedToTerms) {
-      _showError(context, AppStrings.mustAgreeToTerms);
+      _showError(context, l.mustAgreeToTerms);
       return;
     }
 
@@ -70,43 +70,26 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
+      appBar: PPWAppBar(
+        title: l.sellerMode,
         backgroundColor: AppColors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          AppStrings.serviceProvider,
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
+        foregroundColor: AppColors.textPrimary,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(AppStrings.registerSuccess),
+                SnackBar(
+                  content: Text(l.registerSuccess),
                   backgroundColor: AppColors.success,
                 ),
               );
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
+                MaterialPageRoute(builder: (_) => HomePage()),
                 (_) => false,
               );
             }
@@ -125,8 +108,8 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                     RegisterHeader(
                       icon: Icons.work_rounded,
                       color: AppColors.orange,
-                      title: AppStrings.serviceProvider,
-                      subtitle: AppStrings.serviceProviderSub,
+                      title: l.sellerMode,
+                      subtitle: l.serviceProviderSubtitle,
                     ),
 
                     const SizedBox(height: 20),
@@ -139,8 +122,8 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                     const SizedBox(height: 20),
 
                     AppTextField(
-                      label: AppStrings.username,
-                      hint: AppStrings.usernameHint,
+                      label: l.username,
+                      hint: l.usernameHint,
                       controller: _usernameCtrl,
                       keyboardType: TextInputType.text,
                       validator: AppValidators.username,
@@ -149,8 +132,8 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                     const SizedBox(height: 16),
 
                     AppTextField(
-                      label: AppStrings.phoneNumber,
-                      hint: AppStrings.phoneHint,
+                      label: l.phoneNumber,
+                      hint: '+20 1xx xxx xxxx',
                       controller: _phoneCtrl,
                       keyboardType: TextInputType.phone,
                       validator: AppValidators.phone,
@@ -166,8 +149,8 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                     const SizedBox(height: 16),
 
                     AppPasswordField(
-                      label: AppStrings.password,
-                      hint: AppStrings.passwordHint,
+                      label: l.password,
+                      hint: l.passwordHint,
                       controller: _passwordCtrl,
                       validator: AppValidators.password,
                     ),
@@ -175,8 +158,8 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                     const SizedBox(height: 16),
 
                     AppPasswordField(
-                      label: AppStrings.confirmPassword,
-                      hint: AppStrings.confirmPasswordHint,
+                      label: l.confirmPassword,
+                      hint: l.confirmPasswordHint,
                       controller: _confirmPasswordCtrl,
                       validator: (v) => AppValidators.confirmPassword(
                         v,
@@ -208,7 +191,7 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
                                   strokeWidth: 2.5,
                                 ),
                               )
-                            : const Text(AppStrings.createAccount),
+                            : Text(l.register),
                       ),
                     ),
 

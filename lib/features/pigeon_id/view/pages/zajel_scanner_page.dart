@@ -14,15 +14,16 @@ import '../../../../core/constants/app_colors.dart';
 import '../../viewmodel/pigeon_id_bloc.dart';
 import 'pigeon_id_preview_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ZajelScannerPage extends StatefulWidget {
-  const ZajelScannerPage({super.key});
+  ZajelScannerPage({super.key});
 
   @override
   State<ZajelScannerPage> createState() => _ZajelScannerPageState();
 }
 
 class _ZajelScannerPageState extends State<ZajelScannerPage> {
-  static const _steps = [
+  static final _steps = [
     _ScanStep(label: 'الجسم كاملاً', emoji: '🦢', hint: 'وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب'),
     _ScanStep(label: 'الجناح (يمين / يسار)', emoji: '🪶', hint: 'افرد الجناح وقربه من الكاميرا'),
     _ScanStep(label: 'العين (ماكرو)', emoji: '👁️', hint: 'قرّب الكاميرا من العين لالتقاط التفاصيل'),
@@ -106,7 +107,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       final nowStable = tilt < 1.5;
 
       if (nowStable && !_isStable && !_isRecording && !_allDone && !_isProcessing) {
-        _stabilityTimer ??= Timer(const Duration(milliseconds: 700), () {
+        _stabilityTimer ??= Timer(Duration(milliseconds: 700), () {
           if (!mounted || _isRecording || _allDone) return;
           setState(() => _isStable = true);
           _startVideoRecording();
@@ -135,7 +136,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       _resetForRetry();
       return;
     }
-    _recordingTimer = Timer.periodic(const Duration(milliseconds: 100), (t) {
+    _recordingTimer = Timer.periodic(Duration(milliseconds: 100), (t) {
       if (!mounted) {
         t.cancel();
         return;
@@ -228,7 +229,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
         _clipPaths.map((p) => "file '$p'").join('\n'),
       );
 
-      const font = '/system/fonts/Roboto-Regular.ttf';
+      final font = '/system/fonts/Roboto-Regular.ttf';
       final vf = [
         "drawtext=fontfile=$font:text='Pigeon Planet':fontsize=18:fontcolor=white@0.7:x=10:y=h-th-10:shadowcolor=black:shadowx=1:shadowy=1",
         "drawtext=fontfile=$font:text='$captureDate':fontsize=16:fontcolor=white@0.7:x=(w-tw)/2:y=h-th-10:shadowcolor=black:shadowx=1:shadowy=1",
@@ -280,7 +281,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: context.read<PigeonIdBloc>(),
-          child: const PigeonIdPreviewPage(),
+          child: PigeonIdPreviewPage(),
         ),
       ),
     );
@@ -312,7 +313,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
             child: _cameraError != null
                 ? _ErrorView(message: _cameraError!)
                 : !_cameraReady
-                    ? const Center(
+                    ? Center(
                         child: CircularProgressIndicator(color: Colors.white38),
                       )
                     : CameraPreview(_cameraController!),
@@ -349,7 +350,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
               child: Container(
                 color: Colors.black87,
                 child: _isProcessing
-                    ? const _ProcessingView()
+                    ? _ProcessingView()
                     : _processingError != null
                         ? _ProcessingErrorView(
                             message: _processingError!,
@@ -368,7 +369,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
               right: 0,
               child: SafeArea(
                 child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -383,13 +384,13 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                           children: [
                             if (i > 0)
                               AnimatedContainer(
-                                duration: const Duration(milliseconds: 400),
+                                duration: Duration(milliseconds: 400),
                                 width: 24,
                                 height: 2,
                                 color: isDone ? AppColors.primary : Colors.white24,
                               ),
                             AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
+                              duration: Duration(milliseconds: 300),
                               width: isActive ? 44 : 34,
                               height: isActive ? 44 : 34,
                               decoration: BoxDecoration(
@@ -410,7 +411,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                               ),
                               child: Center(
                                 child: isDone
-                                    ? const Icon(Icons.check_rounded,
+                                    ? Icon(Icons.check_rounded,
                                         color: Colors.white, size: 18)
                                     : Text(
                                         _steps[i].emoji,
@@ -434,7 +435,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                             color: Colors.black45,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.close_rounded,
+                          child: Icon(Icons.close_rounded,
                               color: Colors.white, size: 20),
                         ),
                       ),
@@ -453,8 +454,8 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
               right: 0,
               child: SafeArea(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                  decoration: const BoxDecoration(
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
@@ -468,12 +469,12 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                         children: [
                           Text(
                             '${_currentStep + 1} / ${_steps.length}  —  ',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.white54, fontSize: 13),
                           ),
                           Text(
                             step.label,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -481,25 +482,25 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6),
                       Text(
                         step.hint,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.white60, fontSize: 12),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       if (_isRecording) ...[
                         Row(
-                          children: const [
+                          children: [
                             Icon(Icons.fiber_manual_record,
                                 color: Colors.red, size: 10),
                             SizedBox(width: 6),
-                            Text('تسجيل...',
+                            Text(AppLocalizations.of(context).processingLabel,
                                 style: TextStyle(
                                     color: Colors.white70, fontSize: 12)),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
@@ -543,7 +544,7 @@ class _ScanStep {
   final String label;
   final String emoji;
   final String hint;
-  const _ScanStep(
+  _ScanStep(
       {required this.label, required this.emoji, required this.hint});
 }
 
@@ -554,7 +555,7 @@ class _ScanOverlayPainter extends CustomPainter {
   final bool isStable;
   final double recordingProgress;
 
-  const _ScanOverlayPainter({
+  _ScanOverlayPainter({
     required this.step,
     required this.isStable,
     required this.recordingProgress,
@@ -578,7 +579,7 @@ class _ScanOverlayPainter extends CustomPainter {
       case 0: // Full body — tall rounded rect
         final guide = RRect.fromRectAndRadius(
           Rect.fromCenter(center: Offset(cx, cy), width: 220, height: 320),
-          const Radius.circular(24),
+          Radius.circular(24),
         );
         _cutMask(canvas, fullRect, Path()..addRRect(guide), maskPaint);
         canvas.drawRRect(guide, borderPaint);
@@ -587,14 +588,14 @@ class _ScanOverlayPainter extends CustomPainter {
       case 1: // Wing — wide landscape rect
         final guide = RRect.fromRectAndRadius(
           Rect.fromCenter(center: Offset(cx, cy), width: 300, height: 180),
-          const Radius.circular(16),
+          Radius.circular(16),
         );
         _cutMask(canvas, fullRect, Path()..addRRect(guide), maskPaint);
         canvas.drawRRect(guide, borderPaint);
         _drawDottedHLine(canvas, guide.outerRect, _guideColor);
 
       case 2: // Eye — circle with crosshair
-        const radius = 110.0;
+        final radius = 110.0;
         final center = Offset(cx, cy);
         _cutMask(canvas, fullRect,
             Path()..addOval(Rect.fromCircle(center: center, radius: radius)),
@@ -606,7 +607,7 @@ class _ScanOverlayPainter extends CustomPainter {
         final guide = RRect.fromRectAndRadius(
           Rect.fromCenter(
               center: Offset(cx, cy + 80), width: 200, height: 80),
-          const Radius.circular(10),
+          Radius.circular(10),
         );
         _cutMask(canvas, fullRect, Path()..addRRect(guide), maskPaint);
         canvas.drawRRect(guide, borderPaint);
@@ -619,7 +620,7 @@ class _ScanOverlayPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4
         ..strokeCap = StrokeCap.round;
-      const arcRect = Rect.fromLTWH(16, 70, 44, 44);
+      final arcRect = Rect.fromLTWH(16, 70, 44, 44);
       canvas.drawArc(
           arcRect, -1.5708, recordingProgress * 6.2832, false, arcPaint);
     }
@@ -637,7 +638,7 @@ class _ScanOverlayPainter extends CustomPainter {
   }
 
   void _drawCornerTicks(Canvas canvas, Rect r, Paint paint) {
-    const len = 20.0;
+    final len = 20.0;
     final corners = [
       [Offset(r.left, r.top + len), Offset(r.left, r.top), Offset(r.left + len, r.top)],
       [Offset(r.right - len, r.top), Offset(r.right, r.top), Offset(r.right, r.top + len)],
@@ -692,7 +693,7 @@ class _CenterLeveler extends StatelessWidget {
   final bool isStable;
   final double screenWidth;
 
-  const _CenterLeveler({
+  _CenterLeveler({
     required this.tiltOffset,
     required this.isStable,
     required this.screenWidth,
@@ -724,7 +725,7 @@ class _CenterLeveler extends StatelessWidget {
           ),
           // Sliding dot
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 80),
+            duration: Duration(milliseconds: 80),
             left: dotLeft,
             top: 0,
             child: Container(
@@ -751,11 +752,11 @@ class _CenterLeveler extends StatelessWidget {
 // ── Done / Processing sub-widgets ──────────────────────────────────────────────
 
 class _ProcessingView extends StatelessWidget {
-  const _ProcessingView();
+  _ProcessingView();
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircularProgressIndicator(color: AppColors.primary),
@@ -780,7 +781,7 @@ class _ProcessingErrorView extends StatelessWidget {
   final VoidCallback onRetry;
   final VoidCallback onSkip;
 
-  const _ProcessingErrorView({
+  _ProcessingErrorView({
     required this.message,
     required this.onRetry,
     required this.onSkip,
@@ -791,28 +792,28 @@ class _ProcessingErrorView extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.error_outline_rounded,
+        Icon(Icons.error_outline_rounded,
             color: AppColors.error, size: 56),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(message,
-            style: const TextStyle(color: Colors.white, fontSize: 16)),
-        const SizedBox(height: 28),
+            style: TextStyle(color: Colors.white, fontSize: 16)),
+        SizedBox(height: 28),
         ElevatedButton(
           onPressed: onRetry,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             padding:
-                const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                EdgeInsets.symmetric(horizontal: 32, vertical: 14),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14)),
           ),
-          child: const Text('إعادة المعالجة',
+          child: Text(AppLocalizations.of(context).reprocessBtn,
               style: TextStyle(color: Colors.white, fontSize: 15)),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         TextButton(
           onPressed: onSkip,
-          child: const Text(
+          child: Text(
             'تخطي الفيديو والمتابعة',
             style: TextStyle(color: Colors.white54, fontSize: 13),
           ),
@@ -825,7 +826,7 @@ class _ProcessingErrorView extends StatelessWidget {
 class _DoneView extends StatelessWidget {
   final VoidCallback onPreview;
 
-  const _DoneView({required this.onPreview});
+  _DoneView({required this.onPreview});
 
   @override
   Widget build(BuildContext context) {
@@ -835,36 +836,36 @@ class _DoneView extends StatelessWidget {
         Container(
           width: 90,
           height: 90,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.primary,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check_rounded, color: Colors.white, size: 50),
+          child: Icon(Icons.check_rounded, color: Colors.white, size: 50),
         ),
-        const SizedBox(height: 20),
-        const Text(
+        SizedBox(height: 20),
+        Text(
           'تم التصوير بنجاح!',
           style: TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
-        const Text(
+        SizedBox(height: 8),
+        Text(
           'تم دمج الفيديو وإضافة العلامة المائية',
           style: TextStyle(color: Colors.white60, fontSize: 14),
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32),
         ElevatedButton(
           onPressed: onPreview,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             padding:
-                const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                EdgeInsets.symmetric(horizontal: 40, vertical: 14),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14)),
           ),
-          child: const Text(
+          child: Text(
             'عرض المعاينة',
             style: TextStyle(
                 fontSize: 16,
@@ -879,7 +880,7 @@ class _DoneView extends StatelessWidget {
 
 class _ErrorView extends StatelessWidget {
   final String message;
-  const _ErrorView({required this.message});
+  _ErrorView({required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -889,11 +890,11 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.videocam_off_rounded,
+            Icon(Icons.videocam_off_rounded,
                 color: Colors.white38, size: 48),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(message,
-                style: const TextStyle(color: Colors.white54, fontSize: 14)),
+                style: TextStyle(color: Colors.white54, fontSize: 14)),
           ],
         ),
       ),

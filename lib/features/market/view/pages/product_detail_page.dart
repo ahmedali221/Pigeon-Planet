@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../ratings/view/widgets/ratings_section.dart';
 import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ProductDetailPage extends StatelessWidget {
-  const ProductDetailPage({super.key});
+  ProductDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +23,15 @@ class ProductDetailPage extends StatelessWidget {
       listener: (context, state) {
         if (state.status == CartStatus.loaded) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تمت الإضافة إلى السلة'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).addedToCart),
               backgroundColor: AppColors.success,
             ),
           );
         } else if (state.status == CartStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred),
               backgroundColor: AppColors.error,
             ),
           );
@@ -38,7 +40,7 @@ class ProductDetailPage extends StatelessWidget {
       child: BlocBuilder<MarketBloc, MarketState>(
         builder: (context, state) {
           final product = state.selectedProduct;
-          if (product == null) return const SizedBox.shrink();
+          if (product == null) return SizedBox.shrink();
           final authState = context.read<AuthBloc>().state;
           final canRate =
               authState is AuthSuccess && authState.user.isCustomer;
@@ -46,30 +48,8 @@ class ProductDetailPage extends StatelessWidget {
 
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
-            appBar: AppBar(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              automaticallyImplyLeading: false,
-              title: Text(
-                product.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+            appBar: PPWAppBar(
+              title: product.name,
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -77,40 +57,40 @@ class ProductDetailPage extends StatelessWidget {
                 children: [
                   // ── Image ─────────────────────────────────────────────────
                   _ProductImage(product: product),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
 
                   // ── Name + rating ──────────────────────────────────────────
                   _ProductHeader(product: product),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
 
                   // ── Description ────────────────────────────────────────────
                   _ProductDescription(product: product),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   if (assetId != null) ...[
                     _ProductRatingsSection(
                       assetId: assetId,
                       canRate: canRate,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                   ],
 
                   // ── Benefits ───────────────────────────────────────────────
                   if (product.benefits.isNotEmpty)
                     _ProductBenefits(benefits: product.benefits),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
 
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
 
                   // ── Quantity ───────────────────────────────────────────────
                   _QuantityRow(
                     quantity: state.quantity,
                     total: state.currentPrice,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // ── Action buttons ─────────────────────────────────────────
                   _ActionButtons(),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                 ],
               ),
             ),
@@ -124,7 +104,7 @@ class ProductDetailPage extends StatelessWidget {
 // ── Image ─────────────────────────────────────────────────────────────────────
 class _ProductImage extends StatelessWidget {
   final ProductModel product;
-  const _ProductImage({required this.product});
+  _ProductImage({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +117,9 @@ class _ProductImage extends StatelessWidget {
               ? Image.network(
                   product.thumbnailUrl!,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const _ProductImagePlaceholder(),
+                  errorBuilder: (_, _, _) => _ProductImagePlaceholder(),
                 )
-              : const _ProductImagePlaceholder(),
+              : _ProductImagePlaceholder(),
         ),
         // favorite
         Positioned(
@@ -155,7 +135,7 @@ class _ProductImage extends StatelessWidget {
               child: Container(
                 width: 36,
                 height: 36,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
@@ -185,7 +165,7 @@ class _ProductImage extends StatelessWidget {
                 color: Colors.black.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.share_rounded,
                 color: Colors.white,
                 size: 18,
@@ -199,14 +179,14 @@ class _ProductImage extends StatelessWidget {
 }
 
 class _ProductImagePlaceholder extends StatelessWidget {
-  const _ProductImagePlaceholder();
+  _ProductImagePlaceholder();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 260,
       color: AppColors.primaryLight,
-      child: const Icon(
+      child: Icon(
         Icons.image_not_supported_outlined,
         color: AppColors.primary,
         size: 60,
@@ -218,57 +198,57 @@ class _ProductImagePlaceholder extends StatelessWidget {
 // ── Name + rating ─────────────────────────────────────────────────────────────
 class _ProductHeader extends StatelessWidget {
   final ProductModel product;
-  const _ProductHeader({required this.product});
+  _ProductHeader({required this.product});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             product.name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 18),
-              const SizedBox(width: 4),
+              Icon(Icons.star_rounded, color: Colors.amber, size: 18),
+              SizedBox(width: 4),
               Text(
                 product.rating.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Text(
                 '(${product.reviewCount} تقييم)',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
               ),
               if (product.displaySellerName.isNotEmpty) ...[
-                const SizedBox(width: 12),
-                const Text('·',
+                SizedBox(width: 12),
+                Text('·',
                     style: TextStyle(color: AppColors.textHint)),
-                const SizedBox(width: 12),
-                const Icon(Icons.storefront_rounded,
+                SizedBox(width: 12),
+                Icon(Icons.storefront_rounded,
                     size: 14, color: AppColors.textHint),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Flexible(
                   child: Text(
                     product.displaySellerName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
@@ -287,29 +267,29 @@ class _ProductHeader extends StatelessWidget {
 // ── Description ───────────────────────────────────────────────────────────────
 class _ProductDescription extends StatelessWidget {
   final ProductModel product;
-  const _ProductDescription({required this.product});
+  _ProductDescription({required this.product});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'الوصف',
+          Text(
+            AppLocalizations.of(context).description,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             product.description,
             textAlign: TextAlign.start,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
               height: 1.6,
@@ -326,7 +306,7 @@ class _ProductRatingsSection extends StatelessWidget {
   final int assetId;
   final bool canRate;
 
-  const _ProductRatingsSection({
+  _ProductRatingsSection({
     required this.assetId,
     required this.canRate,
   });
@@ -335,7 +315,7 @@ class _ProductRatingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: RatingsSection(
         targetType: RatingTargetType.asset,
         targetId: assetId,
@@ -347,40 +327,40 @@ class _ProductRatingsSection extends StatelessWidget {
 
 class _ProductBenefits extends StatelessWidget {
   final List<String> benefits;
-  const _ProductBenefits({required this.benefits});
+  _ProductBenefits({required this.benefits});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'الفوائد',
+          Text(
+            AppLocalizations.of(context).benefits,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           ...benefits.map(
             (b) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle_rounded,
                     color: AppColors.primary,
                     size: 18,
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       b,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textPrimary,
                       ),
@@ -401,25 +381,25 @@ class _QuantityRow extends StatelessWidget {
   final int quantity;
   final double total;
 
-  const _QuantityRow({required this.quantity, required this.total});
+  _QuantityRow({required this.quantity, required this.total});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'الكمية',
+          Text(
+            AppLocalizations.of(context).quantity,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -427,8 +407,8 @@ class _QuantityRow extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'الإجمالي',
+                  Text(
+                    AppLocalizations.of(context).total,
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
@@ -436,7 +416,7 @@ class _QuantityRow extends StatelessWidget {
                   ),
                   Text(
                     'ج.م ${total.toStringAsFixed(0)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -450,7 +430,7 @@ class _QuantityRow extends StatelessWidget {
                   _StepBtn(
                     icon: Icons.remove,
                     onTap: () => context.read<MarketBloc>().add(
-                      const MarketQuantityDecreased(),
+                      MarketQuantityDecreased(),
                     ),
                   ),
                   Container(
@@ -458,7 +438,7 @@ class _QuantityRow extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       '$quantity',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -468,7 +448,7 @@ class _QuantityRow extends StatelessWidget {
                   _StepBtn(
                     icon: Icons.add,
                     onTap: () => context.read<MarketBloc>().add(
-                      const MarketQuantityIncreased(),
+                      MarketQuantityIncreased(),
                     ),
                   ),
                 ],
@@ -484,7 +464,7 @@ class _QuantityRow extends StatelessWidget {
 class _StepBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const _StepBtn({required this.icon, required this.onTap});
+  _StepBtn({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -511,7 +491,7 @@ class _ActionButtons extends StatelessWidget {
       builder: (context, cartState) {
         final isBusy = cartState.status == CartStatus.mutating;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               // Buy now — adds to cart and stays on the current page
@@ -539,8 +519,8 @@ class _ActionButtons extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'اشتري الآن',
+                    child: Text(
+                      AppLocalizations.of(context).buyNow,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -550,7 +530,7 @@ class _ActionButtons extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
 
               // Add to cart — dispatches to CartBloc; listener shows snackbar
               Expanded(
@@ -570,7 +550,7 @@ class _ActionButtons extends StatelessWidget {
                             }
                           },
                     icon: isBusy
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
@@ -578,9 +558,9 @@ class _ActionButtons extends StatelessWidget {
                               color: AppColors.primary,
                             ),
                           )
-                        : const Icon(Icons.shopping_cart_outlined, size: 18),
-                    label: const Text(
-                      'أضف إلى السلة',
+                        : Icon(Icons.shopping_cart_outlined, size: 18),
+                    label: Text(
+                      AppLocalizations.of(context).addToCart,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -588,7 +568,7 @@ class _ActionButtons extends StatelessWidget {
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,
-                      side: const BorderSide(
+                      side: BorderSide(
                         color: AppColors.primary,
                         width: 2,
                       ),

@@ -3,15 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../payments/model/payment_request_model.dart';
 import '../../viewmodel/complaints_bloc.dart';
 import '../../viewmodel/complaints_event.dart';
 import '../../viewmodel/complaints_state.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ComplaintCreatePage extends StatelessWidget {
   final PaymentRequestModel paymentRequest;
 
-  const ComplaintCreatePage({super.key, required this.paymentRequest});
+  ComplaintCreatePage({super.key, required this.paymentRequest});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class ComplaintCreatePage extends StatelessWidget {
 class _ComplaintCreateView extends StatefulWidget {
   final PaymentRequestModel paymentRequest;
 
-  const _ComplaintCreateView({required this.paymentRequest});
+  _ComplaintCreateView({required this.paymentRequest});
 
   @override
   State<_ComplaintCreateView> createState() => _ComplaintCreateViewState();
@@ -60,8 +62,8 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
     final description = _descriptionCtrl.text.trim();
     if (title.isEmpty || description.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أدخل عنوان الشكوى ووصفها'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).complaintValidation),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -87,8 +89,8 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
       listener: (context, state) {
         if (state.createSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم تقديم الشكوى بنجاح'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).complaintSubmittedSuccess),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -110,22 +112,16 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
         final creating = state.status == ComplaintsStatus.creating;
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'تقديم شكوى',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
+          appBar: const PPWAppBar(
+            title: 'تقديم شكوى',
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             children: [
               _PaymentSummary(request: widget.paymentRequest),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
@@ -136,35 +132,35 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                   children: [
                     TextField(
                       controller: _titleCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'عنوان الشكوى',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context).complaintTitleLabel,
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: AppColors.pageBackground,
                       ),
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       initialValue: _type,
-                      decoration: const InputDecoration(
-                        labelText: 'نوع الشكوى',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context).complaintTypeLabel,
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: AppColors.pageBackground,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: 'post_sale',
-                          child: Text('ما بعد البيع'),
+                          child: Text(AppLocalizations.of(context).afterSaleComplaint),
                         ),
                         DropdownMenuItem(
                           value: 'payment_rejected',
-                          child: Text('دفع مرفوض'),
+                          child: Text(AppLocalizations.of(context).rejectedPaymentComplaint),
                         ),
                         DropdownMenuItem(
                           value: 'other',
-                          child: Text('أخرى'),
+                          child: Text(AppLocalizations.of(context).otherComplaint),
                         ),
                       ],
                       onChanged: creating
@@ -173,12 +169,12 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                                 if (value != null) _type = value;
                               }),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     TextField(
                       controller: _descriptionCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'وصف المشكلة',
-                        hintText: 'اشرح ما حدث بوضوح...',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context).complaintDescLabel,
+                        hintText: AppLocalizations.of(context).complaintDescHint,
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: AppColors.pageBackground,
@@ -187,13 +183,13 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                       maxLines: 6,
                       textInputAction: TextInputAction.newline,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: creating ? null : () => _submit(context),
                         icon: creating
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
@@ -201,7 +197,7 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Icon(Icons.send_rounded, size: 18),
+                            : Icon(Icons.send_rounded, size: 18),
                         label: Text(
                           creating ? 'جاري الإرسال...' : 'تقديم الشكوى',
                         ),
@@ -209,7 +205,7 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           padding:
-                              const EdgeInsets.symmetric(vertical: 14),
+                              EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -231,13 +227,13 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
 class _PaymentSummary extends StatelessWidget {
   final PaymentRequestModel request;
 
-  const _PaymentSummary({required this.request});
+  _PaymentSummary({required this.request});
 
   @override
   Widget build(BuildContext context) {
     final color = request.isApproved ? AppColors.success : AppColors.error;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -254,22 +250,22 @@ class _PaymentSummary extends StatelessWidget {
             ),
             child: Icon(Icons.payment_rounded, color: color, size: 22),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'طلب دفع #${request.id}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '${request.statusLabel} · ${request.typeLabel} · ${request.amount.toStringAsFixed(2)} ج.م',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),

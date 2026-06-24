@@ -57,3 +57,21 @@ class FeedSellersListRequested extends FeedEvent {
 class FeedSellersListNextPageRequested extends FeedEvent {
   const FeedSellersListNextPageRequested();
 }
+
+class FeedPackageFollowRequested extends FeedEvent {
+  final int packageId;
+  const FeedPackageFollowRequested(this.packageId);
+  @override
+  List<Object?> get props => [packageId];
+}
+
+class FeedPackageUnfollowRequested extends FeedEvent {
+  final int packageId;
+  const FeedPackageUnfollowRequested(this.packageId);
+  @override
+  List<Object?> get props => [packageId];
+}
+
+class FeedPackageFollowingRefreshed extends FeedEvent {
+  const FeedPackageFollowingRefreshed();
+}

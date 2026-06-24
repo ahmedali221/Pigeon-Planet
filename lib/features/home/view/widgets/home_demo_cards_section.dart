@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeDemoCardsSection extends StatelessWidget {
-  const HomeDemoCardsSection({super.key});
+  HomeDemoCardsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           _SectionHeader(),
           SizedBox(height: 12),
           _FeatureGrid(),
@@ -26,11 +27,11 @@ class HomeDemoCardsSection extends StatelessWidget {
 // Section header
 // ─────────────────────────────────────────────────────────────────────────────
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader();
+  _SectionHeader();
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
         Icon(Icons.grid_view_rounded, color: AppColors.primary, size: 18),
         SizedBox(width: 8),
@@ -52,18 +53,18 @@ class _SectionHeader extends StatelessWidget {
 // 2×2 feature grid
 // ─────────────────────────────────────────────────────────────────────────────
 class _FeatureGrid extends StatelessWidget {
-  const _FeatureGrid();
+  _FeatureGrid();
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       childAspectRatio: 1.7,
-      children: const [
+      children: [
         _FeatureTile(
           icon: Icons.gavel_rounded,
           label: 'نظام المزايدات',
@@ -73,14 +74,14 @@ class _FeatureGrid extends StatelessWidget {
         ),
         _FeatureTile(
           icon: Icons.shield_rounded,
-          label: 'سجل الملكية',
+          label: AppLocalizations.of(context).ownershipRecord,
           subtitle: 'محمي وغير قابل للتلاعب',
           color: AppColors.primaryDark,
           bg: AppColors.primaryLight,
         ),
         _FeatureTile(
           icon: Icons.storefront_rounded,
-          label: 'المتجر',
+          label: AppLocalizations.of(context).market,
           subtitle: 'علف، أدوية، مستلزمات',
           color: AppColors.orange,
           bg: AppColors.orangeLight,
@@ -104,7 +105,7 @@ class _FeatureTile extends StatelessWidget {
   final Color color;
   final Color bg;
 
-  const _FeatureTile({
+  _FeatureTile({
     required this.icon,
     required this.label,
     required this.subtitle,
@@ -115,7 +116,7 @@ class _FeatureTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -123,7 +124,7 @@ class _FeatureTile extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -138,7 +139,7 @@ class _FeatureTile extends StatelessWidget {
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,10 +153,10 @@ class _FeatureTile extends StatelessWidget {
                     color: color,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     color: AppColors.textSecondary,
                   ),
@@ -175,7 +176,7 @@ class _FeatureTile extends StatelessWidget {
 // Compact referral strip
 // ─────────────────────────────────────────────────────────────────────────────
 class _CompactReferralBanner extends StatefulWidget {
-  const _CompactReferralBanner();
+  _CompactReferralBanner();
 
   @override
   State<_CompactReferralBanner> createState() => _CompactReferralBannerState();
@@ -186,14 +187,14 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
 
   void _copy() {
     setState(() => _copied = true);
-    Future.delayed(const Duration(seconds: 2),
+    Future.delayed(Duration(seconds: 2),
         () => mounted ? setState(() => _copied = false) : null);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -208,15 +209,15 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.person_add_rounded,
+            child: Icon(Icons.person_add_rounded,
                 color: AppColors.primary, size: 18),
           ),
-          const SizedBox(width: 10),
-          const Column(
+          SizedBox(width: 10),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'برنامج المكافآت',
+                AppLocalizations.of(context).rewardsProgram,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -233,12 +234,12 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
               ),
             ],
           ),
-          const Spacer(),
+          Spacer(),
           GestureDetector(
             onTap: _copy,
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color:
                     _copied ? AppColors.primaryLight : AppColors.inputBg,
@@ -253,7 +254,7 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
                         : AppColors.textSecondary,
                     size: 14,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Text(
                     _copied ? 'تم النسخ' : 'نسخ',
                     style: TextStyle(
@@ -268,16 +269,16 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           GestureDetector(
             onTap: () {},
             child: Container(
-              padding: const EdgeInsets.all(7),
+              padding: EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: const Color(0xFF25D366).withValues(alpha: 0.1),
+                color: Color(0xFF25D366).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chat_rounded,
                 color: Color(0xFF25D366),
                 size: 18,

@@ -23,6 +23,9 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     on<FeedSuggestionsRefreshed>(_onSuggestionsRefreshed);
     on<FeedSellersListRequested>(_onSellersListRequested);
     on<FeedSellersListNextPageRequested>(_onSellersListNextPage);
+    on<FeedPackageFollowRequested>(_onPackageFollow);
+    on<FeedPackageUnfollowRequested>(_onPackageUnfollow);
+    on<FeedPackageFollowingRefreshed>(_onPackageFollowingRefreshed);
   }
 
   Future<void> _onStarted(
@@ -35,11 +38,14 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     final suggestResult = await _repository.getSuggestions();
     final feedResult = await _repository.getAuctionFeed();
     final followingResult = await _repository.getFollowing();
+    final pkgFollowingResult = await _repository.getFollowingPackages();
     final blocksResult = await _repository.getBlocks();
 
     final suggestions = suggestResult.getOrElse(() => []);
     final following = followingResult.getOrElse(() => []);
     final followedIds = following.map((f) => f.seller.id).toSet();
+    final pkgFollowing = pkgFollowingResult.getOrElse(() => []);
+    final followedPkgIds = pkgFollowing.map((p) => p.packageId).toSet();
     final blocks = blocksResult.getOrElse(() => []);
     final blockedIds = blocks.map((b) => b.profileId).toSet();
 
@@ -50,6 +56,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         suggestions: suggestions,
         following: following,
         followedSellerIds: followedIds,
+        followingPackages: pkgFollowing,
+        followedPackageIds: followedPkgIds,
         blocks: blocks,
         blockedProfileIds: blockedIds,
       )),
@@ -61,6 +69,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         suggestions: suggestions,
         following: following,
         followedSellerIds: followedIds,
+        followingPackages: pkgFollowing,
+        followedPackageIds: followedPkgIds,
         blocks: blocks,
         blockedProfileIds: blockedIds,
       )),
@@ -241,6 +251,66 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         sellersPage: nextPage,
         sellersHasMore: data.hasMore,
       )),
+    );
+  }
+
+  Future<void> _onPackageFollow(
+    FeedPackageFollowRequested event,
+    Emitter<FeedState> emit,
+  ) async {
+    final ids = Set<int>.from(state.followedPackageIds)..add(event.packageId);
+    emit(state.copyWith(followedPackageIds: ids, clearActionError: true));
+
+    final result = await _repository.followSellerPackage(event.packageId);
+    result.fold(
+      (failure) {
+        final revert = Set<int>.from(state.followedPackageIds)
+          ..remove(event.packageId);
+        emit(state.copyWith(
+          followedPackageIds: revert,
+          actionError: failure.message,
+        ));
+      },
+      (_) => add(const FeedPackageFollowingRefreshed()),
+    );
+  }
+
+  Future<void> _onPackageUnfollow(
+    FeedPackageUnfollowRequested event,
+    Emitter<FeedState> emit,
+  ) async {
+    final ids = Set<int>.from(state.followedPackageIds)
+      ..remove(event.packageId);
+    emit(state.copyWith(followedPackageIds: ids, clearActionError: true));
+
+    final result = await _repository.unfollowSellerPackage(event.packageId);
+    result.fold(
+      (failure) {
+        final revert = Set<int>.from(state.followedPackageIds)
+          ..add(event.packageId);
+        emit(state.copyWith(
+          followedPackageIds: revert,
+          actionError: failure.message,
+        ));
+      },
+      (_) => add(const FeedPackageFollowingRefreshed()),
+    );
+  }
+
+  Future<void> _onPackageFollowingRefreshed(
+    FeedPackageFollowingRefreshed event,
+    Emitter<FeedState> emit,
+  ) async {
+    final result = await _repository.getFollowingPackages();
+    result.fold(
+      (_) {},
+      (packages) {
+        final ids = packages.map((p) => p.packageId).toSet();
+        emit(state.copyWith(
+          followingPackages: packages,
+          followedPackageIds: ids,
+        ));
+      },
     );
   }
 }

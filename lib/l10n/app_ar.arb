@@ -1,877 +1,1476 @@
 {
   "@@locale": "ar",
   "appName": "كوكب الحمام",
-  "@appName": { "description": "Application name" },
-
+  "@appName": {
+    "description": "Application name"
+  },
   "login": "تسجيل الدخول",
-  "@login": { "description": "Login button / page title" },
-
+  "@login": {
+    "description": "Login button / page title"
+  },
   "register": "إنشاء حساب",
-  "@register": { "description": "Register button / page title" },
-
+  "@register": {
+    "description": "Register button / page title"
+  },
   "email": "البريد الإلكتروني",
   "@email": {},
-
   "password": "كلمة المرور",
   "@password": {},
-
   "confirmPassword": "تأكيد كلمة المرور",
   "@confirmPassword": {},
-
   "fullName": "الاسم الكامل",
   "@fullName": {},
-
   "phoneNumber": "رقم الهاتف",
   "@phoneNumber": {},
-
   "country": "الدولة",
   "@country": {},
-
   "city": "المدينة",
   "@city": {},
-
   "forgotPassword": "نسيت كلمة المرور؟",
   "@forgotPassword": {},
-
   "welcomeBack": "مرحباً بعودتك",
   "@welcomeBack": {},
-
   "home": "الرئيسية",
   "@home": {},
-
   "auctions": "المزادات",
   "@auctions": {},
-
   "market": "المتجر",
   "@market": {},
-
   "profile": "الملف الشخصي",
   "@profile": {},
-
   "notifications": "الإشعارات",
   "@notifications": {},
-
   "digitalId": "الهوية الرقمية",
   "@digitalId": {},
-
   "ringNumber": "رقم الحلقة",
   "@ringNumber": {},
-
   "breed": "السلالة",
   "@breed": {},
-
   "gender": "الجنس",
   "@gender": {},
-
   "male": "ذكر",
   "@male": {},
-
   "female": "أنثى",
   "@female": {},
-
   "hatchDate": "تاريخ الفقس",
   "@hatchDate": {},
-
   "raceResults": "نتائج السباقات",
   "@raceResults": {},
-
   "addPhotos": "إضافة الصور",
   "@addPhotos": {},
-
   "recordVideo": "تسجيل الفيديو",
   "@recordVideo": {},
-
   "preview": "المعاينة",
   "@preview": {},
-
   "publish": "نشر",
   "@publish": {},
-
   "addToCart": "أضف إلى السلة",
   "@addToCart": {},
-
   "buyNow": "اشتري الآن",
   "@buyNow": {},
-
   "price": "السعر",
   "@price": {},
-
   "quantity": "الكمية",
   "@quantity": {},
-
   "verifyOtp": "التحقق من الرمز",
   "@verifyOtp": {},
-
   "resendCode": "إعادة الإرسال",
   "@resendCode": {},
-
   "next": "التالي",
   "@next": {},
-
   "cancel": "إلغاء",
   "@cancel": {},
-
   "save": "حفظ",
   "@save": {},
-
   "search": "بحث",
   "@search": {},
-
   "categories": "الفئات",
   "@categories": {},
-
   "products": "المنتجات",
   "@products": {},
-
   "activeAuctions": "المزادات النشطة",
   "@activeAuctions": {},
-
   "sellerDashboard": "لوحة البائع",
   "@sellerDashboard": {},
-
   "buyerMode": "مشترٍ",
   "@buyerMode": {},
-
   "sellerMode": "مقدم خدمة",
   "@sellerMode": {},
-
   "comingSoon": "قريباً",
   "@comingSoon": {},
-
   "retry": "إعادة المحاولة",
   "@retry": {},
-
   "edit": "تعديل",
   "@edit": {},
-
   "delete": "حذف",
   "@delete": {},
-
   "back": "تراجع",
   "@back": {},
-
   "confirm": "تأكيد",
   "@confirm": {},
-
   "send": "إرسال",
   "@send": {},
-
   "accept": "قبول",
   "@accept": {},
-
   "reject": "رفض",
   "@reject": {},
-
   "all": "الكل",
   "@all": {},
-
   "total": "الإجمالي",
   "@total": {},
-
   "viewDetails": "عرض التفاصيل",
   "@viewDetails": {},
-
   "change": "تغيير",
   "@change": {},
-
   "description": "الوصف",
   "@description": {},
-
   "errorOccurred": "حدث خطأ",
   "@errorOccurred": {},
-
   "share": "مشاركة",
   "@share": {},
-
   "follow": "متابعة",
   "@follow": {},
-
   "followed": "متابَق",
   "@followed": {},
-
   "newAuction": "مزاد جديد",
   "@newAuction": {},
-
   "myAuctions": "مزاداتي",
   "@myAuctions": {},
-
   "endingSoon": "ينتهي قريباً",
   "@endingSoon": {},
-
   "searchAuctionHint": "ابحث عن مزاد...",
   "@searchAuctionHint": {},
-
   "noAuctions": "لا توجد مزادات",
   "@noAuctions": {},
-
   "auctionCreatedSuccess": "تم إنشاء المزاد بنجاح",
   "@auctionCreatedSuccess": {},
-
   "addBirdLabel": "إضافة طائر",
   "@addBirdLabel": {},
-
   "noBirdsAdded": "لم تتم إضافة طيور بعد",
   "@noBirdsAdded": {},
-
   "addBirdBtn": "+ إضافة طائر",
   "@addBirdBtn": {},
-
   "birdNumber": "طائر {number}",
   "@birdNumber": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
-
   "pairedBird": "الطائر المزاوج",
   "@pairedBird": {},
-
   "addPairedBird": "+ أضف طائراً مزاوجاً",
   "@addPairedBird": {},
-
   "startingPriceField": "سعر البدء *",
   "@startingPriceField": {},
-
   "startTimeField": "وقت البدء *",
   "@startTimeField": {},
-
   "endTimeField": "وقت الانتهاء *",
   "@endTimeField": {},
-
   "chooseCoverImage": "اختر صورة غلاف للمزاد",
   "@chooseCoverImage": {},
-
   "cancelAuctionTitle": "إلغاء المزاد",
   "@cancelAuctionTitle": {},
-
   "cancelAuctionConfirm": "هل أنت متأكد من إلغاء هذا المزاد؟ لا يمكن التراجع عن هذا الإجراء.",
   "@cancelAuctionConfirm": {},
-
   "auctionCancelledSuccess": "تم إلغاء المزاد",
   "@auctionCancelledSuccess": {},
-
   "auctionUpdatedSuccess": "تم تحديث المزاد بنجاح",
   "@auctionUpdatedSuccess": {},
-
+  "editAuction": "تعديل المزاد",
+  "@editAuction": {},
   "auctionDescriptionLabel": "وصف المزاد",
   "@auctionDescriptionLabel": {},
-
   "startingPriceLabel": "سعر البداية",
   "@startingPriceLabel": {},
-
   "currentPrice": "السعر الحالي",
   "@currentPrice": {},
-
   "details": "التفاصيل",
   "@details": {},
-
   "auctionDetails": "تفاصيل المزاد",
   "@auctionDetails": {},
-
   "buyNowDialogTitle": "شراء فوري",
   "@buyNowDialogTitle": {},
-
   "buyNowConfirm": "هل تريد شراء هذا الطائر فوراً بسعر {price} ج.م؟",
   "@buyNowConfirm": {
     "placeholders": {
-      "price": { "type": "String" }
+      "price": {
+        "type": "String"
+      }
     }
   },
-
   "sendPaymentRequestBtn": "إرسال طلب دفع",
   "@sendPaymentRequestBtn": {},
-
   "sendPaymentRequestTitle": "إرسال طلب دفع",
   "@sendPaymentRequestTitle": {},
-
   "amountLabel": "المبلغ: {amount} ج.م",
   "@amountLabel": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
-
   "bidSuccessful": "تمت المزايدة بنجاح",
   "@bidSuccessful": {},
-
   "bidNowBtn": "زايد الآن",
   "@bidNowBtn": {},
-
   "placeBidTitle": "تقديم مزايدة",
   "@placeBidTitle": {},
-
   "bidCount": "عدد المزايدات",
   "@bidCount": {},
-
   "limitedOffer": "عرض محدود",
   "@limitedOffer": {},
-
+  "limitedOfferRareOpportunity": "عرض محدود - فرصة نادرة",
+  "@limitedOfferRareOpportunity": {},
+  "ownTodaysChampionWinTomorrow": "اقتني بطل اليوم - حقق انتصارات الغد",
+  "@ownTodaysChampionWinTomorrow": {},
   "tapToWatchVideo": "اضغط لعرض الفيديو",
   "@tapToWatchVideo": {},
-
   "officialAnnouncement": "إعلان رسمي",
   "@officialAnnouncement": {},
-
   "noCommentsYet": "لا توجد تعليقات بعد",
   "@noCommentsYet": {},
-
   "chatDisabled": "الشات غير مفعل حالياً",
   "@chatDisabled": {},
-
   "breeder": "المربي",
   "@breeder": {},
-
   "interestedInquiries": "استفسارات المهتمين",
   "@interestedInquiries": {},
-
   "beFirstToInquire": "كن أول من يستفسر!",
   "@beFirstToInquire": {},
-
   "buyNowBeforeItsTooLate": "اشتري الآن قبل فوات الفرصة!",
   "@buyNowBeforeItsTooLate": {},
-
   "specialPrice": "السعر الخاص",
   "@specialPrice": {},
-
   "freeDelivery": "توصيل مجاني لجميع المحافظات 🚚",
   "@freeDelivery": {},
-
   "cashOnDelivery": "الدفع عند الاستلام متاح 💳",
   "@cashOnDelivery": {},
-
   "buyerReviews": "تجارب المشترين",
   "@buyerReviews": {},
-
   "sponsored": "برعاية",
   "@sponsored": {},
-
   "deleteBirdTitle": "حذف الطائر",
   "@deleteBirdTitle": {},
-
   "deleteBirdConfirm": "هل أنت متأكد من حذف هذا الطائر؟ لا يمكن التراجع.",
   "@deleteBirdConfirm": {},
-
   "birdDeletedSuccess": "تم حذف الطائر بنجاح",
   "@birdDeletedSuccess": {},
-
   "addedToCart": "تمت الإضافة إلى السلة",
   "@addedToCart": {},
-
   "noteForSellerLabel": "ملاحظة للبائع (اختياري)",
   "@noteForSellerLabel": {},
-
   "pleaseEnterAuctionTitle": "يرجى إدخال عنوان المزاد",
   "@pleaseEnterAuctionTitle": {},
-
   "pleaseSelectStartTime": "يرجى تحديد وقت البدء",
   "@pleaseSelectStartTime": {},
-
   "startTimeMustBeFuture": "وقت البدء يجب أن يكون في المستقبل",
   "@startTimeMustBeFuture": {},
-
   "pleaseSelectEndTime": "يرجى تحديد وقت الانتهاء",
   "@pleaseSelectEndTime": {},
-
   "endTimeAfterStartTime": "وقت الانتهاء يجب أن يكون بعد وقت البدء",
   "@endTimeAfterStartTime": {},
-
   "pleaseEnterValidMinBid": "يرجى إدخال حد أدنى صحيح للمزايدة",
   "@pleaseEnterValidMinBid": {},
-
   "pleaseAddAtLeastOneBird": "يرجى إضافة طائر واحد على الأقل",
   "@pleaseAddAtLeastOneBird": {},
-
   "disableChat": "تعطيل الشات",
   "@disableChat": {},
-
   "enableChat": "تفعيل الشات",
   "@enableChat": {},
-
   "auctionChatTooltip": "شات المزاد",
   "@auctionChatTooltip": {},
-
   "sellerBlockedSuccess": "تم حظر هذا البائع",
   "@sellerBlockedSuccess": {},
-
   "sellerUnblockedSuccess": "تم إلغاء الحظر",
   "@sellerUnblockedSuccess": {},
-
   "mustFollowFirst": "يجب متابعة البائع أولاً للتواصل معه",
   "@mustFollowFirst": {},
-
   "notifyWhenAvailable": "أخبرني عند النزول",
   "@notifyWhenAvailable": {},
-
   "expectedPrice": "السعر المتوقع",
   "@expectedPrice": {},
-
   "myConversations": "محادثاتي",
   "@myConversations": {},
-
   "switchProfile": "تبديل الملف الشخصي",
   "@switchProfile": {},
-
   "myPackage": "باقتي",
   "@myPackage": {},
-
   "myBadges": "أوسمتي",
   "@myBadges": {},
-
   "customerOrders": "طلبات العملاء",
   "@customerOrders": {},
-
   "paymentRequests": "طلبات الدفع",
   "@paymentRequests": {},
-
   "shoppingCart": "سلة الشراء",
   "@shoppingCart": {},
-
   "myOrders": "طلباتي",
   "@myOrders": {},
-
   "language": "اللغة",
   "@language": {},
-
   "myPrizes": "جوائزي",
   "@myPrizes": {},
-
   "challenges": "التحديات",
   "@challenges": {},
-
   "accountVerification": "توثيق الحساب",
   "@accountVerification": {},
-
   "logout": "تسجيل الخروج",
   "@logout": {},
-
   "logoutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   "@logoutConfirm": {},
-
   "ownershipRecord": "سجل الملكية",
   "@ownershipRecord": {},
-
   "ownershipRecordDesc": "نظام محمي وغير قابل للتلاعب",
   "@ownershipRecordDesc": {},
-
   "rewardsProgram": "برنامج المكافآت",
   "@rewardsProgram": {},
-
   "inviteFriendsEarn": "ادعُ أصدقاءك واكسب",
   "@inviteFriendsEarn": {},
-
   "inviteCode": "كود الدعوة",
   "@inviteCode": {},
-
   "whatsapp": "واتساب",
   "@whatsapp": {},
-
   "notifyMe": "أخبرني",
   "@notifyMe": {},
-
   "pointsRedemptionComingSoon": "قريباً — ميزة الاستبدال قيد التطوير",
   "@pointsRedemptionComingSoon": {},
-
   "browseMarket": "تصفّح السوق",
   "@browseMarket": {},
-
   "searchActiveAuctionsHint": "ابحث بالحلقة أو السلالة أو الوصف...",
   "@searchActiveAuctionsHint": {},
-
   "cartTitle": "عربة التسوق",
   "@cartTitle": {},
-
   "clearCartBtn": "إفراغ",
   "@clearCartBtn": {},
-
   "productCount": "عدد المنتجات",
   "@productCount": {},
-
   "checkoutError": "حدث خطأ أثناء إتمام الطلب",
   "@checkoutError": {},
-
   "noOrdersYet": "لا توجد طلبات بعد",
   "@noOrdersYet": {},
-
   "noOrdersCurrently": "لا توجد طلبات حالياً",
   "@noOrdersCurrently": {},
-
   "sendingPaymentRequest": "جاري إرسال طلب الدفع…",
   "@sendingPaymentRequest": {},
-
   "activityLogTitle": "سجل النشاط",
   "@activityLogTitle": {},
-
   "noActivityYet": "لا يوجد نشاط حتى الآن",
   "@noActivityYet": {},
-
   "profileDeletedSuccess": "تم حذف الملف الشخصي",
   "@profileDeletedSuccess": {},
-
   "editProfile": "تعديل الملف الشخصي",
   "@editProfile": {},
-
   "conversationsTitle": "المحادثات",
   "@conversationsTitle": {},
-
   "messageInputHint": "اكتب رسالتك...",
   "@messageInputHint": {},
-
   "notificationUpdateError": "تعذر تحديث حالة الإشعار",
   "@notificationUpdateError": {},
-
   "noNotifications": "لا توجد إشعارات",
   "@noNotifications": {},
-
   "marketSearchHint": "ابحث عن فئة أو منتج...",
   "@marketSearchHint": {},
-
   "productSearchHint": "ابحث في المنتجات...",
   "@productSearchHint": {},
-
   "badgesTitle": "الأوسمة",
   "@badgesTitle": {},
-
   "myAwards": "جوائزي",
   "@myAwards": {},
-
   "luckyWheelTitle": "عجلة الحظ",
   "@luckyWheelTitle": {},
-
   "availablePrizes": "الجوائز المتاحة",
   "@availablePrizes": {},
-
   "myPerks": "امتيازاتي",
   "@myPerks": {},
-
   "noPerksAvailable": "لا امتيازات متاحة حالياً",
   "@noPerksAvailable": {},
-
   "spinWheelForPerks": "أدر عجلة الحظ للحصول على امتيازات",
   "@spinWheelForPerks": {},
-
   "auctionIdHint": "أدخل ID المزاد",
   "@auctionIdHint": {},
-
   "messageIdHint": "أدخل ID الرسالة",
   "@messageIdHint": {},
-
   "auctionIdLabel": "رقم المزاد",
   "@auctionIdLabel": {},
-
   "messageIdLabel": "رقم الرسالة",
   "@messageIdLabel": {},
-
   "activatePerks": "تفعيل {name}",
   "@activatePerks": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
-
   "pinMessage": "تثبيت رسالة",
   "@pinMessage": {},
-
   "pinMessageDesc": "أدخل رقم الرسالة التي تريد تثبيتها لمدة دقيقة",
   "@pinMessageDesc": {},
-
   "pin": "تثبيت",
   "@pin": {},
-
   "viewMyPerks": "عرض امتيازاتي واستخدامها",
   "@viewMyPerks": {},
-
   "paymentRequestSentSuccess": "تم إرسال طلب الدفع بنجاح",
   "@paymentRequestSentSuccess": {},
-
   "noPaymentRequests": "لا توجد طلبات دفع حتى الآن",
   "@noPaymentRequests": {},
-
   "operationSuccessful": "تمت العملية بنجاح",
   "@operationSuccessful": {},
-
   "saveNote": "حفظ الملاحظة",
   "@saveNote": {},
-
   "imageUploadError": "فشل رفع الصورة، حاول مجدداً",
   "@imageUploadError": {},
-
   "paymentProofSentSuccess": "تم إرسال إثبات الدفع بنجاح",
   "@paymentProofSentSuccess": {},
-
   "addImageBtn": "إضافة صورة",
   "@addImageBtn": {},
-
   "sendProofBtn": "إرسال الإثبات",
   "@sendProofBtn": {},
-
   "rejectionNoteLabel": "ملاحظة الرفض (اختياري)",
   "@rejectionNoteLabel": {},
-
   "rejectionNoteHint": "سبب الرفض إن وجد…",
   "@rejectionNoteHint": {},
-
   "noteForBuyerLabel": "ملاحظتك للبائع",
   "@noteForBuyerLabel": {},
-
   "noteForBuyerHint": "أضف أي تعليق أو توضيح…",
   "@noteForBuyerHint": {},
-
   "complaintValidation": "أدخل عنوان الشكوى ووصفها",
   "@complaintValidation": {},
-
   "complaintSubmittedSuccess": "تم تقديم الشكوى بنجاح",
   "@complaintSubmittedSuccess": {},
-
   "afterSaleComplaint": "ما بعد البيع",
   "@afterSaleComplaint": {},
-
   "rejectedPaymentComplaint": "دفع مرفوض",
   "@rejectedPaymentComplaint": {},
-
   "otherComplaint": "أخرى",
   "@otherComplaint": {},
-
   "complaintCancelledSuccess": "تم إلغاء الشكوى",
   "@complaintCancelledSuccess": {},
-
   "cancelComplaintTitle": "إلغاء الشكوى",
   "@cancelComplaintTitle": {},
-
   "cancelComplaintConfirm": "هل تريد إلغاء هذه الشكوى؟",
   "@cancelComplaintConfirm": {},
-
   "complaintTitleLabel": "عنوان الشكوى",
   "@complaintTitleLabel": {},
-
   "complaintTypeLabel": "نوع الشكوى",
   "@complaintTypeLabel": {},
-
   "complaintDescLabel": "وصف المشكلة",
   "@complaintDescLabel": {},
-
   "complaintDescHint": "اشرح ما حدث بوضوح...",
   "@complaintDescHint": {},
-
   "enterRingNumber": "أدخل رقم الحلقة",
   "@enterRingNumber": {},
-
   "reviewSuccess": "تمت المراجعة بنجاح",
   "@reviewSuccess": {},
-
   "pedigreeRingLabel": "رقم حلقة الطائر",
   "@pedigreeRingLabel": {},
-
   "pedigreeRingHint": "مثال: EG-2024-12345",
   "@pedigreeRingHint": {},
-
   "pedigreeDescHint": "وصف إضافي من شهادة النسب",
   "@pedigreeDescHint": {},
-
   "pdfFile": "ملف PDF",
   "@pdfFile": {},
-
   "ratingSubmittedSuccess": "تم الإرسال بنجاح",
   "@ratingSubmittedSuccess": {},
-
   "ratingLabel": "تقييم",
   "@ratingLabel": {},
-
   "commentLabel": "تعليق",
   "@commentLabel": {},
-
   "submitRatingBtn": "إرسال التقييم",
   "@submitRatingBtn": {},
-
   "submitCommentBtn": "إرسال التعليق",
   "@submitCommentBtn": {},
-
   "addCommentHint": "أضف تعليقاً (اختياري)",
   "@addCommentHint": {},
-
   "writeYourComment": "اكتب تعليقك هنا...",
   "@writeYourComment": {},
-
   "invalidQrCode": "رمز QR غير صالح — لا ينتمي لطائر في كوكب الحمام",
   "@invalidQrCode": {},
-
   "pigeonFormValidation": "يرجى إدخال رقم الحلقة والسلالة والإنجازات",
   "@pigeonFormValidation": {},
-
   "birdDataUpdated": "تم تعديل بيانات الطائر بنجاح",
   "@birdDataUpdated": {},
-
   "capturePhoto": "التقاط صورة",
   "@capturePhoto": {},
-
   "chooseFromGallery": "اختيار من المعرض",
   "@chooseFromGallery": {},
-
   "requiredField": "إلزامي",
   "@requiredField": {},
-
   "noPhotos": "لا توجد صور",
   "@noPhotos": {},
-
   "printFeatureComingSoon": "سيتم إضافة الطباعة قريباً",
   "@printFeatureComingSoon": {},
-
   "printBtn": "طباعة",
   "@printBtn": {},
-
   "shareFeatureComingSoon": "سيتم إضافة المشاركة قريباً",
   "@shareFeatureComingSoon": {},
-
   "publishPigeon": "نشر الحمامة",
   "@publishPigeon": {},
-
   "publishLinkComingSoon": "سيتم ربط النشر في الخطوة القادمة",
   "@publishLinkComingSoon": {},
-
   "viewPedigreeCertificate": "عرض شهادة النسب",
   "@viewPedigreeCertificate": {},
-
   "processingLabel": "تسجيل...",
   "@processingLabel": {},
-
   "reprocessBtn": "إعادة المعالجة",
   "@reprocessBtn": {},
-
   "otpNewCodeSent": "تم إرسال رمز جديد",
   "@otpNewCodeSent": {},
-
   "automatic": "تلقائي",
   "@automatic": {},
-
   "useBtn": "استخدام",
   "@useBtn": {},
-
   "later": "لاحقاً",
   "@later": {},
-
   "auctionTitleLabel": "عنوان المزاد",
   "@auctionTitleLabel": {},
-
   "auctionTitleRequired": "العنوان مطلوب",
   "@auctionTitleRequired": {},
-
   "auctionTitleHint": "أدخل عنوان المزاد",
   "@auctionTitleHint": {},
-
   "auctionDescHint": "أدخل وصف المزاد",
   "@auctionDescHint": {},
-
   "tagsLabel": "الوسوم (Tags)",
   "@tagsLabel": {},
-
   "tagsHint": "مثال: حمام, سباق, نادر",
   "@tagsHint": {},
-
   "auctionEditNote": "يمكن تعديل العنوان والوصف والوسوم فقط، ولا يمكن تعديل الأسعار أو الطيور بعد إنشاء المزاد.",
   "@auctionEditNote": {},
-
   "myBids": "مزايداتي",
   "@myBids": {},
-
   "noBidsYet": "لا توجد مزايدات بعد",
   "@noBidsYet": {},
-
   "winningBid": "مزايدة فائزة",
   "@winningBid": {},
-
   "bidders": "المزايدون",
   "@bidders": {},
-
   "unknown": "مجهول",
   "@unknown": {},
-
   "highestBid": "أعلى مزايدة",
   "@highestBid": {},
-
   "now": "الآن",
   "@now": {},
-
   "minutesAgo": "منذ {minutes} دقيقة",
   "@minutesAgo": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
-
   "hoursAgo": "منذ {hours} ساعة",
   "@hoursAgo": {
     "placeholders": {
-      "hours": { "type": "int" }
+      "hours": {
+        "type": "int"
+      }
     }
   },
-
   "daysAgo": "منذ {days} يوم",
   "@daysAgo": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
-
   "managePedigreeCertificate": "إدارة شهادة النسب",
   "@managePedigreeCertificate": {},
-
   "verifiedPedigree": "نسب موثقة",
   "@verifiedPedigree": {},
-
   "healthGuarantee": "ضمان صحي",
   "@healthGuarantee": {},
-
   "racesAndResults": "النتائج والسباقات",
   "@racesAndResults": {},
-
   "races": "السباقات",
   "@races": {},
-
   "searchResults": "بحث النتائج",
   "@searchResults": {},
-
   "racesSearchHint": "بحث في السباقات...",
   "@racesSearchHint": {},
-
   "noRacesYet": "لا توجد سباقات بعد",
   "@noRacesYet": {},
-
   "noResults": "لا توجد نتائج",
   "@noResults": {},
-
   "noMatchingResults": "لا توجد نتائج مطابقة",
   "@noMatchingResults": {},
-
   "season": "الموسم",
   "@season": {},
-
   "station": "المحطة",
   "@station": {},
-
   "applyFilter": "تطبيق الفلتر",
   "@applyFilter": {},
-
   "clear": "مسح",
   "@clear": {},
-
   "raceSearchHint": "رقم الحلقة أو اسم المتسابق...",
   "@raceSearchHint": {},
-
   "raceSearchDesc": "ابحث برقم حلقة الحمام أو اسم المتسابق",
   "@raceSearchDesc": {},
-
   "bird": "طائر",
   "@bird": {},
-
   "racer": "متسابق",
   "@racer": {},
-
   "ringLabel": "حلقة: {ring}",
   "@ringLabel": {
     "placeholders": {
-      "ring": { "type": "String" }
+      "ring": {
+        "type": "String"
+      }
     }
   },
-
   "loadMore": "تحميل المزيد",
-  "@loadMore": {}
+  "@loadMore": {},
+  "uploadSizeHint": "PNG, JPG حتى 10MB",
+  "@uploadSizeHint": {
+    "description": "Upload box file size/type hint"
+  },
+  "serviceProviderSubtitle": "للشركات والموردين",
+  "@serviceProviderSubtitle": {
+    "description": "Service provider registration subtitle"
+  },
+  "mustAgreeToTerms": "يجب الموافقة على الشروط والأحكام",
+  "@mustAgreeToTerms": {},
+  "registerSuccess": "تم إنشاء الحساب بنجاح",
+  "@registerSuccess": {},
+  "username": "اسم المستخدم",
+  "@username": {},
+  "usernameHint": "أدخل اسم المستخدم (بدون مسافات)",
+  "@usernameHint": {},
+  "passwordHint": "أدخل كلمة المرور",
+  "@passwordHint": {},
+  "confirmPasswordHint": "أدخل كلمة المرور مرة أخرى",
+  "@confirmPasswordHint": {},
+  "personalAccount": "حساب شخصي",
+  "@personalAccount": {
+    "description": "Personal account type label"
+  },
+  "personalAccountSub": "للمربين والمشترين",
+  "@personalAccountSub": {
+    "description": "Personal account type subtitle"
+  },
+  "phoneHint": "+20 1xx xxx xxxx",
+  "@phoneHint": {
+    "description": "Phone number input hint"
+  },
+  "age": "العمر",
+  "@age": {
+    "description": "Age label"
+  },
+  "location": "الموقع",
+  "@location": {
+    "description": "Location label"
+  },
+  "flyingSpeed": "السرعة",
+  "@flyingSpeed": {
+    "description": "Flying speed label"
+  },
+  "kmPerHour": "كم/س",
+  "@kmPerHour": {
+    "description": "Kilometres per hour unit abbreviation"
+  },
+  "stamina": "التحمل",
+  "@stamina": {
+    "description": "Stamina label"
+  },
+  "achievements": "الإنجازات",
+  "@achievements": {
+    "description": "Achievements label"
+  },
+  "staminaExcellent": "ممتاز",
+  "@staminaExcellent": {
+    "description": "Stamina level: excellent"
+  },
+  "staminaVeryGood": "جيد جداً",
+  "@staminaVeryGood": {
+    "description": "Stamina level: very good"
+  },
+  "staminaGood": "جيد",
+  "@staminaGood": {
+    "description": "Stamina level: good"
+  },
+  "genderYoung": "صغير",
+  "@genderYoung": {
+    "description": "Gender/age label: young (chick)"
+  },
+  "auctionEnded": "انتهى",
+  "@auctionEnded": {
+    "description": "Label shown when an auction countdown has expired"
+  },
+  "priceEgpFormat": "ج.م {amount}",
+  "@priceEgpFormat": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "unspecified": "غير محدد",
+  "@unspecified": {
+    "description": "Value is unspecified / unknown"
+  },
+  "lessThanAYear": "أقل من سنة",
+  "@lessThanAYear": {
+    "description": "Age label: less than one year old"
+  },
+  "notAvailable": "غير متاح",
+  "@notAvailable": {
+    "description": "Location or field not available"
+  },
+  "noDescription": "لا يوجد وصف.",
+  "@noDescription": {
+    "description": "Fallback when no description is provided"
+  },
+  "pigeonDetails": "تفاصيل الحمام",
+  "@pigeonDetails": {
+    "description": "AppBar title for the bird detail page"
+  },
+  "savingsAmount": "توفير {amount} ج.م",
+  "@savingsAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "discountPercent": "خصم {percent}%",
+  "@discountPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveViewersCount": "{count} شخص يشاهدون الآن",
+  "@liveViewersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "todayRequestsCount": "{count} طلب اليوم",
+  "@todayRequestsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "thisBirdIsYours": "هذا الطائر ملكك",
+  "@thisBirdIsYours": {
+    "description": "Button label shown to the owner instead of buy now"
+  },
+  "buyNowLimitedOffer": "🛒 اشتري الآن - عرض لفترة محدودة!",
+  "@buyNowLimitedOffer": {
+    "description": "Buy now button label with limited offer note"
+  },
+  "dnaRegistered": "DNA مسجل",
+  "@dnaRegistered": {
+    "description": "DNA registered verification chip label"
+  },
+  "birdPhoto": "صورة الطير",
+  "@birdPhoto": {
+    "description": "Label for the bird photo thumbnail"
+  },
+  "birdWing": "الجناح",
+  "@birdWing": {
+    "description": "Label for the wing photo thumbnail"
+  },
+  "birdEye": "العين",
+  "@birdEye": {
+    "description": "Label for the eye photo thumbnail"
+  },
+  "ringNumberThumbnail": "رقم الدبلة",
+  "@ringNumberThumbnail": {
+    "description": "Label for the ring number photo thumbnail"
+  },
+  "photoNumber": "صورة {number}",
+  "@photoNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "birdVideo": "فيديو الطير",
+  "@birdVideo": {
+    "description": "Label for the bird video thumbnail"
+  },
+  "zeroViews": "0 مشاهدة",
+  "@zeroViews": {
+    "description": "View count badge showing zero views on media"
+  },
+  "noReviewsYet": "لا توجد تقييمات بعد",
+  "@noReviewsYet": {
+    "description": "Empty state when there are no reviews"
+  },
+  "viewAllReviews": "عرض جميع التقييمات ({count})",
+  "@viewAllReviews": {
+    "description": "Button to view all reviews with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyCartTitle": "عربتك فارغة",
+  "@emptyCartTitle": {},
+  "emptyCartSubtitle": "تصفّح السوق وأضف منتجات إلى عربتك",
+  "@emptyCartSubtitle": {},
+  "completeOrder": "إتمام الطلب",
+  "@completeOrder": {},
+  "birdsInThisAuction": "الطيور في هذا المزاد",
+  "@birdsInThisAuction": {
+    "description": "Section header listing the birds in a given auction"
+  },
+  "daysRemaining": "{count} يوم متبقي",
+  "@daysRemaining": {
+    "description": "Countdown: days remaining",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursRemaining": "{count} ساعة متبقية",
+  "@hoursRemaining": {
+    "description": "Countdown: hours remaining",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesRemaining": "{count} دقيقة متبقية",
+  "@minutesRemaining": {
+    "description": "Countdown: minutes remaining",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusActive": "نشط",
+  "@statusActive": {
+    "description": "Auction/item status: active"
+  },
+  "statusEnded": "منتهي",
+  "@statusEnded": {
+    "description": "Auction/item status: ended"
+  },
+  "statusUpcoming": "قادم",
+  "@statusUpcoming": {
+    "description": "Auction/item status: upcoming"
+  },
+  "statusSold": "مُباع",
+  "@statusSold": {
+    "description": "Item status: sold"
+  },
+  "statusUnsold": "غير مُباع",
+  "@statusUnsold": {
+    "description": "Item status: unsold"
+  },
+  "statusCancelled": "ملغي",
+  "@statusCancelled": {
+    "description": "Item status: cancelled"
+  },
+  "minBidLabel": "حد أدنى: {amount} ج.م",
+  "@minBidLabel": {
+    "description": "Minimum bid increment label with amount",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "birdCount": "{count} طائر",
+  "@birdCount": {
+    "description": "Number of birds in the auction",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bidCountLabel": "{count} مزايدة",
+  "@bidCountLabel": {
+    "description": "Number of bids on an auction item",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "byProceedingYouAgree": "بالمتابعة، أنت توافق على ",
+  "@byProceedingYouAgree": {},
+  "andConnector": " و",
+  "@andConnector": {},
+  "auctionBidAmountEgp": "{amount} ج.م",
+  "@auctionBidAmountEgp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "viewAllReviewsText": "عرض جميع التقييمات",
+  "@viewAllReviewsText": {},
+  "blockSeller": "حظر البائع",
+  "@blockSeller": {},
+  "unblockSeller": "إلغاء الحظر",
+  "@unblockSeller": {},
+  "followingNow": "تتابع الآن",
+  "@followingNow": {},
+  "contactSeller": "تواصل مع البائع",
+  "@contactSeller": {},
+  "followSellerToContact": "تابع هذا البائع للتواصل معه",
+  "@followSellerToContact": {},
+  "aboutBreeder": "نبذة عن المربي",
+  "@aboutBreeder": {},
+  "noAdditionalInfo": "لا توجد معلومات إضافية",
+  "@noAdditionalInfo": {},
+  "breederAuctions": "مزادات المربي",
+  "@breederAuctions": {},
+  "reviews": "التقييمات",
+  "@reviews": {},
+  "averageRating": "متوسط التقييم",
+  "@averageRating": {},
+  "activeAuction": "مزاد نشط",
+  "@activeAuction": {},
+  "outOfFive": "من 5",
+  "@outOfFive": {},
+  "whatDoYouWantToAdd": "ماذا تريد أن تضيف؟",
+  "@whatDoYouWantToAdd": {},
+  "addAuctionBirds": "إضافة طيور للمزاد",
+  "@addAuctionBirds": {},
+  "startAuctionForBirds": "ابدأ مزاد على حمامك الزاجل",
+  "@startAuctionForBirds": {},
+  "addFixedPriceBirds": "إضافة طيور بسعر ثابت",
+  "@addFixedPriceBirds": {},
+  "directSaleFixedPrice": "بيع مباشر بسعر محدد مسبقاً",
+  "@directSaleFixedPrice": {},
+  "addProducts": "إضافة منتجات",
+  "@addProducts": {},
+  "productsSubtitle": "أدوية، مكملات، مستلزمات وأكثر",
+  "@productsSubtitle": {},
+  "manageSubscriptions": "إدارة اشتراكاتي",
+  "@manageSubscriptions": {},
+  "subscribeToCreateAuctions": "اشترك في باقة لتتمكن من إنشاء المزادات",
+  "@subscribeToCreateAuctions": {},
+  "dataLoadError": "حدث خطأ في تحميل البيانات",
+  "@dataLoadError": {},
+  "discoverAuctionsAndBreeders": "اكتشف أحدث المزادات والمربين",
+  "@discoverAuctionsAndBreeders": {},
+  "bestSeller": "الأكثر مبيعاً",
+  "@bestSeller": {},
+  "browseProducts": "تصفح المنتجات",
+  "@browseProducts": {},
+  "free": "مجاني",
+  "@free": {},
+  "homeDelivery": "توصيل للمنزل",
+  "@homeDelivery": {},
+  "availableProduct": "منتج متاح",
+  "@availableProduct": {},
+  "allProductsHighQuality": "جميع المنتجات عالية الجودة",
+  "@allProductsHighQuality": {},
+  "certifiedOriginalProducts": "منتجات أصلية معتمدة لصحة حمامك",
+  "@certifiedOriginalProducts": {},
+  "activeOffers": "عروض نشطة",
+  "@activeOffers": {},
+  "suggestedForYou": "مقترح لك",
+  "@suggestedForYou": {},
+  "more": "المزيد",
+  "@more": {},
+  "followedAlt": "متابَع",
+  "@followedAlt": {},
+  "noProducts": "لا توجد منتجات",
+  "@noProducts": {},
+  "newest": "الأحدث",
+  "@newest": {},
+  "priceLowToHigh": "السعر: الأقل أولاً",
+  "@priceLowToHigh": {},
+  "priceHighToLow": "السعر: الأعلى أولاً",
+  "@priceHighToLow": {},
+  "sort": "ترتيب",
+  "@sort": {},
+  "benefits": "الفوائد",
+  "@benefits": {},
+  "myInsights": "إحصائياتي",
+  "@myInsights": {},
+  "insightsLoadError": "فشل تحميل الإحصائيات",
+  "@insightsLoadError": {},
+  "closedAuctions": "مزادات مغلقة",
+  "@closedAuctions": {},
+  "totalOffersReceived": "إجمالي العروض المستلمة",
+  "@totalOffersReceived": {},
+  "uniqueBidders": "مزايدون فريدون",
+  "@uniqueBidders": {},
+  "completedSales": "مبيعات مكتملة",
+  "@completedSales": {},
+  "pendingPaymentRequests": "طلبات دفع معلقة",
+  "@pendingPaymentRequests": {},
+  "listedProducts": "منتجات معروضة",
+  "@listedProducts": {},
+  "pendingOrders": "طلبات معلقة",
+  "@pendingOrders": {},
+  "lowStock": "مخزون منخفض",
+  "@lowStock": {},
+  "engagement": "التفاعل",
+  "@engagement": {},
+  "totalFollowers": "إجمالي المتابعين",
+  "@totalFollowers": {},
+  "newFollowers7Days": "متابعون جدد (7 أيام)",
+  "@newFollowers7Days": {},
+  "activeConversations": "محادثات نشطة",
+  "@activeConversations": {},
+  "unreadMessages": "رسائل غير مقروءة",
+  "@unreadMessages": {},
+  "profileViews7Days": "مشاهدات الملف (7 أيام)",
+  "@profileViews7Days": {},
+  "auctionViews7Days": "مشاهدات المزادات (7 أيام)",
+  "@auctionViews7Days": {},
+  "marketViews7Days": "مشاهدات المتجر (7 أيام)",
+  "@marketViews7Days": {},
+  "trust": "الموثوقية",
+  "@trust": {},
+  "ratingsCount": "عدد التقييمات",
+  "@ratingsCount": {},
+  "newReviews7Days": "مراجعات جديدة (7 أيام)",
+  "@newReviews7Days": {},
+  "badges": "الشارات",
+  "@badges": {},
+  "package": "الباقة",
+  "@package": {},
+  "currentPackage": "الباقة الحالية",
+  "@currentPackage": {},
+  "packageNumber": "رقم الباقة",
+  "@packageNumber": {},
+  "subscriptionStatus": "حالة الاشتراك",
+  "@subscriptionStatus": {},
+  "inactive": "غير نشط",
+  "@inactive": {},
+  "remainingAuctionQuota": "حصة المزادات المتبقية",
+  "@remainingAuctionQuota": {},
+  "remainingMarketQuota": "حصة المتجر المتبقية",
+  "@remainingMarketQuota": {},
+  "remainingPackagePoints": "نقاط الباقة المتبقية",
+  "@remainingPackagePoints": {},
+  "promotedAuctions": "مزادات مروجة",
+  "@promotedAuctions": {},
+  "promotedProducts": "منتجات مروجة",
+  "@promotedProducts": {},
+  "packageExpiryDate": "تاريخ انتهاء الباقة",
+  "@packageExpiryDate": {},
+  "activeOnly": "النشطة فقط",
+  "@activeOnly": {},
+  "previous": "السابقة",
+  "@previous": {},
+  "badgesLoadError": "حدث خطأ في تحميل الأوسمة",
+  "@badgesLoadError": {},
+  "noBadgesYet": "لا توجد أوسمة بعد",
+  "@noBadgesYet": {},
+  "completeDealsForBadges": "أكمل صفقاتك وتفاعل مع المنصة لتحصل على أوسمة",
+  "@completeDealsForBadges": {},
+  "expired": "منتهٍ",
+  "@expired": {},
+  "enterValidPrice": "يرجى إدخال سعر صحيح",
+  "@enterValidPrice": {},
+  "viewPackages": "عرض الباقات",
+  "@viewPackages": {},
+  "createNewAuction": "إنشاء مزاد جديد",
+  "@createNewAuction": {},
+  "auctionData": "بيانات المزاد",
+  "@auctionData": {},
+  "auctionTitleFieldLabel": "عنوان المزاد *",
+  "@auctionTitleFieldLabel": {},
+  "auctionTitleExample": "مثال: حمام زاجل مميز",
+  "@auctionTitleExample": {},
+  "auctionDescBriefHint": "اكتب وصفاً مختصراً للمزاد",
+  "@auctionDescBriefHint": {},
+  "auctionImage": "صورة المزاد",
+  "@auctionImage": {},
+  "auctionTypeField": "نوع المزاد",
+  "@auctionTypeField": {},
+  "chooseStartDateTime": "اختر تاريخ ووقت البدء",
+  "@chooseStartDateTime": {},
+  "chooseEndDateTime": "اختر تاريخ ووقت الانتهاء",
+  "@chooseEndDateTime": {},
+  "minBidField": "الحد الأدنى للمزايدة",
+  "@minBidField": {},
+  "tagsFieldLabel": "الوسوم",
+  "@tagsFieldLabel": {},
+  "auctionSettings": "إعدادات المزاد",
+  "@auctionSettings": {},
+  "autoExtend": "تمديد تلقائي",
+  "@autoExtend": {},
+  "autoExtendDesc": "تمديد المزاد تلقائياً عند وجود مزايدات في آخر الدقائق",
+  "@autoExtendDesc": {},
+  "extensionDuration": "مدة التمديد",
+  "@extensionDuration": {},
+  "buyNowDesc": "السماح بالشراء الفوري",
+  "@buyNowDesc": {},
+  "buyNowPriceField": "سعر الشراء الفوري",
+  "@buyNowPriceField": {},
+  "depositRequired": "العربون مطلوب",
+  "@depositRequired": {},
+  "depositRequiredDesc": "يتطلب المزاد دفع عربون لتأكيد المزايدة",
+  "@depositRequiredDesc": {},
+  "paymentDeadlineDays": "مهلة الدفع بالأيام",
+  "@paymentDeadlineDays": {},
+  "birdsCount": "عدد الطيور: {arg0}",
+  "@birdsCount": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "createAuction": "إنشاء المزاد",
+  "@createAuction": {},
+  "nextArrow": "التالي ←",
+  "@nextArrow": {},
+  "settings": "الإعدادات",
+  "@settings": {},
+  "birds": "الطيور",
+  "@birds": {},
+  "chick": "فرخ",
+  "@chick": {},
+  "buyNowConfirmMessage": "هل تريد الشراء الآن بسعر {arg0} ج.م؟",
+  "@buyNowConfirmMessage": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountDisplay": "المبلغ: {arg0} ج.م",
+  "@amountDisplay": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewPaymentDetails": "عرض تفاصيل الدفع",
+  "@viewPaymentDetails": {},
+  "minBidDisplay": "الحد الأدنى: {arg0} ج.م",
+  "@minBidDisplay": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "yourAuctionCannotBid": "لا يمكنك المزايدة على مزادك",
+  "@yourAuctionCannotBid": {},
+  "auctionNotStartedYet": "المزاد لم يبدأ بعد",
+  "@auctionNotStartedYet": {},
+  "wonAuction": "فزت بالمزاد #{arg0}",
+  "@wonAuction": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "enterValidNumber": "أدخل رقماً صحيحاً",
+  "@enterValidNumber": {},
+  "minBidValidation": "يجب ألا تقل المزايدة عن {arg0}",
+  "@minBidValidation": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "minimumLabel": "الحد الأدنى",
+  "@minimumLabel": {},
+  "orderConfirmationTitle": "تأكيد الطلب",
+  "@orderConfirmationTitle": {},
+  "orderSentSuccess": "تم إرسال الطلب بنجاح",
+  "@orderSentSuccess": {},
+  "awaitingSellerApproval": "بانتظار موافقة البائع",
+  "@awaitingSellerApproval": {},
+  "orderNumber": "طلب #{arg0}",
+  "@orderNumber": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "statusLabel": "الحالة",
+  "@statusLabel": {},
+  "backToHome": "العودة للرئيسية",
+  "@backToHome": {},
+  "quantityLabel": "الكمية: {arg0}",
+  "@quantityLabel": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderDetails": "تفاصيل الطلب",
+  "@orderDetails": {},
+  "sellerName": "البائع: {arg0}",
+  "@sellerName": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "cashbackEarned": "كاش باك مكتسب: {arg0}",
+  "@cashbackEarned": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "cashbackRedeemed": "كاش باك مستخدم: {arg0}",
+  "@cashbackRedeemed": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "statusPending": "قيد الانتظار",
+  "@statusPending": {},
+  "statusProcessing": "قيد المعالجة",
+  "@statusProcessing": {},
+  "statusCompleted": "مكتمل",
+  "@statusCompleted": {},
+  "statusPartialRejected": "مرفوض جزئياً",
+  "@statusPartialRejected": {},
+  "orderSummary": "{arg0} منتجات - {arg1}",
+  "@orderSummary": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      },
+      "arg1": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderItemSummary": "{arg0} × {arg1}",
+  "@orderItemSummary": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      },
+      "arg1": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderTotalSar": "الإجمالي: {arg0} ر.س",
+  "@orderTotalSar": {
+    "placeholders": {
+      "arg0": {
+        "type": "Object"
+      }
+    }
+  },
+  "pointsLoyaltyLoadError": "تعذر تحميل بيانات الولاء من الخادم",
+  "@pointsLoyaltyLoadError": {},
+  "pointsSystemTitle": "نظام PP Coins",
+  "@pointsSystemTitle": {},
+  "pointsSystemSubtitle": "اكسب نقاطاً واستبدلها بجوائز حصرية",
+  "@pointsSystemSubtitle": {},
+  "currentBalance": "رصيدك الحالي",
+  "@currentBalance": {},
+  "pointsAmount": "{count} نقطة",
+  "@pointsAmount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "pointsTabLabel": "🪙  النقاط",
+  "@pointsTabLabel": {},
+  "rewardsTabLabel": "🎁  الجوائز",
+  "@rewardsTabLabel": {},
+  "totalPoints": "إجمالي النقاط",
+  "@totalPoints": {},
+  "loyaltyPoints": "نقاط الولاء",
+  "@loyaltyPoints": {},
+  "packagePoints": "نقاط الباقة",
+  "@packagePoints": {},
+  "pointsLog": "سجل النقاط",
+  "@pointsLog": {},
+  "noPointTransactions": "لا توجد معاملات نقاط بعد",
+  "@noPointTransactions": {},
+  "viewAllTransactions": "عرض كل المعاملات",
+  "@viewAllTransactions": {},
+  "howEarnPoints": "كيف تكسب نقاطاً؟",
+  "@howEarnPoints": {},
+  "pointsValue": "قيمة النقاط",
+  "@pointsValue": {},
+  "pointsExpiryNote": "النقاط صالحة لمدة سنة من تاريخ الكسب. تُضاف تلقائياً بعد إتمام كل عملية.",
+  "@pointsExpiryNote": {},
+  "earnCompleteSalePurchase": "إتمام بيع أو شراء",
+  "@earnCompleteSalePurchase": {},
+  "earnCompleteSalePurchaseSub": "لكل صفقة مكتملة",
+  "@earnCompleteSalePurchaseSub": {},
+  "earnPayOnTime": "سداد في الوقت المحدد",
+  "@earnPayOnTime": {},
+  "earnPayOnTimeSub": "خلال مهلة الدفع",
+  "@earnPayOnTimeSub": {},
+  "earnFiveStarRating": "تقييم 5 نجوم",
+  "@earnFiveStarRating": {},
+  "earnFiveStarRatingSub": "من المشتري أو البائع",
+  "@earnFiveStarRatingSub": {},
+  "earnInviteFriend": "دعوة صديق",
+  "@earnInviteFriend": {},
+  "earnInviteFriendSub": "عند تسجيله وإتمام أول صفقة",
+  "@earnInviteFriendSub": {},
+  "earnAddDigitalId": "إضافة هوية رقمية للطائر",
+  "@earnAddDigitalId": {},
+  "earnAddDigitalIdSub": "أول مرة لكل طائر",
+  "@earnAddDigitalIdSub": {},
+  "earnShareAuction": "مشاركة مزاد",
+  "@earnShareAuction": {},
+  "earnShareAuctionSub": "عبر واتساب أو تويتر",
+  "@earnShareAuctionSub": {},
+  "earnDailyLogin": "تسجيل الدخول اليومي",
+  "@earnDailyLogin": {},
+  "earnDailyLoginSub": "مرة واحدة يومياً",
+  "@earnDailyLoginSub": {},
+  "pointsValueDiscountPublish5": "خصم 5 ريال على رسوم النشر",
+  "@pointsValueDiscountPublish5": {},
+  "pointsValueDiscountDeal10": "خصم 10 ريال على أي صفقة",
+  "@pointsValueDiscountDeal10": {},
+  "pointsValueFreeWeek": "اشتراك مجاني لمدة أسبوع",
+  "@pointsValueFreeWeek": {},
+  "pointsValueAdUpgrade2": "ترقية إعلان مجانية × 2",
+  "@pointsValueAdUpgrade2": {},
+  "pointsValueTrustedSellerBadge": "شارة \"بائع موثوق\" لمدة شهر",
+  "@pointsValueTrustedSellerBadge": {},
+  "pointsValueFreeMonth": "اشتراك مجاني لمدة شهر كامل",
+  "@pointsValueFreeMonth": {},
+  "pointsValueHomepageFeaturedAd": "إعلان مميز على الصفحة الرئيسية",
+  "@pointsValueHomepageFeaturedAd": {},
+  "pointsValueVipThreeMonths": "عضوية VIP لمدة 3 أشهر",
+  "@pointsValueVipThreeMonths": {},
+  "myBadgesSection": "شاراتي",
+  "@myBadgesSection": {},
+  "noEarnedBadges": "لا توجد شارات مكتسبة بعد",
+  "@noEarnedBadges": {},
+  "availableBadges": "الشارات المتاحة",
+  "@availableBadges": {},
+  "howGetReward": "كيف تحصل على جائزة؟",
+  "@howGetReward": {},
+  "membershipLevels": "مستويات العضوية",
+  "@membershipLevels": {},
+  "rewardAuctionFeeDiscount": "تخفيض على رسوم المزاد",
+  "@rewardAuctionFeeDiscount": {},
+  "rewardAuctionFeeDiscountSub": "خصم 10% على رسوم نشر أي مزاد",
+  "@rewardAuctionFeeDiscountSub": {},
+  "rewardDiscountsCategory": "خصومات",
+  "@rewardDiscountsCategory": {},
+  "rewardFreeWeeklySubscription": "اشتراك أسبوعي مجاني",
+  "@rewardFreeWeeklySubscription": {},
+  "rewardFreeWeeklySubscriptionSub": "اشتراك في باقة البائع الأساسية لمدة 7 أيام",
+  "@rewardFreeWeeklySubscriptionSub": {},
+  "rewardSubscriptionsCategory": "اشتراكات",
+  "@rewardSubscriptionsCategory": {},
+  "rewardAdUpgrade": "ترقية إعلان",
+  "@rewardAdUpgrade": {},
+  "rewardAdUpgradeSub": "ظهور إعلانك في أعلى نتائج البحث لمدة 3 أيام",
+  "@rewardAdUpgradeSub": {},
+  "rewardPromotionCategory": "ترويج",
+  "@rewardPromotionCategory": {},
+  "rewardTrustedSellerBadge": "شارة البائع الموثوق",
+  "@rewardTrustedSellerBadge": {},
+  "rewardTrustedSellerBadgeSub": "شارة زرقاء تظهر بجانب اسمك لمدة شهر",
+  "@rewardTrustedSellerBadgeSub": {},
+  "rewardFeaturesCategory": "مميزات",
+  "@rewardFeaturesCategory": {},
+  "rewardFreeMonthlySubscription": "اشتراك شهري مجاني",
+  "@rewardFreeMonthlySubscription": {},
+  "rewardFreeMonthlySubscriptionSub": "اشتراك في باقة البائع الاحترافية لمدة شهر",
+  "@rewardFreeMonthlySubscriptionSub": {},
+  "rewardFeaturedHomepageAd": "إعلان مميز - الصفحة الرئيسية",
+  "@rewardFeaturedHomepageAd": {},
+  "rewardFeaturedHomepageAdSub": "ظهور مزادك في بانر الصفحة الرئيسية لمدة يوم",
+  "@rewardFeaturedHomepageAdSub": {},
+  "rewardVipMembership": "عضوية VIP",
+  "@rewardVipMembership": {},
+  "rewardVipMembershipSub": "جميع المزايا + دعم أولوية + خصم دائم 15%",
+  "@rewardVipMembershipSub": {},
+  "redeem": "استبدال",
+  "@redeem": {},
+  "howRedeemEarnPoints": "اكسب نقاطاً من خلال إتمام الصفقات والأنشطة اليومية",
+  "@howRedeemEarnPoints": {},
+  "howRedeemChooseReward": "اختر الجائزة التي تريدها من الكتالوج أدناه",
+  "@howRedeemChooseReward": {},
+  "howRedeemTapRedeem": "اضغط \"استبدال\" وسيتم خصم النقاط وتفعيل الجائزة فوراً",
+  "@howRedeemTapRedeem": {},
+  "howRedeemRewardAppears": "تظهر الجائزة تلقائياً في حسابك خلال دقائق",
+  "@howRedeemRewardAppears": {},
+  "tierBronze": "برونزي",
+  "@tierBronze": {},
+  "tierBronzeRange": "0 – 499 نقطة",
+  "@tierBronzeRange": {},
+  "tierSilver": "فضي",
+  "@tierSilver": {},
+  "tierSilverRange": "500 – 1,999 نقطة",
+  "@tierSilverRange": {},
+  "tierGold": "ذهبي",
+  "@tierGold": {},
+  "tierGoldRange": "2,000 – 4,999 نقطة",
+  "@tierGoldRange": {},
+  "tierVipRange": "5,000+ نقطة",
+  "@tierVipRange": {},
+  "convertCashbackToPoints": "حوّل كاش باك إلى نقاط PP",
+  "@convertCashbackToPoints": {},
+  "cashbackConversionRate": "كل 1 كاش باك = 20 نقطة PP",
+  "@cashbackConversionRate": {},
+  "cashbackConversionSuccess": "تم! حصلت على {count} نقطة PP",
+  "@cashbackConversionSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tryAgainError": "حدث خطأ، حاول مرة أخرى",
+  "@tryAgainError": {},
+  "cashbackBalanceLabel": "رصيد الكاش باك:",
+  "@cashbackBalanceLabel": {},
+  "cashbackAmountHint": "أدخل المبلغ (كاش باك)",
+  "@cashbackAmountHint": {},
+  "convertNow": "تحويل الآن",
+  "@convertNow": {},
+  "pointsTransactionFallback": "معاملة نقاط",
+  "@pointsTransactionFallback": {},
+  "balanceAfterTransaction": "الرصيد بعد العملية: {balance}",
+  "@balanceAfterTransaction": {
+    "placeholders": {
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
+  "revoked": "مُلغى",
+  "@revoked": {},
+  "thresholdLabel": "الحد: {value}",
+  "@thresholdLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "earnedBadge": "مكتسبة ✓",
+  "@earnedBadge": {},
+  "available": "متاحة",
+  "@available": {}
 }

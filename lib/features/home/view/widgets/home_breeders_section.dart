@@ -7,34 +7,35 @@ import '../../../../features/feed/viewmodel/feed_bloc.dart';
 import '../../model/seller_model.dart';
 import '../pages/breeder_profile_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeBreedersSection extends StatelessWidget {
   final List<SellerModel> sellers;
 
-  const HomeBreedersSection({super.key, required this.sellers});
+  HomeBreedersSection({super.key, required this.sellers});
 
   @override
   Widget build(BuildContext context) {
-    if (sellers.isEmpty) return const SizedBox.shrink();
+    if (sellers.isEmpty) return SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         // ── Section header ─────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.people_rounded,
+                child: Icon(Icons.people_rounded,
                     color: AppColors.primary, size: 18),
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'مربيون قد تعرفهم',
                 style: TextStyle(
                   fontSize: 16,
@@ -42,28 +43,28 @@ class HomeBreedersSection extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               GestureDetector(
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
                       value: context.read<FeedBloc>(),
-                      child: const PeopleYouMayKnowPage(),
+                      child: PeopleYouMayKnowPage(),
                     ),
                   ),
                 ),
                 child: Row(
                   children: [
                     Text(
-                      'الكل',
+                      AppLocalizations.of(context).all,
                       style: TextStyle(
                         color: AppColors.primary.withValues(alpha: 0.85),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Icon(Icons.chevron_left_rounded,
+                    Icon(Icons.chevron_left_rounded,
                         color: AppColors.primary, size: 20),
                   ],
                 ),
@@ -72,14 +73,14 @@ class HomeBreedersSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
 
         // ── Horizontal list ────────────────────────────────────────────────
         SizedBox(
           height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             itemCount: sellers.length,
             itemBuilder: (context, i) => _BreederCard(seller: sellers[i]),
           ),
@@ -93,7 +94,7 @@ class HomeBreedersSection extends StatelessWidget {
 class _BreederCard extends StatelessWidget {
   final SellerModel seller;
 
-  const _BreederCard({required this.seller});
+  _BreederCard({required this.seller});
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +120,7 @@ class _BreederCard extends StatelessWidget {
           ),
           child: Container(
             width: 160,
-            margin: const EdgeInsets.symmetric(horizontal: 5),
+            margin: EdgeInsets.symmetric(horizontal: 5),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(18),
@@ -127,7 +128,7 @@ class _BreederCard extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -145,7 +146,7 @@ class _BreederCard extends StatelessWidget {
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
                     ),
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(18),
                       topRight: Radius.circular(18),
                     ),
@@ -170,14 +171,14 @@ class _BreederCard extends StatelessWidget {
                           top: 8,
                           right: 8,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 3),
                             decoration: BoxDecoration(
                               color: AppColors.red,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Text(
-                              'مزاد جديد',
+                            child: Text(
+                              AppLocalizations.of(context).newAuction,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 9,
@@ -192,7 +193,7 @@ class _BreederCard extends StatelessWidget {
                         right: 0,
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.all(2.5),
+                            padding: EdgeInsets.all(2.5),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white,
@@ -200,7 +201,7 @@ class _BreederCard extends StatelessWidget {
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.12),
                                   blurRadius: 6,
-                                  offset: const Offset(0, 2),
+                                  offset: Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -215,7 +216,7 @@ class _BreederCard extends StatelessWidget {
                                       s.nickname.isNotEmpty
                                           ? s.nickname[0].toUpperCase()
                                           : 'م',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppColors.primary,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -230,16 +231,16 @@ class _BreederCard extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 28),
+                SizedBox(height: 28),
 
                 // ── Info ─────────────────────────────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
                       Text(
                         s.nickname,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -247,43 +248,43 @@ class _BreederCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 3),
+                      SizedBox(height: 3),
                       Text(
                         s.country,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 10, color: AppColors.textSecondary),
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.star_rounded,
+                          Icon(Icons.star_rounded,
                               size: 11, color: Colors.amber),
-                          const SizedBox(width: 2),
+                          SizedBox(width: 2),
                           Text(
                             s.avgRating.toStringAsFixed(1),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 10, color: AppColors.textHint),
                           ),
                           Container(
                             width: 3,
                             height: 3,
                             margin:
-                                const EdgeInsets.symmetric(horizontal: 5),
-                            decoration: const BoxDecoration(
+                                EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: AppColors.textHint,
                             ),
                           ),
-                          const Icon(Icons.gavel_rounded,
+                          Icon(Icons.gavel_rounded,
                               size: 10, color: AppColors.textHint),
-                          const SizedBox(width: 2),
+                          SizedBox(width: 2),
                           Text(
                             '${s.activeAuctionsCount} مزاد',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 10, color: AppColors.textHint),
                           ),
                         ],
@@ -292,11 +293,11 @@ class _BreederCard extends StatelessWidget {
                   ),
                 ),
 
-                const Spacer(),
+                Spacer(),
 
                 // ── Follow button ─────────────────────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 12),
                   child: SizedBox(
                     width: double.infinity,
                     height: 30,
@@ -308,17 +309,17 @@ class _BreederCard extends StatelessWidget {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.textSecondary,
                               side:
-                                  const BorderSide(color: AppColors.border),
+                                  BorderSide(color: AppColors.border),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               padding: EdgeInsets.zero,
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.check_rounded, size: 13),
                                 SizedBox(width: 3),
-                                Text('متابَق',
+                                Text(AppLocalizations.of(context).followed,
                                     style: TextStyle(fontSize: 11)),
                               ],
                             ),
@@ -335,12 +336,12 @@ class _BreederCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10)),
                               padding: EdgeInsets.zero,
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.person_add_rounded, size: 13),
                                 SizedBox(width: 3),
-                                Text('متابعة',
+                                Text(AppLocalizations.of(context).follow,
                                     style: TextStyle(fontSize: 11)),
                               ],
                             ),

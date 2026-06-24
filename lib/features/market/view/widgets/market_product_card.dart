@@ -5,11 +5,12 @@ import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class MarketProductCard extends StatelessWidget {
   final ProductModel product;
   final VoidCallback onTap;
 
-  const MarketProductCard({
+  MarketProductCard({
     super.key,
     required this.product,
     required this.onTap,
@@ -31,7 +32,7 @@ class MarketProductCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -42,7 +43,7 @@ class MarketProductCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(14),
                     topRight: Radius.circular(14),
                   ),
@@ -55,7 +56,7 @@ class MarketProductCard extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (_, _, _) => Container(
                               color: AppColors.primaryLight,
-                              child: const Icon(
+                              child: Icon(
                                 Icons.image_not_supported_outlined,
                                 color: AppColors.primary,
                                 size: 36,
@@ -64,7 +65,7 @@ class MarketProductCard extends StatelessWidget {
                           )
                         : Container(
                             color: AppColors.primaryLight,
-                            child: const Icon(
+                            child: Icon(
                               Icons.storefront_outlined,
                               color: AppColors.primary,
                               size: 36,
@@ -78,7 +79,7 @@ class MarketProductCard extends StatelessWidget {
                     top: 8,
                     right: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 3,
                       ),
@@ -86,8 +87,8 @@ class MarketProductCard extends StatelessWidget {
                         color: AppColors.orange,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
-                        'الأكثر مبيعاً',
+                      child: Text(
+                        AppLocalizations.of(context).bestSeller,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -107,7 +108,7 @@ class MarketProductCard extends StatelessWidget {
                     child: Container(
                       width: 30,
                       height: 30,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
@@ -128,10 +129,10 @@ class MarketProductCard extends StatelessWidget {
 
             // ── Info ───────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
+              padding: EdgeInsets.fromLTRB(10, 8, 10, 4),
               child: Text(
                 product.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -143,22 +144,22 @@ class MarketProductCard extends StatelessWidget {
 
             // rating
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
-                  const SizedBox(width: 3),
+                  Icon(Icons.star_rounded, color: Colors.amber, size: 14),
+                  SizedBox(width: 3),
                   Text(
                     product.rating.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 3),
+                  SizedBox(width: 3),
                   Text(
                     '(${product.reviewCount})',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textHint,
                     ),
@@ -167,11 +168,11 @@ class MarketProductCard extends StatelessWidget {
               ),
             ),
 
-            const Spacer(),
+            Spacer(),
 
             // ── Price + cart ────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
+              padding: EdgeInsets.fromLTRB(10, 6, 10, 10),
               child: Row(
                 // RTL: price first (rightmost), cart button last (leftmost)
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,7 +180,7 @@ class MarketProductCard extends StatelessWidget {
                   // price — start (right in RTL)
                   Text(
                     '$basePrice ج.م',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -195,11 +196,11 @@ class MarketProductCard extends StatelessWidget {
                     child: Container(
                       width: 32,
                       height: 32,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.shopping_cart_outlined,
                         color: Colors.white,
                         size: 16,

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
@@ -36,15 +38,16 @@ class _AuctionOverviewView extends StatelessWidget {
   const _AuctionOverviewView();
 
   void _confirmCancel(BuildContext context, int auctionId) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إلغاء المزاد'),
-        content: const Text('هل أنت متأكد من إلغاء هذا المزاد؟ لا يمكن التراجع عن هذا الإجراء.'),
+        title: Text(l.cancelAuctionTitle),
+        content: Text(l.cancelAuctionConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('تراجع'),
+            child: Text(l.back),
           ),
           ElevatedButton(
             onPressed: () {
@@ -52,7 +55,7 @@ class _AuctionOverviewView extends StatelessWidget {
               context.read<AuctionsBloc>().add(AuctionCancelRequested(auctionId));
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('إلغاء المزاد', style: TextStyle(color: Colors.white)),
+            child: Text(l.cancelAuctionTitle, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -61,25 +64,11 @@ class _AuctionOverviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'تفاصيل المزاد',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold),
-        ),
+      appBar: PPWAppBar(
+        title: l.auctionDetails,
         actions: [
           BlocBuilder<AuctionsBloc, AuctionsState>(
             buildWhen: (p, c) =>
@@ -96,7 +85,7 @@ class _AuctionOverviewView extends StatelessWidget {
                   if (auction.isOwner && auction.isActive) ...[
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, color: Colors.white),
-                      tooltip: 'تعديل',
+                      tooltip: l.edit,
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -115,7 +104,7 @@ class _AuctionOverviewView extends StatelessWidget {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
                           : const Icon(Icons.cancel_outlined, color: Colors.white),
-                      tooltip: 'إلغاء المزاد',
+                      tooltip: l.cancelAuctionTitle,
                       onPressed: state.isCancelling
                           ? null
                           : () => _confirmCancel(context, auction.id),
@@ -137,8 +126,8 @@ class _AuctionOverviewView extends StatelessWidget {
               backgroundColor: AppColors.error,
             ));
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('تم إلغاء المزاد'),
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(l.auctionCancelledSuccess),
               backgroundColor: AppColors.success,
             ));
             Navigator.pop(context);
@@ -154,7 +143,7 @@ class _AuctionOverviewView extends StatelessWidget {
           if (state.status == AuctionsStatus.error) {
             return Center(
               child: Text(
-                state.errorMessage ?? 'حدث خطأ',
+                state.errorMessage ?? l.errorOccurred,
                 style: const TextStyle(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
@@ -176,7 +165,7 @@ class _AuctionOverviewView extends StatelessWidget {
                 AuctionChatSection(auction: auction),
                 const SizedBox(height: 12),
                 _SectionLabel(
-                  label: 'الطيور في هذا المزاد',
+                  label: l.birdsInThisAuction,
                   count: auction.items.length,
                 ),
                 const SizedBox(height: 8),
@@ -291,30 +280,34 @@ class _AuctionHeader extends StatelessWidget {
     return '${dt.day}/${dt.month}/${dt.year}  ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
-  String _timeRemaining() {
+  String _timeRemaining(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final now = DateTime.now();
-    if (auction.isEnded || auction.endTime.isBefore(now)) return 'انتهى';
+    if (auction.isEnded || auction.endTime.isBefore(now)) return l.auctionEnded;
     final diff = auction.endTime.difference(now);
-    if (diff.inDays > 0) return '${diff.inDays} يوم متبقي';
-    if (diff.inHours > 0) return '${diff.inHours} ساعة متبقية';
-    if (diff.inMinutes > 0) return '${diff.inMinutes} دقيقة متبقية';
-    return 'ينتهي قريبًا';
+    if (diff.inDays > 0) return l.daysRemaining(diff.inDays);
+    if (diff.inHours > 0) return l.hoursRemaining(diff.inHours);
+    if (diff.inMinutes > 0) return l.minutesRemaining(diff.inMinutes);
+    return l.endingSoon;
+  }
+
+  String _statusLabel(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    if (auction.statusDisplay.isNotEmpty) return auction.statusDisplay;
+    if (auction.isActive) return l.statusActive;
+    if (auction.isEnded) return l.statusEnded;
+    return l.statusUpcoming;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final statusColor = auction.isActive
         ? AppColors.primary
         : auction.isEnded
             ? AppColors.textSecondary
             : AppColors.blue;
-    final statusLabel = auction.statusDisplay.isNotEmpty
-        ? auction.statusDisplay
-        : auction.isActive
-            ? 'نشط'
-            : auction.isEnded
-                ? 'منتهي'
-                : 'قادم';
+    final statusLabel = _statusLabel(context);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -383,19 +376,22 @@ class _AuctionHeader extends StatelessWidget {
           // ── timing grid ──
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 _InfoChip(
-                    icon: Icons.access_time_rounded,
-                    label: _timeRemaining(),
-                    color: auction.isActive
-                        ? AppColors.primary
-                        : AppColors.textSecondary),
-                const SizedBox(width: 12),
+                  icon: Icons.access_time_rounded,
+                  label: _timeRemaining(context),
+                  color: auction.isActive
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                ),
                 _InfoChip(
-                    icon: Icons.calendar_today_rounded,
-                    label: _formatDate(auction.endTime),
-                    color: AppColors.textSecondary),
+                  icon: Icons.calendar_today_rounded,
+                  label: _formatDate(auction.endTime),
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
           ),
@@ -404,17 +400,20 @@ class _AuctionHeader extends StatelessWidget {
           // ── min increment + item count ──
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Row(
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 _InfoChip(
-                    icon: Icons.trending_up_rounded,
-                    label: 'حد أدنى: ${_fmt(auction.minBidIncrement)} ج.م',
-                    color: AppColors.orange),
-                const SizedBox(width: 12),
+                  icon: Icons.trending_up_rounded,
+                  label: l.minBidLabel(_fmt(auction.minBidIncrement)),
+                  color: AppColors.orange,
+                ),
                 _InfoChip(
-                    icon: Icons.filter_none_rounded,
-                    label: '${auction.items.length} طائر',
-                    color: AppColors.textSecondary),
+                  icon: Icons.filter_none_rounded,
+                  label: l.birdCount(auction.items.length),
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
           ),
@@ -444,6 +443,7 @@ class _DescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(14),
@@ -454,8 +454,8 @@ class _DescriptionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('وصف المزاد',
-              style: TextStyle(
+          Text(l.auctionDescriptionLabel,
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary)),
@@ -542,22 +542,25 @@ class _AuctionItemCard extends StatelessWidget {
     return AppColors.blue;
   }
 
-  String get _statusLabel {
-    if (item.status == 'sold') return 'مُباع';
-    if (item.status == 'unsold') return 'غير مُباع';
-    if (item.status == 'cancelled') return 'ملغي';
-    if (auction.isActive) return 'نشط';
-    if (auction.isEnded) return 'منتهي';
-    return 'قادم';
+  String _statusLabel(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    if (item.status == 'sold') return l.statusSold;
+    if (item.status == 'unsold') return l.statusUnsold;
+    if (item.status == 'cancelled') return l.statusCancelled;
+    if (auction.isActive) return l.statusActive;
+    if (auction.isEnded) return l.statusEnded;
+    return l.statusUpcoming;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final bird = item.bird;
     final thumb = bird.imageUrls.isNotEmpty ? bird.imageUrls.first : null;
     final isDone = item.isSold ||
         item.status == 'unsold' ||
         item.status == 'cancelled';
+    final statusLabel = _statusLabel(context);
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -617,7 +620,7 @@ class _AuctionItemCard extends StatelessWidget {
                           child: Text(
                             bird.name.isNotEmpty
                                 ? bird.name
-                                : 'طائر #${item.id}',
+                                : l.birdNumber(item.id),
                             style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -626,7 +629,7 @@ class _AuctionItemCard extends StatelessWidget {
                           ),
                         ),
                         _Badge(
-                            label: _statusLabel,
+                            label: statusLabel,
                             color: _statusColor),
                         const SizedBox(width: 12),
                       ],
@@ -645,8 +648,8 @@ class _AuctionItemCard extends StatelessWidget {
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
-                            const Text('سعر البداية',
-                                style: TextStyle(
+                            Text(l.startingPriceLabel,
+                                style: const TextStyle(
                                     fontSize: 11,
                                     color:
                                         AppColors.textSecondary)),
@@ -665,8 +668,8 @@ class _AuctionItemCard extends StatelessWidget {
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
-                            const Text('السعر الحالي',
-                                style: TextStyle(
+                            Text(l.currentPrice,
+                                style: const TextStyle(
                                     fontSize: 11,
                                     color:
                                         AppColors.textSecondary)),
@@ -689,7 +692,7 @@ class _AuctionItemCard extends StatelessWidget {
                             color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${item.bids.length} مزايدة',
+                          l.bidCountLabel(item.bids.length),
                           style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary),
@@ -698,8 +701,8 @@ class _AuctionItemCard extends StatelessWidget {
                         const Icon(Icons.chevron_left_rounded,
                             size: 16,
                             color: AppColors.textHint),
-                        const Text('التفاصيل',
-                            style: TextStyle(
+                        Text(l.details,
+                            style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColors.textHint)),
                       ],
@@ -743,7 +746,7 @@ class _AuctionItemCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _statusLabel,
+                    statusLabel,
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,

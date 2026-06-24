@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../core/di/injection.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'create_room_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ProfileSwitcherPage extends StatelessWidget {
-  const ProfileSwitcherPage({super.key});
+  ProfileSwitcherPage({super.key});
 
   static Route<void> route(AuthBloc authBloc) => MaterialPageRoute(
         builder: (_) => BlocProvider(
           create: (_) => sl<ProfileBloc>()
-            ..add(const ProfileRoomsLoadRequested()),
+            ..add(ProfileRoomsLoadRequested()),
           child: BlocProvider.value(
             value: authBloc,
-            child: const ProfileSwitcherPage(),
+            child: ProfileSwitcherPage(),
           ),
         ),
       );
@@ -26,31 +28,21 @@ class ProfileSwitcherPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'تبديل الملف الشخصي',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).switchProfile,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listenWhen: (previous, current) =>
             previous is AuthSwitchingProfile && current is AuthSuccess,
         listener: (context, state) {
-          context.read<ProfileBloc>().add(const ProfileRoomsLoadRequested());
+          context.read<ProfileBloc>().add(ProfileRoomsLoadRequested());
         },
         child: BlocConsumer<ProfileBloc, ProfileState>(
           listenWhen: (p, c) => p.roomsStatus != c.roomsStatus,
           listener: (context, state) {
           if (state.roomsStatus == RoomsStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text('تعذّر تحميل الغرف'),
                 backgroundColor: AppColors.error,
               ),
@@ -61,16 +53,16 @@ class ProfileSwitcherPage extends StatelessWidget {
               p.roomsStatus != c.roomsStatus || p.rooms != c.rooms,
           builder: (context, state) {
           if (state.roomsStatus == RoomsStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           final rooms = state.rooms;
           return Column(
             children: [
               Expanded(
                 child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+                  padding: EdgeInsets.fromLTRB(16, 20, 16, 16),
                   itemCount: rooms.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  separatorBuilder: (_, _) => SizedBox(height: 10),
                   itemBuilder: (context, i) =>
                       _RoomTile(room: rooms[i]),
                 ),
@@ -88,7 +80,7 @@ class ProfileSwitcherPage extends StatelessWidget {
 class _RoomTile extends StatelessWidget {
   final ProfileModel room;
 
-  const _RoomTile({required this.room});
+  _RoomTile({required this.room});
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +96,10 @@ class _RoomTile extends StatelessWidget {
               ? null
               : () => context
                   .read<AuthBloc>()
-                  .add(AuthSwitchProfileByIdRequested(room.id)),
+                  .add(AuthSwitchProfileRequested(room.type)),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.all(14),
+            duration: Duration(milliseconds: 200),
+            padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: isActive
                   ? AppColors.primary.withValues(alpha: 0.08)
@@ -121,7 +113,7 @@ class _RoomTile extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -143,7 +135,7 @@ class _RoomTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,10 +151,10 @@ class _RoomTile extends StatelessWidget {
                         ),
                       ),
                       if (room.country.isNotEmpty) ...[
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           room.countryName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             color: AppColors.textHint,
                           ),
@@ -173,13 +165,13 @@ class _RoomTile extends StatelessWidget {
                 ),
                 if (isActive)
                   Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
+                    child: Text(
                       'الحالية',
                       style: TextStyle(
                         color: Colors.white,
@@ -190,7 +182,7 @@ class _RoomTile extends StatelessWidget {
                   )
                 else if (isPending)
                   Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: Colors.orange.shade50,
@@ -207,13 +199,13 @@ class _RoomTile extends StatelessWidget {
                     ),
                   )
                 else if (isSwitching)
-                  const SizedBox(
+                  SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 else
-                  const Icon(
+                  Icon(
                     Icons.chevron_left_rounded,
                     color: AppColors.textHint,
                     size: 20,
@@ -230,14 +222,14 @@ class _RoomTile extends StatelessWidget {
 class _AddRoomButton extends StatelessWidget {
   final List<ProfileModel> rooms;
 
-  const _AddRoomButton({required this.rooms});
+  _AddRoomButton({required this.rooms});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
         child: SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -260,15 +252,15 @@ class _AddRoomButton extends StatelessWidget {
                 ),
               );
               if (context.mounted) {
-                bloc.add(const ProfileRoomsLoadRequested());
+                bloc.add(ProfileRoomsLoadRequested());
               }
             },
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('إضافة غرفة جديدة'),
+            icon: Icon(Icons.add_rounded),
+            label: Text('إضافة غرفة جديدة'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              side: BorderSide(color: AppColors.primary),
+              padding: EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),

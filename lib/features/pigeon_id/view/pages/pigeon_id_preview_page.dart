@@ -5,13 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/pigeon_model.dart';
 import '../../viewmodel/pigeon_id_bloc.dart';
 import '../widgets/pigeon_id_shared_widgets.dart';
 import 'pigeon_id_card_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class PigeonIdPreviewPage extends StatefulWidget {
-  const PigeonIdPreviewPage({super.key});
+  PigeonIdPreviewPage({super.key});
 
   @override
   State<PigeonIdPreviewPage> createState() => _PigeonIdPreviewPageState();
@@ -43,7 +45,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
   }
 
   void _submit(BuildContext context) {
-    context.read<PigeonIdBloc>().add(const PigeonIdSubmitted());
+    context.read<PigeonIdBloc>().add(PigeonIdSubmitted());
   }
 
   @override
@@ -64,7 +66,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
           MaterialPageRoute(
             builder: (_) => BlocProvider.value(
               value: bloc,
-              child: const PigeonIdCardPage(),
+              child: PigeonIdCardPage(),
             ),
           ),
         );
@@ -74,21 +76,8 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'مراجعة البيانات',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-            actions: [
-              IconButton(
-                icon:
-                    const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
+          appBar: const PPWAppBar(
+            title: 'مراجعة البيانات',
           ),
           body: Column(
             children: [
@@ -96,7 +85,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                   current: 4, total: 4, label: 'المراجعة النهائية'),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -107,23 +96,23 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         child: Column(
                           children: [
                             _PreviewRow(
-                                label: 'رقم الحلقة',
+                                label: AppLocalizations.of(context).ringNumber,
                                 value: state.ringNumber),
-                            const Divider(height: 20),
+                            Divider(height: 20),
                             _PreviewRow(
-                                label: 'السلالة', value: state.breed),
-                            const Divider(height: 20),
+                                label: AppLocalizations.of(context).breed, value: state.breed),
+                            Divider(height: 20),
                             _PreviewRow(
-                              label: 'الجنس',
+                              label: AppLocalizations.of(context).gender,
                               value: isMale ? 'ذكر 🔵' : 'أنثى 🔴',
                               valueColor: isMale
                                   ? AppColors.blue
                                   : AppColors.red,
                             ),
                             if (state.hatchDate != null) ...[
-                              const Divider(height: 20),
+                              Divider(height: 20),
                               _PreviewRow(
-                                label: 'تاريخ الفقس',
+                                label: AppLocalizations.of(context).hatchDate,
                                 value:
                                     '${state.hatchDate!.day}/${state.hatchDate!.month}/${state.hatchDate!.year}',
                               ),
@@ -132,7 +121,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Photos card ──────────────────────────────────
                       _SectionCard(
@@ -144,8 +133,8 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         child: SizedBox(
                           height: 90,
                           child: state.photoPaths.isEmpty
-                              ? const Center(
-                                  child: Text('لا توجد صور',
+                              ? Center(
+                                  child: Text(AppLocalizations.of(context).noPhotos,
                                       style: TextStyle(
                                           color: AppColors.textHint)),
                                 )
@@ -153,7 +142,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: state.photoPaths.length,
                                   separatorBuilder: (_, _) =>
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8),
                                   itemBuilder: (_, i) => ClipRRect(
                                     borderRadius:
                                         BorderRadius.circular(10),
@@ -175,7 +164,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Video card ───────────────────────────────────
                       _SectionCard(
@@ -206,16 +195,16 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                                       .value.isPlaying
                                                   ? 0.0
                                                   : 1.0,
-                                              duration: const Duration(
+                                              duration: Duration(
                                                   milliseconds: 250),
                                               child: Container(
                                                 width: 52,
                                                 height: 52,
-                                                decoration: const BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   color: Colors.black54,
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: const Icon(
+                                                child: Icon(
                                                     Icons.play_arrow_rounded,
                                                     color: Colors.white,
                                                     size: 34),
@@ -226,11 +215,11 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8),
                                   VideoProgressIndicator(
                                     _videoController!,
                                     allowScrubbing: true,
-                                    colors: const VideoProgressColors(
+                                    colors: VideoProgressColors(
                                       playedColor: AppColors.primary,
                                       bufferedColor: AppColors.primaryLight,
                                       backgroundColor: AppColors.border,
@@ -260,7 +249,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                       size: 32,
                                     ),
                                   ),
-                                  const SizedBox(width: 14),
+                                  SizedBox(width: 14),
                                   Expanded(
                                     child: Text(
                                       state.videoPath != null
@@ -280,7 +269,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
 
                       // ── Race results ─────────────────────────────────
                       if (state.raceResults.isNotEmpty) ...[
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _SectionCard(
                           title:
                               'نتائج السباقات (${state.raceResults.length})',
@@ -288,18 +277,18 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                           child: Column(
                             children: state.raceResults
                                 .map((r) => Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 4),
                                       child: Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                               Icons.chevron_left_rounded,
                                               size: 16,
                                               color: AppColors.primary),
-                                          const SizedBox(width: 6),
+                                          SizedBox(width: 6),
                                           Expanded(
                                             child: Text(r,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                     fontSize: 13,
                                                     color: AppColors
                                                         .textPrimary)),
@@ -312,7 +301,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         ),
                       ],
 
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32),
                     ],
                   ),
                 ),
@@ -339,7 +328,7 @@ class _SectionCard extends StatelessWidget {
   final Widget child;
   final Widget? trailing;
 
-  const _SectionCard({
+  _SectionCard({
     required this.title,
     required this.icon,
     required this.child,
@@ -349,7 +338,7 @@ class _SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -357,7 +346,7 @@ class _SectionCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -367,20 +356,20 @@ class _SectionCard extends StatelessWidget {
           Row(
             children: [
               Icon(icon, size: 16, color: AppColors.primary),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               ?trailing,
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           child,
         ],
       ),
@@ -393,7 +382,7 @@ class _PreviewRow extends StatelessWidget {
   final String value;
   final Color? valueColor;
 
-  const _PreviewRow(
+  _PreviewRow(
       {required this.label, required this.value, this.valueColor});
 
   @override
@@ -401,9 +390,9 @@ class _PreviewRow extends StatelessWidget {
     return Row(
       children: [
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 13, color: AppColors.textSecondary)),
-        const Spacer(),
+        Spacer(),
         Text(
           value,
           style: TextStyle(
@@ -419,12 +408,12 @@ class _PreviewRow extends StatelessWidget {
 
 class _CheckBadge extends StatelessWidget {
   final bool ok;
-  const _CheckBadge({required this.ok});
+  _CheckBadge({required this.ok});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: ok ? AppColors.primaryLight : AppColors.redLight,
         borderRadius: BorderRadius.circular(6),
@@ -437,7 +426,7 @@ class _CheckBadge extends StatelessWidget {
             size: 12,
             color: ok ? AppColors.success : AppColors.error,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             ok ? 'مكتمل' : 'ناقص',
             style: TextStyle(

@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../model/lucky_wheel_segment_model.dart';
+import '../../model/wheel_prize_model.dart';
 
 class WheelPainter extends CustomPainter {
-  final List<LuckyWheelSegmentModel> prizes;
+  final List<WheelPrizeModel> prizes;
 
   const WheelPainter({required this.prizes});
 

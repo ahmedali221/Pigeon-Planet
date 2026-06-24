@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../core/di/injection.dart';
 import '../../model/lucky_wheel_spin_history_model.dart';
 import '../../viewmodel/lucky_wheel_history_cubit.dart';
 import '../../model/datasources/lucky_wheel_datasource.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class LuckyWheelHistoryPage extends StatelessWidget {
   LuckyWheelHistoryPage({super.key});
 
@@ -26,27 +28,13 @@ class _HistoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'سجل عجلة الحظ',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: PPWAppBar(
+        title: 'سجل عجلة الحظ',
         actions: [
           BlocBuilder<LuckyWheelHistoryCubit, LuckyWheelHistoryState>(
             buildWhen: (prev, curr) => prev.status != curr.status,
             builder: (context, state) => IconButton(
-              icon: Icon(Icons.refresh_rounded, color: Colors.white),
+              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
               onPressed: state.status == LuckyWheelHistoryStatus.loading
                   ? null
                   : () => context.read<LuckyWheelHistoryCubit>().load(),
@@ -64,7 +52,7 @@ class _HistoryView extends StatelessWidget {
           }
           if (state.status == LuckyWheelHistoryStatus.error) {
             return _ErrorState(
-              message: state.errorMessage ?? 'حدث خطأ',
+              message: state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
               onRetry: () => context.read<LuckyWheelHistoryCubit>().load(),
             );
           }
@@ -87,7 +75,7 @@ class _HistoryView extends StatelessWidget {
                             onPressed: () =>
                                 context.read<LuckyWheelHistoryCubit>().loadMore(),
                             child: Text(
-                              'تحميل المزيد',
+                              AppLocalizations.of(context).loadMore,
                               style: TextStyle(color: AppColors.primary),
                             ),
                           ),
@@ -259,7 +247,7 @@ class _ErrorState extends StatelessWidget {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
               ),
-              child: Text('إعادة المحاولة'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),

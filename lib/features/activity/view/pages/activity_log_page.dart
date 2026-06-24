@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
@@ -56,6 +57,7 @@ class _ActivityLogPageState extends State<ActivityLogPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final top = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -80,11 +82,11 @@ class _ActivityLogPageState extends State<ActivityLogPage> {
                     size: 20,
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
-                      'سجل النشاط',
-                      style: TextStyle(
+                      l.activityLogTitle,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -118,11 +120,11 @@ class _ActivityLogPageState extends State<ActivityLogPage> {
               ),
             )
           else if (_rows.isEmpty)
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Text(
-                  'لا يوجد نشاط حتى الآن',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
+                  l.noActivityYet,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
                 ),
               ),
             )

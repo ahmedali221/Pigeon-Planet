@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../core/di/injection.dart';
 import '../../model/complaint_model.dart';
 import '../../viewmodel/complaints_bloc.dart';
@@ -10,33 +11,28 @@ import '../../viewmodel/complaints_event.dart';
 import '../../viewmodel/complaints_state.dart';
 import 'complaint_detail_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ComplaintsPage extends StatelessWidget {
-  const ComplaintsPage({super.key});
+  ComplaintsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<ComplaintsBloc>()..add(const ComplaintsLoadRequested()),
-      child: const _ComplaintsView(),
+      create: (_) => sl<ComplaintsBloc>()..add(ComplaintsLoadRequested()),
+      child: _ComplaintsView(),
     );
   }
 }
 
 class _ComplaintsView extends StatelessWidget {
-  const _ComplaintsView();
+  _ComplaintsView();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'الشكاوى',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
+      appBar: const PPWAppBar(
+        title: 'الشكاوى',
       ),
       body: BlocConsumer<ComplaintsBloc, ComplaintsState>(
         listenWhen: (p, c) =>
@@ -53,7 +49,7 @@ class _ComplaintsView extends StatelessWidget {
         builder: (context, state) {
           if (state.status == ComplaintsStatus.loading ||
               state.status == ComplaintsStatus.initial) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
@@ -61,26 +57,26 @@ class _ComplaintsView extends StatelessWidget {
           if (state.status == ComplaintsStatus.error &&
               state.complaints.isEmpty) {
             return _ErrorState(
-              message: state.errorMessage ?? 'حدث خطأ',
+              message: state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
               onRetry: () => context
                   .read<ComplaintsBloc>()
-                  .add(const ComplaintsLoadRequested()),
+                  .add(ComplaintsLoadRequested()),
             );
           }
 
           if (state.complaints.isEmpty) {
-            return const _EmptyState();
+            return _EmptyState();
           }
 
           return RefreshIndicator(
             color: AppColors.primary,
             onRefresh: () async => context
                 .read<ComplaintsBloc>()
-                .add(const ComplaintsLoadRequested()),
+                .add(ComplaintsLoadRequested()),
             child: ListView.separated(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               itemCount: state.complaints.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              separatorBuilder: (_, _) => SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final complaint = state.complaints[index];
                 return _ComplaintCard(
@@ -108,7 +104,7 @@ class _ComplaintCard extends StatelessWidget {
   final ComplaintModel complaint;
   final VoidCallback onTap;
 
-  const _ComplaintCard({required this.complaint, required this.onTap});
+  _ComplaintCard({required this.complaint, required this.onTap});
 
   Color get _statusColor => switch (complaint.status) {
         'open' => AppColors.orange,
@@ -126,7 +122,7 @@ class _ComplaintCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -147,7 +143,7 @@ class _ComplaintCard extends StatelessWidget {
                 size: 22,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,24 +152,24 @@ class _ComplaintCard extends StatelessWidget {
                     complaint.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     '${complaint.typeLabel} · طلب دفع #${complaint.paymentRequestId}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     date,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textHint,
                     ),
@@ -183,7 +179,7 @@ class _ComplaintCard extends StatelessWidget {
             ),
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -206,11 +202,11 @@ class _ComplaintCard extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+  _EmptyState();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -234,27 +230,27 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorState({required this.message, required this.onRetry});
+  _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-            const SizedBox(height: 12),
+            Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            SizedBox(height: 12),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
@@ -264,7 +260,7 @@ class _ErrorState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('إعادة المحاولة'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),

@@ -10,6 +10,7 @@ import '../pages/seller_stats_page.dart';
 import '../pages/seller_tools_page.dart';
 import '../../../seller_products/view/pages/seller_products_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class HomeSellerMetricsSection extends StatelessWidget {
   final SellerHomeSummary? summary;
   final int myAuctionsCount;
@@ -17,7 +18,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
   final String? displayName;
   final bool showSellerTools;
 
-  const HomeSellerMetricsSection({
+  HomeSellerMetricsSection({
     super.key,
     this.summary,
     this.myAuctionsCount = 0,
@@ -40,16 +41,16 @@ class HomeSellerMetricsSection extends StatelessWidget {
     final pkg = s?.packageLabel ?? 'بدون باقة';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Greeting header ───────────────────────────────────────────────
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [AppColors.primaryDark, AppColors.primary],
                 begin: Alignment.centerRight,
                 end: Alignment.centerLeft,
@@ -66,22 +67,22 @@ class HomeSellerMetricsSection extends StatelessWidget {
                       children: [
                         Text(
                           _greeting,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 3),
-                        const Text(
-                          'الباقة الحالية',
+                        SizedBox(height: 3),
+                        Text(
+                          AppLocalizations.of(context).currentPackage,
                           style: TextStyle(color: Colors.white70, fontSize: 11),
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 5,
                       ),
@@ -92,15 +93,15 @@ class HomeSellerMetricsSection extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.workspace_premium_rounded,
                             color: Colors.amber,
                             size: 14,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             pkg,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -111,7 +112,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 GestureDetector(
                   onTap: () => Navigator.push(
                     context,
@@ -121,7 +122,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 9,
                     ),
@@ -130,7 +131,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Colors.white30),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.bar_chart_rounded,
@@ -160,7 +161,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // ── Listings card ─────────────────────────────────────────────────
           _ListingsCard(
@@ -169,28 +170,28 @@ class HomeSellerMetricsSection extends StatelessWidget {
             onAuctionsTap: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const SellerMyAuctionsPage()),
+                MaterialPageRoute(builder: (_) => SellerMyAuctionsPage()),
               );
               if (context.mounted) {
-                context.read<HomeBloc>().add(const HomeRefreshRequested());
+                context.read<HomeBloc>().add(HomeRefreshRequested());
               }
             },
             onBirdsTap: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const SellerMyBirdsPage()),
+                MaterialPageRoute(builder: (_) => SellerMyBirdsPage()),
               );
               if (context.mounted) {
-                context.read<HomeBloc>().add(const HomeRefreshRequested());
+                context.read<HomeBloc>().add(HomeRefreshRequested());
               }
             },
             onStoreTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const SellerProductsPage()),
+              MaterialPageRoute(builder: (_) => SellerProductsPage()),
             ),
           ),
 
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
 
           // ── Engagement / trust quick-stats ────────────────────────────────
           if (s != null &&
@@ -203,7 +204,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
               (s.followersCount > 0 ||
                   s.totalBidsReceived > 0 ||
                   s.averageRating != null))
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
 
           // ── Tools tile ────────────────────────────────────────────────────
           _ToolsNavTile(
@@ -228,7 +229,7 @@ class _ListingsCard extends StatelessWidget {
   final VoidCallback onBirdsTap;
   final VoidCallback onStoreTap;
 
-  const _ListingsCard({
+  _ListingsCard({
     required this.auctionsCount,
     required this.birdsCount,
     required this.onAuctionsTap,
@@ -251,11 +252,11 @@ class _ListingsCard extends StatelessWidget {
             iconColor: AppColors.blue,
             iconBg: AppColors.blueLight,
             count: auctionsCount,
-            label: 'مزاداتي',
+            label: AppLocalizations.of(context).myAuctions,
             onTap: onAuctionsTap,
             isFirst: true,
           ),
-          const Divider(height: 1, indent: 14, endIndent: 14),
+          Divider(height: 1, indent: 14, endIndent: 14),
           _ListingRow(
             icon: Icons.flutter_dash,
             iconColor: AppColors.orange,
@@ -264,7 +265,7 @@ class _ListingsCard extends StatelessWidget {
             label: 'طيوري',
             onTap: onBirdsTap,
           ),
-          const Divider(height: 1, indent: 14, endIndent: 14),
+          Divider(height: 1, indent: 14, endIndent: 14),
           _ListingRow(
             icon: Icons.storefront_rounded,
             iconColor: AppColors.primary,
@@ -291,7 +292,7 @@ class _ListingRow extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  const _ListingRow({
+  _ListingRow({
     required this.icon,
     required this.iconColor,
     required this.iconBg,
@@ -308,11 +309,11 @@ class _ListingRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(
-            top: isFirst ? const Radius.circular(13) : Radius.zero,
-            bottom: isLast ? const Radius.circular(13) : Radius.zero,
+            top: isFirst ? Radius.circular(13) : Radius.zero,
+            bottom: isLast ? Radius.circular(13) : Radius.zero,
           ),
         ),
         child: Row(
@@ -326,7 +327,7 @@ class _ListingRow extends StatelessWidget {
               ),
               child: Icon(icon, color: iconColor, size: 22),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: count != null
                   ? Row(
@@ -341,10 +342,10 @@ class _ListingRow extends StatelessWidget {
                             color: iconColor,
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           label,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                           ),
@@ -356,7 +357,7 @@ class _ListingRow extends StatelessWidget {
                       children: [
                         Text(
                           label,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -365,7 +366,7 @@ class _ListingRow extends StatelessWidget {
                         if (subtitle != null)
                           Text(
                             subtitle!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary,
                             ),
@@ -373,7 +374,7 @@ class _ListingRow extends StatelessWidget {
                       ],
                     ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
               color: AppColors.textHint,
               size: 20,
@@ -390,7 +391,7 @@ class _ListingRow extends StatelessWidget {
 class _EngagementRow extends StatelessWidget {
   final SellerHomeSummary summary;
 
-  const _EngagementRow({required this.summary});
+  _EngagementRow({required this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -402,7 +403,7 @@ class _EngagementRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: EdgeInsets.symmetric(vertical: 14),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -414,7 +415,7 @@ class _EngagementRow extends StatelessWidget {
               label: 'متابع',
             ),
           if (s.followersCount > 0 && s.totalBidsReceived > 0)
-            const _VertDivider(),
+            _VertDivider(),
           if (s.totalBidsReceived > 0)
             _StatCell(
               icon: Icons.gavel_rounded,
@@ -423,13 +424,13 @@ class _EngagementRow extends StatelessWidget {
               label: 'مزايدة',
             ),
           if (s.totalBidsReceived > 0 && rating != null)
-            const _VertDivider(),
+            _VertDivider(),
           if (rating != null)
             _StatCell(
               icon: Icons.star_rounded,
               color: AppColors.orange,
               value: rating.toStringAsFixed(1),
-              label: 'تقييم',
+              label: AppLocalizations.of(context).ratingLabel,
             ),
         ],
       ),
@@ -443,7 +444,7 @@ class _StatCell extends StatelessWidget {
   final String value;
   final String label;
 
-  const _StatCell({
+  _StatCell({
     required this.icon,
     required this.color,
     required this.value,
@@ -456,7 +457,7 @@ class _StatCell extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color, size: 20),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
@@ -467,7 +468,7 @@ class _StatCell extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -475,7 +476,7 @@ class _StatCell extends StatelessWidget {
 }
 
 class _VertDivider extends StatelessWidget {
-  const _VertDivider();
+  _VertDivider();
 
   @override
   Widget build(BuildContext context) {
@@ -489,7 +490,7 @@ class _ToolsNavTile extends StatelessWidget {
   final int notifCount;
   final VoidCallback onTap;
 
-  const _ToolsNavTile({required this.notifCount, required this.onTap});
+  _ToolsNavTile({required this.notifCount, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -497,7 +498,7 @@ class _ToolsNavTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -512,14 +513,14 @@ class _ToolsNavTile extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.tune_rounded,
                 color: AppColors.primary,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 12),
-            const Column(
+            SizedBox(width: 12),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -539,25 +540,25 @@ class _ToolsNavTile extends StatelessWidget {
                 ),
               ],
             ),
-            const Spacer(),
+            Spacer(),
             if (notifCount > 0)
               Container(
-                margin: const EdgeInsetsDirectional.only(end: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                margin: EdgeInsetsDirectional.only(end: 8),
+                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppColors.red,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   '$notifCount',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
               color: AppColors.primary,
               size: 20,

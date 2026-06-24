@@ -76,7 +76,7 @@ class SpinResultSheet extends StatelessWidget {
 
             // Description
             Text(
-              result.description,
+              result.prizeDescription,
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,

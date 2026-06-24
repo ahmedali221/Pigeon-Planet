@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../core/di/injection.dart';
 import '../../../complaints/view/pages/complaints_page.dart';
 import '../../../payments/view/pages/payments_page.dart';
@@ -14,8 +15,9 @@ import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'edit_profile_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,8 @@ class ProfilePage extends StatelessWidget {
         if (state.status == ProfileStatus.deleted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم حذف الملف الشخصي'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).profileDeletedSuccess),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -38,7 +40,7 @@ class ProfilePage extends StatelessWidget {
         if (state.status == ProfileStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred),
               backgroundColor: Colors.red.shade600,
               behavior: SnackBarBehavior.floating,
             ),
@@ -48,7 +50,7 @@ class ProfilePage extends StatelessWidget {
       builder: (context, state) {
         if (state.status == ProfileStatus.loading ||
             state.status == ProfileStatus.initial) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: AppColors.pageBackground,
             body: Center(child: CircularProgressIndicator()),
           );
@@ -56,24 +58,22 @@ class ProfilePage extends StatelessWidget {
         if (state.status == ProfileStatus.error && state.profile == null) {
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
-            appBar: AppBar(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              title: const Text('الملف الشخصي'),
+            appBar: PPWAppBar(
+              title: AppLocalizations.of(context).profile,
             ),
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 12),
+                  Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  SizedBox(height: 12),
                   Text(state.errorMessage ?? 'حدث خطأ في تحميل الملف الشخصي'),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<ProfileBloc>().add(
                       ProfileStarted(state.profile?.type ?? 'Customer'),
                     ),
-                    child: const Text('إعادة المحاولة'),
+                    child: Text(AppLocalizations.of(context).retry),
                   ),
                 ],
               ),
@@ -88,44 +88,44 @@ class ProfilePage extends StatelessWidget {
               _ProfileHeader(profile: profile),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _StatusChips(profile: profile),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _LevelBadge(profile: profile),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _StatsCard(profile: profile),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _InfoCard(profile: profile),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       if (profile.isSeller) ...[
                         _RatingCard(profile: profile),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                       ],
                       if (!profile.isSeller &&
                           ((profile.levelDiscountPercent ?? 0) > 0 ||
                               (profile.levelCashbackPercent ?? 0) > 0)) ...[
                         _BenefitsCard(profile: profile),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                       ],
-                      const _PaymentsNavTile(),
-                      const SizedBox(height: 12),
-                      const _ComplaintsNavTile(),
-                      const SizedBox(height: 12),
+                      _PaymentsNavTile(),
+                      SizedBox(height: 12),
+                      _ComplaintsNavTile(),
+                      SizedBox(height: 12),
                       if (!profile.isSeller) ...[
-                        const _CashbackHistoryNavTile(),
-                        const SizedBox(height: 12),
-                        const _PromotionsOffersNavTile(),
-                        const SizedBox(height: 12),
-                        const _FollowingNavTile(),
-                        const SizedBox(height: 12),
+                        _CashbackHistoryNavTile(),
+                        SizedBox(height: 12),
+                        _PromotionsOffersNavTile(),
+                        SizedBox(height: 12),
+                        _FollowingNavTile(),
+                        SizedBox(height: 12),
                       ],
-                      const _PedigreesNavTile(),
-                      const SizedBox(height: 12),
+                      _PedigreesNavTile(),
+                      SizedBox(height: 12),
                       _EditButton(profile: profile),
-                      const SizedBox(height: 80),
+                      SizedBox(height: 80),
                     ],
                   ),
                 ),
@@ -140,7 +140,7 @@ class ProfilePage extends StatelessWidget {
 
 class _ProfileHeader extends StatelessWidget {
   final ProfileModel profile;
-  const _ProfileHeader({required this.profile});
+  _ProfileHeader({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -149,13 +149,13 @@ class _ProfileHeader extends StatelessWidget {
       pinned: true,
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
-      title: const Text(
-        'الملف الشخصي',
+      title: Text(
+        AppLocalizations.of(context).profile,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF1B5E20), AppColors.primary],
               begin: Alignment.topRight,
@@ -166,7 +166,7 @@ class _ProfileHeader extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: Colors.white.withValues(alpha: 0.15),
@@ -174,25 +174,25 @@ class _ProfileHeader extends StatelessWidget {
                       ? NetworkImage(profile.avatarUrl!)
                       : null,
                   child: profile.avatarUrl == null
-                      ? const Icon(
+                      ? Icon(
                           Icons.person_rounded,
                           color: Colors.white,
                           size: 44,
                         )
                       : null,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 Text(
                   profile.displayName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 4,
                   ),
@@ -202,7 +202,7 @@ class _ProfileHeader extends StatelessWidget {
                   ),
                   child: Text(
                     profile.isSeller ? 'بائع' : 'مشتري',
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
               ],
@@ -216,7 +216,7 @@ class _ProfileHeader extends StatelessWidget {
 
 class _StatusChips extends StatelessWidget {
   final ProfileModel profile;
-  const _StatusChips({required this.profile});
+  _StatusChips({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +232,7 @@ class _StatusChips extends StatelessWidget {
               : Icons.pending_outlined,
         ),
         _chip(
-          label: profile.isActive ? 'نشط' : 'غير نشط',
+          label: profile.isActive ? AppLocalizations.of(context).statusActive : AppLocalizations.of(context).inactive,
           color: profile.isActive ? Colors.blue : Colors.grey,
           icon: profile.isActive
               ? Icons.visibility_outlined
@@ -255,7 +255,7 @@ class _StatusChips extends StatelessWidget {
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -265,7 +265,7 @@ class _StatusChips extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 14),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
@@ -282,7 +282,7 @@ class _StatusChips extends StatelessWidget {
 
 class _InfoCard extends StatelessWidget {
   final ProfileModel profile;
-  const _InfoCard({required this.profile});
+  _InfoCard({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +294,7 @@ class _InfoCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -303,18 +303,18 @@ class _InfoCard extends StatelessWidget {
           if ((profile.username ?? '').isNotEmpty) ...[
             _InfoRow(
               icon: Icons.alternate_email_rounded,
-              label: 'اسم المستخدم',
+              label: AppLocalizations.of(context).username,
               value: profile.username!,
             ),
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
           ],
           if ((profile.phoneNumber ?? '').isNotEmpty) ...[
             _InfoRow(
               icon: Icons.phone_outlined,
-              label: 'رقم الهاتف',
+              label: AppLocalizations.of(context).phoneNumber,
               value: profile.phoneNumber!,
             ),
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
           ],
           if (!profile.isSeller) ...[
             _InfoRow(
@@ -323,21 +323,21 @@ class _InfoCard extends StatelessWidget {
               value:
                   '${(profile.cashbackBalance ?? 0.0).toStringAsFixed(2)} ${profile.currency}',
             ),
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
           ],
           _InfoRow(
             icon: Icons.flag_outlined,
-            label: 'الدولة',
+            label: AppLocalizations.of(context).country,
             value: profile.countryName,
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          Divider(height: 1, indent: 16, endIndent: 16),
           _InfoRow(
             icon: Icons.currency_exchange_outlined,
             label: 'العملة',
             value: profile.currency,
           ),
           if (profile.created != null) ...[
-            const Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1, indent: 16, endIndent: 16),
             _InfoRow(
               icon: Icons.calendar_today_outlined,
               label: 'تاريخ الانضمام',
@@ -356,7 +356,7 @@ class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _InfoRow({
+  _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -365,22 +365,22 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Icon(icon, color: AppColors.primary, size: 20),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
             ),
           ),
-          const Spacer(),
+          Spacer(),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -394,14 +394,14 @@ class _InfoRow extends StatelessWidget {
 
 class _RatingCard extends StatelessWidget {
   final ProfileModel profile;
-  const _RatingCard({required this.profile});
+  _RatingCard({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     final avg = profile.avgRating ?? 0.0;
     final count = profile.ratingsCount ?? 0;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -409,7 +409,7 @@ class _RatingCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -422,19 +422,19 @@ class _RatingCard extends StatelessWidget {
               color: AppColors.orange.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.star_rounded,
               color: AppColors.orange,
               size: 28,
             ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 avg.toStringAsFixed(1),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -442,14 +442,14 @@ class _RatingCard extends StatelessWidget {
               ),
               Text(
                 '$count تقييم',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
               ),
             ],
           ),
-          const Spacer(),
+          Spacer(),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(5, (i) {
@@ -472,18 +472,18 @@ class _RatingCard extends StatelessWidget {
 
 class _LevelBadge extends StatelessWidget {
   final ProfileModel profile;
-  const _LevelBadge({required this.profile});
+  _LevelBadge({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     final label = profile.isSeller
         ? profile.sellerLevelLabel
         : profile.customerLevelLabel;
-    if (label == null || label.isEmpty) return const SizedBox.shrink();
+    if (label == null || label.isEmpty) return SizedBox.shrink();
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
@@ -494,12 +494,12 @@ class _LevelBadge extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.workspace_premium_rounded,
+              Icon(Icons.workspace_premium_rounded,
                   color: AppColors.primary, size: 15),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -515,7 +515,7 @@ class _LevelBadge extends StatelessWidget {
 
 class _StatsCard extends StatelessWidget {
   final ProfileModel profile;
-  const _StatsCard({required this.profile});
+  _StatsCard({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -527,7 +527,7 @@ class _StatsCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -540,7 +540,7 @@ class _StatsCard extends StatelessWidget {
               value: profile.completedOrdersCount.toString(),
               color: AppColors.blue,
             ),
-            const VerticalDivider(width: 1, thickness: 1),
+            VerticalDivider(width: 1, thickness: 1),
             _StatCell(
               icon: Icons.person_add_alt_1_outlined,
               label: 'الدعوات الناجحة',
@@ -559,7 +559,7 @@ class _StatCell extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _StatCell({
+  _StatCell({
     required this.icon,
     required this.label,
     required this.value,
@@ -570,23 +570,23 @@ class _StatCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           children: [
             Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 color: AppColors.textSecondary,
               ),
@@ -601,14 +601,14 @@ class _StatCell extends StatelessWidget {
 
 class _BenefitsCard extends StatelessWidget {
   final ProfileModel profile;
-  const _BenefitsCard({required this.profile});
+  _BenefitsCard({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     final discount = profile.levelDiscountPercent ?? 0;
     final cashback = profile.levelCashbackPercent ?? 0;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -616,7 +616,7 @@ class _BenefitsCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -631,7 +631,7 @@ class _BenefitsCard extends StatelessWidget {
                 icon: Icons.local_offer_outlined,
               ),
             ),
-          if (discount > 0 && cashback > 0) const SizedBox(width: 12),
+          if (discount > 0 && cashback > 0) SizedBox(width: 12),
           if (cashback > 0)
             Expanded(
               child: _BenefitChip(
@@ -652,7 +652,7 @@ class _BenefitChip extends StatelessWidget {
   final String value;
   final Color color;
   final IconData icon;
-  const _BenefitChip({
+  _BenefitChip({
     required this.label,
     required this.value,
     required this.color,
@@ -662,7 +662,7 @@ class _BenefitChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
@@ -671,7 +671,7 @@ class _BenefitChip extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: color, size: 20),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
@@ -680,10 +680,10 @@ class _BenefitChip extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               color: AppColors.textSecondary,
             ),
@@ -696,14 +696,14 @@ class _BenefitChip extends StatelessWidget {
 }
 
 class _PaymentsNavTile extends StatelessWidget {
-  const _PaymentsNavTile();
+  _PaymentsNavTile();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const PaymentsPage()),
+        MaterialPageRoute(builder: (_) => PaymentsPage()),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -713,11 +713,11 @@ class _PaymentsNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -727,16 +727,16 @@ class _PaymentsNavTile extends StatelessWidget {
                 color: AppColors.blue.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.payment_rounded,
                 color: AppColors.blue,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
-                'طلبات الدفع',
+                AppLocalizations.of(context).paymentRequests,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -744,7 +744,7 @@ class _PaymentsNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -757,14 +757,14 @@ class _PaymentsNavTile extends StatelessWidget {
 }
 
 class _ComplaintsNavTile extends StatelessWidget {
-  const _ComplaintsNavTile();
+  _ComplaintsNavTile();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const ComplaintsPage()),
+        MaterialPageRoute(builder: (_) => ComplaintsPage()),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -774,11 +774,11 @@ class _ComplaintsNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -788,14 +788,14 @@ class _ComplaintsNavTile extends StatelessWidget {
                 color: AppColors.orangeLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.report_problem_outlined,
                 color: AppColors.orange,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
                 'الشكاوى',
                 style: TextStyle(
@@ -805,7 +805,7 @@ class _ComplaintsNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -818,14 +818,14 @@ class _ComplaintsNavTile extends StatelessWidget {
 }
 
 class _PedigreesNavTile extends StatelessWidget {
-  const _PedigreesNavTile();
+  _PedigreesNavTile();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const PedigreesPage()),
+        MaterialPageRoute(builder: (_) => PedigreesPage()),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -835,11 +835,11 @@ class _PedigreesNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -849,14 +849,14 @@ class _PedigreesNavTile extends StatelessWidget {
                 color: AppColors.purpleLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.description_rounded,
                 color: AppColors.purple,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
                 'شهادات النسب',
                 style: TextStyle(
@@ -866,7 +866,7 @@ class _PedigreesNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -879,7 +879,7 @@ class _PedigreesNavTile extends StatelessWidget {
 }
 
 class _FollowingNavTile extends StatelessWidget {
-  const _FollowingNavTile();
+  _FollowingNavTile();
 
   @override
   Widget build(BuildContext context) {
@@ -888,8 +888,8 @@ class _FollowingNavTile extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => sl<FeedBloc>()..add(const FeedStarted()),
-            child: const FollowingPage(),
+            create: (_) => sl<FeedBloc>()..add(FeedStarted()),
+            child: FollowingPage(),
           ),
         ),
       ),
@@ -901,11 +901,11 @@ class _FollowingNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -915,14 +915,14 @@ class _FollowingNavTile extends StatelessWidget {
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.people_outline_rounded,
                 color: AppColors.primary,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
                 'من أتابع',
                 style: TextStyle(
@@ -932,7 +932,7 @@ class _FollowingNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -945,14 +945,14 @@ class _FollowingNavTile extends StatelessWidget {
 }
 
 class _PromotionsOffersNavTile extends StatelessWidget {
-  const _PromotionsOffersNavTile();
+  _PromotionsOffersNavTile();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const PromotionsOffersPage()),
+        MaterialPageRoute(builder: (_) => PromotionsOffersPage()),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -962,11 +962,11 @@ class _PromotionsOffersNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -976,14 +976,14 @@ class _PromotionsOffersNavTile extends StatelessWidget {
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.local_offer_rounded,
                 color: AppColors.primary,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
                 'العروض والتخفيضات',
                 style: TextStyle(
@@ -993,7 +993,7 @@ class _PromotionsOffersNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -1006,14 +1006,14 @@ class _PromotionsOffersNavTile extends StatelessWidget {
 }
 
 class _CashbackHistoryNavTile extends StatelessWidget {
-  const _CashbackHistoryNavTile();
+  _CashbackHistoryNavTile();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const CashbackHistoryPage()),
+        MaterialPageRoute(builder: (_) => CashbackHistoryPage()),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -1023,11 +1023,11 @@ class _CashbackHistoryNavTile extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
@@ -1037,14 +1037,14 @@ class _CashbackHistoryNavTile extends StatelessWidget {
                 color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.account_balance_wallet_rounded,
                 color: AppColors.primary,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
+            SizedBox(width: 14),
+            Expanded(
               child: Text(
                 'سجل الكاش باك',
                 style: TextStyle(
@@ -1054,7 +1054,7 @@ class _CashbackHistoryNavTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textSecondary,
               size: 14,
@@ -1068,7 +1068,7 @@ class _CashbackHistoryNavTile extends StatelessWidget {
 
 class _EditButton extends StatelessWidget {
   final ProfileModel profile;
-  const _EditButton({required this.profile});
+  _EditButton({required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -1081,7 +1081,7 @@ class _EditButton extends StatelessWidget {
             MaterialPageRoute(
               builder: (_) => BlocProvider.value(
                 value: context.read<ProfileBloc>(),
-                child: const EditProfilePage(),
+                child: EditProfilePage(),
               ),
             ),
           );
@@ -1091,12 +1091,12 @@ class _EditButton extends StatelessWidget {
             context.read<ProfileBloc>().add(ProfileStarted(profileType));
           }
         },
-        icon: const Icon(Icons.edit_outlined, size: 18),
-        label: const Text('تعديل الملف الشخصي'),
+        icon: Icon(Icons.edit_outlined, size: 18),
+        label: Text(AppLocalizations.of(context).editProfile),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

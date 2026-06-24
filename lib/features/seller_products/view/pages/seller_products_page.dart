@@ -7,21 +7,22 @@ import '../../viewmodel/seller_products_bloc.dart';
 import '../widgets/seller_product_card.dart';
 import 'seller_product_form_page.dart';
 
+import '../../../../l10n/app_localizations.dart';
 class SellerProductsPage extends StatelessWidget {
-  const SellerProductsPage({super.key});
+  SellerProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          sl<SellerProductsBloc>()..add(const SellerProductsStarted()),
-      child: const _SellerProductsView(),
+          sl<SellerProductsBloc>()..add(SellerProductsStarted()),
+      child: _SellerProductsView(),
     );
   }
 }
 
 class _SellerProductsView extends StatelessWidget {
-  const _SellerProductsView();
+  _SellerProductsView();
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +34,8 @@ class _SellerProductsView extends StatelessWidget {
       listener: (context, state) {
         if (state.mutationStatus == SellerMutationStatus.success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تمت العملية بنجاح'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).operationSuccessful),
               backgroundColor: AppColors.success,
             ),
           );
@@ -59,8 +60,8 @@ class _SellerProductsView extends StatelessWidget {
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          icon: const Icon(Icons.add_rounded),
-          label: const Text('إضافة منتج',
+          icon: Icon(Icons.add_rounded),
+          label: Text('إضافة منتج',
               style: TextStyle(fontWeight: FontWeight.bold)),
           onPressed: () => _openForm(context, product: null),
         ),
@@ -101,10 +102,10 @@ class _Header extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back_ios_rounded,
+            child: Icon(Icons.arrow_back_ios_rounded,
                 color: Colors.white, size: 20),
           ),
-          const Expanded(
+          Expanded(
             child: Text(
               'منتجاتي',
               textAlign: TextAlign.center,
@@ -119,14 +120,14 @@ class _Header extends StatelessWidget {
             buildWhen: (p, c) => p.products.length != c.products.length,
             builder: (_, state) => Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${state.products.length} منتج',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -143,7 +144,7 @@ class _Header extends StatelessWidget {
 // ── Category filter chips ─────────────────────────────────────────────────────
 
 class _CategoryFilter extends StatelessWidget {
-  static const _chips = [
+  static final _chips = [
     (null, 'الكل'),
     ('accessories', 'إكسسوارات'),
     ('supplements', 'مكملات'),
@@ -158,7 +159,7 @@ class _CategoryFilter extends StatelessWidget {
         height: 48,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: _chips
               .map((chip) => _FilterChip(
                     label: chip.$2,
@@ -177,7 +178,7 @@ class _FilterChip extends StatelessWidget {
   final String? category;
   final bool selected;
 
-  const _FilterChip({
+  _FilterChip({
     required this.label,
     required this.category,
     required this.selected,
@@ -190,9 +191,9 @@ class _FilterChip extends StatelessWidget {
           .read<SellerProductsBloc>()
           .add(SellerProductCategoryFiltered(category)),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsetsDirectional.only(end: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        duration: Duration(milliseconds: 200),
+        margin: EdgeInsetsDirectional.only(end: 8),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: selected ? AppColors.primary : Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -222,7 +223,7 @@ class _Body extends StatelessWidget {
       builder: (context, state) {
         if (state.status == SellerProductsStatus.loading ||
             state.status == SellerProductsStatus.initial) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
 
         if (state.status == SellerProductsStatus.error) {
@@ -237,9 +238,9 @@ class _Body extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: () async => context
               .read<SellerProductsBloc>()
-              .add(const SellerProductsRefreshRequested()),
+              .add(SellerProductsRefreshRequested()),
           child: ListView.builder(
-            padding: const EdgeInsets.only(top: 8, bottom: 100),
+            padding: EdgeInsets.only(top: 8, bottom: 100),
             itemCount: products.length + (state.hasMore ? 1 : 0),
             itemBuilder: (context, i) {
               if (i == products.length) {
@@ -247,7 +248,7 @@ class _Body extends StatelessWidget {
                   loading: state.status == SellerProductsStatus.loadingMore,
                   onTap: () => context
                       .read<SellerProductsBloc>()
-                      .add(const SellerProductsLoadMoreRequested()),
+                      .add(SellerProductsLoadMoreRequested()),
                 );
               }
               return SellerProductCard(
@@ -279,12 +280,12 @@ class _LoadMoreButton extends StatelessWidget {
   final bool loading;
   final VoidCallback onTap;
 
-  const _LoadMoreButton({required this.loading, required this.onTap});
+  _LoadMoreButton({required this.loading, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       child: SizedBox(
         width: double.infinity,
         height: 44,
@@ -292,18 +293,18 @@ class _LoadMoreButton extends StatelessWidget {
           onPressed: loading ? null : onTap,
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
-            side: const BorderSide(color: AppColors.primary),
+            side: BorderSide(color: AppColors.primary),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
           ),
           child: loading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                       strokeWidth: 2.5, color: AppColors.primary),
                 )
-              : const Text('تحميل المزيد',
+              : Text(AppLocalizations.of(context).loadMore,
                   style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
@@ -315,7 +316,7 @@ class _LoadMoreButton extends StatelessWidget {
 
 class _EmptyState extends StatelessWidget {
   final bool hasFilter;
-  const _EmptyState({required this.hasFilter});
+  _EmptyState({required this.hasFilter});
 
   @override
   Widget build(BuildContext context) {
@@ -325,17 +326,17 @@ class _EmptyState extends StatelessWidget {
         children: [
           Icon(Icons.inventory_2_outlined,
               size: 64, color: AppColors.textHint.withValues(alpha: 0.5)),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             hasFilter ? 'لا توجد منتجات في هذه الفئة' : 'لم تضف أي منتجات بعد',
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           if (!hasFilter)
-            const Text(
+            Text(
               'اضغط + لإضافة منتجك الأول',
               style: TextStyle(fontSize: 13, color: AppColors.textHint),
             ),
@@ -347,7 +348,7 @@ class _EmptyState extends StatelessWidget {
 
 class _ErrorState extends StatelessWidget {
   final String? message;
-  const _ErrorState({this.message});
+  _ErrorState({this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -355,22 +356,22 @@ class _ErrorState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline_rounded,
+          Icon(Icons.error_outline_rounded,
               size: 48, color: AppColors.error),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             message ?? 'حدث خطأ في تحميل المنتجات',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 14, color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => context
                 .read<SellerProductsBloc>()
-                .add(const SellerProductsRefreshRequested()),
-            icon: const Icon(Icons.refresh_rounded),
-            label: const Text('إعادة المحاولة'),
+                .add(SellerProductsRefreshRequested()),
+            icon: Icon(Icons.refresh_rounded),
+            label: Text(AppLocalizations.of(context).retry),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,

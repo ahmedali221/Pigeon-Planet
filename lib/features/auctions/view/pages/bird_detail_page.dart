@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../pigeon_id/model/pigeon_model.dart';
@@ -53,13 +55,14 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
     return buf.toString().split('').reversed.join();
   }
 
-  Map<String, dynamic> _buildData() {
+  Map<String, dynamic> _buildData(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final bird = widget.bird;
 
-    String age = 'غير محدد';
+    String age = l.unspecified;
     if (bird.birthday != null) {
       final years = DateTime.now().difference(bird.birthday!).inDays ~/ 365;
-      age = years > 0 ? '$years سنة' : 'أقل من سنة';
+      age = years > 0 ? '$years سنة' : l.lessThanAYear;
     }
 
     return {
@@ -67,7 +70,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       'breed': bird.colour.isNotEmpty ? bird.colour : '—',
       'isLimited': false,
       'age': age,
-      'location': 'غير متاح',
+      'location': l.notAvailable,
       'breeder': widget.sellerNickname.isNotEmpty ? widget.sellerNickname : '—',
       'hasCertifiedPedigree': true,
       'hasDNA': true,
@@ -82,7 +85,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       'reviewCount': 0,
       'description': bird.description.isNotEmpty
           ? bird.description
-          : 'لا يوجد وصف.',
+          : l.noDescription,
       'seed': bird.id,
       'color': 0xFF3E7B52,
       'ringNumber': bird.ringNumber,
@@ -125,22 +128,23 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
   }
 
   void _confirmDelete(BuildContext context) {
+    final l = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('حذف الطائر'),
-        content: const Text('هل أنت متأكد من حذف هذا الطائر؟ لا يمكن التراجع.'),
+        title: Text(l.deleteBirdTitle),
+        content: Text(l.deleteBirdConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('إلغاء'),
+            child: Text(l.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(dialogCtx);
               _deleteBird(context);
             },
-            child: const Text('حذف', style: TextStyle(color: AppColors.error)),
+            child: Text(l.delete, style: const TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -148,6 +152,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
   }
 
   Future<void> _deleteBird(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     setState(() => _isDeleting = true);
     final result = await sl<PigeonRepository>().deleteBird(widget.bird.id);
     if (!mounted) return;
@@ -162,8 +167,8 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       (_) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حذف الطائر بنجاح'),
+          SnackBar(
+            content: Text(l.birdDeletedSuccess),
             backgroundColor: AppColors.success,
           ),
         );
@@ -194,6 +199,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (!_hasCartBloc(context)) {
       return BlocProvider(
         create: (_) => sl<CartBloc>()..add(const CartStarted()),
@@ -205,7 +211,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       );
     }
 
-    final d = _buildData();
+    final d = _buildData(context);
     final authState = context.read<AuthBloc>().state;
     final canRate =
         authState is AuthSuccess && authState.user.isCustomer && !widget.isOwner;
@@ -219,15 +225,15 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       listener: (context, state) {
         if (state.status == CartStatus.loaded) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تمت الإضافة إلى السلة'),
+            SnackBar(
+              content: Text(l.addedToCart),
               backgroundColor: AppColors.success,
             ),
           );
         } else if (state.status == CartStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(state.errorMessage ?? l.errorOccurred),
               backgroundColor: AppColors.error,
             ),
           );
@@ -235,32 +241,13 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
       },
       child: Scaffold(
         backgroundColor: AppColors.pageBackground,
-        appBar: AppBar(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: const Text(
-            'تفاصيل الحمام',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        appBar: PPWAppBar(
+          title: l.pigeonDetails,
           actions: widget.isOwner
               ? [
                   IconButton(
                     icon: const Icon(Icons.edit_rounded, color: Colors.white),
-                    tooltip: 'تعديل',
+                    tooltip: l.edit,
                     onPressed: () => _openEdit(context),
                   ),
                   IconButton(
@@ -274,7 +261,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
                             ),
                           )
                         : const Icon(Icons.delete_rounded, color: Colors.white),
-                    tooltip: 'حذف',
+                    tooltip: l.delete,
                     onPressed: _isDeleting
                         ? null
                         : () => _confirmDelete(context),
@@ -354,6 +341,7 @@ class _BirdPriceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -372,9 +360,9 @@ class _BirdPriceSection extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'السعر الخاص',
-                        style: TextStyle(
+                      Text(
+                        l.specialPrice,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                         ),
@@ -394,7 +382,7 @@ class _BirdPriceSection extends StatelessWidget {
                           const Text('🔥', style: TextStyle(fontSize: 12)),
                           const SizedBox(width: 4),
                           Text(
-                            'توفير ${data['savings']} ج.م',
+                            l.savingsAmount(data['savings']),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.primary,
@@ -415,7 +403,7 @@ class _BirdPriceSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'خصم\n${data['discountPercent']}%',
+                      l.discountPercent(data['discountPercent']),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -443,7 +431,7 @@ class _BirdPriceSection extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            '${data['liveViewers']} شخص يشاهدون الآن',
+                            l.liveViewersCount(data['liveViewers']),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary,
@@ -463,7 +451,7 @@ class _BirdPriceSection extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            '${data['todayRequests']} طلب اليوم',
+                            l.todayRequestsCount(data['todayRequests']),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary,
@@ -516,8 +504,8 @@ class _BirdPriceSection extends StatelessWidget {
                             )
                           : Text(
                               isOwner
-                                  ? 'هذا الطائر ملكك'
-                                  : '🛒 اشتري الآن - عرض لفترة محدودة!',
+                                  ? l.thisBirdIsYours
+                                  : l.buyNowLimitedOffer,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -536,21 +524,21 @@ class _BirdPriceSection extends StatelessWidget {
               child: Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 4,
-                children: const [
+                children: [
                   Text(
-                    'توصيل مجاني لجميع المحافظات 🚚',
-                    style: TextStyle(
+                    l.freeDelivery,
+                    style: const TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  Text(
+                  const Text(
                     '|',
                     style: TextStyle(color: AppColors.border, fontSize: 11),
                   ),
                   Text(
-                    'الدفع عند الاستلام متاح 💳',
-                    style: TextStyle(
+                    l.cashOnDelivery,
+                    style: const TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
                     ),

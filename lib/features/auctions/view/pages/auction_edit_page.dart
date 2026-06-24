@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
 
@@ -48,6 +50,7 @@ class _AuctionEditPageState extends State<AuctionEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocConsumer<AuctionsBloc, AuctionsState>(
       listenWhen: (p, c) =>
           (p.isUpdating && !c.isUpdating) ||
@@ -55,8 +58,8 @@ class _AuctionEditPageState extends State<AuctionEditPage> {
       listener: (context, state) {
         if (!state.isUpdating && state.updateError == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم تحديث المزاد بنجاح'),
+            SnackBar(
+              content: Text(l.auctionUpdatedSuccess),
               backgroundColor: AppColors.success,
             ),
           );
@@ -73,23 +76,8 @@ class _AuctionEditPageState extends State<AuctionEditPage> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded,
-                  color: Colors.white, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text(
-              'تعديل المزاد',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold),
-            ),
+          appBar: PPWAppBar(
+            title: l.editAuction,
             actions: [
               if (state.isUpdating)
                 const Padding(
@@ -104,8 +92,8 @@ class _AuctionEditPageState extends State<AuctionEditPage> {
               else
                 TextButton(
                   onPressed: () => _submit(context),
-                  child: const Text('حفظ',
-                      style: TextStyle(
+                  child: Text(l.save,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
@@ -118,38 +106,38 @@ class _AuctionEditPageState extends State<AuctionEditPage> {
               padding: const EdgeInsets.all(16),
               children: [
                 _FieldCard(
-                  label: 'عنوان المزاد',
+                  label: l.auctionTitleLabel,
                   child: TextFormField(
                     controller: _titleCtrl,
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'العنوان مطلوب' : null,
-                    decoration: _inputDec(hint: 'أدخل عنوان المزاد'),
+                        (v == null || v.trim().isEmpty) ? l.auctionTitleRequired : null,
+                    decoration: _inputDec(hint: l.auctionTitleHint),
                   ),
                 ),
                 const SizedBox(height: 12),
                 _FieldCard(
-                  label: 'الوصف',
+                  label: l.description,
                   child: TextFormField(
                     controller: _descCtrl,
                     maxLines: 4,
-                    decoration: _inputDec(hint: 'أدخل وصف المزاد'),
+                    decoration: _inputDec(hint: l.auctionDescHint),
                   ),
                 ),
                 const SizedBox(height: 12),
                 _FieldCard(
-                  label: 'الوسوم (Tags)',
+                  label: l.tagsLabel,
                   child: TextFormField(
                     controller: _tagsCtrl,
-                    decoration: _inputDec(hint: 'مثال: حمام, سباق, نادر'),
+                    decoration: _inputDec(hint: l.tagsHint),
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
-                    'يمكن تعديل العنوان والوصف والوسوم فقط، ولا يمكن تعديل الأسعار أو الطيور بعد إنشاء المزاد.',
+                    l.auctionEditNote,
                     style:
-                        TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ),
               ],
