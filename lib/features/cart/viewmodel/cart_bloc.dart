@@ -22,8 +22,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartCleared>(_onCleared);
     on<CartCheckoutRequested>(_onCheckoutRequested);
     on<OrdersLoadRequested>(_onOrdersLoad);
+    on<OrdersLoadMoreRequested>(_onOrdersLoadMore);
     on<OrderDetailRequested>(_onOrderDetail);
     on<SellerOrderItemsLoadRequested>(_onSellerItemsLoad);
+    on<SellerOrderItemsLoadMoreRequested>(_onSellerItemsLoadMore);
     on<OrderItemApproveRequested>(_onApproveItem);
     on<OrderItemRejectRequested>(_onRejectItem);
   }
@@ -115,10 +117,36 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onOrdersLoad(
       OrdersLoadRequested event, Emitter<CartState> emit) async {
     emit(state.copyWith(ordersLoading: true, clearOrderError: true));
-    final result = await _repository.getOrders(status: event.status);
+    final result = await _repository.getOrders(status: event.status, page: 1);
     result.fold(
       (f) => emit(state.copyWith(ordersLoading: false, orderError: f.message)),
-      (orders) => emit(state.copyWith(ordersLoading: false, orders: orders)),
+      (page) => emit(state.copyWith(
+        ordersLoading: false,
+        orders: page.items,
+        ordersHasMore: page.hasMore,
+        ordersCurrentPage: 1,
+      )),
+    );
+  }
+
+  Future<void> _onOrdersLoadMore(
+      OrdersLoadMoreRequested event, Emitter<CartState> emit) async {
+    if (!state.ordersHasMore || state.ordersLoadingMore) return;
+    final nextPage = state.ordersCurrentPage + 1;
+    emit(state.copyWith(ordersLoadingMore: true, clearOrderError: true));
+    final result =
+        await _repository.getOrders(status: event.status, page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(
+        ordersLoadingMore: false,
+        orderError: f.message,
+      )),
+      (page) => emit(state.copyWith(
+        ordersLoadingMore: false,
+        orders: [...state.orders, ...page.items],
+        ordersHasMore: page.hasMore,
+        ordersCurrentPage: nextPage,
+      )),
     );
   }
 
@@ -135,10 +163,35 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onSellerItemsLoad(
       SellerOrderItemsLoadRequested event, Emitter<CartState> emit) async {
     emit(state.copyWith(sellerItemsLoading: true, clearOrderError: true));
-    final result = await _repository.getSellerOrderItems();
+    final result = await _repository.getSellerOrderItems(page: 1);
     result.fold(
       (f) => emit(state.copyWith(sellerItemsLoading: false, orderError: f.message)),
-      (items) => emit(state.copyWith(sellerItemsLoading: false, sellerOrderItems: items)),
+      (page) => emit(state.copyWith(
+        sellerItemsLoading: false,
+        sellerOrderItems: page.items,
+        sellerItemsHasMore: page.hasMore,
+        sellerItemsCurrentPage: 1,
+      )),
+    );
+  }
+
+  Future<void> _onSellerItemsLoadMore(
+      SellerOrderItemsLoadMoreRequested event, Emitter<CartState> emit) async {
+    if (!state.sellerItemsHasMore || state.sellerItemsLoadingMore) return;
+    final nextPage = state.sellerItemsCurrentPage + 1;
+    emit(state.copyWith(sellerItemsLoadingMore: true, clearOrderError: true));
+    final result = await _repository.getSellerOrderItems(page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(
+        sellerItemsLoadingMore: false,
+        orderError: f.message,
+      )),
+      (page) => emit(state.copyWith(
+        sellerItemsLoadingMore: false,
+        sellerOrderItems: [...state.sellerOrderItems, ...page.items],
+        sellerItemsHasMore: page.hasMore,
+        sellerItemsCurrentPage: nextPage,
+      )),
     );
   }
 

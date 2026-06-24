@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -70,6 +71,10 @@ class PaymentRequestDetailPage extends StatelessWidget {
               if (request.buyerNote != null || request.sellerNote != null) ...[
                 const SizedBox(height: 14),
                 _NotesCard(request: request),
+              ],
+              if (request.paymentProofUrl != null) ...[
+                const SizedBox(height: 14),
+                _ProofCard(url: request.paymentProofUrl!),
               ],
               if (request.isApproved || request.isRejected) ...[
                 const SizedBox(height: 14),
@@ -443,6 +448,81 @@ class _NoteChip extends StatelessWidget {
   }
 }
 
+// ── Payment proof ─────────────────────────────────────────────────────────────
+
+class _ProofCard extends StatelessWidget {
+  final String url;
+  const _ProofCard({required this.url});
+
+  bool get _isImage =>
+      url.toLowerCase().endsWith('.jpg') ||
+      url.toLowerCase().endsWith('.jpeg') ||
+      url.toLowerCase().endsWith('.png');
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'إثبات الدفع',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (_isImage)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                errorBuilder: (_, _, _) => const _ProofFallbackLink(label: 'فتح الصورة'),
+              ),
+            )
+          else
+            _ProofFallbackLink(label: url.split('/').last),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProofFallbackLink extends StatelessWidget {
+  final String label;
+  const _ProofFallbackLink({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.insert_drive_file_rounded, color: AppColors.primary, size: 20),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.primary,
+              decoration: TextDecoration.underline,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ── Seller: approve / reject ───────────────────────────────────────────────────
 
 class _SellerActions extends StatefulWidget {
@@ -579,6 +659,7 @@ class _BuyerNoteEditor extends StatefulWidget {
 
 class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
   late final TextEditingController _ctrl;
+  PlatformFile? _proofFile;
 
   @override
   void initState() {
@@ -590,6 +671,16 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
   void dispose() {
     _ctrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      setState(() => _proofFile = result.files.first);
+    }
   }
 
   @override
@@ -626,6 +717,31 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
             textInputAction: TextInputAction.done,
           ),
           const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _pickFile,
+            icon: const Icon(Icons.attach_file_rounded, size: 18),
+            label: Text(
+              _proofFile == null ? 'إرفاق إثبات الدفع' : _proofFile!.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: BorderSide(
+                color: _proofFile != null ? AppColors.primary : AppColors.border,
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+            ),
+          ),
+          if (_proofFile != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              'الملف: ${_proofFile!.name} (${(_proofFile!.size / 1024).toStringAsFixed(1)} KB)',
+              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            ),
+          ],
+          const SizedBox(height: 12),
           if (widget.isActing)
             const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
@@ -634,12 +750,13 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _ctrl.text.trim().isEmpty
+                onPressed: (_ctrl.text.trim().isEmpty && _proofFile == null)
                     ? null
                     : () => context.read<PaymentsBloc>().add(
                         PaymentBuyerNoteUpdateRequested(
                           widget.request.id,
                           _ctrl.text.trim(),
+                          proofFile: _proofFile,
                         ),
                       ),
                 style: ElevatedButton.styleFrom(
@@ -651,7 +768,7 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
                   ),
                   elevation: 0,
                 ),
-                child: const Text('حفظ الملاحظة'),
+                child: const Text('حفظ'),
               ),
             ),
         ],

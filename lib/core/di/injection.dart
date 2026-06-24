@@ -91,12 +91,18 @@ import '../../features/promotions/model/datasources/real_promotions_remote_datas
 import '../../features/promotions/model/promotions_repository.dart';
 import '../../features/promotions/model/promotions_repository_impl.dart';
 import '../../features/promotions/viewmodel/promotions_bloc.dart';
+import '../../features/promotions/viewmodel/buy_with_cashback_bloc.dart';
 import '../../features/loyalty/model/datasources/loyalty_remote_datasource.dart';
 import '../../features/loyalty/model/datasources/real_loyalty_remote_datasource.dart';
 import '../../features/loyalty/viewmodel/badges_bloc.dart';
 import '../../features/lucky_wheel/model/datasources/lucky_wheel_datasource.dart';
-import '../../features/lucky_wheel/model/datasources/mock_lucky_wheel_datasource.dart';
+import '../../features/lucky_wheel/model/datasources/real_lucky_wheel_datasource.dart';
 import '../../features/lucky_wheel/viewmodel/lucky_wheel_bloc.dart';
+import '../../features/referrals/model/datasources/referrals_remote_datasource.dart';
+import '../../features/referrals/model/datasources/real_referrals_remote_datasource.dart';
+import '../../features/referrals/model/referrals_repository.dart';
+import '../../features/referrals/model/referrals_repository_impl.dart';
+import '../../features/referrals/viewmodel/referrals_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -258,6 +264,9 @@ void setupDependencies() {
     () => PromotionsRepositoryImpl(sl()),
   );
   sl.registerFactory(() => PromotionsBloc(repository: sl()));
+  sl.registerFactory(
+    () => BuyWithCashbackBloc(datasource: sl<PointsRemoteDataSource>()),
+  );
 
   // ── Loyalty / Badges ─────────────────────────────────────────────────────
   sl.registerLazySingleton<LoyaltyRemoteDataSource>(
@@ -276,7 +285,16 @@ void setupDependencies() {
 
   // ── Lucky Wheel ───────────────────────────────────────────────────────────
   sl.registerLazySingleton<LuckyWheelDataSource>(
-    () => MockLuckyWheelDataSource(),
+    () => RealLuckyWheelDataSource(sl()),
   );
   sl.registerFactory(() => LuckyWheelBloc(datasource: sl()));
+
+  // ── Referrals ─────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<ReferralsRemoteDataSource>(
+    () => RealReferralsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<ReferralsRepository>(
+    () => ReferralsRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => ReferralsBloc(repository: sl()));
 }

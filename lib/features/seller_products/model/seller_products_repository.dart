@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
 import '../../../core/error/failures.dart';
+import 'datasources/seller_products_datasource.dart';
 import 'seller_product_model.dart';
 import 'seller_product_payload.dart';
 
 abstract class SellerProductsRepository {
-  Future<Either<Failure, List<SellerProductModel>>> getMyProducts({
+  Future<Either<Failure, SellerProductsPageResult>> getMyProducts({
     String? category,
     int page = 1,
   });

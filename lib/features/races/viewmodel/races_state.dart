@@ -9,7 +9,14 @@ class RacesState extends Equatable {
   final RacesDetailStatus detailStatus;
   final List<RaceModel> races;
   final List<RaceResultModel> globalSearchResults;
+  final bool resultSearchHasMore;
+  final int resultSearchCurrentPage;
+  final bool resultSearchLoadingMore;
   final RaceModel? selectedRace;
+  final List<RaceResultModel> detailResults;
+  final bool detailResultsHasMore;
+  final int detailResultsCurrentPage;
+  final bool detailResultsLoadingMore;
   final String searchQuery;
   final String resultSearchQuery;
   final String seasonYearFilter;
@@ -25,7 +32,14 @@ class RacesState extends Equatable {
     this.detailStatus = RacesDetailStatus.initial,
     this.races = const [],
     this.globalSearchResults = const [],
+    this.resultSearchHasMore = false,
+    this.resultSearchCurrentPage = 1,
+    this.resultSearchLoadingMore = false,
     this.selectedRace,
+    this.detailResults = const [],
+    this.detailResultsHasMore = false,
+    this.detailResultsCurrentPage = 1,
+    this.detailResultsLoadingMore = false,
     this.searchQuery = '',
     this.resultSearchQuery = '',
     this.seasonYearFilter = '',
@@ -42,7 +56,14 @@ class RacesState extends Equatable {
     RacesDetailStatus? detailStatus,
     List<RaceModel>? races,
     List<RaceResultModel>? globalSearchResults,
+    bool? resultSearchHasMore,
+    int? resultSearchCurrentPage,
+    bool? resultSearchLoadingMore,
     RaceModel? selectedRace,
+    List<RaceResultModel>? detailResults,
+    bool? detailResultsHasMore,
+    int? detailResultsCurrentPage,
+    bool? detailResultsLoadingMore,
     String? searchQuery,
     String? resultSearchQuery,
     String? seasonYearFilter,
@@ -61,7 +82,18 @@ class RacesState extends Equatable {
       detailStatus: detailStatus ?? this.detailStatus,
       races: races ?? this.races,
       globalSearchResults: globalSearchResults ?? this.globalSearchResults,
+      resultSearchHasMore: resultSearchHasMore ?? this.resultSearchHasMore,
+      resultSearchCurrentPage:
+          resultSearchCurrentPage ?? this.resultSearchCurrentPage,
+      resultSearchLoadingMore:
+          resultSearchLoadingMore ?? this.resultSearchLoadingMore,
       selectedRace: clearSelectedRace ? null : (selectedRace ?? this.selectedRace),
+      detailResults: detailResults ?? this.detailResults,
+      detailResultsHasMore: detailResultsHasMore ?? this.detailResultsHasMore,
+      detailResultsCurrentPage:
+          detailResultsCurrentPage ?? this.detailResultsCurrentPage,
+      detailResultsLoadingMore:
+          detailResultsLoadingMore ?? this.detailResultsLoadingMore,
       searchQuery: searchQuery ?? this.searchQuery,
       resultSearchQuery: resultSearchQuery ?? this.resultSearchQuery,
       seasonYearFilter: seasonYearFilter ?? this.seasonYearFilter,
@@ -82,7 +114,14 @@ class RacesState extends Equatable {
         detailStatus,
         races,
         globalSearchResults,
+        resultSearchHasMore,
+        resultSearchCurrentPage,
+        resultSearchLoadingMore,
         selectedRace,
+        detailResults,
+        detailResultsHasMore,
+        detailResultsCurrentPage,
+        detailResultsLoadingMore,
         searchQuery,
         resultSearchQuery,
         seasonYearFilter,

@@ -55,3 +55,7 @@ class SellerProductDeleteRequested extends SellerProductsEvent {
   @override
   List<Object?> get props => [id, category];
 }
+
+class SellerProductsLoadMoreRequested extends SellerProductsEvent {
+  const SellerProductsLoadMoreRequested();
+}

@@ -13,3 +13,15 @@ class PromotionsStarted extends PromotionsEvent {
 class PromotionsRefreshed extends PromotionsEvent {
   const PromotionsRefreshed();
 }
+
+class PromotionsOffersRequested extends PromotionsEvent {
+  const PromotionsOffersRequested();
+}
+
+class PromotionsTxLoadMore extends PromotionsEvent {
+  const PromotionsTxLoadMore();
+}
+
+class PromotionsGrantsLoadMore extends PromotionsEvent {
+  const PromotionsGrantsLoadMore();
+}

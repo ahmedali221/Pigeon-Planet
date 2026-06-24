@@ -21,12 +21,10 @@ class CreateRoomPage extends StatefulWidget {
 class _CreateRoomPageState extends State<CreateRoomPage> {
   final _formKey = GlobalKey<FormState>();
   final _nicknameCtrl = TextEditingController();
-  final _descCtrl = TextEditingController();
 
   @override
   void dispose() {
     _nicknameCtrl.dispose();
-    _descCtrl.dispose();
     super.dispose();
   }
 
@@ -34,7 +32,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     if (!_formKey.currentState!.validate()) return;
     context.read<ProfileBloc>().add(ProfileCreateRoomRequested(
           nickname: _nicknameCtrl.text.trim(),
-          description: _descCtrl.text.trim(),
           country: widget.country,
           currency: widget.currency,
         ));
@@ -109,22 +106,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       }
                       return null;
                     },
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'وصف الغرفة',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _descCtrl,
-                    maxLines: 4,
-                    textInputAction: TextInputAction.done,
-                    decoration: _inputDecor('صف غرفتك ونوع الحمام الذي تربيه...'),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(

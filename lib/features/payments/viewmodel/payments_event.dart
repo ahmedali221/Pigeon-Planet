@@ -33,11 +33,12 @@ class MarketPaymentCreateRequested extends PaymentsEvent {
 class PaymentBuyerNoteUpdateRequested extends PaymentsEvent {
   final int requestId;
   final String buyerNote;
+  final PlatformFile? proofFile;
 
-  const PaymentBuyerNoteUpdateRequested(this.requestId, this.buyerNote);
+  PaymentBuyerNoteUpdateRequested(this.requestId, this.buyerNote, {this.proofFile});
 
   @override
-  List<Object?> get props => [requestId, buyerNote];
+  List<Object?> get props => [requestId, buyerNote, proofFile?.path];
 }
 
 class PaymentApproveRequested extends PaymentsEvent {

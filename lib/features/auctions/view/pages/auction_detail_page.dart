@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
@@ -16,9 +17,16 @@ class AuctionDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          sl<AuctionsBloc>()..add(AuctionDetailRequested(auctionId)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              sl<AuctionsBloc>()..add(AuctionDetailRequested(auctionId)),
+        ),
+        BlocProvider(
+          create: (_) => sl<FeedBloc>()..add(const FeedStarted()),
+        ),
+      ],
       child: const _AuctionOverviewView(),
     );
   }
@@ -26,19 +34,6 @@ class AuctionDetailPage extends StatelessWidget {
 
 class _AuctionOverviewView extends StatelessWidget {
   const _AuctionOverviewView();
-
-  void _openChat(BuildContext context, AuctionModel auction) {
-    final bloc = context.read<AuctionsBloc>();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => BlocProvider.value(
-        value: bloc,
-        child: AuctionChatSection(auction: auction),
-      ),
-    );
-  }
 
   void _confirmCancel(BuildContext context, int auctionId) {
     showDialog(
@@ -90,7 +85,6 @@ class _AuctionOverviewView extends StatelessWidget {
             buildWhen: (p, c) =>
                 p.selectedAuction?.isOwner != c.selectedAuction?.isOwner ||
                 p.selectedAuction?.status != c.selectedAuction?.status ||
-                p.selectedAuction?.chatEnabled != c.selectedAuction?.chatEnabled ||
                 p.isCancelling != c.isCancelling ||
                 p.isUpdating != c.isUpdating,
             builder: (context, state) {
@@ -99,37 +93,6 @@ class _AuctionOverviewView extends StatelessWidget {
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (auction.isOwner)
-                    IconButton(
-                      icon: state.isUpdating
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white))
-                          : Icon(
-                              auction.chatEnabled
-                                  ? Icons.chat_bubble_rounded
-                                  : Icons.chat_bubble_outline_rounded,
-                              color: Colors.white,
-                            ),
-                      tooltip: auction.chatEnabled ? 'تعطيل الشات' : 'تفعيل الشات',
-                      onPressed: state.isUpdating
-                          ? null
-                          : () => context.read<AuctionsBloc>().add(
-                                AuctionChatToggleRequested(
-                                  auctionId: auction.id,
-                                  chatEnabled: !auction.chatEnabled,
-                                ),
-                              ),
-                    )
-                  else if (auction.chatEnabled)
-                    IconButton(
-                      icon: const Icon(Icons.chat_bubble_outline_rounded,
-                          color: Colors.white),
-                      tooltip: 'شات المزاد',
-                      onPressed: () => _openChat(context, auction),
-                    ),
                   if (auction.isOwner && auction.isActive) ...[
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, color: Colors.white),
@@ -210,6 +173,8 @@ class _AuctionOverviewView extends StatelessWidget {
                   _DescriptionCard(text: auction.description),
                   const SizedBox(height: 12),
                 ],
+                AuctionChatSection(auction: auction),
+                const SizedBox(height: 12),
                 _SectionLabel(
                   label: 'الطيور في هذا المزاد',
                   count: auction.items.length,
@@ -222,6 +187,21 @@ class _AuctionOverviewView extends StatelessWidget {
                     bloc: context.read<AuctionsBloc>(),
                   ),
                 ),
+                if (auction.events.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _SectionLabel(
+                    label: 'Events',
+                    count: auction.events.length,
+                  ),
+                  const SizedBox(height: 8),
+                  ...auction.events.map((event) => _AuctionEventRow(
+                        title: event.eventTypeDisplay.isNotEmpty
+                            ? event.eventTypeDisplay
+                            : event.eventType,
+                        notes: event.notes,
+                        created: event.created,
+                      )),
+                ],
               ],
             ),
           );
@@ -232,6 +212,77 @@ class _AuctionOverviewView extends StatelessWidget {
 }
 
 // ── Auction header card ───────────────────────────────────────────────────────
+class _AuctionEventRow extends StatelessWidget {
+  final String title;
+  final String notes;
+  final DateTime? created;
+
+  const _AuctionEventRow({
+    required this.title,
+    required this.notes,
+    required this.created,
+  });
+
+  String _formatDate(DateTime dt) =>
+      '${dt.day}/${dt.month}/${dt.year}  ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.history_rounded,
+              size: 18, color: AppColors.textSecondary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (notes.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    notes,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+                if (created != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    _formatDate(created!),
+                    style: const TextStyle(
+                      color: AppColors.textHint,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _AuctionHeader extends StatelessWidget {
   final AuctionModel auction;
   const _AuctionHeader({required this.auction});
@@ -512,8 +563,11 @@ class _AuctionItemCard extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: bloc,
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: bloc),
+              BlocProvider.value(value: context.read<FeedBloc>()),
+            ],
             child: AuctionItemDetailPage(auction: auction, item: item),
           ),
         ),

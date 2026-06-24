@@ -14,6 +14,10 @@ class NotificationsRefreshRequested extends NotificationsEvent {
   const NotificationsRefreshRequested();
 }
 
+class NotificationsLoadMoreRequested extends NotificationsEvent {
+  const NotificationsLoadMoreRequested();
+}
+
 class NotificationMarkReadRequested extends NotificationsEvent {
   final int id;
   const NotificationMarkReadRequested(this.id);

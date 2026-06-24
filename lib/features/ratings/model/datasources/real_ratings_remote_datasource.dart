@@ -9,21 +9,31 @@ class RealRatingsRemoteDataSource implements RatingsRemoteDataSource {
 
   const RealRatingsRemoteDataSource(this._dio);
 
-  List<T> _parseList<T>(dynamic data, T Function(Map<String, dynamic>) fromJson) {
-    if (data == null) return [];
+  ({List<T> items, bool hasMore}) _parsePage<T>(
+    dynamic data,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (data == null) return (items: <T>[], hasMore: false);
+    var hasMore = false;
     final items = data is Map
         ? (data['results'] as List<dynamic>? ?? [])
         : (data as List<dynamic>? ?? []);
-    return items.map((j) => fromJson(j as Map<String, dynamic>)).toList();
+    if (data is Map) {
+      hasMore = data['next'] != null;
+    }
+    return (
+      items: items.map((j) => fromJson(j as Map<String, dynamic>)).toList(),
+      hasMore: hasMore,
+    );
   }
 
   @override
-  Future<List<RatingModel>> getAssetRatings(int assetId) async {
+  Future<RatingPageResult> getAssetRatings(int assetId, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.assetRatings,
-      queryParameters: {'asset_id': assetId},
+      queryParameters: {'asset_id': assetId, 'page': page},
     );
-    return _parseList(response.data, RatingModel.fromJson);
+    return _parsePage(response.data, RatingModel.fromJson);
   }
 
   @override
@@ -42,12 +52,12 @@ class RealRatingsRemoteDataSource implements RatingsRemoteDataSource {
   }
 
   @override
-  Future<List<RatingModel>> getSellerRatings(int sellerId) async {
+  Future<RatingPageResult> getSellerRatings(int sellerId, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.sellerRatings,
-      queryParameters: {'seller_id': sellerId},
+      queryParameters: {'seller_id': sellerId, 'page': page},
     );
-    return _parseList(response.data, RatingModel.fromJson);
+    return _parsePage(response.data, RatingModel.fromJson);
   }
 
   @override
@@ -66,12 +76,12 @@ class RealRatingsRemoteDataSource implements RatingsRemoteDataSource {
   }
 
   @override
-  Future<List<CommentModel>> getAssetComments(int assetId) async {
+  Future<CommentPageResult> getAssetComments(int assetId, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.assetComments,
-      queryParameters: {'asset_id': assetId},
+      queryParameters: {'asset_id': assetId, 'page': page},
     );
-    return _parseList(response.data, CommentModel.fromJson);
+    return _parsePage(response.data, CommentModel.fromJson);
   }
 
   @override
@@ -86,12 +96,12 @@ class RealRatingsRemoteDataSource implements RatingsRemoteDataSource {
   }
 
   @override
-  Future<List<CommentModel>> getSellerComments(int sellerId) async {
+  Future<CommentPageResult> getSellerComments(int sellerId, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.sellerComments,
-      queryParameters: {'seller_id': sellerId},
+      queryParameters: {'seller_id': sellerId, 'page': page},
     );
-    return _parseList(response.data, CommentModel.fromJson);
+    return _parsePage(response.data, CommentModel.fromJson);
   }
 
   @override

@@ -54,6 +54,8 @@ class RealPigeonRemoteDataSource implements PigeonRemoteDataSource {
         if (pigeon.flyingSpeed != null)
           'flying_speed': pigeon.flyingSpeed!.toStringAsFixed(2),
         if (includeStatus) 'status': pigeon.status,
+        if (pigeon.fatherId != null) 'father': pigeon.fatherId,
+        if (pigeon.motherId != null) 'mother': pigeon.motherId,
       };
 
   // ── Public API ──────────────────────────────────────────────────────────────

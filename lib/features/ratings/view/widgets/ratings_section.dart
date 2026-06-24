@@ -141,6 +141,21 @@ class _RatingsSectionBody extends StatelessWidget {
                 const _SubHeading('التعليقات'),
                 ...state.comments.map((c) => _CommentTile(comment: c)),
               ],
+              if (state.hasMore)
+                _LoadMoreButton(
+                  loading: state.loadingMore,
+                  onTap: () {
+                    if (targetType == RatingTargetType.asset) {
+                      context
+                          .read<RatingsBloc>()
+                          .add(AssetRatingsLoadMoreRequested(targetId));
+                    } else {
+                      context
+                          .read<RatingsBloc>()
+                          .add(SellerRatingsLoadMoreRequested(targetId));
+                    }
+                  },
+                ),
               if (state.ratings.isEmpty && state.comments.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
@@ -153,6 +168,35 @@ class _RatingsSectionBody extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _LoadMoreButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: loading ? null : onTap,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
+          visualDensity: VisualDensity.compact,
+        ),
+        child: loading
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Ø¹Ø±Ø¶ Ø§Ù„Ù…Ø²ÙŠØ¯'),
+      ),
     );
   }
 }

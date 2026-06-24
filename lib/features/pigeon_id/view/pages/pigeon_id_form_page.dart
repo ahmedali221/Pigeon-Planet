@@ -23,6 +23,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
   final _priceCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final _speedCtrl = TextEditingController();
+  final _fatherCtrl = TextEditingController();
+  final _motherCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -37,6 +39,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
       _descCtrl.text = p.description;
       _speedCtrl.text =
           p.flyingSpeed != null ? p.flyingSpeed!.toStringAsFixed(1) : '';
+      _fatherCtrl.text = p.fatherId != null ? '${p.fatherId}' : '';
+      _motherCtrl.text = p.motherId != null ? '${p.motherId}' : '';
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.read<PigeonIdBloc>().add(PigeonIdLoadedForEdit(p));
@@ -54,6 +58,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
     _priceCtrl.dispose();
     _descCtrl.dispose();
     _speedCtrl.dispose();
+    _fatherCtrl.dispose();
+    _motherCtrl.dispose();
     super.dispose();
   }
 
@@ -354,6 +360,77 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                         ),
                       ],
 
+                      const SizedBox(height: 16),
+
+                      // ── Market listing toggle ─────────────────────────
+                      _BirdListingToggle(
+                        value: state.isMarketListed,
+                        onChanged: (v) => context
+                            .read<PigeonIdBloc>()
+                            .add(PigeonIdMarketListedChanged(v)),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ── Parent birds (optional) ───────────────────────
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'بيانات النسب',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary),
+                            ),
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const PigeonFieldLabel(text: 'رقم الأب (اختياري)'),
+                                const SizedBox(height: 6),
+                                PigeonAppInput(
+                                  controller: _fatherCtrl,
+                                  hint: 'معرّف الطائر',
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (v) => context
+                                      .read<PigeonIdBloc>()
+                                      .add(PigeonIdFatherChanged(v)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const PigeonFieldLabel(text: 'رقم الأم (اختياري)'),
+                                const SizedBox(height: 6),
+                                PigeonAppInput(
+                                  controller: _motherCtrl,
+                                  hint: 'معرّف الطائر',
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (v) => context
+                                      .read<PigeonIdBloc>()
+                                      .add(PigeonIdMotherChanged(v)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -570,6 +647,55 @@ class _BirdStatusSelector extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class _BirdListingToggle extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _BirdListingToggle({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'عرض في المتجر',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'سيظهر الطائر للمشترين في المتجر',
+                  style: TextStyle(
+                      fontSize: 12, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeTrackColor: AppColors.primary,
+          ),
+        ],
+      ),
     );
   }
 }

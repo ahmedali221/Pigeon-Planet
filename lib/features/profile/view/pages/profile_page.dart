@@ -9,6 +9,7 @@ import '../../../pedigrees/view/pages/pedigrees_page.dart';
 import '../../../feed/view/pages/following_page.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../../promotions/view/pages/cashback_history_page.dart';
+import '../../../promotions/view/pages/promotions_offers_page.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'edit_profile_page.dart';
@@ -92,11 +93,21 @@ class ProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _StatusChips(profile: profile),
+                      const SizedBox(height: 12),
+                      _LevelBadge(profile: profile),
+                      const SizedBox(height: 16),
+                      _StatsCard(profile: profile),
                       const SizedBox(height: 16),
                       _InfoCard(profile: profile),
                       const SizedBox(height: 16),
                       if (profile.isSeller) ...[
                         _RatingCard(profile: profile),
+                        const SizedBox(height: 16),
+                      ],
+                      if (!profile.isSeller &&
+                          ((profile.levelDiscountPercent ?? 0) > 0 ||
+                              (profile.levelCashbackPercent ?? 0) > 0)) ...[
+                        _BenefitsCard(profile: profile),
                         const SizedBox(height: 16),
                       ],
                       const _PaymentsNavTile(),
@@ -105,6 +116,8 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 12),
                       if (!profile.isSeller) ...[
                         const _CashbackHistoryNavTile(),
+                        const SizedBox(height: 12),
+                        const _PromotionsOffersNavTile(),
                         const SizedBox(height: 12),
                         const _FollowingNavTile(),
                         const SizedBox(height: 12),
@@ -457,6 +470,231 @@ class _RatingCard extends StatelessWidget {
   }
 }
 
+class _LevelBadge extends StatelessWidget {
+  final ProfileModel profile;
+  const _LevelBadge({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    final label = profile.isSeller
+        ? profile.sellerLevelLabel
+        : profile.customerLevelLabel;
+    if (label == null || label.isEmpty) return const SizedBox.shrink();
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.workspace_premium_rounded,
+                  color: AppColors.primary, size: 15),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatsCard extends StatelessWidget {
+  final ProfileModel profile;
+  const _StatsCard({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            _StatCell(
+              icon: Icons.shopping_bag_outlined,
+              label: 'الطلبات المكتملة',
+              value: profile.completedOrdersCount.toString(),
+              color: AppColors.blue,
+            ),
+            const VerticalDivider(width: 1, thickness: 1),
+            _StatCell(
+              icon: Icons.person_add_alt_1_outlined,
+              label: 'الدعوات الناجحة',
+              value: profile.successfulInvitesCount.toString(),
+              color: AppColors.purple,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatCell extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+  const _StatCell({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BenefitsCard extends StatelessWidget {
+  final ProfileModel profile;
+  const _BenefitsCard({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    final discount = profile.levelDiscountPercent ?? 0;
+    final cashback = profile.levelCashbackPercent ?? 0;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          if (discount > 0)
+            Expanded(
+              child: _BenefitChip(
+                label: 'خصم المستوى',
+                value: '$discount%',
+                color: AppColors.blue,
+                icon: Icons.local_offer_outlined,
+              ),
+            ),
+          if (discount > 0 && cashback > 0) const SizedBox(width: 12),
+          if (cashback > 0)
+            Expanded(
+              child: _BenefitChip(
+                label: 'كاش باك المستوى',
+                value: '$cashback%',
+                color: AppColors.primary,
+                icon: Icons.account_balance_wallet_outlined,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BenefitChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+  const _BenefitChip({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PaymentsNavTile extends StatelessWidget {
   const _PaymentsNavTile();
 
@@ -687,6 +925,67 @@ class _FollowingNavTile extends StatelessWidget {
             const Expanded(
               child: Text(
                 'من أتابع',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PromotionsOffersNavTile extends StatelessWidget {
+  const _PromotionsOffersNavTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PromotionsOffersPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.local_offer_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'العروض والتخفيضات',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,

@@ -20,6 +20,26 @@ enum NotificationType {
   unknown,
 }
 
+class NotificationActorProfile {
+  final int id;
+  final String type;
+  final String? nickname;
+
+  const NotificationActorProfile({
+    required this.id,
+    required this.type,
+    this.nickname,
+  });
+
+  factory NotificationActorProfile.fromJson(Map<String, dynamic> json) {
+    return NotificationActorProfile(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      type: json['type'] as String? ?? '',
+      nickname: json['nickname'] as String?,
+    );
+  }
+}
+
 class NotificationModel {
   final int id;
   final String notificationType;
@@ -28,6 +48,10 @@ class NotificationModel {
   final bool isRead;
   final DateTime created;
   final Map<String, dynamic> metadata;
+  final NotificationActorProfile? actorProfile;
+  final String? objectType;
+  final int? objectId;
+  final String? targetUrl;
 
   const NotificationModel({
     required this.id,
@@ -37,6 +61,10 @@ class NotificationModel {
     required this.isRead,
     required this.created,
     this.metadata = const {},
+    this.actorProfile,
+    this.objectType,
+    this.objectId,
+    this.targetUrl,
   });
 
   NotificationType get type {
@@ -102,6 +130,7 @@ class NotificationModel {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     final readAt = json['read_at'];
     final createdRaw = json['created'] as String?;
+    final actorJson = json['actor_profile'] as Map<String, dynamic>?;
     return NotificationModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
       notificationType: json['notification_type'] as String? ?? '',
@@ -114,6 +143,12 @@ class NotificationModel {
           ? DateTime.tryParse(createdRaw) ?? DateTime.now()
           : DateTime.now(),
       metadata: (json['metadata'] as Map<String, dynamic>?) ?? const {},
+      actorProfile: actorJson != null
+          ? NotificationActorProfile.fromJson(actorJson)
+          : null,
+      objectType: json['object_type'] as String?,
+      objectId: (json['object_id'] as num?)?.toInt(),
+      targetUrl: json['target_url'] as String?,
     );
   }
 
@@ -125,5 +160,9 @@ class NotificationModel {
         isRead: true,
         created: created,
         metadata: metadata,
+        actorProfile: actorProfile,
+        objectType: objectType,
+        objectId: objectId,
+        targetUrl: targetUrl,
       );
 }

@@ -1,9 +1,9 @@
-import 'dart:math';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../model/datasources/lucky_wheel_datasource.dart';
+import '../model/lucky_wheel_current_model.dart';
+import '../model/lucky_wheel_segment_model.dart';
 import '../model/wheel_prize_model.dart';
 import '../model/wheel_spin_result_model.dart';
 
@@ -16,8 +16,9 @@ abstract class LuckyWheelEvent extends Equatable {
 }
 
 class LuckyWheelLoadRequested extends LuckyWheelEvent {
+  /// Kept for the info-header display; does not affect BE call.
   final bool isSeller;
-  const LuckyWheelLoadRequested({required this.isSeller});
+  const LuckyWheelLoadRequested({this.isSeller = false});
   @override
   List<Object?> get props => [isSeller];
 }
@@ -32,7 +33,7 @@ enum LuckyWheelStatus { initial, loading, ready, spinning, error }
 
 class LuckyWheelState extends Equatable {
   final LuckyWheelStatus status;
-  final List<WheelPrizeModel> prizes;
+  final LuckyWheelCurrentModel? current;
   final WheelSpinResultModel? spinResult;
   final int? winnerIndex;
   final bool hasSpun;
@@ -41,7 +42,7 @@ class LuckyWheelState extends Equatable {
 
   const LuckyWheelState({
     this.status = LuckyWheelStatus.initial,
-    this.prizes = const [],
+    this.current,
     this.spinResult,
     this.winnerIndex,
     this.hasSpun = false,
@@ -49,9 +50,24 @@ class LuckyWheelState extends Equatable {
     this.errorMessage,
   });
 
+  List<WheelPrizeModel> get prizes {
+    final segments = current?.segments ?? const <LuckyWheelSegmentModel>[];
+    return segments
+        .map((s) => WheelPrizeModel(
+              type: s.prizeType,
+              label: s.label,
+              emoji: s.emoji,
+              color: s.color,
+              weight: 1,
+              isEnabled: true,
+              description: s.description,
+            ))
+        .toList();
+  }
+
   LuckyWheelState copyWith({
     LuckyWheelStatus? status,
-    List<WheelPrizeModel>? prizes,
+    LuckyWheelCurrentModel? current,
     WheelSpinResultModel? spinResult,
     int? winnerIndex,
     bool? hasSpun,
@@ -61,7 +77,7 @@ class LuckyWheelState extends Equatable {
   }) =>
       LuckyWheelState(
         status: status ?? this.status,
-        prizes: prizes ?? this.prizes,
+        current: current ?? this.current,
         spinResult: spinResult ?? this.spinResult,
         winnerIndex: winnerIndex ?? this.winnerIndex,
         hasSpun: hasSpun ?? this.hasSpun,
@@ -72,7 +88,7 @@ class LuckyWheelState extends Equatable {
   @override
   List<Object?> get props => [
         status,
-        prizes,
+        current,
         spinResult,
         winnerIndex,
         hasSpun,
@@ -85,8 +101,6 @@ class LuckyWheelState extends Equatable {
 
 class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
   final LuckyWheelDataSource _datasource;
-  final _random = Random();
-
   LuckyWheelBloc({required LuckyWheelDataSource datasource})
       : _datasource = datasource,
         super(const LuckyWheelState()) {
@@ -104,11 +118,10 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
       clearError: true,
     ));
     try {
-      final prizes =
-          await _datasource.fetchPrizes(isSeller: event.isSeller);
+      final current = await _datasource.fetchCurrent();
       emit(state.copyWith(
         status: LuckyWheelStatus.ready,
-        prizes: prizes,
+        current: current,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -118,45 +131,37 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
     }
   }
 
-  void _onSpin(
+  Future<void> _onSpin(
     LuckyWheelSpinRequested event,
     Emitter<LuckyWheelState> emit,
-  ) {
-    if (state.hasSpun || state.prizes.isEmpty) return;
+  ) async {
+    final current = state.current;
+    if (state.hasSpun || current == null || !current.eligible) return;
 
-    final winnerIdx = _pickWinner(state.prizes);
-    final winner = state.prizes[winnerIdx];
+    final segmentIds = current.segments.map((s) => s.id).toList();
+    final idempotencyKey = 'spin-${DateTime.now().microsecondsSinceEpoch}';
 
-    final result = WheelSpinResultModel(
-      prizeType: winner.type,
-      prizeLabel: winner.label,
-      prizeEmoji: winner.emoji,
-      prizeColor: winner.color,
-      description: winner.description,
-      winnerIndex: winnerIdx,
-    );
-
-    emit(state.copyWith(
-      status: LuckyWheelStatus.spinning,
-      winnerIndex: winnerIdx,
-      spinResult: result,
-      hasSpun: true,
-    ));
-  }
-
-  /// Weighted random selection across enabled prizes.
-  int _pickWinner(List<WheelPrizeModel> prizes) {
-    final enabled = prizes.where((p) => p.isEnabled).toList();
-    if (enabled.isEmpty) return 0;
-
-    final totalWeight = enabled.fold(0, (sum, p) => sum + p.weight);
-    int pick = _random.nextInt(totalWeight);
-
-    for (int i = 0; i < prizes.length; i++) {
-      if (!prizes[i].isEnabled) continue;
-      pick -= prizes[i].weight;
-      if (pick < 0) return i;
+    emit(state.copyWith(status: LuckyWheelStatus.spinning));
+    try {
+      final result = await _datasource.spin(
+        idempotencyKey: idempotencyKey,
+        segmentIds: segmentIds,
+      );
+      final updatedCurrent = state.current?.copyWith(
+        remainingAttempts: result.remainingAttempts,
+      );
+      emit(state.copyWith(
+        status: LuckyWheelStatus.spinning,
+        current: updatedCurrent,
+        spinResult: result,
+        winnerIndex: result.winnerIndex,
+        hasSpun: true,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: LuckyWheelStatus.error,
+        errorMessage: e.toString(),
+      ));
     }
-    return prizes.indexWhere((p) => p.isEnabled);
   }
 }

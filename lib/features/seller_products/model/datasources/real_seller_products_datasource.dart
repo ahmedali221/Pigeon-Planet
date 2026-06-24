@@ -35,7 +35,7 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
   }
 
   @override
-  Future<List<SellerProductModel>> getProducts({
+  Future<SellerProductsPageResult> getProducts({
     required int profileId,
     String? category,
     int page = 1,
@@ -43,6 +43,7 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
     final categories =
         category != null ? [category] : _categoryEndpoints.keys.toList();
     final results = <SellerProductModel>[];
+    bool hasMore = false;
 
     for (final cat in categories) {
       final endpoint = _categoryEndpoints[cat];
@@ -57,6 +58,7 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
       List<dynamic> items;
       if (data is Map && data.containsKey('results')) {
         items = data['results'] as List<dynamic>? ?? [];
+        if (data['next'] != null) hasMore = true;
       } else if (data is List) {
         items = data;
       } else {
@@ -68,7 +70,7 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
           .map((e) => SellerProductModel.fromJson(e, cat)));
     }
 
-    return results;
+    return (products: results, hasMore: hasMore);
   }
 
   @override

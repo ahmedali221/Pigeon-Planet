@@ -124,7 +124,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     const featuredBirds = <BirdSummaryModel>[];
     final comingSoon = comingSoonResult.fold(
       (_) => <AuctionModel>[],
-      (list) => list as List<AuctionModel>,
+      (page) => page.items as List<AuctionModel>,
     );
     var myBirds = <BirdSummaryModel>[];
     var myAuctions = <AuctionModel>[];

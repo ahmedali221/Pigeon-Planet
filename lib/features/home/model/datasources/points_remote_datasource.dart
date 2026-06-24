@@ -128,15 +128,44 @@ class LoyaltySnapshot {
   });
 }
 
+class BuyWithCashbackResult {
+  final double cashbackBalance;
+  final int pointBalance;
+  final int pointsAwarded;
+
+  const BuyWithCashbackResult({
+    required this.cashbackBalance,
+    required this.pointBalance,
+    required this.pointsAwarded,
+  });
+
+  factory BuyWithCashbackResult.fromJson(Map<String, dynamic> json) {
+    return BuyWithCashbackResult(
+      cashbackBalance:
+          double.tryParse(json['cashback_balance']?.toString() ?? '0') ?? 0,
+      pointBalance: (json['point_balance'] as num?)?.toInt() ?? 0,
+      pointsAwarded: (json['points_awarded'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
 abstract class PointsRemoteDataSource {
   /// Combined visible balance: loyalty bonuses + seller package points.
   Future<int?> fetchBalance();
   Future<int?> fetchLoyaltyBalance();
   Future<int?> fetchPackageBalance();
   Future<List<PointTransactionModel>> fetchTransactions();
+  Future<({int count, List<PointTransactionModel> results})> fetchTransactionPage(int page);
   Future<List<BadgeAwardModel>> fetchMyBadges({bool includeExpired = false});
   Future<List<BadgeCatalogItem>> fetchBadgeCatalog();
   Future<LoyaltySnapshot> fetchSnapshot({bool includePackageBalance = true});
+
+  /// Converts [cashbackAmount] into PP Coins (20 PP per 1 cashback unit).
+  /// [idempotencyKey] prevents duplicate conversions.
+  Future<BuyWithCashbackResult> buyWithCashback({
+    required double cashbackAmount,
+    required String idempotencyKey,
+  });
 }
 
 class RealPointsRemoteDataSource implements PointsRemoteDataSource {
@@ -191,6 +220,22 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
   }
 
   @override
+  Future<({int count, List<PointTransactionModel> results})>
+      fetchTransactionPage(int page) async {
+    final response = await _dio.get(
+      ApiConstants.loyaltyPointsTransactions,
+      queryParameters: {'page': page},
+    );
+    final data = response.data;
+    final count = data is Map ? (data['count'] as num?)?.toInt() ?? 0 : 0;
+    final results = _readList(data)
+        .map((item) =>
+            PointTransactionModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+    return (count: count, results: results);
+  }
+
+  @override
   Future<List<BadgeAwardModel>> fetchMyBadges({bool includeExpired = false}) async {
     final response = await _dio.get(
       ApiConstants.loyaltyMyBadges,
@@ -239,6 +284,23 @@ class RealPointsRemoteDataSource implements PointsRemoteDataSource {
       transactions: results[2] as List<PointTransactionModel>,
       badges: results[3] as List<BadgeAwardModel>,
       catalog: results[4] as List<BadgeCatalogItem>,
+    );
+  }
+
+  @override
+  Future<BuyWithCashbackResult> buyWithCashback({
+    required double cashbackAmount,
+    required String idempotencyKey,
+  }) async {
+    final response = await _dio.post(
+      ApiConstants.loyaltyBuyWithCashback,
+      data: {
+        'cashback_amount': cashbackAmount.toStringAsFixed(2),
+        'idempotency_key': idempotencyKey,
+      },
+    );
+    return BuyWithCashbackResult.fromJson(
+      response.data as Map<String, dynamic>,
     );
   }
 

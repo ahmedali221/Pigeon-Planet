@@ -30,7 +30,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
   late final TextEditingController _priceCtrl;
   late final TextEditingController _countCtrl;
 
-  String _selectedCategory = 'supplies';
+  String _selectedCategory = 'accessories';
   bool _isMarketListed = true;
   String _selectedStatus = 'available';
 
@@ -522,7 +522,6 @@ class _CategoryDropdown extends StatelessWidget {
   final ValueChanged<String?> onChanged;
 
   static const _categories = [
-    ('supplies', 'مستلزمات الحمام', '🔧'),
     ('accessories', 'إكسسوارات', '💊'),
     ('feeds', 'أعلاف والحبوب', '🌾'),
     ('supplements', 'مكملات غذائية', '⚡'),

@@ -20,6 +20,20 @@ class SellerRatingsLoadRequested extends RatingsEvent {
   List<Object?> get props => [sellerId];
 }
 
+class AssetRatingsLoadMoreRequested extends RatingsEvent {
+  final int assetId;
+  const AssetRatingsLoadMoreRequested(this.assetId);
+  @override
+  List<Object?> get props => [assetId];
+}
+
+class SellerRatingsLoadMoreRequested extends RatingsEvent {
+  final int sellerId;
+  const SellerRatingsLoadMoreRequested(this.sellerId);
+  @override
+  List<Object?> get props => [sellerId];
+}
+
 class AssetRatingSubmitted extends RatingsEvent {
   final int assetId;
   final int stars;

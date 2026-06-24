@@ -24,20 +24,9 @@ abstract class AuthRepository {
     String? avatarPath,
   });
 
-  Future<Either<Failure, String>> verifyOtp({
-    required String phoneNumber,
-    required String code,
-  });
-
-  Future<Either<Failure, void>> resendOtp({required String phoneNumber});
-
   Future<Either<Failure, UserModel>> switchProfile(String newProfile);
 
-  Future<Either<Failure, UserModel>> switchProfileById(int profileId);
-
   Future<Either<Failure, void>> createSellerProfile();
-
-  Future<Either<Failure, List<int>>> fetchMySellerProfileIds();
 
   Future<Either<Failure, UserModel?>> getStoredUser();
 

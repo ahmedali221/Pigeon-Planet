@@ -159,26 +159,54 @@ The `../REQUIREMENTS_AUDIT.md` file tracks backend gaps and post-implementation 
 
 ---
 
-## Module Implementation Workflow
+## Combined Module Comparison Workflow
 
-For every backend module tackled in the mobile app, follow this order strictly:
+This is the canonical workflow for every module review session. It covers the backend, mobile app, and dashboard simultaneously.
 
-1. **Compare** — read the relevant `AGENTS.md` section, then scan the current Flutter code (datasources, repos, blocs, pages, models).
-2. **Scope** — keep only what customers or sellers can do; exclude manager endpoints entirely.
-3. **Pre-implementation list** — before writing any code, produce a written list of:
-   - 🐛 Bugs (wrong URLs, wrong field names, broken flows)
-   - ❌ Missing implementations (endpoints not wired)
-   - ⚠️ Partial implementations (wired but incomplete)
-   - 🎨 UI gaps (data available from backend but not displayed or shown incorrectly)
-   - Priority order for fixing them
-   Present this list and wait for confirmation before proceeding.
-4. **Implement** — build fixes following the architecture rules below. UI is updated alongside backend wiring — if data exists on the backend but isn't shown, update the UI too.
-5. **Wire navigation** — after creating or completing a module page, search existing screens (home, profile, bottom nav, drawer, action buttons) for any button or tile that should navigate to the new page but currently does nothing or navigates to a stub. Wire those entry points up so the feature is reachable.
-6. **Update the audit and changelog** — after every comparison, fix, or backend change:
-   - Edit `../MOBILE_BACKEND_AUDIT.md`: change ❌ → ✅, resolve ⚠️/🐛 rows, update the Module Progress table (Last Worked date + Status), and add a dated entry to the Critical Gaps table for anything newly resolved.
-   - Edit `../PPW/BACKEND_CHANGELOG.md`: add a dated section for every backend file touched — what changed and why.
+**Step 1 — Read the backend**
+Read the backend module code: `../PPW/apps/<module>/` — models, serializers, views, urls, services. Cross-reference `../PPW/AGENTS.md` for business rules, permission patterns, and what each endpoint returns/accepts.
 
-Never skip step 3. Never mark a module done with remaining known gaps. Never skip the audit/changelog updates — they are part of completing the task, not optional housekeeping.
+**Step 2 — List mobile gaps (customer & seller scope only)**
+Scan the Flutter feature folder (`lib/features/<module>/`): datasources, repos, blocs, pages, widgets, models.
+Produce a gap list:
+- 🐛 Bugs (wrong URL, wrong field name, broken flow)
+- ❌ Missing (endpoint/feature not wired at all)
+- ⚠️ Partial (wired but incomplete — missing fields, missing UI, wrong payload)
+- 🎨 UI gaps (backend returns data but UI doesn't show it)
+
+Exclude manager-only endpoints — mobile is customer/seller only.
+
+**Step 3 — List dashboard gaps (managerial scope only)**
+Scan the Next.js dashboard (`../lotfy-dashboard/src/app/admin/<module>/`): page components, TS types, API calls, forms.
+Produce a gap list using the same categories (🐛 ❌ ⚠️ 🎨).
+
+Focus only on what managers can do (list, retrieve, approve, reject, create, update, delete admin-facing data). Skip customer/seller-only flows.
+
+**Step 4 — Present and wait**
+Present both gap lists (mobile + dashboard) together before writing any code. Label each gap clearly with its target (Mobile or Dashboard). Wait for explicit confirmation before proceeding.
+
+**Step 5 — Implement**
+Implement approved gaps in priority order. Mobile follows architecture rules below. Dashboard follows its existing Next.js/TypeScript patterns. UI is updated alongside wiring — if data exists on the backend but isn't shown, update the UI too.
+
+**Step 6 — Wire navigation (mobile)**
+After completing a mobile module page, search existing screens (home, profile, bottom nav, drawer, action buttons) for orphaned buttons/tiles that should navigate to the new page. Wire them before marking done.
+
+**Step 7 — Create test flow file**
+Create `../docs/testing/TEST_<MODULE>.md` with manual test steps for the module:
+- Mobile section: happy path + edge cases for customer and seller flows
+- Dashboard section: happy path + edge cases for manager flows
+- Optional API sanity checks (endpoint, method, payload, expected response)
+
+One file per module. Never combine modules.
+
+**Step 8 — Update audit files**
+After every module:
+- `../MOBILE_BACKEND_AUDIT.md` — update status rows, Module Progress table, Critical Gaps table.
+- `../PPW/BACKEND_CHANGELOG.md` — dated entry for every backend file touched.
+- `../MODULE_COMPARISON.md` — update the Progress Table row (status + date + notes) and append a Module Detail Log entry listing every fix (M1/D1…) and all files changed.
+- `project_dashboard_sync_session.md` memory — update module progress table.
+
+Never skip step 4. Never mark a module done with remaining known gaps. Test flow and audit file updates are part of completing the task, not optional.
 
 ---
 

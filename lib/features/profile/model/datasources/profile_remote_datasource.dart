@@ -5,7 +5,6 @@ abstract class ProfileRemoteDataSource {
   Future<List<ProfileModel>> fetchAllSellerProfiles();
   Future<void> createRoom({
     required String nickname,
-    required String description,
     required String country,
     required String currency,
   });

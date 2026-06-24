@@ -12,6 +12,10 @@ class RaceResultModel {
   final double speed;
   final String arrivalDatetime;
   final int? basketNumber;
+  final DateTime? created;
+  final DateTime? modified;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const RaceResultModel({
     required this.id,
@@ -27,13 +31,17 @@ class RaceResultModel {
     required this.speed,
     required this.arrivalDatetime,
     this.basketNumber,
+    this.created,
+    this.modified,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory RaceResultModel.fromJson(Map<String, dynamic> json) {
     final raceJson = json['race'] as Map<String, dynamic>?;
     return RaceResultModel(
       id: json['id'] as int,
-      raceId: raceJson?['id'] as int?,
+      raceId: raceJson?['id'] as int? ?? json['race_id'] as int?,
       raceTitle: raceJson?['title'] as String?,
       raceSeasonYear: raceJson?['season_year'] as int?,
       raceStationName: raceJson?['station_name'] as String?,
@@ -45,6 +53,10 @@ class RaceResultModel {
       speed: double.tryParse(json['speed']?.toString() ?? '0') ?? 0.0,
       arrivalDatetime: json['arrival_datetime'] as String? ?? '',
       basketNumber: json['basket_number'] as int?,
+      created: DateTime.tryParse(json['created'] as String? ?? ''),
+      modified: DateTime.tryParse(json['modified'] as String? ?? ''),
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? ''),
+      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? ''),
     );
   }
 }
@@ -63,6 +75,10 @@ class RaceModel {
   final String coordinateY;
   final String notes;
   final List<RaceResultModel> results;
+  final DateTime? created;
+  final DateTime? modified;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const RaceModel({
     required this.id,
@@ -78,6 +94,10 @@ class RaceModel {
     required this.coordinateY,
     required this.notes,
     this.results = const [],
+    this.created,
+    this.modified,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory RaceModel.fromJson(Map<String, dynamic> json) {
@@ -102,6 +122,10 @@ class RaceModel {
                   RaceResultModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      created: DateTime.tryParse(json['created'] as String? ?? ''),
+      modified: DateTime.tryParse(json['modified'] as String? ?? ''),
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? ''),
+      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? ''),
     );
   }
 }
@@ -111,4 +135,11 @@ class RacePage {
   final bool hasMore;
 
   const RacePage({required this.races, required this.hasMore});
+}
+
+class RaceResultPage {
+  final List<RaceResultModel> results;
+  final bool hasMore;
+
+  const RaceResultPage({required this.results, required this.hasMore});
 }

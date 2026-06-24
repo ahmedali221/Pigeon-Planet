@@ -1,9 +1,14 @@
 import '../seller_product_model.dart';
 
+typedef SellerProductsPageResult = ({
+  List<SellerProductModel> products,
+  bool hasMore,
+});
+
 abstract class SellerProductsDataSource {
   Future<int> getSellerProfileId();
 
-  Future<List<SellerProductModel>> getProducts({
+  Future<SellerProductsPageResult> getProducts({
     required int profileId,
     String? category,
     int page = 1,

@@ -5,10 +5,14 @@ enum AuctionsStatus { initial, loading, loaded, detail, error }
 class AuctionsState extends Equatable {
   final AuctionsStatus status;
   final List<AuctionModel> auctions;
+  final bool auctionsHasMore;
+  final int auctionsCurrentPage;
+  final bool auctionsLoadingMore;
   final AuctionModel? selectedAuction;
   final List<BidModel> bids;
   final List<AssetRatingModel> reviews;
   // Per selected item (loaded when user opens an item detail)
+  final AuctionItemModel? selectedItemDetail;
   final List<BidModel> itemBids;
   final List<AssetRatingModel> itemReviews;
   final bool isItemLoading;
@@ -30,17 +34,20 @@ class AuctionsState extends Equatable {
   final String? updateError;
   final List<BidModel> myBids;
   final bool myBidsLoading;
-  final List<AuctionCommentModel> chatComments;
-  final bool isChatLoading;
-  final bool isSendingComment;
-  final String? chatError;
+  final bool myBidsLoadingMore;
+  final bool myBidsHasMore;
+  final int myBidsCurrentPage;
 
   const AuctionsState({
     this.status = AuctionsStatus.initial,
     this.auctions = const [],
+    this.auctionsHasMore = false,
+    this.auctionsCurrentPage = 1,
+    this.auctionsLoadingMore = false,
     this.selectedAuction,
     this.bids = const [],
     this.reviews = const [],
+    this.selectedItemDetail,
     this.itemBids = const [],
     this.itemReviews = const [],
     this.isItemLoading = false,
@@ -61,19 +68,23 @@ class AuctionsState extends Equatable {
     this.updateError,
     this.myBids = const [],
     this.myBidsLoading = false,
-    this.chatComments = const [],
-    this.isChatLoading = false,
-    this.isSendingComment = false,
-    this.chatError,
+    this.myBidsLoadingMore = false,
+    this.myBidsHasMore = false,
+    this.myBidsCurrentPage = 1,
   });
 
   AuctionsState copyWith({
     AuctionsStatus? status,
     List<AuctionModel>? auctions,
+    bool? auctionsHasMore,
+    int? auctionsCurrentPage,
+    bool? auctionsLoadingMore,
     AuctionModel? selectedAuction,
     bool clearSelectedAuction = false,
     List<BidModel>? bids,
     List<AssetRatingModel>? reviews,
+    AuctionItemModel? selectedItemDetail,
+    bool clearSelectedItemDetail = false,
     List<BidModel>? itemBids,
     List<AssetRatingModel>? itemReviews,
     bool? isItemLoading,
@@ -101,18 +112,22 @@ class AuctionsState extends Equatable {
     bool clearUpdateError = false,
     List<BidModel>? myBids,
     bool? myBidsLoading,
-    List<AuctionCommentModel>? chatComments,
-    bool? isChatLoading,
-    bool? isSendingComment,
-    String? chatError,
-    bool clearChatError = false,
+    bool? myBidsLoadingMore,
+    bool? myBidsHasMore,
+    int? myBidsCurrentPage,
   }) =>
       AuctionsState(
         status: status ?? this.status,
         auctions: auctions ?? this.auctions,
+        auctionsHasMore: auctionsHasMore ?? this.auctionsHasMore,
+        auctionsCurrentPage: auctionsCurrentPage ?? this.auctionsCurrentPage,
+        auctionsLoadingMore: auctionsLoadingMore ?? this.auctionsLoadingMore,
         selectedAuction: clearSelectedAuction ? null : (selectedAuction ?? this.selectedAuction),
         bids: bids ?? this.bids,
         reviews: reviews ?? this.reviews,
+        selectedItemDetail: clearSelectedItemDetail
+            ? null
+            : (selectedItemDetail ?? this.selectedItemDetail),
         itemBids: itemBids ?? this.itemBids,
         itemReviews: itemReviews ?? this.itemReviews,
         isItemLoading: isItemLoading ?? this.isItemLoading,
@@ -135,19 +150,22 @@ class AuctionsState extends Equatable {
         updateError: clearUpdateError ? null : (updateError ?? this.updateError),
         myBids: myBids ?? this.myBids,
         myBidsLoading: myBidsLoading ?? this.myBidsLoading,
-        chatComments: chatComments ?? this.chatComments,
-        isChatLoading: isChatLoading ?? this.isChatLoading,
-        isSendingComment: isSendingComment ?? this.isSendingComment,
-        chatError: clearChatError ? null : (chatError ?? this.chatError),
+        myBidsLoadingMore: myBidsLoadingMore ?? this.myBidsLoadingMore,
+        myBidsHasMore: myBidsHasMore ?? this.myBidsHasMore,
+        myBidsCurrentPage: myBidsCurrentPage ?? this.myBidsCurrentPage,
       );
 
   @override
   List<Object?> get props => [
         status,
         auctions,
+        auctionsHasMore,
+        auctionsCurrentPage,
+        auctionsLoadingMore,
         selectedAuction?.id,
         bids,
         reviews,
+        selectedItemDetail,
         itemBids,
         itemReviews,
         isItemLoading,
@@ -168,9 +186,8 @@ class AuctionsState extends Equatable {
         updateError,
         myBids,
         myBidsLoading,
-        chatComments,
-        isChatLoading,
-        isSendingComment,
-        chatError,
+        myBidsLoadingMore,
+        myBidsHasMore,
+        myBidsCurrentPage,
       ];
 }

@@ -5,7 +5,6 @@ import '../../../core/error/failures.dart';
 import 'cart_model.dart';
 import 'cart_repository.dart';
 import 'datasources/cart_remote_datasource.dart';
-import 'order_item_model.dart';
 import 'order_model.dart';
 
 class CartRepositoryImpl implements CartRepository {
@@ -37,7 +36,16 @@ class CartRepositoryImpl implements CartRepository {
       _wrap(_dataSource.checkout);
 
   @override
-  Future<Either<Failure, List<OrderModel>>> getOrders({String? status, int page = 1}) =>
+  Future<Either<Failure, OrderModel>> createOrderFromItems(
+    List<({int assetId, int quantity})> items,
+  ) =>
+      _wrap(() => _dataSource.createOrderFromItems(items));
+
+  @override
+  Future<Either<Failure, OrderPageResult>> getOrders({
+    String? status,
+    int page = 1,
+  }) =>
       _wrap(() => _dataSource.getOrders(status: status, page: page));
 
   @override
@@ -45,7 +53,9 @@ class CartRepositoryImpl implements CartRepository {
       _wrap(() => _dataSource.getOrderDetail(id));
 
   @override
-  Future<Either<Failure, List<OrderItemModel>>> getSellerOrderItems({int page = 1}) =>
+  Future<Either<Failure, OrderItemPageResult>> getSellerOrderItems({
+    int page = 1,
+  }) =>
       _wrap(() => _dataSource.getSellerOrderItems(page: page));
 
   @override

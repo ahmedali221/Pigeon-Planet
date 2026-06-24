@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../promotions/model/datasources/promotions_remote_datasource.dart';
+import '../../../promotions/viewmodel/buy_with_cashback_bloc.dart';
 import '../../model/datasources/points_remote_datasource.dart';
+import '../pages/points_history_page.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -123,6 +127,7 @@ class _ModalBodyState extends State<_ModalBody>
                     _PointsTab(
                       isLoading: isLoading,
                       transactions: data?.transactions ?? const [],
+                      isSeller: widget.isSeller,
                     ),
                     _RewardsTab(
                       isLoading: isLoading,
@@ -423,8 +428,13 @@ class _BalanceRow extends StatelessWidget {
 class _PointsTab extends StatelessWidget {
   final bool isLoading;
   final List<PointTransactionModel> transactions;
+  final bool isSeller;
 
-  const _PointsTab({required this.isLoading, required this.transactions});
+  const _PointsTab({
+    required this.isLoading,
+    required this.transactions,
+    required this.isSeller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -444,6 +454,34 @@ class _PointsTab extends StatelessWidget {
           ...transactions
               .take(5)
               .map((tx) => _TransactionTile(transaction: tx)),
+
+        if (!isLoading && transactions.isNotEmpty)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const PointsHistoryPage(),
+                ),
+              ),
+              icon: const Icon(Icons.history_rounded, size: 16),
+              label: const Text('عرض كل المعاملات'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+        if (!isSeller) ...[
+          const SizedBox(height: 8),
+          const _ConvertCashbackCard(),
+        ],
 
         const SizedBox(height: 20),
 
@@ -1284,6 +1322,309 @@ class _InlineNotice extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Convert Cashback Card (customer-only) ─────────────────────────────────────
+
+class _ConvertCashbackCard extends StatelessWidget {
+  const _ConvertCashbackCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const _BuyWithCashbackSheet(),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: AppColors.orangeLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.currency_exchange_rounded,
+                color: AppColors.orange,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'حوّل كاش باك إلى نقاط PP',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'كل 1 كاش باك = 20 نقطة PP',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 14,
+              color: AppColors.textHint,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Buy With Cashback Sheet ───────────────────────────────────────────────────
+
+class _BuyWithCashbackSheet extends StatefulWidget {
+  const _BuyWithCashbackSheet();
+
+  @override
+  State<_BuyWithCashbackSheet> createState() => _BuyWithCashbackSheetState();
+}
+
+class _BuyWithCashbackSheetState extends State<_BuyWithCashbackSheet> {
+  final _ctrl = TextEditingController();
+  late final Future<double> _balanceFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _balanceFuture = sl<PromotionsRemoteDataSource>().fetchCashbackBalance();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<BuyWithCashbackBloc>(),
+      child: BlocConsumer<BuyWithCashbackBloc, BuyWithCashbackState>(
+        listener: (context, state) {
+          if (state.status == BuyWithCashbackStatus.success) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'تم! حصلت على ${state.pointsAwarded} نقطة PP',
+                ),
+                backgroundColor: AppColors.primary,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state.status == BuyWithCashbackStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage ?? 'حدث خطأ، حاول مرة أخرى'),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state.status == BuyWithCashbackStatus.loading;
+          return Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            decoration: const BoxDecoration(
+              color: AppColors.pageBackground,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'تحويل كاش باك إلى نقاط PP',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'كل 1 كاش باك = 20 نقطة PP',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FutureBuilder<double>(
+                      future: _balanceFuture,
+                      builder: (_, snap) {
+                        final balance = snap.data;
+                        return Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.account_balance_wallet_rounded,
+                                color: AppColors.orange,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                'رصيد الكاش باك:',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (snap.connectionState ==
+                                  ConnectionState.waiting)
+                                const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2),
+                                )
+                              else
+                                Text(
+                                  balance != null
+                                      ? balance.toStringAsFixed(2)
+                                      : '—',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _ctrl,
+                      keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true),
+                      decoration: InputDecoration(
+                        hintText: 'أدخل المبلغ (كاش باك)',
+                        hintStyle: const TextStyle(
+                            color: AppColors.textHint, fontSize: 13),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 14),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              const BorderSide(color: AppColors.primary),
+                        ),
+                        prefixIcon: const Icon(Icons.monetization_on_rounded,
+                            color: AppColors.orange, size: 20),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                final amount =
+                                    double.tryParse(_ctrl.text.trim()) ?? 0;
+                                if (amount <= 0) return;
+                                context.read<BuyWithCashbackBloc>().add(
+                                      BuyWithCashbackRequested(amount),
+                                    );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              AppColors.primary.withValues(alpha: 0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text(
+                                'تحويل الآن',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

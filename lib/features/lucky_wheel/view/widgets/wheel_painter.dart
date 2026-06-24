@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../model/wheel_prize_model.dart';
+import '../../model/lucky_wheel_segment_model.dart';
 
 class WheelPainter extends CustomPainter {
-  final List<WheelPrizeModel> prizes;
+  final List<LuckyWheelSegmentModel> prizes;
 
   const WheelPainter({required this.prizes});
 
@@ -17,7 +17,7 @@ class WheelPainter extends CustomPainter {
     final radius = size.width / 2 - 6;
     final n = prizes.length;
     final sliceAngle = 2 * pi / n;
-    const startOffset = -pi / 2; // first slot starts at 12 o'clock
+    const startOffset = -pi / 2;
 
     final segPaint = Paint()..style = PaintingStyle.fill;
     final divPaint = Paint()
@@ -25,12 +25,8 @@ class WheelPainter extends CustomPainter {
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
-    // ── Draw segments ─────────────────────────────────────────────────────────
     for (int i = 0; i < n; i++) {
-      final prize = prizes[i];
-      segPaint.color =
-          prize.isEnabled ? prize.color : Colors.grey.shade300;
-
+      segPaint.color = prizes[i].color;
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         startOffset + i * sliceAngle,
@@ -40,7 +36,6 @@ class WheelPainter extends CustomPainter {
       );
     }
 
-    // ── Draw divider lines ────────────────────────────────────────────────────
     for (int i = 0; i < n; i++) {
       final angle = startOffset + i * sliceAngle;
       canvas.drawLine(
@@ -53,7 +48,6 @@ class WheelPainter extends CustomPainter {
       );
     }
 
-    // ── Outer ring ────────────────────────────────────────────────────────────
     canvas.drawCircle(
       center,
       radius + 1,
@@ -63,9 +57,7 @@ class WheelPainter extends CustomPainter {
         ..strokeWidth = 3,
     );
 
-    // ── Emoji labels (upright, centered in each segment) ──────────────────────
     for (int i = 0; i < n; i++) {
-      final prize = prizes[i];
       final midAngle = startOffset + (i + 0.5) * sliceAngle;
       final textR = radius * 0.62;
       final tx = center.dx + textR * cos(midAngle);
@@ -73,11 +65,8 @@ class WheelPainter extends CustomPainter {
 
       final tp = TextPainter(
         text: TextSpan(
-          text: prize.emoji,
-          style: TextStyle(
-            fontSize: 22,
-            color: prize.isEnabled ? null : Colors.grey.shade500,
-          ),
+          text: prizes[i].emoji,
+          style: const TextStyle(fontSize: 22),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -85,7 +74,6 @@ class WheelPainter extends CustomPainter {
       tp.paint(canvas, Offset(tx - tp.width / 2, ty - tp.height / 2));
     }
 
-    // ── Center hub ────────────────────────────────────────────────────────────
     canvas.drawCircle(center, 24, Paint()..color = Colors.white);
     canvas.drawCircle(
       center,

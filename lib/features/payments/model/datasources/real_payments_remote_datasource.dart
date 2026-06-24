@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
@@ -24,6 +27,20 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
     return items.map((e) => _parse(e)).toList();
   }
 
+  Future<FormData?> _buildProofFormData(
+    Map<String, dynamic> fields,
+    PlatformFile? proofFile,
+  ) async {
+    if (proofFile == null || proofFile.path == null) return null;
+    return FormData.fromMap({
+      ...fields,
+      'payment_proof': await MultipartFile.fromFile(
+        proofFile.path!,
+        filename: proofFile.name,
+      ),
+    });
+  }
+
   @override
   Future<List<PaymentRequestModel>> getPaymentRequests() async {
     final response = await _dio.get(ApiConstants.paymentRequests);
@@ -34,14 +51,16 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
   Future<PaymentRequestModel> createAuctionPaymentRequest(
     int auctionItemId, {
     String? buyerNote,
+    PlatformFile? proofFile,
   }) async {
-    final payload = <String, dynamic>{
+    final fields = <String, dynamic>{
       'auction_item_id': auctionItemId,
       if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
     };
+    final formData = await _buildProofFormData(fields, proofFile);
     final response = await _dio.post(
       ApiConstants.auctionPaymentRequest,
-      data: payload,
+      data: formData ?? fields,
     );
     return _parse(response.data);
   }
@@ -50,14 +69,16 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
   Future<PaymentRequestModel> createMarketPaymentRequest(
     int orderItemId, {
     String? buyerNote,
+    PlatformFile? proofFile,
   }) async {
-    final payload = <String, dynamic>{
+    final fields = <String, dynamic>{
       'order_item_id': orderItemId,
       if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
     };
+    final formData = await _buildProofFormData(fields, proofFile);
     final response = await _dio.post(
       ApiConstants.marketPaymentRequest,
-      data: payload,
+      data: formData ?? fields,
     );
     return _parse(response.data);
   }
@@ -65,11 +86,14 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
   @override
   Future<PaymentRequestModel> updateBuyerNote(
     int requestId,
-    String buyerNote,
-  ) async {
+    String buyerNote, {
+    PlatformFile? proofFile,
+  }) async {
+    final fields = <String, dynamic>{'buyer_note': buyerNote};
+    final formData = await _buildProofFormData(fields, proofFile);
     final response = await _dio.patch(
       ApiConstants.paymentRequestDetail(requestId),
-      data: {'buyer_note': buyerNote},
+      data: formData ?? fields,
     );
     return _parse(response.data);
   }

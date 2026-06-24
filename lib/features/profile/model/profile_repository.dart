@@ -8,7 +8,6 @@ abstract class ProfileRepository {
   Future<Either<Failure, List<ProfileModel>>> fetchAllSellerProfiles();
   Future<Either<Failure, void>> createRoom({
     required String nickname,
-    required String description,
     required String country,
     required String currency,
   });

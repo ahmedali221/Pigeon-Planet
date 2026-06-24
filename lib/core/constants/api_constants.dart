@@ -52,12 +52,12 @@ class ApiConstants {
   static String auctionCancel(int id) => '/auctions/$id/cancel/';
   // Items are fetched via query param — no nested /<id>/items/ endpoint exists
   static const String auctionItems = '/auctions/items/';
+  static String auctionItemDetail(int id) => '/auctions/items/$id/';
   static String placeBid(int itemId) => '/auctions/items/$itemId/place_bid/';
   static String buyNow(int itemId) => '/auctions/items/$itemId/buy_now/';
   static const String bids = '/auctions/bids/';
   static const String myBids = '/auctions/bids/my_bids/';
   static const String auctionEvents = '/auctions/events/';
-  static const String auctionComments = '/auctions/comments/';
 
   // ── Packages ──────────────────────────────────────────────────────────────
   static const String packages = '/packages/';
@@ -72,6 +72,7 @@ class ApiConstants {
       '/promotions/cashback-offers/current/';
   static const String cashbackBalance = '/promotions/cashback/balance/';
   static const String cashbackTransactions = '/promotions/cashback/my/';
+  static const String myPromotionGrants = '/promotions/my-grants/';
 
   // ── Races ─────────────────────────────────────────────────────────────────
   static const String races = '/races/';
@@ -116,6 +117,20 @@ class ApiConstants {
   static const String myComplaints = '/complaints/my/';
   static String complaintDetail(int id) => '/complaints/$id/';
   static String cancelComplaint(int id) => '/complaints/$id/cancel/';
+  static String reopenComplaint(int id) => '/complaints/$id/reopen/';
+
+  // ── Lucky Wheel ───────────────────────────────────────────────────────────
+  static const String luckyWheelCurrent = '/lucky-wheel/current/';
+  static const String luckyWheelSpin = '/lucky-wheel/spin/';
+  static const String luckyWheelMySpins = '/lucky-wheel/spins/my/';
+
+  // ── Loyalty (extended) ────────────────────────────────────────────────────
+  static const String loyaltyBuyWithCashback =
+      '/loyalty/points/buy-with-cashback/';
+
+  // ── Referrals ─────────────────────────────────────────────────────────────
+  static const String referralCodes = '/referrals/codes/';
+  static const String referralRedeem = '/referrals/redeem/';
 
   // ── Chat ──────────────────────────────────────────────────────────────────
   static const String chatConversations = '/chat/conversations/';

@@ -76,4 +76,16 @@ class ComplaintsRepositoryImpl implements ComplaintsRepository {
       return const Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, ComplaintModel>> reopenComplaint(
+      int complaintId) async {
+    try {
+      return Right(await _dataSource.reopenComplaint(complaintId));
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
 }

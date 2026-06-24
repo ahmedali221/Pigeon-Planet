@@ -27,15 +27,7 @@ class AuctionItemInput {
 
   Map<String, dynamic> toJson() => {
         if (birdId != null) 'bird_id': birdId,
-        if (birdName != null && birdName!.isNotEmpty) 'bird_name': birdName,
-        if (ringNumber != null && ringNumber!.isNotEmpty) 'ring_number': ringNumber,
-        if (gender != null) 'gender': gender,
-        if (colour != null && colour!.isNotEmpty) 'colour': colour,
         if (pairedBirdId != null) 'paired_bird_id': pairedBirdId,
-        if (pairedBirdName != null && pairedBirdName!.isNotEmpty) 'paired_bird_name': pairedBirdName,
-        if (pairedRingNumber != null && pairedRingNumber!.isNotEmpty) 'paired_ring_number': pairedRingNumber,
-        if (pairedGender != null) 'paired_gender': pairedGender,
-        if (pairedColour != null && pairedColour!.isNotEmpty) 'paired_colour': pairedColour,
         'starting_price': startingPrice,
       };
 }

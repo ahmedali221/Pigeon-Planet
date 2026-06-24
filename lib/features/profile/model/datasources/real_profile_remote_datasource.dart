@@ -48,7 +48,6 @@ class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
   @override
   Future<void> createRoom({
     required String nickname,
-    required String description,
     required String country,
     required String currency,
   }) async {
@@ -56,7 +55,6 @@ class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
       ApiConstants.mySellers,
       data: {
         'nickname': nickname,
-        'description': description,
         'country': country,
         'currency': currency,
       },

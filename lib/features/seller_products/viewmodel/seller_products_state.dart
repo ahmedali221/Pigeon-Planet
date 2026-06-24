@@ -1,6 +1,6 @@
 part of 'seller_products_bloc.dart';
 
-enum SellerProductsStatus { initial, loading, loaded, error }
+enum SellerProductsStatus { initial, loading, loadingMore, loaded, error }
 
 enum SellerMutationStatus { idle, creating, updating, deleting, success, failure }
 
@@ -11,6 +11,8 @@ class SellerProductsState extends Equatable {
   final String? selectedCategory;
   final String? errorMessage;
   final String? mutationError;
+  final bool hasMore;
+  final int currentPage;
 
   const SellerProductsState({
     this.status = SellerProductsStatus.initial,
@@ -19,6 +21,8 @@ class SellerProductsState extends Equatable {
     this.selectedCategory,
     this.errorMessage,
     this.mutationError,
+    this.hasMore = false,
+    this.currentPage = 1,
   });
 
   List<SellerProductModel> get filteredProducts => selectedCategory == null
@@ -35,6 +39,8 @@ class SellerProductsState extends Equatable {
     bool clearError = false,
     String? mutationError,
     bool clearMutationError = false,
+    bool? hasMore,
+    int? currentPage,
   }) =>
       SellerProductsState(
         status: status ?? this.status,
@@ -46,6 +52,8 @@ class SellerProductsState extends Equatable {
         errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
         mutationError:
             clearMutationError ? null : mutationError ?? this.mutationError,
+        hasMore: hasMore ?? this.hasMore,
+        currentPage: currentPage ?? this.currentPage,
       );
 
   @override
@@ -56,5 +64,7 @@ class SellerProductsState extends Equatable {
         selectedCategory,
         errorMessage,
         mutationError,
+        hasMore,
+        currentPage,
       ];
 }

@@ -10,6 +10,20 @@ class RealCartRemoteDataSource implements CartRemoteDataSource {
 
   const RealCartRemoteDataSource(this._dio);
 
+  ({List<T> items, bool hasMore}) _parsePage<T>(
+    dynamic data,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (data == null) return (items: <T>[], hasMore: false);
+    final items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data as List<dynamic>? ?? []);
+    return (
+      items: items.map((j) => fromJson(j as Map<String, dynamic>)).toList(),
+      hasMore: data is Map && data['next'] != null,
+    );
+  }
+
   @override
   Future<CartModel> getCart() async {
     final response = await _dio.get(ApiConstants.cart);
@@ -51,13 +65,26 @@ class RealCartRemoteDataSource implements CartRemoteDataSource {
   }
 
   @override
-  Future<List<OrderModel>> getOrders({String? status, int page = 1}) async {
+  Future<OrderModel> createOrderFromItems(
+    List<({int assetId, int quantity})> items,
+  ) async {
+    final response = await _dio.post(ApiConstants.orders, data: {
+      'items': items
+          .map((item) => {
+                'asset_id': item.assetId,
+                'quantity': item.quantity,
+              })
+          .toList(),
+    });
+    return OrderModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<OrderPageResult> getOrders({String? status, int page = 1}) async {
     final params = <String, dynamic>{'page': page};
     if (status != null) params['status'] = status;
     final response = await _dio.get(ApiConstants.orders, queryParameters: params);
-    final data = response.data;
-    final items = data is Map ? (data['results'] as List<dynamic>? ?? []) : (data as List<dynamic>? ?? []);
-    return items.map((j) => OrderModel.fromJson(j as Map<String, dynamic>)).toList();
+    return _parsePage(response.data, OrderModel.fromJson);
   }
 
   @override
@@ -67,11 +94,9 @@ class RealCartRemoteDataSource implements CartRemoteDataSource {
   }
 
   @override
-  Future<List<OrderItemModel>> getSellerOrderItems({int page = 1}) async {
+  Future<OrderItemPageResult> getSellerOrderItems({int page = 1}) async {
     final response = await _dio.get(ApiConstants.orderItems, queryParameters: {'page': page});
-    final data = response.data;
-    final items = data is Map ? (data['results'] as List<dynamic>? ?? []) : (data as List<dynamic>? ?? []);
-    return items.map((j) => OrderItemModel.fromJson(j as Map<String, dynamic>)).toList();
+    return _parsePage(response.data, OrderItemModel.fromJson);
   }
 
   @override

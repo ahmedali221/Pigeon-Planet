@@ -43,6 +43,8 @@ class PigeonModel {
   final double? avgRating;
   final int? ratingsCount;
   final DateTime? created;
+  final int? fatherId;
+  final int? motherId;
 
   const PigeonModel({
     this.id,
@@ -69,6 +71,8 @@ class PigeonModel {
     this.avgRating,
     this.ratingsCount,
     this.created,
+    this.fatherId,
+    this.motherId,
   });
 
   factory PigeonModel.fromJson(Map<String, dynamic> json) {
@@ -135,6 +139,8 @@ class PigeonModel {
       created: json['created'] != null
           ? DateTime.tryParse(json['created'] as String)
           : null,
+      fatherId: json['father'] as int?,
+      motherId: json['mother'] as int?,
     );
   }
 
@@ -190,6 +196,8 @@ class PigeonModel {
     double? avgRating,
     int? ratingsCount,
     DateTime? created,
+    int? fatherId,
+    int? motherId,
   }) =>
       PigeonModel(
         id: id ?? this.id,
@@ -216,5 +224,7 @@ class PigeonModel {
         avgRating: avgRating ?? this.avgRating,
         ratingsCount: ratingsCount ?? this.ratingsCount,
         created: created ?? this.created,
+        fatherId: fatherId ?? this.fatherId,
+        motherId: motherId ?? this.motherId,
       );
 }

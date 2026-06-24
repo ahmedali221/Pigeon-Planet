@@ -122,8 +122,11 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       'username': username,
       'phone_number': phoneNumber,
       'password': password,
-      'customer_profile': {'country': countryCode, 'currency': currency},
-      ...?avatarUrl == null ? null : {'avatar_url': avatarUrl},
+      'customer_profile': {
+        'country': countryCode,
+        'currency': currency,
+        ...?avatarUrl != null ? {'avatar_url': avatarUrl} : null,
+      },
     };
   }
 

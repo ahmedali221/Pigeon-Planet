@@ -9,12 +9,13 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
   final ComplaintsRepository _repository;
 
   ComplaintsBloc({required ComplaintsRepository repository})
-    : _repository = repository,
-      super(const ComplaintsState()) {
+      : _repository = repository,
+        super(const ComplaintsState()) {
     on<ComplaintsLoadRequested>(_onLoad);
     on<ComplaintDetailRequested>(_onDetail);
     on<ComplaintCreateRequested>(_onCreate);
     on<ComplaintCancelRequested>(_onCancel);
+    on<ComplaintReopenRequested>(_onReopen);
   }
 
   Future<void> _onLoad(
@@ -144,6 +145,33 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
             cancelSuccess: true,
           ),
         );
+      },
+    );
+  }
+
+  Future<void> _onReopen(
+    ComplaintReopenRequested event,
+    Emitter<ComplaintsState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: ComplaintsStatus.reopening,
+      clearError: true,
+      resetActions: true,
+    ));
+    final result = await _repository.reopenComplaint(event.complaintId);
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: ComplaintsStatus.error,
+        errorMessage: failure.message,
+      )),
+      (complaint) {
+        final complaints = _upsert(complaint);
+        emit(state.copyWith(
+          status: ComplaintsStatus.loaded,
+          complaints: complaints,
+          selectedComplaint: complaint,
+          reopenSuccess: true,
+        ));
       },
     );
   }

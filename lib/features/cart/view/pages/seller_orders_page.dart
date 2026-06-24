@@ -55,6 +55,8 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
         buildWhen: (p, c) =>
             p.sellerOrderItems != c.sellerOrderItems ||
             p.sellerItemsLoading != c.sellerItemsLoading ||
+            p.sellerItemsLoadingMore != c.sellerItemsLoadingMore ||
+            p.sellerItemsHasMore != c.sellerItemsHasMore ||
             p.itemActioning != c.itemActioning ||
             p.orderError != c.orderError,
         builder: (context, state) {
@@ -74,14 +76,48 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: state.sellerOrderItems.length,
+            itemCount: state.sellerOrderItems.length +
+                (state.sellerItemsHasMore ? 1 : 0),
             separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (context, i) => _SellerOrderItemCard(
-              item: state.sellerOrderItems[i],
-              actioning: state.itemActioning,
-            ),
+            itemBuilder: (context, i) {
+              if (i == state.sellerOrderItems.length) {
+                return _LoadMoreButton(
+                  loading: state.sellerItemsLoadingMore,
+                  onPressed: () => context
+                      .read<CartBloc>()
+                      .add(const SellerOrderItemsLoadMoreRequested()),
+                );
+              }
+              return _SellerOrderItemCard(
+                item: state.sellerOrderItems[i],
+                actioning: state.itemActioning,
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const _LoadMoreButton({required this.loading, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton(
+        onPressed: loading ? null : onPressed,
+        child: loading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯'),
       ),
     );
   }

@@ -74,7 +74,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(roomsStatus: RoomsStatus.creating));
     final result = await _repository.createRoom(
       nickname: event.nickname,
-      description: event.description,
       country: event.country,
       currency: event.currency,
     );

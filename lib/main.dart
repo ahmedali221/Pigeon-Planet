@@ -6,6 +6,7 @@ import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/locale/locale_service.dart';
+import 'l10n/app_localizations.dart';
 import 'features/auth/viewmodel/auth_bloc.dart';
 import 'features/chat/viewmodel/chat_badge_cubit.dart';
 
@@ -49,6 +50,7 @@ class PigeonPlanetApp extends StatelessWidget {
             locale: locale,
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: const [
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,

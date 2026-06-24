@@ -10,4 +10,5 @@ abstract class ComplaintsRemoteDataSource {
   });
   Future<ComplaintModel> getComplaint(int complaintId);
   Future<void> cancelComplaint(int complaintId);
+  Future<ComplaintModel> reopenComplaint(int complaintId);
 }

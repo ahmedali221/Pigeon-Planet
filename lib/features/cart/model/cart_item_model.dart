@@ -9,6 +9,8 @@ class CartItemModel extends Equatable {
   final int quantity;
   final double unitPrice;
   final double total;
+  final DateTime? created;
+  final DateTime? modified;
 
   const CartItemModel({
     required this.id,
@@ -19,6 +21,8 @@ class CartItemModel extends Equatable {
     required this.quantity,
     required this.unitPrice,
     required this.total,
+    this.created,
+    this.modified,
   });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) => CartItemModel(
@@ -30,9 +34,22 @@ class CartItemModel extends Equatable {
         quantity: json['quantity'] as int,
         unitPrice: double.tryParse(json['unit_price']?.toString() ?? '') ?? 0.0,
         total: double.tryParse(json['total']?.toString() ?? '') ?? 0.0,
+        created: DateTime.tryParse(json['created'] as String? ?? ''),
+        modified: DateTime.tryParse(json['modified'] as String? ?? ''),
       );
 
   @override
   List<Object?> get props =>
-      [id, assetId, title, sellerId, sellerNickname, quantity, unitPrice, total];
+      [
+        id,
+        assetId,
+        title,
+        sellerId,
+        sellerNickname,
+        quantity,
+        unitPrice,
+        total,
+        created,
+        modified,
+      ];
 }

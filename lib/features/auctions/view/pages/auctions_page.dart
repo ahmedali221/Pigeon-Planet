@@ -5,6 +5,7 @@ import '../../../../../core/di/injection.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../viewmodel/auctions_bloc.dart';
 import '../widgets/auction_card.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'auction_create_page.dart';
 import 'my_bids_page.dart';
 
@@ -31,10 +32,10 @@ class _AuctionsViewState extends State<_AuctionsView> {
   int _filterIndex = 0;
   final _searchCtrl = TextEditingController();
 
-  static const _filters = [
-    {'label': 'الكل', 'filter': 'all', 'emoji': ''},
-    {'label': 'ينتهي قريباً', 'filter': 'ending_soon', 'emoji': '🕐'},
-    {'label': 'مزاداتي', 'filter': 'my_auctions', 'emoji': '✈️'},
+  static const _filterKeys = [
+    {'filter': 'all', 'emoji': ''},
+    {'filter': 'ending_soon', 'emoji': '🕐'},
+    {'filter': 'my_auctions', 'emoji': '✈️'},
   ];
 
   @override
@@ -46,12 +47,14 @@ class _AuctionsViewState extends State<_AuctionsView> {
   void _onFilterTap(int i) {
     if (_filterIndex == i) return;
     setState(() => _filterIndex = i);
-    final filter = _filters[i]['filter'] as String;
+    final filter = _filterKeys[i]['filter'] as String;
     context.read<AuctionsBloc>().add(AuctionsFilterChanged(filter));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final filterLabels = [l.all, l.endingSoon, l.myAuctions];
     final isSeller = context.select<AuthBloc, bool>((b) {
       final s = b.state;
       if (s is AuthSuccess) return s.user.isSeller;
@@ -74,8 +77,8 @@ class _AuctionsViewState extends State<_AuctionsView> {
               ),
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.add_rounded, color: Colors.white),
-              label: const Text('مزاد جديد',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              label: Text(l.newAuction,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             )
           : null,
       body: Column(
@@ -107,8 +110,8 @@ class _AuctionsViewState extends State<_AuctionsView> {
               child: TextField(
                 controller: _searchCtrl,
                 textAlign: TextAlign.start,
-                decoration: const InputDecoration(
-                  hintText: 'ابحث عن مزاد...',
+                decoration: InputDecoration(
+                  hintText: l.searchAuctionHint,
                   hintStyle:
                       TextStyle(color: AppColors.textHint, fontSize: 13),
                   prefixIcon: Icon(Icons.search_rounded,
@@ -128,8 +131,8 @@ class _AuctionsViewState extends State<_AuctionsView> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(_filters.length, (i) {
-                  final f = _filters[i];
+                children: List.generate(_filterKeys.length, (i) {
+                  final f = _filterKeys[i];
                   final isSelected = _filterIndex == i;
                   return Padding(
                     padding: const EdgeInsetsDirectional.only(end: 8),
@@ -153,7 +156,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              f['label'] as String,
+                              filterLabels[i],
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: isSelected
@@ -188,7 +191,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
               listener: (context, state) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.errorMessage ?? 'حدث خطأ'),
+                    content: Text(state.errorMessage ?? l.errorOccurred),
                     backgroundColor: Colors.red,
                     behavior: SnackBarBehavior.floating,
                   ),
@@ -207,7 +210,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          state.errorMessage ?? 'حدث خطأ',
+                          state.errorMessage ?? l.errorOccurred,
                           style: const TextStyle(
                               color: AppColors.textSecondary),
                           textAlign: TextAlign.center,
@@ -219,18 +222,17 @@ class _AuctionsViewState extends State<_AuctionsView> {
                               .add(const AuctionsRefreshRequested()),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary),
-                          child: const Text('إعادة المحاولة',
-                              style: TextStyle(color: Colors.white)),
+                          child: Text(l.retry,
+                              style: const TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
                   );
                 }
                 if (state.auctions.isEmpty) {
-                  return const Center(
-                    child: Text('لا توجد مزادات',
-                        style:
-                            TextStyle(color: AppColors.textSecondary)),
+                  return Center(
+                    child: Text(l.noAuctions,
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   );
                 }
                 return RefreshIndicator(
@@ -247,9 +249,19 @@ class _AuctionsViewState extends State<_AuctionsView> {
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.58,
                     ),
-                    itemCount: state.auctions.length,
-                    itemBuilder: (context, i) =>
-                        AuctionCard(auction: state.auctions[i]),
+                    itemCount: state.auctions.length +
+                        (state.auctionsHasMore ? 1 : 0),
+                    itemBuilder: (context, i) {
+                      if (i == state.auctions.length) {
+                        return _AuctionLoadMoreTile(
+                          loading: state.auctionsLoadingMore,
+                          onPressed: () => context
+                              .read<AuctionsBloc>()
+                              .add(const AuctionsLoadMoreRequested()),
+                        );
+                      }
+                      return AuctionCard(auction: state.auctions[i]);
+                    },
                   ),
                 );
               },
@@ -262,6 +274,32 @@ class _AuctionsViewState extends State<_AuctionsView> {
 }
 
 // ── Green header ──────────────────────────────────────────────────────────────
+class _AuctionLoadMoreTile extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const _AuctionLoadMoreTile({
+    required this.loading,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton(
+        onPressed: loading ? null : onPressed,
+        child: loading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Load more'),
+      ),
+    );
+  }
+}
+
 class _AuctionsHeader extends StatelessWidget {
   final int auctionCount;
   final VoidCallback onRefresh;
@@ -271,6 +309,7 @@ class _AuctionsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final topPadding = MediaQuery.of(context).padding.top;
     return Container(
       color: AppColors.primary,
@@ -278,12 +317,12 @@ class _AuctionsHeader extends StatelessWidget {
           top: topPadding + 12, bottom: 14, left: 16, right: 16),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Column(
               children: [
                 Text(
-                  'المزادات النشطة',
-                  style: TextStyle(
+                  l.activeAuctions,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

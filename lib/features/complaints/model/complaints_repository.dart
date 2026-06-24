@@ -16,4 +16,5 @@ abstract class ComplaintsRepository {
   Future<Either<Failure, ComplaintModel>> getComplaint(int complaintId);
 
   Future<Either<Failure, void>> cancelComplaint(int complaintId);
+  Future<Either<Failure, ComplaintModel>> reopenComplaint(int complaintId);
 }

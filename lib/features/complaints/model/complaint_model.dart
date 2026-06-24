@@ -9,6 +9,7 @@ class ComplaintModel extends Equatable {
   final String? description;
   final String? adminNote;
   final DateTime createdAt;
+  final DateTime? reviewedAt;
   final DateTime? resolvedAt;
   final DateTime? cancelledAt;
 
@@ -21,6 +22,7 @@ class ComplaintModel extends Equatable {
     this.description,
     this.adminNote,
     required this.createdAt,
+    this.reviewedAt,
     this.resolvedAt,
     this.cancelledAt,
   });
@@ -51,6 +53,7 @@ class ComplaintModel extends Equatable {
       createdAt: (json['created'] ?? json['created_at']) != null
           ? DateTime.parse((json['created'] ?? json['created_at']) as String)
           : DateTime.now(),
+      reviewedAt: DateTime.tryParse(json['reviewed_at'] as String? ?? ''),
       resolvedAt: DateTime.tryParse(json['resolved_at'] as String? ?? ''),
       cancelledAt: DateTime.tryParse(json['cancelled_at'] as String? ?? ''),
     );
@@ -65,6 +68,7 @@ class ComplaintModel extends Equatable {
         description: description,
         adminNote: adminNote,
         createdAt: createdAt,
+        reviewedAt: reviewedAt,
         resolvedAt: resolvedAt,
         cancelledAt: cancelledAt,
       );
@@ -97,6 +101,7 @@ class ComplaintModel extends Equatable {
         description,
         adminNote,
         createdAt,
+        reviewedAt,
         resolvedAt,
         cancelledAt,
       ];

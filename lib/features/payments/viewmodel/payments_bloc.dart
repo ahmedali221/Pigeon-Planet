@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../model/payment_request_model.dart';
@@ -97,6 +98,7 @@ class PaymentsBloc extends Bloc<PaymentsEvent, PaymentsState> {
     final result = await _repository.updateBuyerNote(
       event.requestId,
       event.buyerNote,
+      proofFile: event.proofFile,
     );
     result.fold(
       (f) => emit(state.copyWith(

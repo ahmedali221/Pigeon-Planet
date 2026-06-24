@@ -2,8 +2,13 @@ import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../notification_model.dart';
 
+typedef NotificationsPageResult = ({
+  List<NotificationModel> notifications,
+  bool hasMore,
+});
+
 abstract class NotificationsRemoteDataSource {
-  Future<List<NotificationModel>> getNotifications();
+  Future<NotificationsPageResult> getNotifications({int page = 1});
   Future<int> getUnreadCount();
   Future<void> markRead(int id);
   Future<int> markAllRead();
@@ -15,20 +20,26 @@ class RealNotificationsRemoteDataSource implements NotificationsRemoteDataSource
   const RealNotificationsRemoteDataSource(this._dio);
 
   @override
-  Future<List<NotificationModel>> getNotifications() async {
-    final response = await _dio.get(ApiConstants.notifications);
+  Future<NotificationsPageResult> getNotifications({int page = 1}) async {
+    final response = await _dio.get(
+      ApiConstants.notifications,
+      queryParameters: {'page': page},
+    );
     final data = response.data;
     List<dynamic> items;
+    bool hasMore = false;
     if (data is Map && data.containsKey('results')) {
       items = data['results'] as List<dynamic>? ?? [];
+      hasMore = data['next'] != null;
     } else if (data is List) {
       items = data;
     } else {
-      return [];
+      return (notifications: <NotificationModel>[], hasMore: false);
     }
-    return items
+    final notifications = items
         .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
         .toList();
+    return (notifications: notifications, hasMore: hasMore);
   }
 
   @override

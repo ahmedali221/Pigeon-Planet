@@ -135,3 +135,24 @@ class PigeonIdStatusChanged extends PigeonIdEvent {
   @override
   List<Object?> get props => [status];
 }
+
+class PigeonIdMarketListedChanged extends PigeonIdEvent {
+  final bool value;
+  const PigeonIdMarketListedChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdFatherChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdFatherChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class PigeonIdMotherChanged extends PigeonIdEvent {
+  final String value;
+  const PigeonIdMotherChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}

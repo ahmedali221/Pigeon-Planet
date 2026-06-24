@@ -33,6 +33,9 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
     on<PigeonIdLoadedForEdit>(_onLoadedForEdit);
     on<PigeonIdDeleteRequested>(_onDeleteRequested);
     on<PigeonIdStatusChanged>(_onStatusChanged);
+    on<PigeonIdMarketListedChanged>(_onMarketListedChanged);
+    on<PigeonIdFatherChanged>(_onFatherChanged);
+    on<PigeonIdMotherChanged>(_onMotherChanged);
   }
 
   void _onRingNumberChanged(
@@ -119,6 +122,21 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
     emit(state.copyWith(birdStatus: event.status));
   }
 
+  void _onMarketListedChanged(
+      PigeonIdMarketListedChanged event, Emitter<PigeonIdState> emit) {
+    emit(state.copyWith(isMarketListed: event.value));
+  }
+
+  void _onFatherChanged(
+      PigeonIdFatherChanged event, Emitter<PigeonIdState> emit) {
+    emit(state.copyWith(fatherIdText: event.value));
+  }
+
+  void _onMotherChanged(
+      PigeonIdMotherChanged event, Emitter<PigeonIdState> emit) {
+    emit(state.copyWith(motherIdText: event.value));
+  }
+
   Future<void> _onSubmitted(
       PigeonIdSubmitted event, Emitter<PigeonIdState> emit) async {
     if (!state.isReadyToSubmit) return;
@@ -135,10 +153,12 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
       price: double.tryParse(state.price) ?? 0.0,
       description: state.description,
       flyingSpeed: double.tryParse(state.flyingSpeed),
-      isMarketListed: true,
+      isMarketListed: state.isMarketListed,
       status: state.birdStatus,
       photoPaths: state.photoPaths,
       videoPath: state.videoPath,
+      fatherId: int.tryParse(state.fatherIdText),
+      motherId: int.tryParse(state.motherIdText),
     );
 
     if (state.editingId != null) {
@@ -191,6 +211,9 @@ class PigeonIdBloc extends Bloc<PigeonIdEvent, PigeonIdState> {
           ? p.flyingSpeed!.toStringAsFixed(1)
           : '',
       birdStatus: p.status,
+      isMarketListed: p.isMarketListed,
+      fatherIdText: p.fatherId != null ? '${p.fatherId}' : '',
+      motherIdText: p.motherId != null ? '${p.motherId}' : '',
       savedBird: p,
     ));
   }

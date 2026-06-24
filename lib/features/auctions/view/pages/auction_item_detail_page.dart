@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
 import '../../viewmodel/auctions_bloc.dart';
+import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../../payments/view/pages/payments_page.dart';
 import '../widgets/auction_bids_section.dart';
 import '../widgets/auction_bird_info_section.dart';
@@ -14,7 +15,6 @@ import '../widgets/auction_float_btn.dart';
 import '../widgets/auction_media_section.dart';
 import '../widgets/auction_pedigree_button.dart';
 import '../widgets/auction_reviews_section.dart';
-import '../widgets/auction_chat_section.dart';
 import '../widgets/auction_verification_row.dart';
 
 class AuctionItemDetailPage extends StatefulWidget {
@@ -57,10 +57,11 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     return buf.toString().split('').reversed.join();
   }
 
-  Map<String, dynamic> _buildData() {
-    final bird = widget.item.bird;
-    final startingPrice = widget.item.startingPrice;
-    final currentPrice = widget.item.currentPrice;
+  Map<String, dynamic> _buildData([AuctionItemModel? selectedItem]) {
+    final item = selectedItem ?? widget.item;
+    final bird = item.bird;
+    final startingPrice = item.startingPrice;
+    final currentPrice = item.currentPrice;
     final savings =
         currentPrice > startingPrice ? currentPrice - startingPrice : 0.0;
     final discountPercent = startingPrice > 0
@@ -103,9 +104,10 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     };
   }
 
-  void _showBidDialog(BuildContext context) {
+  void _showBidDialog(BuildContext context, [AuctionItemModel? selectedItem]) {
+    final item = selectedItem ?? widget.item;
     final minBid =
-        widget.item.currentPrice + widget.auction.minBidIncrement;
+        item.currentPrice + widget.auction.minBidIncrement;
     final bloc = context.read<AuctionsBloc>();
 
     showModalBottomSheet(
@@ -115,7 +117,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
       builder: (sheetCtx) => BlocProvider.value(
         value: bloc,
         child: _BidSheet(
-          item: widget.item,
+          item: item,
           auction: widget.auction,
           minBid: minBid,
           fmtFn: _fmt,
@@ -124,7 +126,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     );
   }
 
-  void _confirmBuyNow(BuildContext context) {
+  void _confirmBuyNow(BuildContext context, [AuctionItemModel? selectedItem]) {
+    final item = selectedItem ?? widget.item;
     final price = widget.auction.buyNowPrice ?? 0;
     showDialog(
       context: context,
@@ -139,7 +142,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.read<AuctionsBloc>().add(AuctionBuyNowRequested(widget.item.id));
+              context.read<AuctionsBloc>().add(AuctionBuyNowRequested(item.id));
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
             child: const Text('تأكيد', style: TextStyle(color: Colors.white)),
@@ -200,30 +203,9 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     );
   }
 
-  void _openChat(BuildContext context, AuctionModel auction) {
-    final bloc = context.read<AuctionsBloc>();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => BlocProvider.value(
-        value: bloc,
-        child: AuctionChatSection(auction: auction),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final d = _buildData();
-    final canBid = widget.auction.isActive && !widget.auction.isOwner;
-    final canBuyNow = widget.auction.isActive &&
-        !widget.auction.isOwner &&
-        widget.auction.buyNowEnabled &&
-        widget.auction.buyNowPrice != null &&
-        widget.item.status == 'active';
-    final canRequestPayment =
-        widget.item.status == 'sold' && !widget.auction.isOwner;
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -245,28 +227,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
               fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
         ),
-        actions: [
-          BlocBuilder<AuctionsBloc, AuctionsState>(
-            buildWhen: (p, c) =>
-                p.selectedAuction?.chatEnabled !=
-                c.selectedAuction?.chatEnabled,
-            builder: (context, state) {
-              final chatEnabled =
-                  state.selectedAuction?.chatEnabled ??
-                      widget.auction.chatEnabled;
-              if (!chatEnabled && !widget.auction.isOwner) {
-                return const SizedBox.shrink();
-              }
-              return IconButton(
-                icon: const Icon(Icons.chat_bubble_outline_rounded,
-                    color: Colors.white),
-                tooltip: 'شات المزاد',
-                onPressed: () => _openChat(
-                    context, state.selectedAuction ?? widget.auction),
-              );
-            },
-          ),
-        ],
+        actions: const [],
       ),
       body: BlocConsumer<AuctionsBloc, AuctionsState>(
         listenWhen: (p, c) =>
@@ -295,6 +256,24 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
           }
         },
         builder: (context, state) {
+          final item = state.selectedItemDetail ?? widget.item;
+          final contentData = _buildData(item);
+          final sellerIsBlocked = widget.auction.owner != null &&
+              context.select<FeedBloc, bool>(
+                (bloc) => bloc.state.blockedProfileIds
+                    .contains(widget.auction.owner),
+              );
+          final canBid = widget.auction.isActive &&
+              !widget.auction.isOwner &&
+              !sellerIsBlocked;
+          final canBuyNow = widget.auction.isActive &&
+              !widget.auction.isOwner &&
+              !sellerIsBlocked &&
+              widget.auction.buyNowEnabled &&
+              widget.auction.buyNowPrice != null &&
+              item.status == 'active';
+          final canRequestPayment =
+              item.status == 'sold' && !widget.auction.isOwner;
           return Stack(
             children: [
               SingleChildScrollView(
@@ -308,27 +287,30 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                           setState(() => _currentImage = i),
                       onFavorite: () =>
                           setState(() => _isFavorite = !_isFavorite),
-                      imageUrls: widget.item.bird.imageUrls,
-                      videoUrl: widget.item.bird.videoUrl,
+                      imageUrls: item.bird.imageUrls,
+                      videoUrl: item.bird.videoUrl,
                     ),
-                    AuctionBirdInfoSection(data: d),
+                    AuctionBirdInfoSection(data: contentData),
                     const SizedBox(height: 8),
-                    AuctionVerificationRow(data: d),
+                    AuctionVerificationRow(data: contentData),
                     const SizedBox(height: 8),
-                    AuctionDetailsGrid(data: d),
+                    AuctionDetailsGrid(data: contentData),
                     const SizedBox(height: 12),
                     AuctionDescriptionSection(
-                        text: d['description'] as String),
+                        text: contentData['description'] as String),
                     const SizedBox(height: 12),
                     const AuctionPedigreeButton(),
                     const SizedBox(height: 12),
                     _ItemBidCard(
-                      item: widget.item,
+                      item: item,
                       auction: widget.auction,
                       fmtFn: _fmt,
-                      onBid: canBid ? () => _showBidDialog(context) : null,
-                      onBuyNow: canBuyNow ? () => _confirmBuyNow(context) : null,
+                      onBid: canBid ? () => _showBidDialog(context, item) : null,
+                      onBuyNow: canBuyNow ? () => _confirmBuyNow(context, item) : null,
                       isBuyingNow: state.isBuyingNow,
+                      blockedMessage: sellerIsBlocked
+                          ? 'You cannot bid while this seller is blocked.'
+                          : null,
                     ),
                     if (canRequestPayment) ...[
                       const SizedBox(height: 8),
@@ -337,13 +319,13 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                         child: SizedBox(
                           width: double.infinity,
                           height: 50,
-                          child: widget.item.winnerPaymentRequestId != null
+                          child: item.winnerPaymentRequestId != null
                               ? ElevatedButton.icon(
                                   onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => PaymentsPage(
-                                        pendingAuctionItemId: widget.item.id,
+                                            pendingAuctionItemId: item.id,
                                       ),
                                     ),
                                   ),
@@ -364,8 +346,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                               : ElevatedButton.icon(
                                   onPressed: () => _confirmPaymentRequest(
                                     context,
-                                    widget.item.id,
-                                    widget.item.currentPrice,
+                                    item.id,
+                                    item.currentPrice,
                                   ),
                                   icon: const Icon(Icons.payment_rounded,
                                       color: Colors.white, size: 18),
@@ -394,13 +376,27 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                         ),
                       )
                     else ...[
-                      AuctionBidsSection(bids: state.itemBids),
-                      if (widget.item.hasWinner) ...[
+                      BlocBuilder<FeedBloc, FeedState>(
+                        buildWhen: (p, c) =>
+                            p.blockedProfileIds != c.blockedProfileIds,
+                        builder: (context, feedState) => AuctionBidsSection(
+                          bids: state.itemBids,
+                          isOwner: widget.auction.isOwner,
+                          blockedProfileIds: feedState.blockedProfileIds,
+                          onBlockBidder: (profileId) => context
+                              .read<FeedBloc>()
+                              .add(FeedBlockRequested(profileId)),
+                          onUnblockBidder: (profileId) => context
+                              .read<FeedBloc>()
+                              .add(FeedUnblockRequested(profileId)),
+                        ),
+                      ),
+                      if (item.hasWinner) ...[
                         const SizedBox(height: 8),
                         _WinnerBar(
-                          winnerUsername: widget.item.winnerUsername ?? '',
-                          birdName: widget.item.bird.name.isNotEmpty
-                              ? widget.item.bird.name
+                          winnerUsername: item.winnerUsername ?? '',
+                          birdName: item.bird.name.isNotEmpty
+                              ? item.bird.name
                               : widget.auction.title,
                         ),
                       ],
@@ -421,7 +417,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                     icon: Icons.gavel_rounded,
                     badge: '${state.itemBids.length}',
                     color: AppColors.primary,
-                    onTap: () => _showBidDialog(context),
+                    onTap: () => _showBidDialog(context, item),
                   ),
                 ),
             ],
@@ -440,6 +436,7 @@ class _ItemBidCard extends StatelessWidget {
   final VoidCallback? onBid;
   final VoidCallback? onBuyNow;
   final bool isBuyingNow;
+  final String? blockedMessage;
 
   const _ItemBidCard({
     required this.item,
@@ -448,6 +445,7 @@ class _ItemBidCard extends StatelessWidget {
     this.onBid,
     this.onBuyNow,
     this.isBuyingNow = false,
+    this.blockedMessage,
   });
 
   @override
@@ -567,11 +565,12 @@ class _ItemBidCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
                 child: Text(
-                  auction.isOwner
+                  blockedMessage ??
+                  (auction.isOwner
                       ? 'هذا مزادك — لا يمكنك المزايدة'
                       : auction.isEnded
                           ? 'انتهى المزاد'
-                          : 'المزاد لم يبدأ بعد',
+                          : 'المزاد لم يبدأ بعد'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 13, color: AppColors.textSecondary),

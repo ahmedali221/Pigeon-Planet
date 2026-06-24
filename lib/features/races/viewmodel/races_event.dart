@@ -44,12 +44,24 @@ class RaceDetailRequested extends RacesEvent {
   List<Object?> get props => [raceId];
 }
 
+class RaceDetailResultsLoadMoreRequested extends RacesEvent {
+  final int raceId;
+  const RaceDetailResultsLoadMoreRequested(this.raceId);
+
+  @override
+  List<Object?> get props => [raceId];
+}
+
 class RaceResultSearchChanged extends RacesEvent {
   final String query;
   const RaceResultSearchChanged(this.query);
 
   @override
   List<Object?> get props => [query];
+}
+
+class RaceResultSearchLoadMoreRequested extends RacesEvent {
+  const RaceResultSearchLoadMoreRequested();
 }
 
 class RacesLoadMoreRequested extends RacesEvent {

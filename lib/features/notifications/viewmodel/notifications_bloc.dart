@@ -22,6 +22,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         super(const NotificationsState()) {
     on<NotificationsStarted>(_onStarted);
     on<NotificationsRefreshRequested>(_onRefresh);
+    on<NotificationsLoadMoreRequested>(_onLoadMore);
     on<NotificationMarkReadRequested>(_onMarkRead);
     on<NotificationMarkAllReadRequested>(_onMarkAllRead);
     on<_SilentPollTick>(_onSilentPoll);
@@ -52,38 +53,57 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     await _load(emit);
   }
 
+  Future<void> _onLoadMore(
+    NotificationsLoadMoreRequested event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    if (!state.hasMore || state.status == NotificationsStatus.loadingMore) {
+      return;
+    }
+    final nextPage = state.currentPage + 1;
+    emit(state.copyWith(status: NotificationsStatus.loadingMore));
+    final result = await _repository.getNotifications(page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(status: NotificationsStatus.loaded)),
+      (page) => emit(state.copyWith(
+        status: NotificationsStatus.loaded,
+        notifications: [...state.notifications, ...page.notifications],
+        hasMore: page.hasMore,
+        currentPage: nextPage,
+      )),
+    );
+  }
+
   Future<void> _onSilentPoll(
     _SilentPollTick event,
     Emitter<NotificationsState> emit,
   ) async {
-    final listResult = await _repository.getNotifications();
     final countResult = await _repository.getUnreadCount();
-    final notifications =
-        listResult.fold((_) => state.notifications, (l) => l);
-    final unreadCount = countResult.fold((_) => state.unreadCount, (c) => c);
-    emit(state.copyWith(notifications: notifications, unreadCount: unreadCount));
+    countResult.fold(
+      (_) {},
+      (count) => emit(state.copyWith(unreadCount: count)),
+    );
   }
 
   Future<void> _load(Emitter<NotificationsState> emit) async {
-    final listResult = await _repository.getNotifications();
+    final listResult = await _repository.getNotifications(page: 1);
     final countResult = await _repository.getUnreadCount();
 
-    final notifications = listResult.fold((_) => <NotificationModel>[], (l) => l);
     final unreadCount = countResult.fold((_) => 0, (c) => c);
 
-    if (listResult.isLeft() && notifications.isEmpty) {
-      final failure = listResult.fold((f) => f, (_) => null);
-      emit(state.copyWith(
+    listResult.fold(
+      (f) => emit(state.copyWith(
         status: NotificationsStatus.error,
-        errorMessage: failure?.message,
-      ));
-    } else {
-      emit(state.copyWith(
+        errorMessage: f.message,
+      )),
+      (page) => emit(state.copyWith(
         status: NotificationsStatus.loaded,
-        notifications: notifications,
+        notifications: page.notifications,
+        hasMore: page.hasMore,
+        currentPage: 1,
         unreadCount: unreadCount,
-      ));
-    }
+      )),
+    );
   }
 
   Future<void> _onMarkRead(
@@ -99,6 +119,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       notifications: updated,
       unreadCount: state.unreadCount > 0 ? state.unreadCount - 1 : 0,
       isActing: true,
+      hasMore: state.hasMore,
+      currentPage: state.currentPage,
     ));
 
     final result = await _repository.markRead(event.id);
@@ -109,7 +131,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         actionError: f.message,
         unreadCount: state.unreadCount + 1,
       )),
-      (_) => emit(state.copyWith(isActing: false, actionError: null)),
+      (_) => emit(state.copyWith(isActing: false)),
     );
   }
 
@@ -129,7 +151,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         isActing: false,
         actionError: f.message,
       )),
-      (_) => emit(state.copyWith(isActing: false, actionError: null)),
+      (_) => emit(state.copyWith(isActing: false)),
     );
   }
 }

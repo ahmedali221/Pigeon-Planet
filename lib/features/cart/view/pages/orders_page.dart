@@ -59,6 +59,8 @@ class _OrdersPageState extends State<OrdersPage> {
               buildWhen: (p, c) =>
                   p.orders != c.orders ||
                   p.ordersLoading != c.ordersLoading ||
+                  p.ordersLoadingMore != c.ordersLoadingMore ||
+                  p.ordersHasMore != c.ordersHasMore ||
                   p.orderError != c.orderError,
               builder: (context, state) {
                 if (state.ordersLoading) {
@@ -77,15 +79,47 @@ class _OrdersPageState extends State<OrdersPage> {
                 }
                 return ListView.separated(
                   padding: const EdgeInsets.all(16),
-                  itemCount: state.orders.length,
+                  itemCount: state.orders.length + (state.ordersHasMore ? 1 : 0),
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
-                  itemBuilder: (context, i) =>
-                      _OrderCard(order: state.orders[i]),
+                  itemBuilder: (context, i) {
+                    if (i == state.orders.length) {
+                      return _LoadMoreButton(
+                        loading: state.ordersLoadingMore,
+                        onPressed: () => context.read<CartBloc>().add(
+                              OrdersLoadMoreRequested(status: _selectedStatus),
+                            ),
+                      );
+                    }
+                    return _OrderCard(order: state.orders[i]);
+                  },
                 );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const _LoadMoreButton({required this.loading, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton(
+        onPressed: loading ? null : onPressed,
+        child: loading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯'),
       ),
     );
   }

@@ -46,7 +46,10 @@ class _MyBidsView extends StatelessWidget {
       ),
       body: BlocBuilder<AuctionsBloc, AuctionsState>(
         buildWhen: (p, c) =>
-            p.myBids != c.myBids || p.myBidsLoading != c.myBidsLoading,
+            p.myBids != c.myBids ||
+            p.myBidsLoading != c.myBidsLoading ||
+            p.myBidsLoadingMore != c.myBidsLoadingMore ||
+            p.myBidsHasMore != c.myBidsHasMore,
         builder: (context, state) {
           if (state.myBidsLoading) {
             return const Center(
@@ -71,11 +74,44 @@ class _MyBidsView extends StatelessWidget {
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: state.myBids.length,
+            itemCount: state.myBids.length + (state.myBidsHasMore ? 1 : 0),
             separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (_, i) => _BidCard(bid: state.myBids[i]),
+            itemBuilder: (context, i) {
+              if (i == state.myBids.length) {
+                return _LoadMoreButton(
+                  loading: state.myBidsLoadingMore,
+                  onPressed: () => context
+                      .read<AuctionsBloc>()
+                      .add(const AuctionMyBidsLoadMoreRequested()),
+                );
+              }
+              return _BidCard(bid: state.myBids[i]);
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const _LoadMoreButton({required this.loading, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton(
+        onPressed: loading ? null : onPressed,
+        child: loading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Load more'),
       ),
     );
   }

@@ -69,9 +69,14 @@ class RealMarketRemoteDataSource implements MarketRemoteDataSource {
 
     final products = results.map((e) {
       final json = e as Map<String, dynamic>;
-      final rawType = json['asset_type'] as String? ?? 'supply';
+      final item = Map<String, dynamic>.from(
+        json['item'] as Map<String, dynamic>? ?? json,
+      );
+      item['source'] ??= json['source'];
+      final rawType =
+          item['asset_type'] as String? ?? item['category'] as String? ?? 'supply';
       final categoryId = _mapAssetType(rawType);
-      return ProductModel.fromJson(json, categoryId);
+      return ProductModel.fromJson(item, categoryId);
     }).toList();
 
     return MarketFeedResult(products: products, nextCursor: nextCursor);

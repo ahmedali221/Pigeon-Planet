@@ -21,7 +21,7 @@ class SellerProductsRepositoryImpl implements SellerProductsRepository {
   }
 
   @override
-  Future<Either<Failure, List<SellerProductModel>>> getMyProducts({
+  Future<Either<Failure, SellerProductsPageResult>> getMyProducts({
     String? category,
     int page = 1,
   }) async {

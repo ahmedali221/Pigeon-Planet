@@ -13,8 +13,10 @@ class PaymentRequestModel {
   final int? buyerProfileId;
   final int? sellerProfileId;
   final DateTime created;
+  final DateTime? modified;
   final DateTime? approvedAt;
   final DateTime? rejectedAt;
+  final String? paymentProofUrl;
 
   const PaymentRequestModel({
     required this.id,
@@ -31,8 +33,10 @@ class PaymentRequestModel {
     this.buyerProfileId,
     this.sellerProfileId,
     required this.created,
+    this.modified,
     this.approvedAt,
     this.rejectedAt,
+    this.paymentProofUrl,
   });
 
   bool get isPending => status == 'pending';
@@ -83,8 +87,10 @@ class PaymentRequestModel {
       buyerProfileId: buyer?['id'] as int?,
       sellerProfileId: seller?['id'] as int?,
       created: DateTime.parse(json['created'] as String),
+      modified: DateTime.tryParse(json['modified'] as String? ?? ''),
       approvedAt: DateTime.tryParse(json['approved_at'] as String? ?? ''),
       rejectedAt: DateTime.tryParse(json['rejected_at'] as String? ?? ''),
+      paymentProofUrl: json['payment_proof'] as String?,
     );
   }
 
@@ -92,6 +98,7 @@ class PaymentRequestModel {
     String? status,
     String? buyerNote,
     String? sellerNote,
+    String? paymentProofUrl,
   }) =>
       PaymentRequestModel(
         id: id,
@@ -108,8 +115,10 @@ class PaymentRequestModel {
         buyerProfileId: buyerProfileId,
         sellerProfileId: sellerProfileId,
         created: created,
+        modified: modified,
         approvedAt: approvedAt,
         rejectedAt: rejectedAt,
+        paymentProofUrl: paymentProofUrl ?? this.paymentProofUrl,
       );
 
   String get statusLabel => switch (status) {

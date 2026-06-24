@@ -17,10 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(_onLogin);
     on<AuthRegisterPersonalRequested>(_onRegisterPersonal);
     on<AuthRegisterProviderRequested>(_onRegisterProvider);
-    on<AuthOtpVerifyRequested>(_onOtpVerify);
-    on<AuthResendOtpRequested>(_onResendOtp);
     on<AuthSwitchProfileRequested>(_onSwitchProfile);
-    on<AuthSwitchProfileByIdRequested>(_onSwitchProfileById);
     on<AuthBecomeSellerRequested>(_onBecomeSeller);
     on<AuthProfileSwitchFailureAcknowledged>(
       _onProfileSwitchFailureAcknowledged,
@@ -71,7 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthOtpRequired(event.phoneNumber)),
+      (user) => emit(AuthSuccess(user)),
     );
   }
 
@@ -89,40 +86,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthOtpRequired(event.phoneNumber)),
+      (user) => emit(AuthSuccess(user)),
     );
-  }
-
-  Future<void> _onOtpVerify(
-    AuthOtpVerifyRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(const AuthLoading());
-    final result = await _repository.verifyOtp(
-      phoneNumber: event.phoneNumber,
-      code: event.code,
-    );
-    await result.fold((failure) async => emit(AuthFailure(failure.message)), (
-      _,
-    ) async {
-      // Tokens were saved during registerPersonal/registerProvider login.
-      // Restore session from storage so the root bloc has an authenticated user.
-      final stored = await _repository.getStoredUser();
-      stored.fold(
-        (_) => emit(AuthOtpVerified(event.phoneNumber)),
-        (user) => user != null
-            ? emit(AuthSuccess(user))
-            : emit(AuthOtpVerified(event.phoneNumber)),
-      );
-    });
-  }
-
-  Future<void> _onResendOtp(
-    AuthResendOtpRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    await _repository.resendOtp(phoneNumber: event.phoneNumber);
-    emit(const AuthOtpResent());
   }
 
   Future<void> _onSwitchProfile(
@@ -149,28 +114,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onSwitchProfileById(
-    AuthSwitchProfileByIdRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    if (state is AuthSwitchingProfile) return;
-
-    UserModel? previous;
-    if (state is AuthSuccess) {
-      previous = (state as AuthSuccess).user;
-    } else if (state is AuthProfileSwitchFailure) {
-      previous = (state as AuthProfileSwitchFailure).user;
-    }
-    if (previous == null) return;
-
-    emit(AuthSwitchingProfile(previous));
-    final result = await _repository.switchProfileById(event.profileId);
-    result.fold(
-      (failure) => emit(AuthProfileSwitchFailure(previous!, failure.message)),
-      (user) => emit(AuthSuccess(user)),
-    );
-  }
-
   Future<void> _onBecomeSeller(
     AuthBecomeSellerRequested event,
     Emitter<AuthState> emit,
@@ -188,41 +131,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(AuthSwitchingProfile(sessionUser));
 
-    // Fetch existing seller profiles — switch to first (earliest-created) if any.
-    final idsResult = await _repository.fetchMySellerProfileIds();
-    if (idsResult.isLeft()) {
-      final message = idsResult.fold((f) => f.message, (_) => '');
-      emit(AuthProfileSwitchFailure(sessionUser, message));
-      return;
-    }
-    final ids = idsResult.getOrElse(() => []);
-
-    if (ids.isNotEmpty) {
-      final switchResult = await _repository.switchProfileById(ids.first);
-      switchResult.fold(
-        (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
-        (user) => emit(AuthSuccess(user)),
-      );
-      return;
-    }
-
-    // No seller profile yet — create one then switch.
     final createResult = await _repository.createSellerProfile();
     if (createResult.isLeft()) {
       final message = createResult.fold((f) => f.message, (_) => '');
       emit(AuthProfileSwitchFailure(sessionUser, message));
       return;
     }
-
-    final idsAfterCreate = await _repository.fetchMySellerProfileIds();
-    if (idsAfterCreate.isLeft() || idsAfterCreate.getOrElse(() => []).isEmpty) {
-      emit(AuthProfileSwitchFailure(sessionUser, 'فشل في إنشاء الملف الشخصي'));
-      return;
-    }
-
-    final switchResult = await _repository.switchProfileById(
-      idsAfterCreate.getOrElse(() => []).first,
-    );
+    final switchResult = await _repository.switchProfile('Seller');
     switchResult.fold(
       (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
       (user) => emit(AuthSuccess(user)),

@@ -76,4 +76,16 @@ class RealComplaintsRemoteDataSource implements ComplaintsRemoteDataSource {
       throw ApiException('فشل في إلغاء الشكوى');
     }
   }
+
+  @override
+  Future<ComplaintModel> reopenComplaint(int complaintId) async {
+    try {
+      final response = await _dio.post(ApiConstants.reopenComplaint(complaintId));
+      return ComplaintModel.fromJson(response.data as Map<String, dynamic>);
+    } on ApiException {
+      rethrow;
+    } catch (_) {
+      throw ApiException('فشل في إعادة فتح الشكوى');
+    }
+  }
 }

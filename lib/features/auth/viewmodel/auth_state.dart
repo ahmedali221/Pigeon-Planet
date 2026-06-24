@@ -45,26 +45,6 @@ class AuthProfileSwitchFailure extends AuthState {
   List<Object?> get props => [user, message];
 }
 
-class AuthOtpRequired extends AuthState {
-  final String phoneNumber;
-  const AuthOtpRequired(this.phoneNumber);
-
-  @override
-  List<Object?> get props => [phoneNumber];
-}
-
-class AuthOtpVerified extends AuthState {
-  final String phoneNumber;
-  const AuthOtpVerified(this.phoneNumber);
-
-  @override
-  List<Object?> get props => [phoneNumber];
-}
-
-class AuthOtpResent extends AuthState {
-  const AuthOtpResent();
-}
-
 class AuthFailure extends AuthState {
   final String message;
 

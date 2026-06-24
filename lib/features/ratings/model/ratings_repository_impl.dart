@@ -13,8 +13,11 @@ class RatingsRepositoryImpl implements RatingsRepository {
   const RatingsRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<Failure, List<RatingModel>>> getAssetRatings(int assetId) =>
-      _wrap(() => _dataSource.getAssetRatings(assetId));
+  Future<Either<Failure, RatingPageResult>> getAssetRatings(
+    int assetId, {
+    int page = 1,
+  }) =>
+      _wrap(() => _dataSource.getAssetRatings(assetId, page: page));
 
   @override
   Future<Either<Failure, void>> createAssetRating({
@@ -29,8 +32,11 @@ class RatingsRepositoryImpl implements RatingsRepository {
           ));
 
   @override
-  Future<Either<Failure, List<RatingModel>>> getSellerRatings(int sellerId) =>
-      _wrap(() => _dataSource.getSellerRatings(sellerId));
+  Future<Either<Failure, RatingPageResult>> getSellerRatings(
+    int sellerId, {
+    int page = 1,
+  }) =>
+      _wrap(() => _dataSource.getSellerRatings(sellerId, page: page));
 
   @override
   Future<Either<Failure, void>> createSellerRating({
@@ -45,8 +51,11 @@ class RatingsRepositoryImpl implements RatingsRepository {
           ));
 
   @override
-  Future<Either<Failure, List<CommentModel>>> getAssetComments(int assetId) =>
-      _wrap(() => _dataSource.getAssetComments(assetId));
+  Future<Either<Failure, CommentPageResult>> getAssetComments(
+    int assetId, {
+    int page = 1,
+  }) =>
+      _wrap(() => _dataSource.getAssetComments(assetId, page: page));
 
   @override
   Future<Either<Failure, void>> createAssetComment({
@@ -56,8 +65,11 @@ class RatingsRepositoryImpl implements RatingsRepository {
       _wrapVoid(() => _dataSource.createAssetComment(assetId: assetId, text: text));
 
   @override
-  Future<Either<Failure, List<CommentModel>>> getSellerComments(int sellerId) =>
-      _wrap(() => _dataSource.getSellerComments(sellerId));
+  Future<Either<Failure, CommentPageResult>> getSellerComments(
+    int sellerId, {
+    int page = 1,
+  }) =>
+      _wrap(() => _dataSource.getSellerComments(sellerId, page: page));
 
   @override
   Future<Either<Failure, void>> createSellerComment({

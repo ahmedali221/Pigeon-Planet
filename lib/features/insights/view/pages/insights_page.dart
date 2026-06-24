@@ -80,11 +80,17 @@ class _InsightsView extends StatelessWidget {
                   label: 'مزادات نشطة',
                   value: '${insights.auctionSummary.activeCount}'),
               _StatRow(
+                  label: 'مزادات مغلقة',
+                  value: '${insights.auctionSummary.closedCount}'),
+              _StatRow(
                   label: 'تنتهي قريباً',
                   value: '${insights.auctionSummary.endingSoonCount}'),
               _StatRow(
                   label: 'إجمالي العروض المستلمة',
                   value: '${insights.auctionSummary.totalBidsReceived}'),
+              _StatRow(
+                  label: 'مزايدون فريدون',
+                  value: '${insights.auctionSummary.uniqueBiddersCount}'),
               _StatRow(
                   label: 'مبيعات مكتملة',
                   value: '${insights.auctionSummary.soldItemsCount}'),
@@ -109,6 +115,9 @@ class _InsightsView extends StatelessWidget {
               _StatRow(
                   label: 'طلبات معلقة',
                   value: '${insights.marketSummary.pendingOrderItemsCount}'),
+              _StatRow(
+                  label: 'طلبات دفع معلقة',
+                  value: '${insights.marketSummary.pendingPaymentCount}'),
               _StatRow(
                   label: 'مخزون منخفض',
                   value: '${insights.marketSummary.lowStockProductsCount}',
@@ -138,6 +147,15 @@ class _InsightsView extends StatelessWidget {
               _StatRow(
                   label: 'رسائل غير مقروءة',
                   value: '${insights.engagementSummary.unreadMessages}'),
+              _StatRow(
+                  label: 'مشاهدات الملف (7 أيام)',
+                  value: '${insights.engagementSummary.profileViews7d}'),
+              _StatRow(
+                  label: 'مشاهدات المزادات (7 أيام)',
+                  value: '${insights.engagementSummary.auctionViews7d}'),
+              _StatRow(
+                  label: 'مشاهدات المتجر (7 أيام)',
+                  value: '${insights.engagementSummary.marketItemViews7d}'),
             ],
           ),
           const SizedBox(height: 12),
@@ -154,6 +172,9 @@ class _InsightsView extends StatelessWidget {
                   label: 'عدد التقييمات',
                   value: '${insights.trustSummary.ratingsCount}'),
               _StatRow(
+                  label: 'مراجعات جديدة (7 أيام)',
+                  value: '${insights.trustSummary.recentReviewsCount7d}'),
+              _StatRow(
                   label: 'الشارات',
                   value: '${insights.trustSummary.badgesCount}'),
             ],
@@ -168,6 +189,10 @@ class _InsightsView extends StatelessWidget {
               _StatRow(
                   label: 'الباقة الحالية',
                   value: insights.packageSummary.displayName),
+              if (insights.packageSummary.activePackageId != null)
+                _StatRow(
+                    label: 'رقم الباقة',
+                    value: '${insights.packageSummary.activePackageId}'),
               _StatRow(
                   label: 'حالة الاشتراك',
                   value:
@@ -183,6 +208,22 @@ class _InsightsView extends StatelessWidget {
                 _StatRow(
                     label: 'حصة المتجر المتبقية',
                     value: '${insights.packageSummary.remainingMarketQuota}'),
+              if (insights.packageSummary.activePackageRemainingPoints != null)
+                _StatRow(
+                    label: 'نقاط الباقة المتبقية',
+                    value:
+                        '${insights.packageSummary.activePackageRemainingPoints}'),
+              _StatRow(
+                  label: 'مزادات مروجة',
+                  value: '${insights.packageSummary.promotedAuctionsCount}'),
+              _StatRow(
+                  label: 'منتجات مروجة',
+                  value: '${insights.packageSummary.promotedMarketCount}'),
+              if (insights.packageSummary.packageExpiryDate != null)
+                _StatRow(
+                    label: 'تاريخ انتهاء الباقة',
+                    value: _formatDate(
+                        insights.packageSummary.packageExpiryDate!)),
             ],
           ),
         ],
@@ -192,6 +233,13 @@ class _InsightsView extends StatelessWidget {
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
+
+String _formatDate(DateTime date) {
+  final local = date.toLocal();
+  final month = local.month.toString().padLeft(2, '0');
+  final day = local.day.toString().padLeft(2, '0');
+  return '${local.year}-$month-$day';
+}
 
 class _InsightsHeader extends StatelessWidget {
   final VoidCallback onBack;

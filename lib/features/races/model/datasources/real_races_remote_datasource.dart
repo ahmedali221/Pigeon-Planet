@@ -9,6 +9,25 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
 
   const RealRacesRemoteDataSource(this._dio);
 
+  ({List<T> items, bool hasMore}) _parsePage<T>(
+    dynamic data,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (data == null) {
+      throw const ServerException('Unexpected response format');
+    }
+    final items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data is List ? data : null);
+    if (items == null) {
+      throw const ServerException('Unexpected response format');
+    }
+    return (
+      items: items.map((e) => fromJson(e as Map<String, dynamic>)).toList(),
+      hasMore: data is Map && data['next'] != null,
+    );
+  }
+
   @override
   Future<RacePage> getRaces({
     int page = 1,
@@ -47,30 +66,24 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
   }
 
   @override
-  Future<List<RaceResultModel>> getRaceResults(int raceId, {int page = 1}) async {
+  Future<RaceResultPage> getRaceResults(int raceId, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.raceResults(raceId),
       queryParameters: {'page': page},
     );
-    final data = response.data;
-    List<dynamic> items;
-    if (data is Map && data.containsKey('results')) {
-      items = data['results'] as List<dynamic>? ?? [];
-    } else if (data is List) {
-      items = data;
-    } else {
-      throw const ServerException('Unexpected response format');
-    }
-    return items
-        .map((e) => RaceResultModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final pageData = _parsePage(response.data, RaceResultModel.fromJson);
+    return RaceResultPage(
+      results: pageData.items,
+      hasMore: pageData.hasMore,
+    );
   }
 
   @override
-  Future<List<RaceResultModel>> searchResults({
+  Future<RaceResultPage> searchResults({
     String? q,
     String? birdRingNumber,
     String? competitorName,
+    int? raceId,
     int page = 1,
   }) async {
     final params = <String, dynamic>{
@@ -81,22 +94,16 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
         'bird_ring_number': birdRingNumber,
       if (competitorName != null && competitorName.isNotEmpty)
         'competitor_name': competitorName,
+      if (raceId != null) 'race_id': raceId,
     };
     final response = await _dio.get(
       ApiConstants.raceResultsGlobal,
       queryParameters: params,
     );
-    final data = response.data;
-    List<dynamic> items;
-    if (data is Map && data.containsKey('results')) {
-      items = data['results'] as List<dynamic>? ?? [];
-    } else if (data is List) {
-      items = data;
-    } else {
-      throw const ServerException('Unexpected response format');
-    }
-    return items
-        .map((e) => RaceResultModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final pageData = _parsePage(response.data, RaceResultModel.fromJson);
+    return RaceResultPage(
+      results: pageData.items,
+      hasMore: pageData.hasMore,
+    );
   }
 }

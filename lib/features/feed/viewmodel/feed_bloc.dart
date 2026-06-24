@@ -35,10 +35,13 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     final suggestResult = await _repository.getSuggestions();
     final feedResult = await _repository.getAuctionFeed();
     final followingResult = await _repository.getFollowing();
+    final blocksResult = await _repository.getBlocks();
 
     final suggestions = suggestResult.getOrElse(() => []);
     final following = followingResult.getOrElse(() => []);
     final followedIds = following.map((f) => f.seller.id).toSet();
+    final blocks = blocksResult.getOrElse(() => []);
+    final blockedIds = blocks.map((b) => b.profileId).toSet();
 
     feedResult.fold(
       (failure) => emit(state.copyWith(
@@ -47,6 +50,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         suggestions: suggestions,
         following: following,
         followedSellerIds: followedIds,
+        blocks: blocks,
+        blockedProfileIds: blockedIds,
       )),
       (result) => emit(state.copyWith(
         status: FeedStatus.loaded,
@@ -56,6 +61,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         suggestions: suggestions,
         following: following,
         followedSellerIds: followedIds,
+        blocks: blocks,
+        blockedProfileIds: blockedIds,
       )),
     );
   }

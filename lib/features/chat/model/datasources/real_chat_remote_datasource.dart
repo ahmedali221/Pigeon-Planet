@@ -69,7 +69,7 @@ class RealChatRemoteDataSource implements ChatRemoteDataSource {
   Future<List<ChatMessageModel>> pollMessages(int conversationId,
       {int? afterId}) async {
     try {
-      final params = <String, dynamic>{'after_id': ?afterId};
+      final params = <String, dynamic>{if (afterId != null) 'after_id': afterId};
       final response = await _dio.get(
         ApiConstants.chatMessages(conversationId),
         queryParameters: params.isEmpty ? null : params,

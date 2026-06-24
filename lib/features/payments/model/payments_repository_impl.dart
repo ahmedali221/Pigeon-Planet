@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/error/failures.dart';
 import 'datasources/payments_remote_datasource.dart';
@@ -34,11 +35,13 @@ class PaymentsRepositoryImpl implements PaymentsRepository {
   Future<Either<Failure, PaymentRequestModel>> createAuctionPaymentRequest(
     int auctionItemId, {
     String? buyerNote,
+    PlatformFile? proofFile,
   }) async {
     try {
       return Right(await _dataSource.createAuctionPaymentRequest(
         auctionItemId,
         buyerNote: buyerNote,
+        proofFile: proofFile,
       ));
     } on ApiException catch (e) {
       return Left(_map(e));
@@ -51,11 +54,13 @@ class PaymentsRepositoryImpl implements PaymentsRepository {
   Future<Either<Failure, PaymentRequestModel>> createMarketPaymentRequest(
     int orderItemId, {
     String? buyerNote,
+    PlatformFile? proofFile,
   }) async {
     try {
       return Right(await _dataSource.createMarketPaymentRequest(
         orderItemId,
         buyerNote: buyerNote,
+        proofFile: proofFile,
       ));
     } on ApiException catch (e) {
       return Left(_map(e));
@@ -67,10 +72,15 @@ class PaymentsRepositoryImpl implements PaymentsRepository {
   @override
   Future<Either<Failure, PaymentRequestModel>> updateBuyerNote(
     int requestId,
-    String buyerNote,
-  ) async {
+    String buyerNote, {
+    PlatformFile? proofFile,
+  }) async {
     try {
-      return Right(await _dataSource.updateBuyerNote(requestId, buyerNote));
+      return Right(await _dataSource.updateBuyerNote(
+        requestId,
+        buyerNote,
+        proofFile: proofFile,
+      ));
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {

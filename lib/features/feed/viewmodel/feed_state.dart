@@ -22,7 +22,7 @@ class FeedState extends Equatable {
   final Set<int> blockedProfileIds;
   final String? errorMessage;
   final String? actionError;
-  // Sellers list (غرف tab)
+  // Sellers list tab
   final List<SellerModel> sellersList;
   final int sellersPage;
   final bool sellersHasMore;

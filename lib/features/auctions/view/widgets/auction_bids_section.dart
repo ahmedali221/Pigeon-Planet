@@ -4,7 +4,19 @@ import '../../model/bid_model.dart';
 
 class AuctionBidsSection extends StatelessWidget {
   final List<BidModel> bids;
-  const AuctionBidsSection({super.key, required this.bids});
+  final bool isOwner;
+  final Set<int> blockedProfileIds;
+  final ValueChanged<int>? onBlockBidder;
+  final ValueChanged<int>? onUnblockBidder;
+
+  const AuctionBidsSection({
+    super.key,
+    required this.bids,
+    this.isOwner = false,
+    this.blockedProfileIds = const {},
+    this.onBlockBidder,
+    this.onUnblockBidder,
+  });
 
   String _fmtPrice(double v) {
     if (v == 0) return '0';
@@ -107,6 +119,7 @@ class AuctionBidsSection extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final bid = bids[i];
                   final isTop = i == 0;
+                  final isBlocked = blockedProfileIds.contains(bid.bidder);
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
@@ -199,6 +212,31 @@ class AuctionBidsSection extends StatelessWidget {
                                     color: Color(0xFFD4A017),
                                     fontWeight: FontWeight.w600),
                               ),
+                            if (isOwner && bid.bidder != 0) ...[
+                              const SizedBox(height: 6),
+                              TextButton.icon(
+                                onPressed: () => isBlocked
+                                    ? onUnblockBidder?.call(bid.bidder)
+                                    : onBlockBidder?.call(bid.bidder),
+                                icon: Icon(
+                                  isBlocked
+                                      ? Icons.lock_open_rounded
+                                      : Icons.block_rounded,
+                                  size: 15,
+                                ),
+                                label: Text(isBlocked ? 'Unblock' : 'Block'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: isBlocked
+                                      ? AppColors.primary
+                                      : AppColors.error,
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 28),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ],

@@ -51,7 +51,7 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
           if (race == null) {
             return const Center(child: CircularProgressIndicator());
           }
-          return _RaceDetailBody(race: race);
+          return _RaceDetailBody(race: race, state: state);
         },
       ),
     );
@@ -60,8 +60,9 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
 
 class _RaceDetailBody extends StatelessWidget {
   final RaceModel race;
+  final RacesState state;
 
-  const _RaceDetailBody({required this.race});
+  const _RaceDetailBody({required this.race, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +82,18 @@ class _RaceDetailBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          if (race.results.isEmpty)
+          if (state.detailResults.isEmpty)
             const _EmptyResults()
-          else
-            _ResultsTable(results: race.results),
+          else ...[
+            _ResultsTable(results: state.detailResults),
+            if (state.detailResultsHasMore || state.detailResultsLoadingMore)
+              _LoadMoreButton(
+                loading: state.detailResultsLoadingMore,
+                onTap: () => context
+                    .read<RacesBloc>()
+                    .add(RaceDetailResultsLoadMoreRequested(race.id)),
+              ),
+          ],
           const SizedBox(height: 24),
         ],
       ),
@@ -402,6 +411,37 @@ class _EmptyResults extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _LoadMoreButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Center(
+        child: loading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              )
+            : OutlinedButton.icon(
+                onPressed: onTap,
+                icon: const Icon(Icons.expand_more_rounded, size: 18),
+                label: const Text('تحميل المزيد'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                ),
+              ),
       ),
     );
   }

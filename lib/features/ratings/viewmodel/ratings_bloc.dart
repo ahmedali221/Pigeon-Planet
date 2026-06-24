@@ -16,6 +16,8 @@ class RatingsBloc extends Bloc<RatingsEvent, RatingsState> {
         super(const RatingsState()) {
     on<AssetRatingsLoadRequested>(_onAssetRatingsLoad);
     on<SellerRatingsLoadRequested>(_onSellerRatingsLoad);
+    on<AssetRatingsLoadMoreRequested>(_onAssetRatingsLoadMore);
+    on<SellerRatingsLoadMoreRequested>(_onSellerRatingsLoadMore);
     on<AssetRatingSubmitted>(_onAssetRatingSubmit);
     on<SellerRatingSubmitted>(_onSellerRatingSubmit);
     on<AssetCommentSubmitted>(_onAssetCommentSubmit);
@@ -26,17 +28,25 @@ class RatingsBloc extends Bloc<RatingsEvent, RatingsState> {
     AssetRatingsLoadRequested event,
     Emitter<RatingsState> emit,
   ) async {
-    emit(state.copyWith(loading: true, clearError: true));
-    final results = await Future.wait([
-      _repository.getAssetRatings(event.assetId),
-      _repository.getAssetComments(event.assetId),
-    ]);
-    final ratingsResult = results[0] as dynamic;
-    final commentsResult = results[1] as dynamic;
+    emit(state.copyWith(
+      loading: true,
+      currentPage: 1,
+      hasMore: false,
+      clearError: true,
+    ));
+    final ratingsResult = await _repository.getAssetRatings(event.assetId);
+    final commentsResult = await _repository.getAssetComments(event.assetId);
+    final ratingsPage = ratingsResult.getOrElse(
+      () => (items: state.ratings, hasMore: false),
+    );
+    final commentsPage = commentsResult.getOrElse(
+      () => (items: state.comments, hasMore: false),
+    );
     emit(state.copyWith(
       loading: false,
-      ratings: ratingsResult.fold((_) => state.ratings, (r) => r as List<RatingModel>),
-      comments: commentsResult.fold((_) => state.comments, (c) => c as List<CommentModel>),
+      ratings: ratingsPage.items,
+      comments: commentsPage.items,
+      hasMore: ratingsPage.hasMore || commentsPage.hasMore,
       error: ratingsResult.isLeft() ? (ratingsResult.fold((f) => f.message, (_) => null)) : null,
     ));
   }
@@ -45,17 +55,79 @@ class RatingsBloc extends Bloc<RatingsEvent, RatingsState> {
     SellerRatingsLoadRequested event,
     Emitter<RatingsState> emit,
   ) async {
-    emit(state.copyWith(loading: true, clearError: true));
-    final results = await Future.wait([
-      _repository.getSellerRatings(event.sellerId),
-      _repository.getSellerComments(event.sellerId),
-    ]);
-    final ratingsResult = results[0] as dynamic;
-    final commentsResult = results[1] as dynamic;
+    emit(state.copyWith(
+      loading: true,
+      currentPage: 1,
+      hasMore: false,
+      clearError: true,
+    ));
+    final ratingsResult = await _repository.getSellerRatings(event.sellerId);
+    final commentsResult = await _repository.getSellerComments(event.sellerId);
+    final ratingsPage = ratingsResult.getOrElse(
+      () => (items: state.ratings, hasMore: false),
+    );
+    final commentsPage = commentsResult.getOrElse(
+      () => (items: state.comments, hasMore: false),
+    );
     emit(state.copyWith(
       loading: false,
-      ratings: ratingsResult.fold((_) => state.ratings, (r) => r as List<RatingModel>),
-      comments: commentsResult.fold((_) => state.comments, (c) => c as List<CommentModel>),
+      ratings: ratingsPage.items,
+      comments: commentsPage.items,
+      hasMore: ratingsPage.hasMore || commentsPage.hasMore,
+      error: ratingsResult.isLeft() ? (ratingsResult.fold((f) => f.message, (_) => null)) : null,
+    ));
+  }
+
+  Future<void> _onAssetRatingsLoadMore(
+    AssetRatingsLoadMoreRequested event,
+    Emitter<RatingsState> emit,
+  ) async {
+    if (!state.hasMore || state.loadingMore) return;
+    final nextPage = state.currentPage + 1;
+    emit(state.copyWith(loadingMore: true, clearError: true));
+    final ratingsResult =
+        await _repository.getAssetRatings(event.assetId, page: nextPage);
+    final commentsResult =
+        await _repository.getAssetComments(event.assetId, page: nextPage);
+    final ratingsPage = ratingsResult.getOrElse(
+      () => (items: <RatingModel>[], hasMore: false),
+    );
+    final commentsPage = commentsResult.getOrElse(
+      () => (items: <CommentModel>[], hasMore: false),
+    );
+    emit(state.copyWith(
+      loadingMore: false,
+      currentPage: nextPage,
+      ratings: [...state.ratings, ...ratingsPage.items],
+      comments: [...state.comments, ...commentsPage.items],
+      hasMore: ratingsPage.hasMore || commentsPage.hasMore,
+      error: ratingsResult.isLeft() ? (ratingsResult.fold((f) => f.message, (_) => null)) : null,
+    ));
+  }
+
+  Future<void> _onSellerRatingsLoadMore(
+    SellerRatingsLoadMoreRequested event,
+    Emitter<RatingsState> emit,
+  ) async {
+    if (!state.hasMore || state.loadingMore) return;
+    final nextPage = state.currentPage + 1;
+    emit(state.copyWith(loadingMore: true, clearError: true));
+    final ratingsResult =
+        await _repository.getSellerRatings(event.sellerId, page: nextPage);
+    final commentsResult =
+        await _repository.getSellerComments(event.sellerId, page: nextPage);
+    final ratingsPage = ratingsResult.getOrElse(
+      () => (items: <RatingModel>[], hasMore: false),
+    );
+    final commentsPage = commentsResult.getOrElse(
+      () => (items: <CommentModel>[], hasMore: false),
+    );
+    emit(state.copyWith(
+      loadingMore: false,
+      currentPage: nextPage,
+      ratings: [...state.ratings, ...ratingsPage.items],
+      comments: [...state.comments, ...commentsPage.items],
+      hasMore: ratingsPage.hasMore || commentsPage.hasMore,
       error: ratingsResult.isLeft() ? (ratingsResult.fold((f) => f.message, (_) => null)) : null,
     ));
   }

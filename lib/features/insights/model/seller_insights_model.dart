@@ -3,6 +3,7 @@ class AuctionSummaryInsights {
   final int closedCount;
   final int endingSoonCount;
   final int totalBidsReceived;
+  final int uniqueBiddersCount;
   final int soldItemsCount;
   final int pendingPaymentCount;
 
@@ -11,6 +12,7 @@ class AuctionSummaryInsights {
     required this.closedCount,
     required this.endingSoonCount,
     required this.totalBidsReceived,
+    required this.uniqueBiddersCount,
     required this.soldItemsCount,
     required this.pendingPaymentCount,
   });
@@ -21,6 +23,8 @@ class AuctionSummaryInsights {
         closedCount: (json['closed_count'] as num?)?.toInt() ?? 0,
         endingSoonCount: (json['ending_soon_count'] as num?)?.toInt() ?? 0,
         totalBidsReceived: (json['total_bids_received'] as num?)?.toInt() ?? 0,
+        uniqueBiddersCount:
+            (json['unique_bidders_count'] as num?)?.toInt() ?? 0,
         soldItemsCount: (json['sold_items_count'] as num?)?.toInt() ?? 0,
         pendingPaymentCount:
             (json['pending_payment_requests_count'] as num?)?.toInt() ?? 0,
@@ -61,12 +65,18 @@ class EngagementSummaryInsights {
   final int newFollowers7d;
   final int unreadMessages;
   final int activeConversationsCount;
+  final int profileViews7d;
+  final int auctionViews7d;
+  final int marketItemViews7d;
 
   const EngagementSummaryInsights({
     required this.followersCount,
     required this.newFollowers7d,
     required this.unreadMessages,
     required this.activeConversationsCount,
+    required this.profileViews7d,
+    required this.auctionViews7d,
+    required this.marketItemViews7d,
   });
 
   factory EngagementSummaryInsights.fromJson(Map<String, dynamic> json) =>
@@ -78,6 +88,10 @@ class EngagementSummaryInsights {
             (json['unread_messages_count'] as num?)?.toInt() ?? 0,
         activeConversationsCount:
             (json['active_conversations_count'] as num?)?.toInt() ?? 0,
+        profileViews7d: (json['profile_views_7d'] as num?)?.toInt() ?? 0,
+        auctionViews7d: (json['auction_views_7d'] as num?)?.toInt() ?? 0,
+        marketItemViews7d:
+            (json['market_item_views_7d'] as num?)?.toInt() ?? 0,
       );
 }
 
@@ -85,11 +99,13 @@ class TrustSummaryInsights {
   final int badgesCount;
   final double averageRating;
   final int ratingsCount;
+  final int recentReviewsCount7d;
 
   const TrustSummaryInsights({
     required this.badgesCount,
     required this.averageRating,
     required this.ratingsCount,
+    required this.recentReviewsCount7d,
   });
 
   factory TrustSummaryInsights.fromJson(Map<String, dynamic> json) =>
@@ -98,34 +114,49 @@ class TrustSummaryInsights {
         averageRating:
             double.tryParse('${json['average_rating'] ?? 0}') ?? 0.0,
         ratingsCount: (json['ratings_count'] as num?)?.toInt() ?? 0,
+        recentReviewsCount7d:
+            (json['recent_reviews_count_7d'] as num?)?.toInt() ?? 0,
       );
 }
 
 class PackageSummaryInsights {
+  final int? activePackageId;
   final String? activePackageName;
+  final int? activePackageRemainingPoints;
   final int? remainingAuctionQuota;
   final int? remainingMarketQuota;
   final int promotedAuctionsCount;
   final int promotedMarketCount;
+  final DateTime? packageExpiryDate;
 
   const PackageSummaryInsights({
+    required this.activePackageId,
     required this.activePackageName,
+    required this.activePackageRemainingPoints,
     required this.remainingAuctionQuota,
     required this.remainingMarketQuota,
     required this.promotedAuctionsCount,
     required this.promotedMarketCount,
+    required this.packageExpiryDate,
   });
 
   bool get isActive => activePackageName != null;
 
   factory PackageSummaryInsights.fromJson(Map<String, dynamic> json) {
     final activePackageJson = json['active_package'];
+    int? packageId;
     String? packageName;
+    int? packageRemainingPoints;
     if (activePackageJson is Map<String, dynamic>) {
+      packageId = (activePackageJson['id'] as num?)?.toInt();
       packageName = activePackageJson['name'] as String?;
+      packageRemainingPoints =
+          (activePackageJson['remaining_points'] as num?)?.toInt();
     }
     return PackageSummaryInsights(
+      activePackageId: packageId,
       activePackageName: packageName,
+      activePackageRemainingPoints: packageRemainingPoints,
       remainingAuctionQuota:
           (json['remaining_auction_quota'] as num?)?.toInt(),
       remainingMarketQuota:
@@ -134,6 +165,7 @@ class PackageSummaryInsights {
           (json['promoted_auctions_count'] as num?)?.toInt() ?? 0,
       promotedMarketCount:
           (json['promoted_market_items_count'] as num?)?.toInt() ?? 0,
+      packageExpiryDate: DateTime.tryParse('${json['package_expiry_date']}'),
     );
   }
 

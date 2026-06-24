@@ -50,3 +50,12 @@ class ComplaintCancelRequested extends ComplaintsEvent {
   @override
   List<Object?> get props => [complaintId];
 }
+
+class ComplaintReopenRequested extends ComplaintsEvent {
+  final int complaintId;
+
+  const ComplaintReopenRequested(this.complaintId);
+
+  @override
+  List<Object?> get props => [complaintId];
+}

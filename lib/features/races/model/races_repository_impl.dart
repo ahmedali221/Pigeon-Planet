@@ -44,13 +44,13 @@ class RacesRepositoryImpl implements RacesRepository {
   }
 
   @override
-  Future<Either<Failure, List<RaceResultModel>>> getRaceResults(
+  Future<Either<Failure, RaceResultPage>> getRaceResults(
     int raceId, {
     int page = 1,
   }) async {
     try {
-      final list = await _dataSource.getRaceResults(raceId, page: page);
-      return Right(list);
+      final resultPage = await _dataSource.getRaceResults(raceId, page: page);
+      return Right(resultPage);
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {
@@ -59,10 +59,11 @@ class RacesRepositoryImpl implements RacesRepository {
   }
 
   @override
-  Future<Either<Failure, List<RaceResultModel>>> searchResults({
+  Future<Either<Failure, RaceResultPage>> searchResults({
     String? q,
     String? birdRingNumber,
     String? competitorName,
+    int? raceId,
     int page = 1,
   }) async {
     try {
@@ -70,6 +71,7 @@ class RacesRepositoryImpl implements RacesRepository {
         q: q,
         birdRingNumber: birdRingNumber,
         competitorName: competitorName,
+        raceId: raceId,
         page: page,
       );
       return Right(list);

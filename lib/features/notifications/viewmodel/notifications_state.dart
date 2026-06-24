@@ -1,6 +1,6 @@
 part of 'notifications_bloc.dart';
 
-enum NotificationsStatus { initial, loading, loaded, error }
+enum NotificationsStatus { initial, loading, loaded, loadingMore, error }
 
 class NotificationsState extends Equatable {
   final NotificationsStatus status;
@@ -9,6 +9,8 @@ class NotificationsState extends Equatable {
   final bool isActing;
   final String? actionError;
   final String? errorMessage;
+  final bool hasMore;
+  final int currentPage;
 
   const NotificationsState({
     this.status = NotificationsStatus.initial,
@@ -17,6 +19,8 @@ class NotificationsState extends Equatable {
     this.isActing = false,
     this.actionError,
     this.errorMessage,
+    this.hasMore = false,
+    this.currentPage = 1,
   });
 
   int get computedUnreadCount => notifications.where((n) => !n.isRead).length;
@@ -28,6 +32,8 @@ class NotificationsState extends Equatable {
     bool? isActing,
     String? actionError,
     String? errorMessage,
+    bool? hasMore,
+    int? currentPage,
   }) =>
       NotificationsState(
         status: status ?? this.status,
@@ -36,6 +42,8 @@ class NotificationsState extends Equatable {
         isActing: isActing ?? this.isActing,
         actionError: actionError ?? this.actionError,
         errorMessage: errorMessage ?? this.errorMessage,
+        hasMore: hasMore ?? this.hasMore,
+        currentPage: currentPage ?? this.currentPage,
       );
 
   @override
@@ -46,5 +54,7 @@ class NotificationsState extends Equatable {
         isActing,
         actionError,
         errorMessage,
+        hasMore,
+        currentPage,
       ];
 }

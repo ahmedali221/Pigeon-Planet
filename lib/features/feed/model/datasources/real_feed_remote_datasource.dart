@@ -129,7 +129,7 @@ class RealFeedRemoteDataSource implements FeedRemoteDataSource {
             .map((e) => SellerModel.fromJson(e as Map<String, dynamic>))
             .toList(),
         count: data['count'] as int? ?? 0,
-        hasMore: data['has_more'] as bool? ?? false,
+        hasMore: data['next'] != null,
       );
     } on ApiException {
       rethrow;

@@ -31,6 +31,9 @@ class PigeonIdState extends Equatable {
   final String description;
   final String flyingSpeed;
   final String birdStatus;
+  final bool isMarketListed;
+  final String fatherIdText;
+  final String motherIdText;
   final PigeonModel? savedBird;
 
   const PigeonIdState({
@@ -52,6 +55,9 @@ class PigeonIdState extends Equatable {
     this.description = '',
     this.flyingSpeed = '',
     this.birdStatus = 'available',
+    this.isMarketListed = true,
+    this.fatherIdText = '',
+    this.motherIdText = '',
     this.savedBird,
   });
 
@@ -82,6 +88,9 @@ class PigeonIdState extends Equatable {
     String? description,
     String? flyingSpeed,
     String? birdStatus,
+    bool? isMarketListed,
+    String? fatherIdText,
+    String? motherIdText,
     PigeonModel? savedBird,
   }) =>
       PigeonIdState(
@@ -103,6 +112,9 @@ class PigeonIdState extends Equatable {
         description: description ?? this.description,
         flyingSpeed: flyingSpeed ?? this.flyingSpeed,
         birdStatus: birdStatus ?? this.birdStatus,
+        isMarketListed: isMarketListed ?? this.isMarketListed,
+        fatherIdText: fatherIdText ?? this.fatherIdText,
+        motherIdText: motherIdText ?? this.motherIdText,
         savedBird: savedBird ?? this.savedBird,
       );
 
@@ -126,6 +138,9 @@ class PigeonIdState extends Equatable {
         description,
         flyingSpeed,
         birdStatus,
+        isMarketListed,
+        fatherIdText,
+        motherIdText,
         savedBird,
       ];
 }

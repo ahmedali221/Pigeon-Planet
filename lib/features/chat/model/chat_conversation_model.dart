@@ -9,6 +9,7 @@ class ChatConversationModel extends Equatable {
   final String? lastMessage;
   final DateTime? lastMessageAt;
   final int unreadCount;
+  final bool isActive;
 
   const ChatConversationModel({
     required this.id,
@@ -19,6 +20,7 @@ class ChatConversationModel extends Equatable {
     this.lastMessage,
     this.lastMessageAt,
     this.unreadCount = 0,
+    this.isActive = true,
   });
 
   factory ChatConversationModel.fromJson(Map<String, dynamic> json) {
@@ -37,10 +39,11 @@ class ChatConversationModel extends Equatable {
           ? DateTime.tryParse(json['last_message_at'] as String)
           : null,
       unreadCount: json['unread_count'] as int? ?? 0,
+      isActive: json['is_active'] as bool? ?? true,
     );
   }
 
-  ChatConversationModel copyWith({int? unreadCount}) {
+  ChatConversationModel copyWith({int? unreadCount, bool? isActive}) {
     return ChatConversationModel(
       id: id,
       customerId: customerId,
@@ -50,6 +53,7 @@ class ChatConversationModel extends Equatable {
       lastMessage: lastMessage,
       lastMessageAt: lastMessageAt,
       unreadCount: unreadCount ?? this.unreadCount,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -63,5 +67,6 @@ class ChatConversationModel extends Equatable {
         lastMessage,
         lastMessageAt,
         unreadCount,
+        isActive,
       ];
 }

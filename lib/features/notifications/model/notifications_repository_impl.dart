@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/error/failures.dart';
 import 'datasources/notifications_remote_datasource.dart';
-import 'notification_model.dart';
 import 'notifications_repository.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
@@ -18,9 +17,9 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }
 
   @override
-  Future<Either<Failure, List<NotificationModel>>> getNotifications() async {
+  Future<Either<Failure, NotificationsPageResult>> getNotifications({int page = 1}) async {
     try {
-      return Right(await _dataSource.getNotifications());
+      return Right(await _dataSource.getNotifications(page: page));
     } on ApiException catch (e) {
       return Left(_map(e));
     } catch (_) {

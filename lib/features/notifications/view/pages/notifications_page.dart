@@ -83,14 +83,29 @@ class _NotificationsView extends StatelessWidget {
                                 child: ListView.separated(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8),
-                                  itemCount: state.notifications.length,
-                                  separatorBuilder: (_, _) => const Divider(
-                                    height: 1,
-                                    indent: 16,
-                                    endIndent: 16,
-                                    color: AppColors.divider,
-                                  ),
+                                  itemCount: state.notifications.length +
+                                      (state.hasMore ? 1 : 0),
+                                  separatorBuilder: (_, i) {
+                                    if (i >= state.notifications.length - 1) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return const Divider(
+                                      height: 1,
+                                      indent: 16,
+                                      endIndent: 16,
+                                      color: AppColors.divider,
+                                    );
+                                  },
                                   itemBuilder: (context, i) {
+                                    if (i == state.notifications.length) {
+                                      return _LoadMoreButton(
+                                        loading: state.status ==
+                                            NotificationsStatus.loadingMore,
+                                        onTap: () => context
+                                            .read<NotificationsBloc>()
+                                            .add(const NotificationsLoadMoreRequested()),
+                                      );
+                                    }
                                     final item = state.notifications[i];
                                     return _NotificationTile(
                                       item: item,
@@ -450,6 +465,44 @@ class _NotificationIcon extends StatelessWidget {
       height: 44,
       decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
       child: Icon(icon, color: fg, size: 22),
+    );
+  }
+}
+
+// ── Load more button ──────────────────────────────────────────────────────────
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _LoadMoreButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      child: SizedBox(
+        width: double.infinity,
+        height: 44,
+        child: OutlinedButton(
+          onPressed: loading ? null : onTap,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primary,
+            side: const BorderSide(color: AppColors.primary),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+          child: loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2.5, color: AppColors.primary),
+                )
+              : const Text('تحميل المزيد',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ),
     );
   }
 }

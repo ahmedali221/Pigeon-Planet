@@ -87,28 +87,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
-
-  @override
-  Future<Either<Failure, String>> verifyOtp({
-    required String phoneNumber,
-    required String code,
-  }) async {
-    // OTP not yet implemented on backend — mock accepts any 6-digit code
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (code.length == 6) return const Right('verified');
-    return const Left(ValidationFailure('رمز التحقق غير صحيح'));
-  }
-
-  @override
-  Future<Either<Failure, void>> resendOtp({required String phoneNumber}) async {
-    try {
-      await remoteDataSource.resendOtp(phoneNumber: phoneNumber);
-      return const Right(null);
-    } catch (_) {
-      return const Left(ServerFailure());
-    }
-  }
-
   @override
   Future<Either<Failure, UserModel>> switchProfile(String newProfile) async {
     try {
@@ -123,19 +101,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserModel>> switchProfileById(int profileId) async {
-    try {
-      final user = await remoteDataSource.switchProfileById(profileId);
-      return Right(user);
-    } on ApiException catch (e) {
-      return Left(_mapApiException(e));
-    } catch (e, st) {
-      dev.log('switchProfileById error', error: e, stackTrace: st, name: 'AuthRepo');
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> createSellerProfile() async {
     try {
       await remoteDataSource.createSellerProfile();
@@ -144,19 +109,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(_mapApiException(e));
     } catch (e, st) {
       dev.log('createSellerProfile error', error: e, stackTrace: st, name: 'AuthRepo');
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<int>>> fetchMySellerProfileIds() async {
-    try {
-      final ids = await remoteDataSource.fetchMySellerProfileIds();
-      return Right(ids);
-    } on ApiException catch (e) {
-      return Left(_mapApiException(e));
-    } catch (e, st) {
-      dev.log('fetchMySellerProfileIds error', error: e, stackTrace: st, name: 'AuthRepo');
       return Left(ServerFailure(e.toString()));
     }
   }

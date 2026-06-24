@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeAccountRow extends StatelessWidget {
   final bool isServiceProvider;
@@ -23,6 +24,7 @@ class HomeAccountRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
@@ -39,7 +41,7 @@ class HomeAccountRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                'مشتري',
+                l.buyerMode,
                 style: TextStyle(
                   color: !isServiceProvider
                       ? Colors.white
@@ -62,7 +64,7 @@ class HomeAccountRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                'مقدم خدمة',
+                l.sellerMode,
                 style: TextStyle(
                   color: isServiceProvider
                       ? Colors.white

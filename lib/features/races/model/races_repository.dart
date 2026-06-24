@@ -10,14 +10,15 @@ abstract class RacesRepository {
     String? stationName,
   });
   Future<Either<Failure, RaceModel>> getRaceDetail(int raceId);
-  Future<Either<Failure, List<RaceResultModel>>> getRaceResults(
+  Future<Either<Failure, RaceResultPage>> getRaceResults(
     int raceId, {
     int page,
   });
-  Future<Either<Failure, List<RaceResultModel>>> searchResults({
+  Future<Either<Failure, RaceResultPage>> searchResults({
     String? q,
     String? birdRingNumber,
     String? competitorName,
+    int? raceId,
     int page,
   });
 }

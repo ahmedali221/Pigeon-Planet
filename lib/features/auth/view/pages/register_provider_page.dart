@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../viewmodel/auth_bloc.dart';
+import '../../../home/view/pages/home_page.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/avatar_picker_widget.dart';
 import '../widgets/country_city_picker.dart';
 import '../widgets/register_header.dart';
-import 'otp_page.dart';
 
 class RegisterProviderPage extends StatefulWidget {
   const RegisterProviderPage({super.key});
@@ -39,9 +40,10 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
   }
 
   void _submit(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
     if (_country.isEmpty) {
-      _showError(context, 'يرجى اختيار الدولة');
+      _showError(context, l.country);
       return;
     }
     if (!_agreedToTerms) {
@@ -95,15 +97,17 @@ class _RegisterProviderPageState extends State<RegisterProviderPage> {
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthOtpRequired) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: context.read<AuthBloc>(),
-                    child: OtpPage(phone: state.phoneNumber),
-                  ),
+            if (state is AuthSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(AppStrings.registerSuccess),
+                  backgroundColor: AppColors.success,
                 ),
+              );
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+                (_) => false,
               );
             }
             if (state is AuthFailure) {

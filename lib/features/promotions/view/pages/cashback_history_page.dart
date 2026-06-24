@@ -38,9 +38,7 @@ class _CashbackHistoryView extends StatelessWidget {
         title: const Text(
           'سجل الكاش باك',
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
         ),
         actions: [
           BlocBuilder<PromotionsBloc, PromotionsState>(
@@ -49,9 +47,8 @@ class _CashbackHistoryView extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded, color: Colors.white),
               onPressed: state.status == PromotionsStatus.loading
                   ? null
-                  : () => context
-                      .read<PromotionsBloc>()
-                      .add(const PromotionsRefreshed()),
+                  : () =>
+                      context.read<PromotionsBloc>().add(const PromotionsRefreshed()),
             ),
           ),
         ],
@@ -65,9 +62,8 @@ class _CashbackHistoryView extends StatelessWidget {
           if (state.status == PromotionsStatus.error) {
             return _ErrorState(
               message: state.errorMessage ?? 'حدث خطأ',
-              onRetry: () => context
-                  .read<PromotionsBloc>()
-                  .add(const PromotionsRefreshed()),
+              onRetry: () =>
+                  context.read<PromotionsBloc>().add(const PromotionsRefreshed()),
             );
           }
           return CustomScrollView(
@@ -77,9 +73,9 @@ class _CashbackHistoryView extends StatelessWidget {
               ),
               if (state.transactions.isEmpty)
                 const SliverFillRemaining(child: _EmptyState())
-              else
+              else ...[
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, i) =>
@@ -88,9 +84,51 @@ class _CashbackHistoryView extends StatelessWidget {
                     ),
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: _LoadMoreRow(
+                    hasMore: state.hasMoreTx,
+                    loading: state.loadingMoreTx,
+                    onLoad: () => context
+                        .read<PromotionsBloc>()
+                        .add(const PromotionsTxLoadMore()),
+                  ),
+                ),
+              ],
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _LoadMoreRow extends StatelessWidget {
+  final bool hasMore;
+  final bool loading;
+  final VoidCallback onLoad;
+
+  const _LoadMoreRow({
+    required this.hasMore,
+    required this.loading,
+    required this.onLoad,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!hasMore) return const SizedBox(height: 24);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: loading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : TextButton(
+                onPressed: onLoad,
+                child: const Text('تحميل المزيد'),
+              ),
       ),
     );
   }
@@ -273,8 +311,7 @@ class _EmptyState extends StatelessWidget {
           const Text(
             'ستظهر هنا معاملات الكاش باك عند إتمام عمليات الشراء',
             textAlign: TextAlign.center,
-            style:
-                TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
           ),
         ],
       ),

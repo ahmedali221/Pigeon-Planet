@@ -141,7 +141,7 @@ class _RacesListTab extends StatelessWidget {
       );
     }
     if (state.status == RacesStatus.searchResults) {
-      return _globalResultsList(context, state.globalSearchResults);
+      return _globalResultsList(context, state);
     }
     if (state.races.isEmpty) {
       return const _EmptyView(message: 'لا توجد سباقات بعد');
@@ -182,16 +182,27 @@ class _RacesListTab extends StatelessWidget {
     );
   }
 
-  Widget _globalResultsList(
-      BuildContext context, List<RaceResultModel> results) {
+  Widget _globalResultsList(BuildContext context, RacesState state) {
+    final results = state.globalSearchResults;
     if (results.isEmpty) {
       return const _EmptyView(message: 'لا توجد نتائج');
     }
+    final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: results.length,
+      itemCount: results.length + (hasFooter ? 1 : 0),
       separatorBuilder: (_, index) => const SizedBox(height: 8),
-      itemBuilder: (_, i) => _ResultRow(result: results[i], showRace: true),
+      itemBuilder: (context, i) {
+        if (i == results.length) {
+          return _LoadMoreButton(
+            loading: state.resultSearchLoadingMore,
+            onTap: () => context
+                .read<RacesBloc>()
+                .add(const RaceResultSearchLoadMoreRequested()),
+          );
+        }
+        return _ResultRow(result: results[i], showRace: true);
+      },
     );
   }
 }
@@ -373,14 +384,25 @@ class _ResultsSearchTab extends StatelessWidget {
     if (state.globalSearchResults.isEmpty) {
       return const _EmptyView(message: 'لا توجد نتائج مطابقة');
     }
+    final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: state.globalSearchResults.length,
+      itemCount: state.globalSearchResults.length + (hasFooter ? 1 : 0),
       separatorBuilder: (_, index) => const SizedBox(height: 8),
-      itemBuilder: (_, i) => _ResultRow(
-        result: state.globalSearchResults[i],
-        showRace: true,
-      ),
+      itemBuilder: (context, i) {
+        if (i == state.globalSearchResults.length) {
+          return _LoadMoreButton(
+            loading: state.resultSearchLoadingMore,
+            onTap: () => context
+                .read<RacesBloc>()
+                .add(const RaceResultSearchLoadMoreRequested()),
+          );
+        }
+        return _ResultRow(
+          result: state.globalSearchResults[i],
+          showRace: true,
+        );
+      },
     );
   }
 }

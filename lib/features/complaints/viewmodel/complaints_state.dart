@@ -9,6 +9,7 @@ enum ComplaintsStatus {
   detailLoading,
   creating,
   cancelling,
+  reopening,
   error,
 }
 
@@ -19,6 +20,7 @@ class ComplaintsState extends Equatable {
   final String? errorMessage;
   final bool createSuccess;
   final bool cancelSuccess;
+  final bool reopenSuccess;
 
   const ComplaintsState({
     this.status = ComplaintsStatus.initial,
@@ -27,6 +29,7 @@ class ComplaintsState extends Equatable {
     this.errorMessage,
     this.createSuccess = false,
     this.cancelSuccess = false,
+    this.reopenSuccess = false,
   });
 
   ComplaintsState copyWith({
@@ -36,6 +39,7 @@ class ComplaintsState extends Equatable {
     String? errorMessage,
     bool? createSuccess,
     bool? cancelSuccess,
+    bool? reopenSuccess,
     bool clearSelected = false,
     bool clearError = false,
     bool resetActions = false,
@@ -49,6 +53,7 @@ class ComplaintsState extends Equatable {
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       createSuccess: resetActions ? false : createSuccess ?? this.createSuccess,
       cancelSuccess: resetActions ? false : cancelSuccess ?? this.cancelSuccess,
+      reopenSuccess: resetActions ? false : reopenSuccess ?? this.reopenSuccess,
     );
   }
 
@@ -60,5 +65,6 @@ class ComplaintsState extends Equatable {
     errorMessage,
     createSuccess,
     cancelSuccess,
+    reopenSuccess,
   ];
 }

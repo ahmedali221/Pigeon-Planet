@@ -21,6 +21,7 @@ class SellerProductsBloc
     on<SellerProductCreateRequested>(_onCreate);
     on<SellerProductUpdateRequested>(_onUpdate);
     on<SellerProductDeleteRequested>(_onDelete);
+    on<SellerProductsLoadMoreRequested>(_onLoadMore);
   }
 
   Future<void> _onStarted(
@@ -37,16 +38,40 @@ class SellerProductsBloc
 
   Future<void> _load(Emitter<SellerProductsState> emit) async {
     emit(state.copyWith(
-        status: SellerProductsStatus.loading, clearError: true));
-    final result = await _repository.getMyProducts();
+        status: SellerProductsStatus.loading, clearError: true, currentPage: 1));
+    final result = await _repository.getMyProducts(page: 1);
     result.fold(
       (f) => emit(state.copyWith(
         status: SellerProductsStatus.error,
         errorMessage: f.message,
       )),
-      (products) => emit(state.copyWith(
+      (page) => emit(state.copyWith(
         status: SellerProductsStatus.loaded,
-        products: products,
+        products: page.products,
+        hasMore: page.hasMore,
+        currentPage: 1,
+      )),
+    );
+  }
+
+  Future<void> _onLoadMore(
+    SellerProductsLoadMoreRequested event,
+    Emitter<SellerProductsState> emit,
+  ) async {
+    if (!state.hasMore || state.status == SellerProductsStatus.loadingMore) {
+      return;
+    }
+
+    final nextPage = state.currentPage + 1;
+    emit(state.copyWith(status: SellerProductsStatus.loadingMore));
+    final result = await _repository.getMyProducts(page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(status: SellerProductsStatus.loaded)),
+      (page) => emit(state.copyWith(
+        status: SellerProductsStatus.loaded,
+        products: [...state.products, ...page.products],
+        hasMore: page.hasMore,
+        currentPage: nextPage,
       )),
     );
   }

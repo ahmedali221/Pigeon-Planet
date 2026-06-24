@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../pedigrees/view/pages/pedigrees_page.dart';
 
 class AuctionPedigreeButton extends StatelessWidget {
@@ -15,6 +16,7 @@ class AuctionPedigreeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
@@ -24,7 +26,7 @@ class AuctionPedigreeButton extends StatelessWidget {
           onPressed: () => _onPressed(context),
           icon: const Icon(Icons.description_rounded, size: 18),
           label: Text(
-            isOwner ? 'إدارة شهادة النسب' : 'عرض شهادة النسب الكاملة',
+            isOwner ? l.managePedigreeCertificate : l.viewPedigreeCertificate,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           style: ElevatedButton.styleFrom(

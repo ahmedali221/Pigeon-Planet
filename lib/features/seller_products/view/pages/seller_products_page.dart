@@ -145,7 +145,6 @@ class _Header extends StatelessWidget {
 class _CategoryFilter extends StatelessWidget {
   static const _chips = [
     (null, 'الكل'),
-    ('supplies', 'مستلزمات'),
     ('accessories', 'إكسسوارات'),
     ('supplements', 'مكملات'),
     ('feeds', 'أعلاف'),
@@ -241,25 +240,73 @@ class _Body extends StatelessWidget {
               .add(const SellerProductsRefreshRequested()),
           child: ListView.builder(
             padding: const EdgeInsets.only(top: 8, bottom: 100),
-            itemCount: products.length,
-            itemBuilder: (context, i) => SellerProductCard(
-              product: products[i],
-              onEdit: () {
-                final bloc = context.read<SellerProductsBloc>();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: bloc,
-                      child: SellerProductFormPage(product: products[i]),
-                    ),
-                  ),
+            itemCount: products.length + (state.hasMore ? 1 : 0),
+            itemBuilder: (context, i) {
+              if (i == products.length) {
+                return _LoadMoreButton(
+                  loading: state.status == SellerProductsStatus.loadingMore,
+                  onTap: () => context
+                      .read<SellerProductsBloc>()
+                      .add(const SellerProductsLoadMoreRequested()),
                 );
-              },
-            ),
+              }
+              return SellerProductCard(
+                product: products[i],
+                onEdit: () {
+                  final bloc = context.read<SellerProductsBloc>();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: bloc,
+                        child: SellerProductFormPage(product: products[i]),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
         );
       },
+    );
+  }
+}
+
+// ── Load more button ──────────────────────────────────────────────────────────
+
+class _LoadMoreButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _LoadMoreButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      child: SizedBox(
+        width: double.infinity,
+        height: 44,
+        child: OutlinedButton(
+          onPressed: loading ? null : onTap,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primary,
+            side: const BorderSide(color: AppColors.primary),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+          child: loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2.5, color: AppColors.primary),
+                )
+              : const Text('تحميل المزيد',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ),
     );
   }
 }

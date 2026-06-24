@@ -1,7 +1,7 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../asset_rating_model.dart';
-import '../auction_comment_model.dart';
+import '../auction_item_model.dart';
 import '../auction_model.dart';
 import '../auction_create_payload.dart';
 import '../bid_model.dart';
@@ -13,28 +13,31 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
 
   const RealAuctionsRemoteDataSource(this._dio);
 
+  ({List<T> items, bool hasMore}) _parsePage<T>(
+    dynamic data,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (data == null) return (items: <T>[], hasMore: false);
+    final items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data is List ? data : <dynamic>[]);
+    return (
+      items: items.map((j) => fromJson(j as Map<String, dynamic>)).toList(),
+      hasMore: data is Map && data['next'] != null,
+    );
+  }
+
   List<AuctionModel> _parseList(dynamic data) {
-    if (data == null) return [];
-    List<dynamic> items;
-    if (data is Map) {
-      items = data['results'] as List<dynamic>? ?? [];
-    } else if (data is List) {
-      items = data;
-    } else {
-      return [];
-    }
-    return items
-        .map((j) => AuctionModel.fromJson(j as Map<String, dynamic>))
-        .toList();
+    return _parsePage(data, AuctionModel.fromJson).items;
   }
 
   @override
-  Future<List<AuctionModel>> getAuctions({int page = 1}) async {
+  Future<AuctionPageResult> getAuctions({int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.auctions,
       queryParameters: {'page': page},
     );
-    return _parseList(response.data);
+    return _parsePage(response.data, AuctionModel.fromJson);
   }
 
   @override
@@ -65,6 +68,12 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   Future<AuctionModel> getAuctionDetail(int id) async {
     final response = await _dio.get(ApiConstants.auctionDetail(id));
     return AuctionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<AuctionItemModel> getAuctionItemDetail(int id) async {
+    final response = await _dio.get(ApiConstants.auctionItemDetail(id));
+    return AuctionItemModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
@@ -107,44 +116,14 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   }
 
   @override
-  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags, bool? chatEnabled}) async {
+  Future<AuctionModel> updateAuction(int id, {String? title, String? description, String? tags}) async {
     final data = <String, dynamic>{
-      'title': ?title,
-      'description': ?description,
-      'tags': ?tags,
-      'chat_enabled': ?chatEnabled,
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (tags != null) 'tags': tags,
     };
     final response = await _dio.patch(ApiConstants.auctionDetail(id), data: data);
     return AuctionModel.fromJson(response.data as Map<String, dynamic>);
-  }
-
-  @override
-  Future<List<AuctionCommentModel>> getAuctionComments(int auctionId) async {
-    final response = await _dio.get(
-      ApiConstants.auctionComments,
-      queryParameters: {'auction_id': auctionId},
-    );
-    final data = response.data;
-    if (data == null) return [];
-    final items = data is Map
-        ? (data['results'] as List<dynamic>? ?? [])
-        : (data is List ? data : []);
-    return items
-        .map((j) => AuctionCommentModel.fromJson(j as Map<String, dynamic>))
-        .toList();
-  }
-
-  @override
-  Future<AuctionCommentModel> postAuctionComment(int auctionId, String body, bool isAnnouncement) async {
-    final response = await _dio.post(
-      ApiConstants.auctionComments,
-      data: {
-        'auction_id': auctionId,
-        'body': body,
-        'is_announcement': isAnnouncement,
-      },
-    );
-    return AuctionCommentModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
@@ -153,14 +132,12 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   }
 
   @override
-  Future<List<BidModel>> getMyBids() async {
-    final response = await _dio.get(ApiConstants.myBids);
-    final data = response.data;
-    if (data == null) return [];
-    final items = data is Map
-        ? (data['results'] as List<dynamic>? ?? [])
-        : (data is List ? data : []);
-    return items.map((j) => BidModel.fromJson(j as Map<String, dynamic>)).toList();
+  Future<BidPageResult> getMyBids({int page = 1}) async {
+    final response = await _dio.get(
+      ApiConstants.myBids,
+      queryParameters: {'page': page},
+    );
+    return _parsePage(response.data, BidModel.fromJson);
   }
 
   @override

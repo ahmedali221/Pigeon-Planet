@@ -39,6 +39,9 @@ dependencies:
   # Image Picker (for ID / tax card photo uploads)
   image_picker: ^1.1.2
 
+  # File picker (for payment proof — supports images + PDF)
+  file_picker: ^8.0.0
+
   # Runtime permissions
   permission_handler: ^11.4.0
 

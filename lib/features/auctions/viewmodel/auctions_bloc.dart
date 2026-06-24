@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/error/failures.dart';
 import '../model/asset_rating_model.dart';
-import '../model/auction_comment_model.dart';
 import '../model/auction_create_payload.dart';
+import '../model/auction_item_model.dart';
 import '../model/auction_model.dart';
 import '../model/auctions_repository.dart';
 import '../model/bid_model.dart';
 import '../model/bird_summary_model.dart';
+import '../model/datasources/auctions_remote_datasource.dart';
 
 part 'auctions_event.dart';
 part 'auctions_state.dart';
@@ -22,6 +23,7 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
         super(const AuctionsState()) {
     on<AuctionsStarted>(_onStarted);
     on<AuctionsRefreshRequested>(_onStarted);
+    on<AuctionsLoadMoreRequested>(_onLoadMore);
     on<AuctionsFilterChanged>(_onFilterChanged);
     on<AuctionDetailRequested>(_onDetailRequested);
     on<AuctionBidPlaced>(_onBidPlaced);
@@ -33,9 +35,7 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     on<AuctionUpdateRequested>(_onUpdateRequested);
     on<AuctionBuyNowRequested>(_onBuyNowRequested);
     on<AuctionMyBidsLoadRequested>(_onMyBidsLoad);
-    on<AuctionChatLoadRequested>(_onChatLoadRequested);
-    on<AuctionCommentPosted>(_onCommentPosted);
-    on<AuctionChatToggleRequested>(_onChatToggleRequested);
+    on<AuctionMyBidsLoadMoreRequested>(_onMyBidsLoadMore);
   }
 
   Future<void> _onStarted(
@@ -43,14 +43,43 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     Emitter<AuctionsState> emit,
   ) async {
     emit(state.copyWith(status: AuctionsStatus.loading, clearError: true, clearSelectedAuction: true));
-    final result = await _repository.getAuctions();
+    final result = await _repository.getAuctions(page: 1);
     result.fold(
       (f) => emit(state.copyWith(
           status: AuctionsStatus.error, errorMessage: f.message)),
-      (list) => emit(state.copyWith(
+      (page) => emit(state.copyWith(
           status: AuctionsStatus.loaded,
-          auctions: list,
+          auctions: page.items,
+          auctionsHasMore: page.hasMore,
+          auctionsCurrentPage: 1,
+          auctionsLoadingMore: false,
           activeFilter: 'all')),
+    );
+  }
+
+  Future<void> _onLoadMore(
+    AuctionsLoadMoreRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    if (state.activeFilter != 'all' ||
+        !state.auctionsHasMore ||
+        state.auctionsLoadingMore) {
+      return;
+    }
+    final nextPage = state.auctionsCurrentPage + 1;
+    emit(state.copyWith(auctionsLoadingMore: true, clearError: true));
+    final result = await _repository.getAuctions(page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(
+        auctionsLoadingMore: false,
+        errorMessage: f.message,
+      )),
+      (page) => emit(state.copyWith(
+        auctionsLoadingMore: false,
+        auctions: [...state.auctions, ...page.items],
+        auctionsHasMore: page.hasMore,
+        auctionsCurrentPage: nextPage,
+      )),
     );
   }
 
@@ -61,23 +90,51 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     emit(state.copyWith(
         status: AuctionsStatus.loading, activeFilter: event.filter, clearError: true));
 
-    late final Either<Failure, List<AuctionModel>> result;
+    Either<Failure, List<AuctionModel>>? listResult;
+    Either<Failure, AuctionPageResult>? pageResult;
     switch (event.filter) {
       case 'ending_soon':
-        result = await _repository.getEndingSoon();
+        listResult = await _repository.getEndingSoon();
+        break;
+      case 'active':
+        listResult = await _repository.getActiveAuctions();
         break;
       case 'my_auctions':
-        result = await _repository.getMyAuctions();
+      case 'my_active':
+      case 'my_ended':
+      case 'my_cancelled':
+        final status = event.filter == 'my_auctions' ? null : event.filter.replaceFirst('my_', '');
+        listResult = await _repository.getMyAuctions(status: status);
         break;
       default:
-        result = await _repository.getAuctions();
+        pageResult = await _repository.getAuctions(page: 1);
     }
 
-    result.fold(
+    if (pageResult != null) {
+      pageResult.fold(
+        (f) => emit(state.copyWith(
+            status: AuctionsStatus.error, errorMessage: f.message)),
+        (page) => emit(state.copyWith(
+          status: AuctionsStatus.loaded,
+          auctions: page.items,
+          auctionsHasMore: page.hasMore,
+          auctionsCurrentPage: 1,
+          auctionsLoadingMore: false,
+        )),
+      );
+      return;
+    }
+
+    listResult!.fold(
       (f) => emit(state.copyWith(
           status: AuctionsStatus.error, errorMessage: f.message)),
       (list) => emit(state.copyWith(
-          status: AuctionsStatus.loaded, auctions: list)),
+        status: AuctionsStatus.loaded,
+        auctions: list,
+        auctionsHasMore: false,
+        auctionsCurrentPage: 1,
+        auctionsLoadingMore: false,
+      )),
     );
   }
 
@@ -158,11 +215,13 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     AuctionItemDetailRequested event,
     Emitter<AuctionsState> emit,
   ) async {
-    emit(state.copyWith(isItemLoading: true));
+    emit(state.copyWith(isItemLoading: true, clearSelectedItemDetail: true));
+    final itemResult = await _repository.getAuctionItemDetail(event.itemId);
     final bidsResult = await _repository.getBidsForItem(event.itemId);
     final reviewsResult = await _repository.getAssetRatings(event.birdId);
     emit(state.copyWith(
       isItemLoading: false,
+      selectedItemDetail: itemResult.fold((_) => null, (item) => item),
       itemBids: bidsResult.fold((_) => [], (b) => b),
       itemReviews: reviewsResult.fold((_) => [], (r) => r),
     ));
@@ -239,7 +298,6 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
       title: event.title,
       description: event.description,
       tags: event.tags,
-      chatEnabled: event.chatEnabled,
     );
     result.fold(
       (f) => emit(state.copyWith(isUpdating: false, updateError: f.message)),
@@ -279,59 +337,36 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     Emitter<AuctionsState> emit,
   ) async {
     emit(state.copyWith(myBidsLoading: true));
-    final result = await _repository.getMyBids();
+    final result = await _repository.getMyBids(page: 1);
     result.fold(
       (f) => emit(state.copyWith(myBidsLoading: false)),
-      (bids) => emit(state.copyWith(myBidsLoading: false, myBids: bids)),
-    );
-  }
-
-  Future<void> _onChatLoadRequested(
-    AuctionChatLoadRequested event,
-    Emitter<AuctionsState> emit,
-  ) async {
-    emit(state.copyWith(isChatLoading: true, clearChatError: true));
-    final result = await _repository.getAuctionComments(event.auctionId);
-    result.fold(
-      (f) => emit(state.copyWith(isChatLoading: false, chatError: f.message)),
-      (comments) => emit(state.copyWith(isChatLoading: false, chatComments: comments)),
-    );
-  }
-
-  Future<void> _onCommentPosted(
-    AuctionCommentPosted event,
-    Emitter<AuctionsState> emit,
-  ) async {
-    emit(state.copyWith(isSendingComment: true, clearChatError: true));
-    final result = await _repository.postAuctionComment(
-      event.auctionId,
-      event.body,
-      event.isAnnouncement,
-    );
-    result.fold(
-      (f) => emit(state.copyWith(isSendingComment: false, chatError: f.message)),
-      (comment) => emit(state.copyWith(
-        isSendingComment: false,
-        chatComments: [...state.chatComments, comment],
+      (page) => emit(state.copyWith(
+        myBidsLoading: false,
+        myBids: page.items,
+        myBidsHasMore: page.hasMore,
+        myBidsCurrentPage: 1,
+        myBidsLoadingMore: false,
       )),
     );
   }
 
-  Future<void> _onChatToggleRequested(
-    AuctionChatToggleRequested event,
+  Future<void> _onMyBidsLoadMore(
+    AuctionMyBidsLoadMoreRequested event,
     Emitter<AuctionsState> emit,
   ) async {
-    emit(state.copyWith(isUpdating: true, clearUpdateError: true));
-    final result = await _repository.updateAuction(
-      event.auctionId,
-      chatEnabled: event.chatEnabled,
-    );
+    if (!state.myBidsHasMore || state.myBidsLoadingMore) return;
+    final nextPage = state.myBidsCurrentPage + 1;
+    emit(state.copyWith(myBidsLoadingMore: true));
+    final result = await _repository.getMyBids(page: nextPage);
     result.fold(
-      (f) => emit(state.copyWith(isUpdating: false, updateError: f.message)),
-      (auction) {
-        final updated = state.auctions.map((a) => a.id == auction.id ? auction : a).toList();
-        emit(state.copyWith(isUpdating: false, selectedAuction: auction, auctions: updated));
-      },
+      (f) => emit(state.copyWith(myBidsLoadingMore: false)),
+      (page) => emit(state.copyWith(
+        myBidsLoadingMore: false,
+        myBids: [...state.myBids, ...page.items],
+        myBidsHasMore: page.hasMore,
+        myBidsCurrentPage: nextPage,
+      )),
     );
   }
+
 }

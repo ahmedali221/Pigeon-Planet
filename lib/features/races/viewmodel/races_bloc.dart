@@ -18,7 +18,9 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     on<RacesSearchChanged>(_onSearchChanged);
     on<RacesFilterChanged>(_onFilterChanged);
     on<RaceDetailRequested>(_onDetailRequested);
+    on<RaceDetailResultsLoadMoreRequested>(_onDetailResultsLoadMore);
     on<RaceResultSearchChanged>(_onResultSearchChanged);
+    on<RaceResultSearchLoadMoreRequested>(_onResultSearchLoadMore);
     on<RacesLoadMoreRequested>(_onLoadMore);
   }
 
@@ -87,12 +89,17 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     }
     emit(state.copyWith(
         status: RacesStatus.loading, searchQuery: query, clearError: true));
-    final result = await _repository.searchResults(q: query);
+    final result = await _repository.searchResults(q: query, page: 1);
     result.fold(
       (f) => emit(state.copyWith(
           status: RacesStatus.error, errorMessage: f.message)),
       (results) => emit(state.copyWith(
-          status: RacesStatus.searchResults, globalSearchResults: results)),
+        status: RacesStatus.searchResults,
+        globalSearchResults: results.results,
+        resultSearchHasMore: results.hasMore,
+        resultSearchCurrentPage: 1,
+        resultSearchLoadingMore: false,
+      )),
     );
   }
 
@@ -134,14 +141,51 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     Emitter<RacesState> emit,
   ) async {
     emit(state.copyWith(
-        detailStatus: RacesDetailStatus.loading, clearDetailError: true));
+      detailStatus: RacesDetailStatus.loading,
+      clearDetailError: true,
+      detailResults: const [],
+      detailResultsHasMore: false,
+      detailResultsCurrentPage: 1,
+      detailResultsLoadingMore: false,
+    ));
     final result = await _repository.getRaceDetail(event.raceId);
+    final resultsPage = await _repository.getRaceResults(event.raceId, page: 1);
     result.fold(
       (f) => emit(state.copyWith(
           detailStatus: RacesDetailStatus.error,
           detailErrorMessage: f.message)),
-      (race) => emit(state.copyWith(
-          detailStatus: RacesDetailStatus.loaded, selectedRace: race)),
+      (race) {
+        final page = resultsPage.fold(
+          (_) => RaceResultPage(results: race.results, hasMore: false),
+          (p) => p,
+        );
+        emit(state.copyWith(
+          detailStatus: RacesDetailStatus.loaded,
+          selectedRace: race,
+          detailResults: page.results,
+          detailResultsHasMore: page.hasMore,
+          detailResultsCurrentPage: 1,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onDetailResultsLoadMore(
+    RaceDetailResultsLoadMoreRequested event,
+    Emitter<RacesState> emit,
+  ) async {
+    if (!state.detailResultsHasMore || state.detailResultsLoadingMore) return;
+    final nextPage = state.detailResultsCurrentPage + 1;
+    emit(state.copyWith(detailResultsLoadingMore: true));
+    final result = await _repository.getRaceResults(event.raceId, page: nextPage);
+    result.fold(
+      (f) => emit(state.copyWith(detailResultsLoadingMore: false)),
+      (page) => emit(state.copyWith(
+        detailResults: [...state.detailResults, ...page.results],
+        detailResultsHasMore: page.hasMore,
+        detailResultsCurrentPage: nextPage,
+        detailResultsLoadingMore: false,
+      )),
     );
   }
 
@@ -156,15 +200,49 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
         clearError: true));
     if (query.isEmpty) {
       emit(state.copyWith(
-          status: RacesStatus.loaded, globalSearchResults: []));
+        status: RacesStatus.loaded,
+        globalSearchResults: [],
+        resultSearchHasMore: false,
+        resultSearchCurrentPage: 1,
+        resultSearchLoadingMore: false,
+      ));
       return;
     }
-    final result = await _repository.searchResults(q: query);
+    final result = await _repository.searchResults(q: query, page: 1);
     result.fold(
       (f) => emit(state.copyWith(
           status: RacesStatus.error, errorMessage: f.message)),
       (results) => emit(state.copyWith(
-          status: RacesStatus.searchResults, globalSearchResults: results)),
+        status: RacesStatus.searchResults,
+        globalSearchResults: results.results,
+        resultSearchHasMore: results.hasMore,
+        resultSearchCurrentPage: 1,
+        resultSearchLoadingMore: false,
+      )),
+    );
+  }
+
+  Future<void> _onResultSearchLoadMore(
+    RaceResultSearchLoadMoreRequested event,
+    Emitter<RacesState> emit,
+  ) async {
+    if (!state.resultSearchHasMore || state.resultSearchLoadingMore) return;
+    final nextPage = state.resultSearchCurrentPage + 1;
+    emit(state.copyWith(resultSearchLoadingMore: true));
+    final result = await _repository.searchResults(
+      q: state.resultSearchQuery.isNotEmpty
+          ? state.resultSearchQuery
+          : state.searchQuery,
+      page: nextPage,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(resultSearchLoadingMore: false)),
+      (page) => emit(state.copyWith(
+        globalSearchResults: [...state.globalSearchResults, ...page.results],
+        resultSearchHasMore: page.hasMore,
+        resultSearchCurrentPage: nextPage,
+        resultSearchLoadingMore: false,
+      )),
     );
   }
 

@@ -4,6 +4,9 @@ class RatingsState extends Equatable {
   final List<RatingModel> ratings;
   final List<CommentModel> comments;
   final bool loading;
+  final bool loadingMore;
+  final bool hasMore;
+  final int currentPage;
   final bool submitting;
   final bool submitSuccess;
   final String? error;
@@ -13,6 +16,9 @@ class RatingsState extends Equatable {
     this.ratings = const [],
     this.comments = const [],
     this.loading = false,
+    this.loadingMore = false,
+    this.hasMore = false,
+    this.currentPage = 1,
     this.submitting = false,
     this.submitSuccess = false,
     this.error,
@@ -28,6 +34,9 @@ class RatingsState extends Equatable {
     List<RatingModel>? ratings,
     List<CommentModel>? comments,
     bool? loading,
+    bool? loadingMore,
+    bool? hasMore,
+    int? currentPage,
     bool? submitting,
     bool? submitSuccess,
     String? error,
@@ -39,6 +48,9 @@ class RatingsState extends Equatable {
         ratings: ratings ?? this.ratings,
         comments: comments ?? this.comments,
         loading: loading ?? this.loading,
+        loadingMore: loadingMore ?? this.loadingMore,
+        hasMore: hasMore ?? this.hasMore,
+        currentPage: currentPage ?? this.currentPage,
         submitting: submitting ?? this.submitting,
         submitSuccess: submitSuccess ?? this.submitSuccess,
         error: clearError ? null : (error ?? this.error),
@@ -47,5 +59,16 @@ class RatingsState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [ratings, comments, loading, submitting, submitSuccess, error, submitError];
+      [
+        ratings,
+        comments,
+        loading,
+        loadingMore,
+        hasMore,
+        currentPage,
+        submitting,
+        submitSuccess,
+        error,
+        submitError,
+      ];
 }

@@ -62,27 +62,6 @@ class AuthRegisterProviderRequested extends AuthEvent {
   List<Object?> get props => [phoneNumber, password, country, username, avatarPath];
 }
 
-class AuthOtpVerifyRequested extends AuthEvent {
-  final String phoneNumber;
-  final String code;
-
-  const AuthOtpVerifyRequested({
-    required this.phoneNumber,
-    required this.code,
-  });
-
-  @override
-  List<Object?> get props => [phoneNumber, code];
-}
-
-class AuthResendOtpRequested extends AuthEvent {
-  final String phoneNumber;
-  const AuthResendOtpRequested({required this.phoneNumber});
-
-  @override
-  List<Object?> get props => [phoneNumber];
-}
-
 class AuthSwitchProfileRequested extends AuthEvent {
   final String newProfile;
   const AuthSwitchProfileRequested(this.newProfile);
@@ -95,15 +74,6 @@ class AuthSwitchProfileRequested extends AuthEvent {
 /// Creates the seller profile if it doesn't exist, then switches.
 class AuthBecomeSellerRequested extends AuthEvent {
   const AuthBecomeSellerRequested();
-}
-
-/// Switch to a specific seller room by its profile ID.
-class AuthSwitchProfileByIdRequested extends AuthEvent {
-  final int profileId;
-  const AuthSwitchProfileByIdRequested(this.profileId);
-
-  @override
-  List<Object?> get props => [profileId];
 }
 
 class AuthProfileSwitchFailureAcknowledged extends AuthEvent {

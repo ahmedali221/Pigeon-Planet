@@ -52,6 +52,13 @@ class OrdersLoadRequested extends CartEvent {
   List<Object?> get props => [status];
 }
 
+class OrdersLoadMoreRequested extends CartEvent {
+  final String? status;
+  const OrdersLoadMoreRequested({this.status});
+  @override
+  List<Object?> get props => [status];
+}
+
 class OrderDetailRequested extends CartEvent {
   final int orderId;
   const OrderDetailRequested(this.orderId);
@@ -61,6 +68,12 @@ class OrderDetailRequested extends CartEvent {
 
 class SellerOrderItemsLoadRequested extends CartEvent {
   const SellerOrderItemsLoadRequested();
+  @override
+  List<Object?> get props => [];
+}
+
+class SellerOrderItemsLoadMoreRequested extends CartEvent {
+  const SellerOrderItemsLoadMoreRequested();
   @override
   List<Object?> get props => [];
 }
