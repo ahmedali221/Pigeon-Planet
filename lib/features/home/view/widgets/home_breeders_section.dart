@@ -36,7 +36,7 @@ class HomeBreedersSection extends StatelessWidget {
               ),
               SizedBox(width: 8),
               Text(
-                'مربيون قد تعرفهم',
+                AppLocalizations.of(context).breedersYouMayKnow,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -283,7 +283,7 @@ class _BreederCard extends StatelessWidget {
                               size: 10, color: AppColors.textHint),
                           SizedBox(width: 2),
                           Text(
-                            '${s.activeAuctionsCount} مزاد',
+                            '${s.activeAuctionsCount} ${AppLocalizations.of(context).auctionCountUnit}',
                             style: TextStyle(
                                 fontSize: 10, color: AppColors.textHint),
                           ),

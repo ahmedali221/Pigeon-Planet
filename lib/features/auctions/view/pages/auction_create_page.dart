@@ -490,7 +490,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
             _FieldLabel(l.tagsFieldLabel),
             _Input(controller: _tagsCtrl, hint: 'racing, champion, ...'),
             SizedBox(height: 14),
-            _FieldLabel('الباقة المستخدمة'),
+            _FieldLabel(l.usedPackageLabel),
             _PackageSelector(
               future: _activePackagesFuture,
               selectedId: _selectedPackageId,

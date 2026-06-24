@@ -36,7 +36,7 @@ class SellerToolsPage extends StatelessWidget {
                   Icon(Icons.tune_rounded, color: Colors.white, size: 15),
                   SizedBox(width: 5),
                   Text(
-                    'أدواتي ومميزاتي',
+                    AppLocalizations.of(context).myToolsAndFeatures,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -106,7 +106,7 @@ class SellerToolsPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'مركز التحكم',
+                                      AppLocalizations.of(context).controlCenter,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 13,
@@ -116,7 +116,7 @@ class SellerToolsPage extends StatelessWidget {
                                     ),
                                     SizedBox(height: 3),
                                     Text(
-                                      'إشعاراتك • مميزاتك • أدواتك في مكان واحد',
+                                      AppLocalizations.of(context).toolsPageTagline,
                                       style: TextStyle(
                                         color: Colors.white70,
                                         fontSize: 10.5,
@@ -140,11 +140,11 @@ class SellerToolsPage extends StatelessWidget {
                               ),
                               _ToolsChip(
                                 icon: Icons.verified_rounded,
-                                label: 'المميزات',
+                                label: AppLocalizations.of(context).featuresChip,
                               ),
                               _ToolsChip(
                                 icon: Icons.gavel_rounded,
-                                label: 'الأدوات',
+                                label: AppLocalizations.of(context).toolsChip,
                               ),
                             ],
                           ),
@@ -288,7 +288,7 @@ class _MyProductsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'منتجاتي',
+                    AppLocalizations.of(context).myProducts,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -297,7 +297,7 @@ class _MyProductsCard extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    'إضافة وإدارة منتجاتك في المتجر',
+                    AppLocalizations.of(context).manageProductsInStore,
                     style: TextStyle(
                         fontSize: 12, color: AppColors.textSecondary),
                   ),

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../auctions/model/auction_model.dart';
 import '../../auctions/model/auctions_repository.dart';
 import '../../auctions/model/bird_summary_model.dart';
+import '../model/announcement_model.dart';
 import '../model/customer_home_summary.dart';
 import '../model/datasources/points_remote_datasource.dart';
 import '../model/datasources/seller_home_remote_datasource.dart';
@@ -45,143 +46,178 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _onStarted(HomeEvent event, Emitter<HomeState> emit) async {
-    emit(state.copyWith(status: HomeStatus.loading, clearError: true));
-    final shouldLoadSellerPrivateData = event.isSeller;
+    final isSeller = event.isSeller;
 
-    final sellerFuture = () async {
-      if (!shouldLoadSellerPrivateData) return null;
-      try {
-        return await _sellerHomeRemote.fetchHomeSummary();
-      } catch (_) {
-        return null;
-      }
-    }();
+    // Immediately render the page with skeletons in every section.
+    emit(state.copyWith(
+      status: HomeStatus.loading,
+      clearError: true,
+      activeAuctionsLoading: true,
+      endingSoonLoading: true,
+      comingSoonLoading: true,
+      sellersLoading: true,
+      announcementsLoading: true,
+      summaryLoading: true,
+      sellerPrivateLoading: isSeller,
+    ));
 
-    final customerFuture = () async {
-      try {
-        return await _sellerHomeRemote.fetchCustomerHomeSummary();
-      } catch (_) {
-        return null;
-      }
-    }();
-
-    final unreadFuture = () async {
-      try {
-        return await _sellerHomeRemote.fetchUnreadNotificationCount();
-      } catch (_) {
-        return 0;
-      }
-    }();
-
-    final pointsFuture = () async {
-      try {
-        if (shouldLoadSellerPrivateData) {
-          return await _pointsRemote.fetchBalance();
-        }
-        return await _pointsRemote.fetchLoyaltyBalance();
-      } catch (_) {
-        return null;
-      }
-    }();
-
-    final sellersFuture = () async {
-      try {
-        return await _sellerHomeRemote.fetchSellers();
-      } catch (_) {
-        return <SellerModel>[];
-      }
-    }();
-
-    final results = await Future.wait([
-      _auctionsRepository.getActiveAuctions(), // 0
-      _auctionsRepository.getEndingSoon(), // 1
-      sellerFuture, // 2
-      customerFuture, // 3
-      unreadFuture, // 4
-      pointsFuture, // 5
-      _auctionsRepository.getAuctions(), // 6
-      sellersFuture, // 7
+    // Fire all independent sections in parallel — each emits as soon as it resolves.
+    await Future.wait([
+      _loadActiveAuctions(emit),
+      _loadEndingSoon(emit),
+      _loadComingSoon(emit),
+      _loadSellers(emit),
+      _loadAnnouncements(emit),
+      _loadSummary(emit, isSeller),
     ]);
 
-    final activeResult = results[0] as dynamic;
-    final endingResult = results[1] as dynamic;
-    final remoteSellerSummary = results[2] as SellerHomeSummary?;
-    final remoteCustomerSummary = results[3] as CustomerHomeSummary?;
-    final unreadCount = results[4] as int;
-    final pointsBalance = results[5] as int?;
-    final comingSoonResult = results[6] as dynamic;
-    final sellers = results[7] as List<SellerModel>;
-
-    String? errorMessage;
-
-    final activeAuctions = activeResult.fold((failure) {
-      errorMessage = failure.toString();
-      return <AuctionModel>[];
-    }, (list) => list as List<AuctionModel>);
-    final endingSoon = endingResult.fold(
-      (_) => <AuctionModel>[],
-      (list) => list as List<AuctionModel>,
-    );
-    const featuredBirds = <BirdSummaryModel>[];
-    final comingSoon = comingSoonResult.fold(
-      (_) => <AuctionModel>[],
-      (page) => page.items as List<AuctionModel>,
-    );
-    var myBirds = <BirdSummaryModel>[];
-    var myAuctions = <AuctionModel>[];
-    if (shouldLoadSellerPrivateData) {
-      final myBirdsResult = await _auctionsRepository.getSellerBirds(
-        mineOnly: true,
-      );
-      myBirds = myBirdsResult.fold((_) => <BirdSummaryModel>[], (list) => list);
-      final myAuctionsResult = await _auctionsRepository.getMyAuctions();
-      myAuctions = myAuctionsResult.fold(
-        (_) => <AuctionModel>[],
-        (list) => list,
-      );
+    // Seller-only private data (sequential by design — birds before auctions).
+    if (isSeller) {
+      await _loadSellerPrivate(emit, isSeller);
     }
 
-    final sellerSummary =
-        remoteSellerSummary ??
+    emit(state.copyWith(status: HomeStatus.loaded));
+
+    _pollTimer ??= Timer.periodic(const Duration(seconds: 30), (_) {
+      if (!isClosed) add(const _UnreadCountTick());
+    });
+  }
+
+  Future<void> _loadActiveAuctions(Emitter<HomeState> emit) async {
+    String? errorMsg;
+    final result = await _auctionsRepository.getActiveAuctions();
+    final auctions = result.fold(
+      (failure) {
+        errorMsg = failure.toString();
+        return <AuctionModel>[];
+      },
+      (list) => list,
+    );
+    emit(state.copyWith(
+      activeAuctions: auctions,
+      activeAuctionsLoading: false,
+      errorMessage: errorMsg,
+      clearError: errorMsg == null,
+    ));
+  }
+
+  Future<void> _loadEndingSoon(Emitter<HomeState> emit) async {
+    final result = await _auctionsRepository.getEndingSoon();
+    final auctions = result.fold(
+      (_) => <AuctionModel>[],
+      (list) => list,
+    );
+    emit(state.copyWith(endingSoonAuctions: auctions, endingSoonLoading: false));
+  }
+
+  Future<void> _loadComingSoon(Emitter<HomeState> emit) async {
+    final result = await _auctionsRepository.getAuctions();
+    final auctions = result.fold(
+      (_) => <AuctionModel>[],
+      (page) => page.items,
+    );
+    emit(state.copyWith(comingSoonAuctions: auctions, comingSoonLoading: false));
+  }
+
+  Future<void> _loadSellers(Emitter<HomeState> emit) async {
+    try {
+      final sellers = await _sellerHomeRemote.fetchSellers();
+      emit(state.copyWith(sellers: sellers, sellersLoading: false));
+    } catch (_) {
+      emit(state.copyWith(sellers: const [], sellersLoading: false));
+    }
+  }
+
+  Future<void> _loadAnnouncements(Emitter<HomeState> emit) async {
+    try {
+      final announcements = await _sellerHomeRemote.fetchAnnouncements();
+      emit(state.copyWith(announcements: announcements, announcementsLoading: false));
+    } catch (_) {
+      emit(state.copyWith(announcements: const [], announcementsLoading: false));
+    }
+  }
+
+  Future<void> _loadSummary(Emitter<HomeState> emit, bool isSeller) async {
+    SellerHomeSummary? remoteSellerSummary;
+    CustomerHomeSummary? remoteCustomerSummary;
+    int unreadCount = 0;
+    int? pointsBalance;
+
+    await Future.wait([
+      () async {
+        if (!isSeller) return;
+        try {
+          remoteSellerSummary = await _sellerHomeRemote.fetchHomeSummary();
+        } catch (_) {}
+      }(),
+      () async {
+        try {
+          remoteCustomerSummary =
+              await _sellerHomeRemote.fetchCustomerHomeSummary();
+        } catch (_) {}
+      }(),
+      () async {
+        try {
+          unreadCount =
+              await _sellerHomeRemote.fetchUnreadNotificationCount();
+        } catch (_) {}
+      }(),
+      () async {
+        try {
+          pointsBalance = isSeller
+              ? await _pointsRemote.fetchBalance()
+              : await _pointsRemote.fetchLoyaltyBalance();
+        } catch (_) {}
+      }(),
+    ]);
+
+    final sellerSummary = remoteSellerSummary ??
         _buildSellerSummary(
-          myAuctions: myAuctions,
-          myBirds: myBirds,
+          myAuctions: const [],
+          myBirds: const [],
           pointsBalance: pointsBalance,
           unreadCount: unreadCount,
         );
-    final customerSummary =
-        remoteCustomerSummary ??
+    final customerSummary = remoteCustomerSummary ??
         _buildCustomerSummary(
           pointsBalance: pointsBalance,
           unreadCount: unreadCount,
         );
 
-    final allFailed =
-        activeAuctions.isEmpty &&
-        endingSoon.isEmpty &&
-        featuredBirds.isEmpty &&
-        errorMessage != null;
+    emit(state.copyWith(
+      sellerSummary: sellerSummary,
+      customerSummary: customerSummary,
+      unreadNotificationCount: unreadCount,
+      pointsBalance: pointsBalance,
+      summaryLoading: false,
+    ));
+  }
 
-    emit(
-      state.copyWith(
-        status: allFailed ? HomeStatus.error : HomeStatus.loaded,
-        activeAuctions: activeAuctions,
-        endingSoonAuctions: endingSoon,
-        comingSoonAuctions: comingSoon,
-        featuredBirds: featuredBirds,
-        myBirds: myBirds,
-        sellers: sellers,
-        sellerSummary: sellerSummary,
-        customerSummary: customerSummary,
-        unreadNotificationCount: unreadCount,
-        pointsBalance: pointsBalance,
-        errorMessage: errorMessage,
-      ),
-    );
+  Future<void> _loadSellerPrivate(Emitter<HomeState> emit, bool isSeller) async {
+    final birdsResult = await _auctionsRepository.getSellerBirds(mineOnly: true);
+    final myBirds =
+        birdsResult.fold((_) => <BirdSummaryModel>[], (list) => list);
+    // Emit birds immediately so the metrics count updates as soon as possible.
+    emit(state.copyWith(myBirds: myBirds));
 
-    _pollTimer ??= Timer.periodic(const Duration(seconds: 30), (_) {
-      if (!isClosed) add(const _UnreadCountTick());
-    });
+    final auctionsResult = await _auctionsRepository.getMyAuctions();
+    final myAuctions =
+        auctionsResult.fold((_) => <AuctionModel>[], (list) => list);
+
+    // If the summary API failed (nickname is empty), build a fallback from local data.
+    final needsFallback = state.sellerSummary == null ||
+        state.sellerSummary!.nickname.isEmpty;
+    emit(state.copyWith(
+      sellerSummary: needsFallback
+          ? _buildSellerSummary(
+              myAuctions: myAuctions,
+              myBirds: myBirds,
+              pointsBalance: state.pointsBalance,
+              unreadCount: state.unreadNotificationCount,
+            )
+          : null, // keep the API-fetched summary
+      sellerPrivateLoading: false,
+    ));
   }
 
   Future<void> _onUnreadCountTick(

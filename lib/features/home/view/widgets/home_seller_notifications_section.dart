@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../model/seller_home_summary.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeSellerNotificationsSection extends StatelessWidget {
   final SellerHomeSummary? summary;
@@ -20,13 +21,13 @@ class HomeSellerNotificationsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Row(
+              Row(
                 children: [
                   Icon(Icons.notifications_rounded,
                       color: AppColors.textPrimary, size: 18),
                   SizedBox(width: 6),
                   Text(
-                    'إشعارات مهمة',
+                    AppLocalizations.of(context).importantNotifications,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -35,7 +36,7 @@ class HomeSellerNotificationsSection extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
+              Spacer(),
               if (newCount > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -45,7 +46,7 @@ class HomeSellerNotificationsSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    '$newCount جديدة',
+                    AppLocalizations.of(context).newCountBadge(newCount),
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
@@ -70,11 +71,11 @@ class HomeSellerNotificationsSection extends StatelessWidget {
               ],
             ),
             child: items.isEmpty
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.all(20),
                     child: Center(
                       child: Text(
-                        'لا إشعارات حديثة',
+                        AppLocalizations.of(context).noRecentNotifications,
                         style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
@@ -173,8 +174,8 @@ class _NotifItem extends StatelessWidget {
                 color: AppColors.orangeLight,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Text(
-                'جديد',
+              child: Text(
+                AppLocalizations.of(context).newBadge,
                 style: TextStyle(
                     color: AppColors.orange,
                     fontSize: 10,

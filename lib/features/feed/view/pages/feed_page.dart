@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
@@ -9,8 +10,9 @@ import 'following_page.dart';
 import 'people_you_may_know_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class FeedPage extends StatelessWidget {
-  FeedPage({super.key});
+  const FeedPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +21,12 @@ class FeedPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.pageBackground,
         appBar: PPWAppBar(
-          title: 'مزادات المتابعين',
+          title: AppLocalizations.of(context).followersAuctions,
           actions: [
             IconButton(
               icon: Icon(Icons.people_outline_rounded,
                   color: Colors.white),
-              tooltip: 'من أتابع',
+              tooltip: AppLocalizations.of(context).whoIFollow,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -38,7 +40,7 @@ class FeedPage extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.person_search_rounded,
                   color: Colors.white),
-              tooltip: 'اقتراحات',
+              tooltip: AppLocalizations.of(context).suggestions,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -70,7 +72,7 @@ class FeedPage extends StatelessWidget {
           builder: (context, state) {
             if (state.status == FeedStatus.loading ||
                 state.status == FeedStatus.initial) {
-              return Center(child: CircularProgressIndicator());
+              return _FeedShimmer();
             }
             if (state.status == FeedStatus.error) {
               return Center(
@@ -122,7 +124,7 @@ class FeedPage extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
                       Text(
-                        'لا توجد مزادات بعد',
+                        AppLocalizations.of(context).noFollowedAuctionsYet,
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -130,7 +132,7 @@ class FeedPage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'تابع بائعين لترى مزاداتهم هنا أولاً',
+                        AppLocalizations.of(context).followSellersToSeeAuctions,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 13,
@@ -148,7 +150,7 @@ class FeedPage extends StatelessWidget {
                           ),
                         ),
                         icon: Icon(Icons.person_add_rounded, size: 16),
-                        label: Text('اكتشف بائعين'),
+                        label: Text(AppLocalizations.of(context).discoverSellers),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
@@ -193,10 +195,89 @@ class FeedPage extends StatelessWidget {
   }
 }
 
+class _FeedShimmer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade200,
+      highlightColor: Colors.grey.shade50,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        itemCount: 5,
+        itemBuilder: (_, __) => _ShimmerCard(),
+      ),
+    );
+  }
+}
+
+class _ShimmerCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // image placeholder
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+            child: Container(
+              height: 140,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // title bar
+                Container(
+                  height: 14,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // seller / time bar
+                Container(
+                  height: 11,
+                  width: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // price bar
+                Container(
+                  height: 18,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _AuctionFeedCard extends StatelessWidget {
   final FeedAuctionItemModel item;
 
-  _AuctionFeedCard({required this.item});
+  const _AuctionFeedCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +286,10 @@ class _AuctionFeedCard extends StatelessWidget {
     final seconds = item.timeRemaining ?? 0;
     final h = seconds ~/ 3600;
     final m = (seconds % 3600) ~/ 60;
-    final timeLabel = h > 0 ? '$h س $m د' : '$m دقيقة';
+    final l = AppLocalizations.of(context);
+    final timeLabel = h > 0
+        ? l.compactHoursMinutes(h, m)
+        : l.compactMinutes(m);
 
     return Container(
       margin: EdgeInsets.only(bottom: 12),
@@ -234,7 +318,7 @@ class _AuctionFeedCard extends StatelessWidget {
                   ? Image.network(
                       item.thumbnailUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _placeholder(),
+                      errorBuilder: (context, error, stack) => _placeholder(),
                     )
                   : _placeholder(),
             ),
@@ -271,10 +355,10 @@ class _AuctionFeedCard extends StatelessWidget {
                       ),
                       child: Text(
                         isFollowing
-                            ? AppLocalizations.of(context).followed
+                            ? l.followed
                             : isPackageFollowing
-                                ? 'باقة متابعة'
-                                : 'اكتشاف',
+                                ? l.packageFollowing
+                                : l.discovery,
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -312,7 +396,7 @@ class _AuctionFeedCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '${item.currentPrice.toStringAsFixed(0)} ج.م',
+                  l.priceEgpFormat(item.currentPrice.toStringAsFixed(0)),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

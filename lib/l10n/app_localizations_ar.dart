@@ -1209,6 +1209,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noProducts => 'لا توجد منتجات';
 
   @override
+  String productsCount(int count) {
+    return '$count منتج';
+  }
+
+  @override
   String get newest => 'الأحدث';
 
   @override
@@ -1219,6 +1224,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sort => 'ترتيب';
+
+  @override
+  String reviewsCount(int count) {
+    return '($count تقييم)';
+  }
 
   @override
   String get benefits => 'الفوائد';
@@ -1814,4 +1824,659 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get available => 'متاحة';
+
+  @override
+  String get welcomeBackGeneric => 'مرحباً بعودتك! 👋';
+
+  @override
+  String welcomeWithName(String name) {
+    return 'مرحباً $name 👋';
+  }
+
+  @override
+  String get noPackage => 'بدون باقة';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get activitySummary => 'ملخص نشاطك';
+
+  @override
+  String get viewAllStats => 'عرض كل الإحصائيات';
+
+  @override
+  String get myListedBirds => 'طيوري المعروضة';
+
+  @override
+  String get noAuctionsAddedYet => 'لا توجد مزادات مضافة بعد';
+
+  @override
+  String get noBirdsAddedYet => 'لا توجد طيور مضافة بعد';
+
+  @override
+  String endsInDays(int count) {
+    return 'ينتهي خلال $count يوم';
+  }
+
+  @override
+  String endsInHours(int count) {
+    return 'ينتهي خلال $count ساعة';
+  }
+
+  @override
+  String endsInMinutes(int count) {
+    return 'ينتهي خلال $count دقيقة';
+  }
+
+  @override
+  String get fixedPriceBirds => 'طيور بسعر ثابت';
+
+  @override
+  String get kmUnit => 'كم';
+
+  @override
+  String get platformFeatures => 'مميزات المنصة';
+
+  @override
+  String get auctionSystem => 'نظام المزايدات';
+
+  @override
+  String get auctionSystemSub => 'مزايدة حية ومتقدمة';
+
+  @override
+  String get ownershipRecordProtected => 'محمي وغير قابل للتلاعب';
+
+  @override
+  String get marketSubtitle => 'علف، أدوية، مستلزمات';
+
+  @override
+  String get pointsAndLoyalty => 'نقاط وولاء';
+
+  @override
+  String get pointsAndLoyaltySub => 'اكسب مع كل عملية';
+
+  @override
+  String get referralCodeHint => 'كود: PIGEON123';
+
+  @override
+  String get copied => 'تم النسخ';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String get sellerRole => 'بائع';
+
+  @override
+  String get buyerRole => 'مشتري';
+
+  @override
+  String get breedersYouMayKnow => 'مربيون قد تعرفهم';
+
+  @override
+  String get auctionCountUnit => 'مزاد';
+
+  @override
+  String get upcomingAuctions => 'مزادات قادمة';
+
+  @override
+  String get auctionsComingSoonBanner =>
+      'سوف تنزل المزادات قريباً - كن مستعداً!';
+
+  @override
+  String get countdownSecond => 'ثانية';
+
+  @override
+  String get countdownMinute => 'دقيقة';
+
+  @override
+  String get countdownHour => 'ساعة';
+
+  @override
+  String get countdownDay => 'يوم';
+
+  @override
+  String get providerFeatures => 'مميزات مقدمي الخدمة';
+
+  @override
+  String get sellerActivationRequired =>
+      'تنبيه: تفعيل حساب البائع مطلوب قبل النشر الكامل.';
+
+  @override
+  String get digitalIdVideoRequired =>
+      'ملاحظة: الهوية الرقمية والفيديو الإلزاميان قبل نشر أي مزاد';
+
+  @override
+  String get addAuctionWithDigitalId => 'إضافة مزاد بالهوية الرقمية';
+
+  @override
+  String get addAuctionWithDigitalIdSub => 'ربط الطائر بهوية رقمية موثقة';
+
+  @override
+  String get viewDigitalId => 'عرض الهوية الرقمية';
+
+  @override
+  String get viewDigitalIdSub => 'QR Code + رقم الدبلة';
+
+  @override
+  String get mandatoryVideo => 'الفيديو الإلزامي';
+
+  @override
+  String get mandatoryVideoSub => '4 مراحل مطلوبة';
+
+  @override
+  String get importantNotifications => 'إشعارات مهمة';
+
+  @override
+  String newCountBadge(int count) {
+    return '$count جديدة';
+  }
+
+  @override
+  String get noRecentNotifications => 'لا إشعارات حديثة';
+
+  @override
+  String get newBadge => 'جديد';
+
+  @override
+  String get myBirds => 'طيوري';
+
+  @override
+  String get addProductToStore => 'إضافة منتج للمتجر';
+
+  @override
+  String get followers => 'متابع';
+
+  @override
+  String get bidsLabel => 'مزايدة';
+
+  @override
+  String get myToolsAndFeatures => 'أدواتي ومميزاتي';
+
+  @override
+  String get toolsPageSubtitle => 'إشعارات · متطلبات النشر · أدوات متقدمة';
+
+  @override
+  String get sellerProviderTools => 'أدوات مقدم الخدمة';
+
+  @override
+  String get multiRoomManagement => 'إدارة الغرف المتعددة';
+
+  @override
+  String get newBadgeLabel => 'NEW';
+
+  @override
+  String get multiRoomDesc => 'إنشاء وإدارة عدة غرف مزادات';
+
+  @override
+  String get threePackages => '3 باقات مختلفة';
+
+  @override
+  String get fullCustomization => 'تخصيص كامل';
+
+  @override
+  String get unlimited => 'غير محدود';
+
+  @override
+  String get viewOwnershipRecord => 'عرض سجل الملكية';
+
+  @override
+  String get ownershipRecordFull => 'سجل كامل لجميع عمليات النقل';
+
+  @override
+  String get ownershipTransfer => 'عملية نقل الملكية';
+
+  @override
+  String get ownershipTransferStages => '3 مراحل: سداد ← تسليم ← تأكيد';
+
+  @override
+  String get recordProtectionLabel => 'حماية السجل:';
+
+  @override
+  String get tamperProof => 'غير قابل للتلاعب';
+
+  @override
+  String get visibleToSellerBuyerOnly => 'يظهر فقط للبائع والمشتري';
+
+  @override
+  String get autoDeleteAfter7Days => 'حذف تلقائي بعد 7 أيام';
+
+  @override
+  String get manualDeleteAfterMonth => 'حذف يدوي بعد شهر (للبائع)';
+
+  @override
+  String get perInviteLabel => 'لكل دعوة';
+
+  @override
+  String get earningsLabel => 'أرباح';
+
+  @override
+  String get invitesLabel => 'دعوات';
+
+  @override
+  String get scanBirdCardTooltip => 'مسح بطاقة طائر';
+
+  @override
+  String get serviceProvider => 'مقدم الخدمة';
+
+  @override
+  String get statsPageTitle => 'الإحصائيات';
+
+  @override
+  String get fullPerformanceDashboard => 'لوحة الأداء الكاملة';
+
+  @override
+  String get miniKpiAuctions => 'مزادات';
+
+  @override
+  String get miniKpiSales => 'مبيعات';
+
+  @override
+  String get miniKpiOrders => 'طلبات';
+
+  @override
+  String get miniKpiListings => 'قوائم';
+
+  @override
+  String get todayStats => 'إحصائيات اليوم';
+
+  @override
+  String get activeAuctionsLabel => 'مزادات نشطة';
+
+  @override
+  String get trendFromYesterday => '+2 من الأمس';
+
+  @override
+  String get totalSalesLabel => 'إجمالي المبيعات';
+
+  @override
+  String get auctionPlusStore => 'المزاد + المتجر';
+
+  @override
+  String get needsReview => 'تحتاج مراجعة';
+
+  @override
+  String get activeListingsLabel => 'قوائم نشطة';
+
+  @override
+  String get totalPublished => 'إجمالي المنشورات';
+
+  @override
+  String get balanceAndPoints => 'الرصيد والنقاط';
+
+  @override
+  String get currentBalanceLabel => 'الرصيد الحالي';
+
+  @override
+  String get loyaltyPointsLabel => 'نقاط الولاء';
+
+  @override
+  String get weeklyPerformance => 'الأداء الأسبوعي';
+
+  @override
+  String get last7DaysSales => 'المبيعات خلال آخر 7 أيام';
+
+  @override
+  String get accountHealth => 'صحة الحساب';
+
+  @override
+  String get accountActivation => 'تفعيل الحساب';
+
+  @override
+  String get basicPublishingRequirement => 'شرط أساسي للنشر';
+
+  @override
+  String get digitalIdSubtitle => 'QR Code + رقم الدبلة';
+
+  @override
+  String get mandatoryVideoLabel => 'الفيديو الإلزامي';
+
+  @override
+  String get fourStagesRequired => '4 مراحل مطلوبة';
+
+  @override
+  String get addAuctionLabel => 'إضافة مزاد';
+
+  @override
+  String get firstAuctionOnPlatform => 'أول مزاد لك على المنصة';
+
+  @override
+  String get recentActivities => 'آخر النشاطات';
+
+  @override
+  String get controlCenter => 'مركز التحكم';
+
+  @override
+  String get toolsPageTagline => 'إشعاراتك • مميزاتك • أدواتك في مكان واحد';
+
+  @override
+  String get featuresChip => 'المميزات';
+
+  @override
+  String get toolsChip => 'الأدوات';
+
+  @override
+  String get myProducts => 'منتجاتي';
+
+  @override
+  String get manageProductsInStore => 'إضافة وإدارة منتجاتك في المتجر';
+
+  @override
+  String myAuctionsWithCount(int count) {
+    return 'مزاداتي ($count)';
+  }
+
+  @override
+  String activeTabWithCount(int count) {
+    return 'نشطة ($count)';
+  }
+
+  @override
+  String endedTabWithCount(int count) {
+    return 'منتهية ($count)';
+  }
+
+  @override
+  String get noEndedAuctions => 'لا توجد مزادات منتهية';
+
+  @override
+  String get noActiveAuctions => 'لا توجد مزادات نشطة';
+
+  @override
+  String get endedAuctionsWillAppearHere => 'ستظهر هنا المزادات بعد انتهائها';
+
+  @override
+  String get createFirstAuction => 'أنشئ مزادك الأول لعرض طيورك';
+
+  @override
+  String timeLabelDaysHours(int days, int hours) {
+    return '$days يوم و$hours ساعة';
+  }
+
+  @override
+  String timeLabelHoursMinutes(int hours, int minutes) {
+    return '$hours ساعة و$minutes دقيقة';
+  }
+
+  @override
+  String timeLabelMinutes(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get auctionTypeDefault => 'مزاد';
+
+  @override
+  String get availableForAuction => 'متاح للمزاد';
+
+  @override
+  String get inAuction => 'في مزاد';
+
+  @override
+  String get noBirdsYet => 'لا توجد طيور بعد';
+
+  @override
+  String get addBirdsToAuctionsAndMarket =>
+      'أضف طيورك لعرضها في المزادات والسوق';
+
+  @override
+  String get noBirdsWithFilter => 'لا توجد طيور بهذا الفلتر';
+
+  @override
+  String get clearFilters => 'مسح الفلاتر';
+
+  @override
+  String get availableBadge => 'متاح';
+
+  @override
+  String get daySun => 'أحد';
+
+  @override
+  String get dayMon => 'اثن';
+
+  @override
+  String get dayTue => 'ثلا';
+
+  @override
+  String get dayWed => 'أرب';
+
+  @override
+  String get dayThu => 'خمي';
+
+  @override
+  String get dayFri => 'جمع';
+
+  @override
+  String get daySat => 'سبت';
+
+  @override
+  String bidsCountLabel(int count) {
+    return '$count مزايدة';
+  }
+
+  @override
+  String get usedPackageLabel => 'الباقة المستخدمة';
+
+  @override
+  String get addNewBirdTitle => 'إضافة طائر جديد';
+
+  @override
+  String get addNewBirdSubtitle => 'أنشئ بيانات طائر جديد وأضفه إلى المزاد';
+
+  @override
+  String get chooseFromMyBirds => 'اختيار من طيوري';
+
+  @override
+  String get chooseFromMyBirdsSub =>
+      'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر';
+
+  @override
+  String get selectBirdTitle => 'اختر طائراً';
+
+  @override
+  String get myBirdsAvailableForAuction => 'طيوري المتاحة للإضافة في المزاد';
+
+  @override
+  String get noBirdsAvailable => 'لا توجد طيور متاحة';
+
+  @override
+  String get allBirdsListed => 'جميع طيورك مدرجة في مزادات أو المتجر';
+
+  @override
+  String get noActivePackageWarning =>
+      'لا توجد باقة نشطة — ستُرفض عملية الإنشاء';
+
+  @override
+  String get subscribeBtn => 'اشترك';
+
+  @override
+  String packagePointsInfo(int remaining, int cost) {
+    return '$remaining نقطة متبقية · تكلفة المزاد: $cost نقطة';
+  }
+
+  @override
+  String get endingSoonFilter => 'ينتهي قريباً 🕐';
+
+  @override
+  String get myAuctionsFilter => 'مزاداتي ✈️';
+
+  @override
+  String activeAuctionsCount(int count) {
+    return '$count مزاد نشط';
+  }
+
+  @override
+  String get loadingMore => 'جارٍ التحميل...';
+
+  @override
+  String auctionCountBadge(int count) {
+    return '$count مزاد';
+  }
+
+  @override
+  String get myBidsTooltip => 'مزايداتي';
+
+  @override
+  String get refreshTooltip => 'تحديث';
+
+  @override
+  String noResultsFor(String query) {
+    return 'لا توجد نتائج لـ \"$query\"';
+  }
+
+  @override
+  String get pointsHistoryTitle => 'سجل النقاط';
+
+  @override
+  String get pointsLoadError =>
+      'تعذر تحميل السجل. تحقق من اتصالك وحاول مجدداً.';
+
+  @override
+  String pointsPaginationLabel(int from, int to, int count) {
+    return '$from–$to من $count';
+  }
+
+  @override
+  String pointsBalanceAfter(int balance) {
+    return 'الرصيد: $balance';
+  }
+
+  @override
+  String get noPointsTransactions => 'لا توجد معاملات نقاط بعد';
+
+  @override
+  String get cashbackHistoryTitle => 'سجل الكاش باك';
+
+  @override
+  String get cashbackBalanceTitle => 'رصيد الكاش باك';
+
+  @override
+  String get egpCurrency => 'ج.م';
+
+  @override
+  String get noCashbackTransactionsYet => 'لا توجد معاملات حتى الآن';
+
+  @override
+  String get cashbackTransactionsWillAppear =>
+      'ستظهر هنا معاملات الكاش باك عند إتمام عمليات الشراء';
+
+  @override
+  String get followersAuctions => 'مزادات المتابعين';
+
+  @override
+  String get whoIFollow => 'من أتابعهم';
+
+  @override
+  String get suggestions => 'اقتراحات';
+
+  @override
+  String get noFollowedAuctionsYet => 'لا توجد مزادات بعد';
+
+  @override
+  String get followSellersToSeeAuctions =>
+      'تابع بائعين لترى مزاداتهم هنا أولاً';
+
+  @override
+  String get discoverSellers => 'اكتشف بائعين';
+
+  @override
+  String compactHoursMinutes(int hours, int minutes) {
+    return '$hours س $minutes د';
+  }
+
+  @override
+  String compactMinutes(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get packageFollowing => 'باقة متابعة';
+
+  @override
+  String get discovery => 'اكتشاف';
+
+  @override
+  String get editBird => 'تعديل الطائر';
+
+  @override
+  String get pigeonBasicData => 'بيانات الطائر الأساسية';
+
+  @override
+  String get ringNumberRequired => 'رقم الحلقة *';
+
+  @override
+  String get breedRequired => 'السلالة *';
+
+  @override
+  String get breedHint => 'مثال: حمام زاجل';
+
+  @override
+  String get genderRequired => 'الجنس *';
+
+  @override
+  String get optionalData => 'بيانات اختيارية';
+
+  @override
+  String get chooseHatchDate => 'اختر تاريخ الفقس';
+
+  @override
+  String get achievementsRequired => 'الإنجازات *';
+
+  @override
+  String get achievementsHint => 'اكتب أهم إنجازات الطائر';
+
+  @override
+  String get staminaRequired => 'قدرة التحمل *';
+
+  @override
+  String get saleData => 'بيانات البيع';
+
+  @override
+  String get displayName => 'اسم العرض';
+
+  @override
+  String get displayNameHint => 'الاسم الظاهر للمشترين';
+
+  @override
+  String get priceEgpRequired => 'السعر (ج.م) *';
+
+  @override
+  String get priceHint => 'مثال: 1500';
+
+  @override
+  String get flyingSpeedKmh => 'سرعة الطيران (كم/س)';
+
+  @override
+  String get flyingSpeedHint => 'مثال: 75.5';
+
+  @override
+  String get birdStatus => 'حالة الطائر';
+
+  @override
+  String get pedigreeData => 'بيانات النسب';
+
+  @override
+  String get fatherRingOptional => 'رقم الأب (اختياري)';
+
+  @override
+  String get motherRingOptional => 'رقم الأم (اختياري)';
+
+  @override
+  String get birdIdHint => 'معرّف الطائر';
+
+  @override
+  String get saving => 'جارٍ الحفظ...';
+
+  @override
+  String get saveChanges => 'حفظ التعديلات';
+
+  @override
+  String get nextAddPhotos => 'التالي - إضافة الصور';
+
+  @override
+  String get listInMarket => 'عرض في المتجر';
+
+  @override
+  String get listInMarketDesc => 'سيظهر الطائر للمشترين في المتجر';
 }

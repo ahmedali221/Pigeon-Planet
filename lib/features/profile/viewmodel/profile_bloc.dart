@@ -39,20 +39,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     result.fold(
       (f) => emit(state.copyWith(
           status: ProfileStatus.error, errorMessage: f.message)),
-      (updated) => emit(state.copyWith(
-          status: ProfileStatus.updated, profile: updated)),
+      (updated) {
+        emit(state.copyWith(status: ProfileStatus.updated, profile: updated));
+        if (state.rooms.isNotEmpty) add(ProfileRoomsLoadRequested());
+      },
     );
   }
 
   Future<void> _onDeleteRequested(
       ProfileDeleteRequested event, Emitter<ProfileState> emit) async {
-    if (state.profile == null) return;
     emit(state.copyWith(status: ProfileStatus.deleting));
-    final result = await _repository.deleteProfile(state.profile!);
+    final result = await _repository.deleteProfile(event.profile);
     result.fold(
       (f) => emit(state.copyWith(
           status: ProfileStatus.error, errorMessage: f.message)),
-      (_) => emit(state.copyWith(status: ProfileStatus.deleted)),
+      (_) {
+        emit(state.copyWith(status: ProfileStatus.deleted));
+        add(ProfileRoomsLoadRequested());
+      },
     );
   }
 
@@ -82,7 +86,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         roomsStatus: RoomsStatus.error,
         errorMessage: f.message,
       )),
-      (_) => emit(state.copyWith(roomsStatus: RoomsStatus.created)),
+      (_) {
+        emit(state.copyWith(roomsStatus: RoomsStatus.created));
+        add(ProfileRoomsLoadRequested());
+      },
     );
   }
 }

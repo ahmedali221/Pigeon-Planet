@@ -2396,6 +2396,12 @@ abstract class AppLocalizations {
   /// **'لا توجد منتجات'**
   String get noProducts;
 
+  /// No description provided for @productsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} منتج'**
+  String productsCount(int count);
+
   /// No description provided for @newest.
   ///
   /// In ar, this message translates to:
@@ -2419,6 +2425,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ترتيب'**
   String get sort;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'({count} تقييم)'**
+  String reviewsCount(int count);
 
   /// No description provided for @benefits.
   ///
@@ -3511,6 +3523,1004 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'متاحة'**
   String get available;
+
+  /// No description provided for @welcomeBackGeneric.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً بعودتك! 👋'**
+  String get welcomeBackGeneric;
+
+  /// No description provided for @welcomeWithName.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً {name} 👋'**
+  String welcomeWithName(String name);
+
+  /// No description provided for @noPackage.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون باقة'**
+  String get noPackage;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الكل'**
+  String get viewAll;
+
+  /// No description provided for @activitySummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص نشاطك'**
+  String get activitySummary;
+
+  /// No description provided for @viewAllStats.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض كل الإحصائيات'**
+  String get viewAllStats;
+
+  /// No description provided for @myListedBirds.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيوري المعروضة'**
+  String get myListedBirds;
+
+  /// No description provided for @noAuctionsAddedYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مزادات مضافة بعد'**
+  String get noAuctionsAddedYet;
+
+  /// No description provided for @noBirdsAddedYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طيور مضافة بعد'**
+  String get noBirdsAddedYet;
+
+  /// No description provided for @endsInDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي خلال {count} يوم'**
+  String endsInDays(int count);
+
+  /// No description provided for @endsInHours.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي خلال {count} ساعة'**
+  String endsInHours(int count);
+
+  /// No description provided for @endsInMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي خلال {count} دقيقة'**
+  String endsInMinutes(int count);
+
+  /// No description provided for @fixedPriceBirds.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيور بسعر ثابت'**
+  String get fixedPriceBirds;
+
+  /// No description provided for @kmUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'كم'**
+  String get kmUnit;
+
+  /// No description provided for @platformFeatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'مميزات المنصة'**
+  String get platformFeatures;
+
+  /// No description provided for @auctionSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'نظام المزايدات'**
+  String get auctionSystem;
+
+  /// No description provided for @auctionSystemSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزايدة حية ومتقدمة'**
+  String get auctionSystemSub;
+
+  /// No description provided for @ownershipRecordProtected.
+  ///
+  /// In ar, this message translates to:
+  /// **'محمي وغير قابل للتلاعب'**
+  String get ownershipRecordProtected;
+
+  /// No description provided for @marketSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'علف، أدوية، مستلزمات'**
+  String get marketSubtitle;
+
+  /// No description provided for @pointsAndLoyalty.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط وولاء'**
+  String get pointsAndLoyalty;
+
+  /// No description provided for @pointsAndLoyaltySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكسب مع كل عملية'**
+  String get pointsAndLoyaltySub;
+
+  /// No description provided for @referralCodeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود: PIGEON123'**
+  String get referralCodeHint;
+
+  /// No description provided for @copied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم النسخ'**
+  String get copied;
+
+  /// No description provided for @copy.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ'**
+  String get copy;
+
+  /// No description provided for @sellerRole.
+  ///
+  /// In ar, this message translates to:
+  /// **'بائع'**
+  String get sellerRole;
+
+  /// No description provided for @buyerRole.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشتري'**
+  String get buyerRole;
+
+  /// No description provided for @breedersYouMayKnow.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربيون قد تعرفهم'**
+  String get breedersYouMayKnow;
+
+  /// No description provided for @auctionCountUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد'**
+  String get auctionCountUnit;
+
+  /// No description provided for @upcomingAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات قادمة'**
+  String get upcomingAuctions;
+
+  /// No description provided for @auctionsComingSoonBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'سوف تنزل المزادات قريباً - كن مستعداً!'**
+  String get auctionsComingSoonBanner;
+
+  /// No description provided for @countdownSecond.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثانية'**
+  String get countdownSecond;
+
+  /// No description provided for @countdownMinute.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة'**
+  String get countdownMinute;
+
+  /// No description provided for @countdownHour.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساعة'**
+  String get countdownHour;
+
+  /// No description provided for @countdownDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم'**
+  String get countdownDay;
+
+  /// No description provided for @providerFeatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'مميزات مقدمي الخدمة'**
+  String get providerFeatures;
+
+  /// No description provided for @sellerActivationRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه: تفعيل حساب البائع مطلوب قبل النشر الكامل.'**
+  String get sellerActivationRequired;
+
+  /// No description provided for @digitalIdVideoRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة: الهوية الرقمية والفيديو الإلزاميان قبل نشر أي مزاد'**
+  String get digitalIdVideoRequired;
+
+  /// No description provided for @addAuctionWithDigitalId.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة مزاد بالهوية الرقمية'**
+  String get addAuctionWithDigitalId;
+
+  /// No description provided for @addAuctionWithDigitalIdSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط الطائر بهوية رقمية موثقة'**
+  String get addAuctionWithDigitalIdSub;
+
+  /// No description provided for @viewDigitalId.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الهوية الرقمية'**
+  String get viewDigitalId;
+
+  /// No description provided for @viewDigitalIdSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'QR Code + رقم الدبلة'**
+  String get viewDigitalIdSub;
+
+  /// No description provided for @mandatoryVideo.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفيديو الإلزامي'**
+  String get mandatoryVideo;
+
+  /// No description provided for @mandatoryVideoSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'4 مراحل مطلوبة'**
+  String get mandatoryVideoSub;
+
+  /// No description provided for @importantNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعارات مهمة'**
+  String get importantNotifications;
+
+  /// No description provided for @newCountBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} جديدة'**
+  String newCountBadge(int count);
+
+  /// No description provided for @noRecentNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا إشعارات حديثة'**
+  String get noRecentNotifications;
+
+  /// No description provided for @newBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get newBadge;
+
+  /// No description provided for @myBirds.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيوري'**
+  String get myBirds;
+
+  /// No description provided for @addProductToStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة منتج للمتجر'**
+  String get addProductToStore;
+
+  /// No description provided for @followers.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابع'**
+  String get followers;
+
+  /// No description provided for @bidsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزايدة'**
+  String get bidsLabel;
+
+  /// No description provided for @myToolsAndFeatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدواتي ومميزاتي'**
+  String get myToolsAndFeatures;
+
+  /// No description provided for @toolsPageSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعارات · متطلبات النشر · أدوات متقدمة'**
+  String get toolsPageSubtitle;
+
+  /// No description provided for @sellerProviderTools.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدوات مقدم الخدمة'**
+  String get sellerProviderTools;
+
+  /// No description provided for @multiRoomManagement.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة الغرف المتعددة'**
+  String get multiRoomManagement;
+
+  /// No description provided for @newBadgeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'NEW'**
+  String get newBadgeLabel;
+
+  /// No description provided for @multiRoomDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء وإدارة عدة غرف مزادات'**
+  String get multiRoomDesc;
+
+  /// No description provided for @threePackages.
+  ///
+  /// In ar, this message translates to:
+  /// **'3 باقات مختلفة'**
+  String get threePackages;
+
+  /// No description provided for @fullCustomization.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخصيص كامل'**
+  String get fullCustomization;
+
+  /// No description provided for @unlimited.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدود'**
+  String get unlimited;
+
+  /// No description provided for @viewOwnershipRecord.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض سجل الملكية'**
+  String get viewOwnershipRecord;
+
+  /// No description provided for @ownershipRecordFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل كامل لجميع عمليات النقل'**
+  String get ownershipRecordFull;
+
+  /// No description provided for @ownershipTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'عملية نقل الملكية'**
+  String get ownershipTransfer;
+
+  /// No description provided for @ownershipTransferStages.
+  ///
+  /// In ar, this message translates to:
+  /// **'3 مراحل: سداد ← تسليم ← تأكيد'**
+  String get ownershipTransferStages;
+
+  /// No description provided for @recordProtectionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حماية السجل:'**
+  String get recordProtectionLabel;
+
+  /// No description provided for @tamperProof.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير قابل للتلاعب'**
+  String get tamperProof;
+
+  /// No description provided for @visibleToSellerBuyerOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'يظهر فقط للبائع والمشتري'**
+  String get visibleToSellerBuyerOnly;
+
+  /// No description provided for @autoDeleteAfter7Days.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف تلقائي بعد 7 أيام'**
+  String get autoDeleteAfter7Days;
+
+  /// No description provided for @manualDeleteAfterMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف يدوي بعد شهر (للبائع)'**
+  String get manualDeleteAfterMonth;
+
+  /// No description provided for @perInviteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل دعوة'**
+  String get perInviteLabel;
+
+  /// No description provided for @earningsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرباح'**
+  String get earningsLabel;
+
+  /// No description provided for @invitesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوات'**
+  String get invitesLabel;
+
+  /// No description provided for @scanBirdCardTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح بطاقة طائر'**
+  String get scanBirdCardTooltip;
+
+  /// No description provided for @serviceProvider.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقدم الخدمة'**
+  String get serviceProvider;
+
+  /// No description provided for @statsPageTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإحصائيات'**
+  String get statsPageTitle;
+
+  /// No description provided for @fullPerformanceDashboard.
+  ///
+  /// In ar, this message translates to:
+  /// **'لوحة الأداء الكاملة'**
+  String get fullPerformanceDashboard;
+
+  /// No description provided for @miniKpiAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات'**
+  String get miniKpiAuctions;
+
+  /// No description provided for @miniKpiSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبيعات'**
+  String get miniKpiSales;
+
+  /// No description provided for @miniKpiOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات'**
+  String get miniKpiOrders;
+
+  /// No description provided for @miniKpiListings.
+  ///
+  /// In ar, this message translates to:
+  /// **'قوائم'**
+  String get miniKpiListings;
+
+  /// No description provided for @todayStats.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحصائيات اليوم'**
+  String get todayStats;
+
+  /// No description provided for @activeAuctionsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات نشطة'**
+  String get activeAuctionsLabel;
+
+  /// No description provided for @trendFromYesterday.
+  ///
+  /// In ar, this message translates to:
+  /// **'+2 من الأمس'**
+  String get trendFromYesterday;
+
+  /// No description provided for @totalSalesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المبيعات'**
+  String get totalSalesLabel;
+
+  /// No description provided for @auctionPlusStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزاد + المتجر'**
+  String get auctionPlusStore;
+
+  /// No description provided for @needsReview.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحتاج مراجعة'**
+  String get needsReview;
+
+  /// No description provided for @activeListingsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قوائم نشطة'**
+  String get activeListingsLabel;
+
+  /// No description provided for @totalPublished.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المنشورات'**
+  String get totalPublished;
+
+  /// No description provided for @balanceAndPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد والنقاط'**
+  String get balanceAndPoints;
+
+  /// No description provided for @currentBalanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد الحالي'**
+  String get currentBalanceLabel;
+
+  /// No description provided for @loyaltyPointsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط الولاء'**
+  String get loyaltyPointsLabel;
+
+  /// No description provided for @weeklyPerformance.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأداء الأسبوعي'**
+  String get weeklyPerformance;
+
+  /// No description provided for @last7DaysSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات خلال آخر 7 أيام'**
+  String get last7DaysSales;
+
+  /// No description provided for @accountHealth.
+  ///
+  /// In ar, this message translates to:
+  /// **'صحة الحساب'**
+  String get accountHealth;
+
+  /// No description provided for @accountActivation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل الحساب'**
+  String get accountActivation;
+
+  /// No description provided for @basicPublishingRequirement.
+  ///
+  /// In ar, this message translates to:
+  /// **'شرط أساسي للنشر'**
+  String get basicPublishingRequirement;
+
+  /// No description provided for @digitalIdSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'QR Code + رقم الدبلة'**
+  String get digitalIdSubtitle;
+
+  /// No description provided for @mandatoryVideoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفيديو الإلزامي'**
+  String get mandatoryVideoLabel;
+
+  /// No description provided for @fourStagesRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'4 مراحل مطلوبة'**
+  String get fourStagesRequired;
+
+  /// No description provided for @addAuctionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة مزاد'**
+  String get addAuctionLabel;
+
+  /// No description provided for @firstAuctionOnPlatform.
+  ///
+  /// In ar, this message translates to:
+  /// **'أول مزاد لك على المنصة'**
+  String get firstAuctionOnPlatform;
+
+  /// No description provided for @recentActivities.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر النشاطات'**
+  String get recentActivities;
+
+  /// No description provided for @controlCenter.
+  ///
+  /// In ar, this message translates to:
+  /// **'مركز التحكم'**
+  String get controlCenter;
+
+  /// No description provided for @toolsPageTagline.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعاراتك • مميزاتك • أدواتك في مكان واحد'**
+  String get toolsPageTagline;
+
+  /// No description provided for @featuresChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'المميزات'**
+  String get featuresChip;
+
+  /// No description provided for @toolsChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأدوات'**
+  String get toolsChip;
+
+  /// No description provided for @myProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتجاتي'**
+  String get myProducts;
+
+  /// No description provided for @manageProductsInStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة وإدارة منتجاتك في المتجر'**
+  String get manageProductsInStore;
+
+  /// No description provided for @myAuctionsWithCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاداتي ({count})'**
+  String myAuctionsWithCount(int count);
+
+  /// No description provided for @activeTabWithCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشطة ({count})'**
+  String activeTabWithCount(int count);
+
+  /// No description provided for @endedTabWithCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهية ({count})'**
+  String endedTabWithCount(int count);
+
+  /// No description provided for @noEndedAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مزادات منتهية'**
+  String get noEndedAuctions;
+
+  /// No description provided for @noActiveAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مزادات نشطة'**
+  String get noActiveAuctions;
+
+  /// No description provided for @endedAuctionsWillAppearHere.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستظهر هنا المزادات بعد انتهائها'**
+  String get endedAuctionsWillAppearHere;
+
+  /// No description provided for @createFirstAuction.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ مزادك الأول لعرض طيورك'**
+  String get createFirstAuction;
+
+  /// No description provided for @timeLabelDaysHours.
+  ///
+  /// In ar, this message translates to:
+  /// **'{days} يوم و{hours} ساعة'**
+  String timeLabelDaysHours(int days, int hours);
+
+  /// No description provided for @timeLabelHoursMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{hours} ساعة و{minutes} دقيقة'**
+  String timeLabelHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @timeLabelMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} دقيقة'**
+  String timeLabelMinutes(int minutes);
+
+  /// No description provided for @auctionTypeDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد'**
+  String get auctionTypeDefault;
+
+  /// No description provided for @availableForAuction.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح للمزاد'**
+  String get availableForAuction;
+
+  /// No description provided for @inAuction.
+  ///
+  /// In ar, this message translates to:
+  /// **'في مزاد'**
+  String get inAuction;
+
+  /// No description provided for @noBirdsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طيور بعد'**
+  String get noBirdsYet;
+
+  /// No description provided for @addBirdsToAuctionsAndMarket.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف طيورك لعرضها في المزادات والسوق'**
+  String get addBirdsToAuctionsAndMarket;
+
+  /// No description provided for @noBirdsWithFilter.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طيور بهذا الفلتر'**
+  String get noBirdsWithFilter;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الفلاتر'**
+  String get clearFilters;
+
+  /// No description provided for @availableBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح'**
+  String get availableBadge;
+
+  /// No description provided for @daySun.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحد'**
+  String get daySun;
+
+  /// No description provided for @dayMon.
+  ///
+  /// In ar, this message translates to:
+  /// **'اثن'**
+  String get dayMon;
+
+  /// No description provided for @dayTue.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثلا'**
+  String get dayTue;
+
+  /// No description provided for @dayWed.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرب'**
+  String get dayWed;
+
+  /// No description provided for @dayThu.
+  ///
+  /// In ar, this message translates to:
+  /// **'خمي'**
+  String get dayThu;
+
+  /// No description provided for @dayFri.
+  ///
+  /// In ar, this message translates to:
+  /// **'جمع'**
+  String get dayFri;
+
+  /// No description provided for @daySat.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبت'**
+  String get daySat;
+
+  /// No description provided for @bidsCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مزايدة'**
+  String bidsCountLabel(int count);
+
+  /// No description provided for @usedPackageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة المستخدمة'**
+  String get usedPackageLabel;
+
+  /// No description provided for @addNewBirdTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة طائر جديد'**
+  String get addNewBirdTitle;
+
+  /// No description provided for @addNewBirdSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ بيانات طائر جديد وأضفه إلى المزاد'**
+  String get addNewBirdSubtitle;
+
+  /// No description provided for @chooseFromMyBirds.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من طيوري'**
+  String get chooseFromMyBirds;
+
+  /// No description provided for @chooseFromMyBirdsSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر'**
+  String get chooseFromMyBirdsSub;
+
+  /// No description provided for @selectBirdTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طائراً'**
+  String get selectBirdTitle;
+
+  /// No description provided for @myBirdsAvailableForAuction.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيوري المتاحة للإضافة في المزاد'**
+  String get myBirdsAvailableForAuction;
+
+  /// No description provided for @noBirdsAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طيور متاحة'**
+  String get noBirdsAvailable;
+
+  /// No description provided for @allBirdsListed.
+  ///
+  /// In ar, this message translates to:
+  /// **'جميع طيورك مدرجة في مزادات أو المتجر'**
+  String get allBirdsListed;
+
+  /// No description provided for @noActivePackageWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد باقة نشطة — ستُرفض عملية الإنشاء'**
+  String get noActivePackageWarning;
+
+  /// No description provided for @subscribeBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك'**
+  String get subscribeBtn;
+
+  /// No description provided for @packagePointsInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'{remaining} نقطة متبقية · تكلفة المزاد: {cost} نقطة'**
+  String packagePointsInfo(int remaining, int cost);
+
+  /// No description provided for @endingSoonFilter.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي قريباً 🕐'**
+  String get endingSoonFilter;
+
+  /// No description provided for @myAuctionsFilter.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاداتي ✈️'**
+  String get myAuctionsFilter;
+
+  /// No description provided for @activeAuctionsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مزاد نشط'**
+  String activeAuctionsCount(int count);
+
+  /// No description provided for @loadingMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ التحميل...'**
+  String get loadingMore;
+
+  /// No description provided for @auctionCountBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مزاد'**
+  String auctionCountBadge(int count);
+
+  /// No description provided for @myBidsTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزايداتي'**
+  String get myBidsTooltip;
+
+  /// No description provided for @refreshTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get refreshTooltip;
+
+  /// No description provided for @noResultsFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد نتائج لـ \"{query}\"'**
+  String noResultsFor(String query);
+
+  /// No description provided for @pointsHistoryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل النقاط'**
+  String get pointsHistoryTitle;
+
+  /// No description provided for @pointsLoadError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر تحميل السجل. تحقق من اتصالك وحاول مجدداً.'**
+  String get pointsLoadError;
+
+  /// No description provided for @pointsPaginationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{from}–{to} من {count}'**
+  String pointsPaginationLabel(int from, int to, int count);
+
+  /// No description provided for @pointsBalanceAfter.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد: {balance}'**
+  String pointsBalanceAfter(int balance);
+
+  /// No description provided for @noPointsTransactions.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد معاملات نقاط بعد'**
+  String get noPointsTransactions;
+
+  String get cashbackHistoryTitle;
+  String get cashbackBalanceTitle;
+  String get egpCurrency;
+  String get noCashbackTransactionsYet;
+  String get cashbackTransactionsWillAppear;
+  String get followersAuctions;
+  String get whoIFollow;
+  String get suggestions;
+  String get noFollowedAuctionsYet;
+  String get followSellersToSeeAuctions;
+  String get discoverSellers;
+  String compactHoursMinutes(int hours, int minutes);
+  String compactMinutes(int minutes);
+  String get packageFollowing;
+  String get discovery;
+  String get editBird;
+  String get pigeonBasicData;
+  String get ringNumberRequired;
+  String get breedRequired;
+  String get breedHint;
+  String get genderRequired;
+  String get optionalData;
+  String get chooseHatchDate;
+  String get achievementsRequired;
+  String get achievementsHint;
+  String get staminaRequired;
+  String get saleData;
+  String get displayName;
+  String get displayNameHint;
+  String get priceEgpRequired;
+  String get priceHint;
+  String get flyingSpeedKmh;
+  String get flyingSpeedHint;
+  String get birdStatus;
+  String get pedigreeData;
+  String get fatherRingOptional;
+  String get motherRingOptional;
+  String get birdIdHint;
+  String get saving;
+  String get saveChanges;
+  String get nextAddPhotos;
+  String get listInMarket;
+  String get listInMarketDesc;
 }
 
 class _AppLocalizationsDelegate

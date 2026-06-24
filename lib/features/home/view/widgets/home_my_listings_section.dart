@@ -23,14 +23,8 @@ class HomeMyListingsSection extends StatelessWidget {
     this.onBirdTap,
   });
 
-  static String _fmtTime(int? seconds) {
-    if (seconds == null || seconds <= 0) return 'انتهى';
-    final days = seconds ~/ 86400;
-    if (days > 0) return '$days يوم';
-    final hours = seconds ~/ 3600;
-    if (hours > 0) return '$hours ساعة';
-    return '${seconds ~/ 60} دقيقة';
-  }
+  // _fmtTime is now unused — _AuctionCard localizes inline
+
 
   static String _fmtPrice(double v) {
     if (v == 0) return '0';
@@ -64,7 +58,7 @@ class HomeMyListingsSection extends StatelessWidget {
             auctions.isEmpty
                 ? _EmptyCard(
                     icon: Icons.gavel_rounded,
-                    message: 'لا توجد مزادات مضافة بعد',
+                    message: AppLocalizations.of(context).noAuctionsAddedYet,
                   )
                 : SizedBox(
                     height: 130,
@@ -75,7 +69,6 @@ class HomeMyListingsSection extends StatelessWidget {
                       itemBuilder: (_, i) => _AuctionCard(
                         auction: auctions[i],
                         onTap: onAuctionTap,
-                        fmtTime: _fmtTime,
                         fmtPrice: _fmtPrice,
                       ),
                     ),
@@ -84,7 +77,7 @@ class HomeMyListingsSection extends StatelessWidget {
           ],
           if (birds.isNotEmpty || true) ...[
             _SectionHeader(
-              title: 'طيوري المعروضة',
+              title: AppLocalizations.of(context).myListedBirds,
               count: birds.length,
               icon: Icons.flutter_dash,
               iconColor: AppColors.orange,
@@ -94,7 +87,7 @@ class HomeMyListingsSection extends StatelessWidget {
             birds.isEmpty
                 ? _EmptyCard(
                     icon: Icons.flutter_dash,
-                    message: 'لا توجد طيور مضافة بعد',
+                    message: AppLocalizations.of(context).noBirdsAddedYet,
                   )
                 : SizedBox(
                     height: 140,
@@ -180,7 +173,7 @@ class _SectionHeader extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'عرض الكل',
+                  AppLocalizations.of(context).viewAll,
                   style: TextStyle(
                       fontSize: 12, color: AppColors.textSecondary),
                 ),
@@ -232,12 +225,10 @@ class _EmptyCard extends StatelessWidget {
 class _AuctionCard extends StatelessWidget {
   final AuctionModel auction;
   final void Function(AuctionModel)? onTap;
-  final String Function(int?) fmtTime;
   final String Function(double) fmtPrice;
 
   _AuctionCard({
     required this.auction,
-    required this.fmtTime,
     required this.fmtPrice,
     this.onTap,
   });
@@ -255,14 +246,14 @@ class _AuctionCard extends StatelessWidget {
     }
   }
 
-  String get _statusLabel {
+  String _statusLabel(AppLocalizations l) {
     switch (auction.status) {
       case 'active':
-        return 'نشط';
+        return l.statusActive;
       case 'ended':
-        return 'منتهي';
+        return l.statusEnded;
       case 'cancelled':
-        return 'ملغي';
+        return l.statusCancelled;
       default:
         return auction.statusDisplay.isNotEmpty
             ? auction.statusDisplay
@@ -270,11 +261,21 @@ class _AuctionCard extends StatelessWidget {
     }
   }
 
+  String _timeLabel(AppLocalizations l) {
+    if (!auction.isActive) return _statusLabel(l);
+    final seconds = auction.timeRemaining;
+    if (seconds == null || seconds <= 0) return l.statusEnded;
+    final days = seconds ~/ 86400;
+    if (days > 0) return l.endsInDays(days);
+    final hours = seconds ~/ 3600;
+    if (hours > 0) return l.endsInHours(hours);
+    return l.endsInMinutes(seconds ~/ 60);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final timeLabel = auction.isActive
-        ? 'ينتهي خلال ${fmtTime(auction.timeRemaining)}'
-        : _statusLabel;
+    final l = AppLocalizations.of(context);
+    final timeLabel = _timeLabel(l);
 
     return GestureDetector(
       onTap: onTap != null ? () => onTap!(auction) : null,
@@ -306,7 +307,7 @@ class _AuctionCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    _statusLabel,
+                    _statusLabel(l),
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -317,7 +318,7 @@ class _AuctionCard extends StatelessWidget {
                 Spacer(),
                 if (auction.itemCount > 0)
                   Text(
-                    '${auction.itemCount} طير',
+                    l.birdCount(auction.itemCount),
                     style: TextStyle(
                         fontSize: 10, color: AppColors.textSecondary),
                   ),
@@ -357,7 +358,7 @@ class _AuctionCard extends StatelessWidget {
             if (auction.currentPrice > 0) ...[
               SizedBox(height: 2),
               Text(
-                'السعر الحالي: ${fmtPrice(auction.currentPrice)}',
+                '${l.currentPrice}: ${fmtPrice(auction.currentPrice)}',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -387,6 +388,7 @@ class _BirdCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap != null ? () => onTap!(bird) : null,
       child: Container(
@@ -440,7 +442,7 @@ class _BirdCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      '${fmtPrice(bird.price)} ج.م',
+                      l.priceEgpFormat(fmtPrice(bird.price)),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -459,10 +461,10 @@ class _BirdCard extends StatelessWidget {
                     ),
                     child: Text(
                       bird.gender == 'male'
-                          ? 'ذكر'
+                          ? l.male
                           : bird.gender == 'female'
-                              ? 'أنثى'
-                              : 'صغير',
+                              ? l.female
+                              : l.genderYoung,
                       style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,

@@ -9,6 +9,7 @@ import '../widgets/pigeon_id_shared_widgets.dart';
 import 'pigeon_id_photos_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class PigeonIdFormPage extends StatefulWidget {
   final PigeonModel? initialPigeon;
   PigeonIdFormPage({super.key, this.initialPigeon});
@@ -118,7 +119,9 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
         } else if (state.status == PigeonIdStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(
+                state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -129,13 +132,18 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
-            title: isEditMode ? 'تعديل الطائر' : 'الهوية الرقمية للحمامة',
+            title: isEditMode
+                ? AppLocalizations.of(context).editBird
+                : AppLocalizations.of(context).digitalId,
           ),
           body: Column(
             children: [
               if (!isEditMode)
                 PigeonStepHeader(
-                    current: 1, total: 4, label: 'البيانات الأساسية'),
+                  current: 1,
+                  total: 4,
+                  label: AppLocalizations.of(context).pigeonBasicData,
+                ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(20),
@@ -143,11 +151,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ── Ring number ──────────────────────────────────
-                      PigeonFieldLabel(text: 'رقم الحلقة *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).ringNumberRequired),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _ringCtrl,
-                        hint: 'مثال: EG-2024-001',
+                        hint: 'EG-2024-001',
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdRingNumberChanged(v)),
@@ -156,11 +164,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Breed ────────────────────────────────────────
-                      PigeonFieldLabel(text: 'السلالة / النسب *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).breedRequired),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _breedCtrl,
-                        hint: 'مثال: زاجل بلجيكي أصيل',
+                        hint: AppLocalizations.of(context).breedHint,
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdBreedChanged(v)),
@@ -169,7 +177,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Gender ───────────────────────────────────────
-                      PigeonFieldLabel(text: 'الجنس *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).genderRequired),
                       SizedBox(height: 8),
                       _GenderSelector(
                         selected: state.gender,
@@ -188,7 +196,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 12),
                             child: Text(
-                              'بيانات اختيارية',
+                              AppLocalizations.of(context).optionalData,
                               style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary),
@@ -223,7 +231,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                               Text(
                                 state.hatchDate != null
                                     ? '${state.hatchDate!.day}/${state.hatchDate!.month}/${state.hatchDate!.year}'
-                                    : 'اختر تاريخ الفقس',
+                                    : AppLocalizations.of(context).chooseHatchDate,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: state.hatchDate != null
@@ -239,11 +247,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Achievements ─────────────────────────────────
-                      PigeonFieldLabel(text: 'الإنجازات *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).achievementsRequired),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _achievementsCtrl,
-                        hint: 'مثال: بطل سباق 500كم 2024',
+                        hint: AppLocalizations.of(context).achievementsHint,
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdAchievementsChanged(v)),
@@ -252,7 +260,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Stamina ability ──────────────────────────────
-                      PigeonFieldLabel(text: 'قدرة التحمل *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).staminaRequired),
                       SizedBox(height: 8),
                       _StaminaSelector(
                         selected: state.staminaAbility,
@@ -270,7 +278,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
-                              'بيانات البيع',
+                              AppLocalizations.of(context).saleData,
                               style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary),
@@ -283,11 +291,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Display name ─────────────────────────────────
-                      PigeonFieldLabel(text: 'اسم العرض'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).displayName),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _nameCtrl,
-                        hint: 'مثال: الصاعقة الزرقاء',
+                        hint: AppLocalizations.of(context).displayNameHint,
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
                             .add(PigeonIdNameChanged(v)),
@@ -296,11 +304,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Price ─────────────────────────────────────────
-                      PigeonFieldLabel(text: 'السعر (ج.م) *'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).priceEgpRequired),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _priceCtrl,
-                        hint: 'مثال: 5000',
+                        hint: AppLocalizations.of(context).priceHint,
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
@@ -310,11 +318,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Description ───────────────────────────────────
-                      PigeonFieldLabel(text: 'وصف الطائر'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).description),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _descCtrl,
-                        hint: 'اكتب وصفاً مختصراً عن الطائر وميزاته...',
+                        hint: AppLocalizations.of(context).auctionDescBriefHint,
                         maxLines: 3,
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
@@ -324,11 +332,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       SizedBox(height: 16),
 
                       // ── Flying speed ──────────────────────────────────
-                      PigeonFieldLabel(text: 'سرعة الطيران (كم/ساعة)'),
+                      PigeonFieldLabel(text: AppLocalizations.of(context).flyingSpeedKmh),
                       SizedBox(height: 6),
                       PigeonAppInput(
                         controller: _speedCtrl,
-                        hint: 'مثال: 108.5',
+                        hint: AppLocalizations.of(context).flyingSpeedHint,
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (v) => context
                             .read<PigeonIdBloc>()
@@ -338,7 +346,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                       // ── Bird status (edit only) ───────────────────────
                       if (state.editingId != null) ...[
                         SizedBox(height: 16),
-                        PigeonFieldLabel(text: 'حالة الطائر'),
+                        PigeonFieldLabel(text: AppLocalizations.of(context).birdStatus),
                         SizedBox(height: 8),
                         _BirdStatusSelector(
                           selected: state.birdStatus,
@@ -367,7 +375,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
-                              'بيانات النسب',
+                              AppLocalizations.of(context).pedigreeData,
                               style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary),
@@ -385,11 +393,11 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                PigeonFieldLabel(text: 'رقم الأب (اختياري)'),
+                                PigeonFieldLabel(text: AppLocalizations.of(context).fatherRingOptional),
                                 SizedBox(height: 6),
                                 PigeonAppInput(
                                   controller: _fatherCtrl,
-                                  hint: 'معرّف الطائر',
+                                  hint: AppLocalizations.of(context).birdIdHint,
                                   keyboardType: TextInputType.number,
                                   onChanged: (v) => context
                                       .read<PigeonIdBloc>()
@@ -403,11 +411,14 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                PigeonFieldLabel(text: 'رقم الأم (اختياري)'),
+                                PigeonFieldLabel(
+                                  text: AppLocalizations.of(context)
+                                      .motherRingOptional,
+                                ),
                                 SizedBox(height: 6),
                                 PigeonAppInput(
                                   controller: _motherCtrl,
-                                  hint: 'معرّف الطائر',
+                                  hint: AppLocalizations.of(context).birdIdHint,
                                   keyboardType: TextInputType.number,
                                   onChanged: (v) => context
                                       .read<PigeonIdBloc>()
@@ -428,8 +439,8 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
               isEditMode
                   ? PigeonNextButton(
                       label: state.status == PigeonIdStatus.updating
-                          ? 'جارٍ الحفظ...'
-                          : 'حفظ التعديلات',
+                          ? AppLocalizations.of(context).saving
+                          : AppLocalizations.of(context).saveChanges,
                       enabled: state.isReadyToSubmit &&
                           state.status != PigeonIdStatus.updating,
                       onTap: () => context
@@ -437,7 +448,7 @@ class _PigeonIdFormPageState extends State<PigeonIdFormPage> {
                           .add(PigeonIdSubmitted()),
                     )
                   : PigeonNextButton(
-                      label: 'التالي — إضافة الصور',
+                      label: AppLocalizations.of(context).nextAddPhotos,
                       enabled: state.canProceedToPhotos,
                       onTap: () => _next(context, state),
                     ),
@@ -458,28 +469,48 @@ class _GenderSelector extends StatelessWidget {
   _GenderSelector(
       {required this.selected, required this.onChanged});
 
-  static final _options = [
-    (PigeonGender.male, 'ذكر', '🔵', AppColors.blue, AppColors.blueLight),
-    (PigeonGender.female, 'أنثى', '🔴', AppColors.red, AppColors.redLight),
-    (PigeonGender.young, 'صغير', '🟡', AppColors.orange, AppColors.orangeLight),
-  ];
+  List<({PigeonGender gender, String label, String emoji, Color color, Color bg})>
+      _options(AppLocalizations l) => [
+            (
+              gender: PigeonGender.male,
+              label: l.male,
+              emoji: '🔵',
+              color: AppColors.blue,
+              bg: AppColors.blueLight,
+            ),
+            (
+              gender: PigeonGender.female,
+              label: l.female,
+              emoji: '🔴',
+              color: AppColors.red,
+              bg: AppColors.redLight,
+            ),
+            (
+              gender: PigeonGender.young,
+              label: l.genderYoung,
+              emoji: '🟡',
+              color: AppColors.orange,
+              bg: AppColors.orangeLight,
+            ),
+          ];
 
   @override
   Widget build(BuildContext context) {
+    final options = _options(AppLocalizations.of(context));
     return Row(
-      children: _options.asMap().entries.map((e) {
+      children: options.asMap().entries.map((e) {
         final idx = e.key;
-        final (gender, label, emoji, color, bg) = e.value;
+        final option = e.value;
         return Expanded(
           child: Padding(
             padding: EdgeInsetsDirectional.only(end: idx < 2 ? 8 : 0),
             child: _GenderOption(
-              label: label,
-              emoji: emoji,
-              isSelected: selected == gender,
-              selectedColor: color,
-              selectedBg: bg,
-              onTap: () => onChanged(gender),
+              label: option.label,
+              emoji: option.emoji,
+              isSelected: selected == option.gender,
+              selectedColor: option.color,
+              selectedBg: option.bg,
+              onTap: () => onChanged(option.gender),
             ),
           ),
         );
@@ -546,8 +577,20 @@ class _StaminaSelector extends StatelessWidget {
 
   _StaminaSelector({required this.selected, required this.onChanged});
 
+  String _labelFor(AppLocalizations l, StaminaAbility stamina) {
+    switch (stamina) {
+      case StaminaAbility.excellent:
+        return l.staminaExcellent;
+      case StaminaAbility.verygood:
+        return l.staminaVeryGood;
+      case StaminaAbility.good:
+        return l.staminaGood;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: StaminaAbility.values.map((s) {
         final isSelected = s == selected;
@@ -569,7 +612,7 @@ class _StaminaSelector extends StatelessWidget {
                 ),
               ),
               child: Text(
-                s.label,
+                _labelFor(l, s),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
@@ -591,44 +634,50 @@ class _BirdStatusSelector extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
 
-  static final _options = [
-    ('available', 'متاح', AppColors.success),
-    ('inactive', 'غير نشط', AppColors.textSecondary),
-    ('sold', 'مباع', AppColors.blue),
-  ];
+  List<({String value, String label, Color color})> _options(
+    AppLocalizations l,
+  ) =>
+      [
+        (value: 'available', label: l.available, color: AppColors.success),
+        (value: 'inactive', label: l.inactive, color: AppColors.textSecondary),
+        (value: 'sold', label: l.statusSold, color: AppColors.blue),
+      ];
 
   _BirdStatusSelector(
       {required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final options = _options(AppLocalizations.of(context));
     return Row(
-      children: _options.asMap().entries.map((e) {
+      children: options.asMap().entries.map((e) {
         final idx = e.key;
-        final (apiVal, label, color) = e.value;
-        final isSelected = selected == apiVal;
+        final option = e.value;
+        final isSelected = selected == option.value;
         return Expanded(
           child: GestureDetector(
-            onTap: () => onChanged(apiVal),
+            onTap: () => onChanged(option.value),
             child: AnimatedContainer(
               duration: Duration(milliseconds: 200),
               margin: EdgeInsetsDirectional.only(end: idx < 2 ? 8 : 0),
               padding: EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: isSelected ? color.withValues(alpha: 0.12) : Colors.white,
+                color: isSelected
+                    ? option.color.withValues(alpha: 0.12)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? color : AppColors.border,
+                  color: isSelected ? option.color : AppColors.border,
                   width: isSelected ? 1.5 : 1,
                 ),
               ),
               child: Text(
-                label,
+                option.label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: isSelected ? color : AppColors.textSecondary,
+                  color: isSelected ? option.color : AppColors.textSecondary,
                 ),
               ),
             ),
@@ -661,7 +710,7 @@ class _BirdListingToggle extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'عرض في المتجر',
+                  AppLocalizations.of(context).listInMarket,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -670,7 +719,7 @@ class _BirdListingToggle extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  'سيظهر الطائر للمشترين في المتجر',
+                  AppLocalizations.of(context).listInMarketDesc,
                   style: TextStyle(
                       fontSize: 12, color: AppColors.textSecondary),
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../model/seller_home_summary.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeProviderFeaturesSection extends StatelessWidget {
   final SellerHomeSummary? summary;
@@ -60,12 +61,12 @@ class HomeProviderFeaturesSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
+            children: [
               Icon(Icons.verified_rounded,
                   color: AppColors.purple, size: 18),
               SizedBox(width: 8),
               Text(
-                'مميزات مقدمي الخدمة',
+                AppLocalizations.of(context).providerFeatures,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -108,8 +109,8 @@ class HomeProviderFeaturesSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     summary?.profileActivated == false
-                        ? 'تنبيه: تفعيل حساب البائع مطلوب قبل النشر الكامل.'
-                        : 'ملاحظة: الهوية الرقمية والفيديو الإلزاميان قبل نشر أي مزاد',
+                        ? AppLocalizations.of(context).sellerActivationRequired
+                        : AppLocalizations.of(context).digitalIdVideoRequired,
                     style: const TextStyle(
                         fontSize: 12, color: Color(0xFF795548)),
                   ),
@@ -145,12 +146,13 @@ class _FallbackTiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       children: [
         _FeatureTile(
           icon: Icons.add_box_rounded,
-          title: 'إضافة مزاد مع هوية رقمية',
-          subtitle: 'الأنساب الكامل + صور حصرية + فيديو وجهي',
+          title: l.addAuctionWithDigitalId,
+          subtitle: l.addAuctionWithDigitalIdSub,
           color: AppColors.primary,
           lightColor: AppColors.primaryLight,
           trailingIcon: Icons.check_circle_rounded,
@@ -159,8 +161,8 @@ class _FallbackTiles extends StatelessWidget {
         SizedBox(height: 8),
         _FeatureTile(
           icon: Icons.badge_rounded,
-          title: 'عرض الهوية الرقمية',
-          subtitle: 'QR Code + معلومات الطير + رقم الدبلة',
+          title: l.viewDigitalId,
+          subtitle: l.viewDigitalIdSub,
           color: AppColors.purple,
           lightColor: AppColors.purpleLight,
           trailingIcon: Icons.qr_code_2_rounded,
@@ -169,8 +171,8 @@ class _FallbackTiles extends StatelessWidget {
         SizedBox(height: 8),
         _FeatureTile(
           icon: Icons.videocam_rounded,
-          title: 'الفيديو الإلزامي (4 مراحل)',
-          subtitle: 'وقفة عامة + جناح + ذيل + حين + خط',
+          title: l.mandatoryVideo,
+          subtitle: l.mandatoryVideoSub,
           color: AppColors.red,
           lightColor: AppColors.redLight,
           trailingIcon: Icons.play_circle_rounded,

@@ -987,6 +987,14 @@
   "@followedAlt": {},
   "noProducts": "لا توجد منتجات",
   "@noProducts": {},
+  "productsCount": "{count} منتج",
+  "@productsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "newest": "الأحدث",
   "@newest": {},
   "priceLowToHigh": "السعر: الأقل أولاً",
@@ -995,6 +1003,14 @@
   "@priceHighToLow": {},
   "sort": "ترتيب",
   "@sort": {},
+  "reviewsCount": "({count} تقييم)",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "benefits": "الفوائد",
   "@benefits": {},
   "myInsights": "إحصائياتي",
@@ -1472,5 +1488,529 @@
   "earnedBadge": "مكتسبة ✓",
   "@earnedBadge": {},
   "available": "متاحة",
-  "@available": {}
+  "@available": {},
+  "welcomeBackGeneric": "مرحباً بعودتك! 👋",
+  "@welcomeBackGeneric": {},
+  "welcomeWithName": "مرحباً {name} 👋",
+  "@welcomeWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noPackage": "بدون باقة",
+  "@noPackage": {},
+  "viewAll": "عرض الكل",
+  "@viewAll": {},
+  "activitySummary": "ملخص نشاطك",
+  "@activitySummary": {},
+  "viewAllStats": "عرض كل الإحصائيات",
+  "@viewAllStats": {},
+  "myListedBirds": "طيوري المعروضة",
+  "@myListedBirds": {},
+  "noAuctionsAddedYet": "لا توجد مزادات مضافة بعد",
+  "@noAuctionsAddedYet": {},
+  "noBirdsAddedYet": "لا توجد طيور مضافة بعد",
+  "@noBirdsAddedYet": {},
+  "endsInDays": "ينتهي خلال {count} يوم",
+  "@endsInDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endsInHours": "ينتهي خلال {count} ساعة",
+  "@endsInHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endsInMinutes": "ينتهي خلال {count} دقيقة",
+  "@endsInMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fixedPriceBirds": "طيور بسعر ثابت",
+  "@fixedPriceBirds": {},
+  "kmUnit": "كم",
+  "@kmUnit": {},
+  "platformFeatures": "مميزات المنصة",
+  "@platformFeatures": {},
+  "auctionSystem": "نظام المزايدات",
+  "@auctionSystem": {},
+  "auctionSystemSub": "مزايدة حية ومتقدمة",
+  "@auctionSystemSub": {},
+  "ownershipRecordProtected": "محمي وغير قابل للتلاعب",
+  "@ownershipRecordProtected": {},
+  "marketSubtitle": "علف، أدوية، مستلزمات",
+  "@marketSubtitle": {},
+  "pointsAndLoyalty": "نقاط وولاء",
+  "@pointsAndLoyalty": {},
+  "pointsAndLoyaltySub": "اكسب مع كل عملية",
+  "@pointsAndLoyaltySub": {},
+  "referralCodeHint": "كود: PIGEON123",
+  "@referralCodeHint": {},
+  "copied": "تم النسخ",
+  "@copied": {},
+  "copy": "نسخ",
+  "@copy": {},
+  "sellerRole": "بائع",
+  "@sellerRole": {},
+  "buyerRole": "مشتري",
+  "@buyerRole": {},
+  "breedersYouMayKnow": "مربيون قد تعرفهم",
+  "@breedersYouMayKnow": {},
+  "auctionCountUnit": "مزاد",
+  "@auctionCountUnit": {},
+  "upcomingAuctions": "مزادات قادمة",
+  "@upcomingAuctions": {},
+  "auctionsComingSoonBanner": "سوف تنزل المزادات قريباً - كن مستعداً!",
+  "@auctionsComingSoonBanner": {},
+  "countdownSecond": "ثانية",
+  "@countdownSecond": {},
+  "countdownMinute": "دقيقة",
+  "@countdownMinute": {},
+  "countdownHour": "ساعة",
+  "@countdownHour": {},
+  "countdownDay": "يوم",
+  "@countdownDay": {},
+  "providerFeatures": "مميزات مقدمي الخدمة",
+  "@providerFeatures": {},
+  "sellerActivationRequired": "تنبيه: تفعيل حساب البائع مطلوب قبل النشر الكامل.",
+  "@sellerActivationRequired": {},
+  "digitalIdVideoRequired": "ملاحظة: الهوية الرقمية والفيديو الإلزاميان قبل نشر أي مزاد",
+  "@digitalIdVideoRequired": {},
+  "addAuctionWithDigitalId": "إضافة مزاد بالهوية الرقمية",
+  "@addAuctionWithDigitalId": {},
+  "addAuctionWithDigitalIdSub": "ربط الطائر بهوية رقمية موثقة",
+  "@addAuctionWithDigitalIdSub": {},
+  "viewDigitalId": "عرض الهوية الرقمية",
+  "@viewDigitalId": {},
+  "viewDigitalIdSub": "QR Code + رقم الدبلة",
+  "@viewDigitalIdSub": {},
+  "mandatoryVideo": "الفيديو الإلزامي",
+  "@mandatoryVideo": {},
+  "mandatoryVideoSub": "4 مراحل مطلوبة",
+  "@mandatoryVideoSub": {},
+  "importantNotifications": "إشعارات مهمة",
+  "@importantNotifications": {},
+  "newCountBadge": "{count} جديدة",
+  "@newCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRecentNotifications": "لا إشعارات حديثة",
+  "@noRecentNotifications": {},
+  "newBadge": "جديد",
+  "@newBadge": {},
+  "myBirds": "طيوري",
+  "@myBirds": {},
+  "addProductToStore": "إضافة منتج للمتجر",
+  "@addProductToStore": {},
+  "followers": "متابع",
+  "@followers": {},
+  "bidsLabel": "مزايدة",
+  "@bidsLabel": {},
+  "myToolsAndFeatures": "أدواتي ومميزاتي",
+  "@myToolsAndFeatures": {},
+  "toolsPageSubtitle": "إشعارات · متطلبات النشر · أدوات متقدمة",
+  "@toolsPageSubtitle": {},
+  "sellerProviderTools": "أدوات مقدم الخدمة",
+  "@sellerProviderTools": {},
+  "multiRoomManagement": "إدارة الغرف المتعددة",
+  "@multiRoomManagement": {},
+  "newBadgeLabel": "NEW",
+  "@newBadgeLabel": {},
+  "multiRoomDesc": "إنشاء وإدارة عدة غرف مزادات",
+  "@multiRoomDesc": {},
+  "threePackages": "3 باقات مختلفة",
+  "@threePackages": {},
+  "fullCustomization": "تخصيص كامل",
+  "@fullCustomization": {},
+  "unlimited": "غير محدود",
+  "@unlimited": {},
+  "viewOwnershipRecord": "عرض سجل الملكية",
+  "@viewOwnershipRecord": {},
+  "ownershipRecordFull": "سجل كامل لجميع عمليات النقل",
+  "@ownershipRecordFull": {},
+  "ownershipTransfer": "عملية نقل الملكية",
+  "@ownershipTransfer": {},
+  "ownershipTransferStages": "3 مراحل: سداد ← تسليم ← تأكيد",
+  "@ownershipTransferStages": {},
+  "recordProtectionLabel": "حماية السجل:",
+  "@recordProtectionLabel": {},
+  "tamperProof": "غير قابل للتلاعب",
+  "@tamperProof": {},
+  "visibleToSellerBuyerOnly": "يظهر فقط للبائع والمشتري",
+  "@visibleToSellerBuyerOnly": {},
+  "autoDeleteAfter7Days": "حذف تلقائي بعد 7 أيام",
+  "@autoDeleteAfter7Days": {},
+  "manualDeleteAfterMonth": "حذف يدوي بعد شهر (للبائع)",
+  "@manualDeleteAfterMonth": {},
+  "perInviteLabel": "لكل دعوة",
+  "@perInviteLabel": {},
+  "earningsLabel": "أرباح",
+  "@earningsLabel": {},
+  "invitesLabel": "دعوات",
+  "@invitesLabel": {},
+  "scanBirdCardTooltip": "مسح بطاقة طائر",
+  "@scanBirdCardTooltip": {},
+  "serviceProvider": "مقدم الخدمة",
+  "@serviceProvider": {},
+  "statsPageTitle": "الإحصائيات",
+  "@statsPageTitle": {},
+  "fullPerformanceDashboard": "لوحة الأداء الكاملة",
+  "@fullPerformanceDashboard": {},
+  "miniKpiAuctions": "مزادات",
+  "@miniKpiAuctions": {},
+  "miniKpiSales": "مبيعات",
+  "@miniKpiSales": {},
+  "miniKpiOrders": "طلبات",
+  "@miniKpiOrders": {},
+  "miniKpiListings": "قوائم",
+  "@miniKpiListings": {},
+  "todayStats": "إحصائيات اليوم",
+  "@todayStats": {},
+  "activeAuctionsLabel": "مزادات نشطة",
+  "@activeAuctionsLabel": {},
+  "trendFromYesterday": "+2 من الأمس",
+  "@trendFromYesterday": {},
+  "totalSalesLabel": "إجمالي المبيعات",
+  "@totalSalesLabel": {},
+  "auctionPlusStore": "المزاد + المتجر",
+  "@auctionPlusStore": {},
+  "needsReview": "تحتاج مراجعة",
+  "@needsReview": {},
+  "activeListingsLabel": "قوائم نشطة",
+  "@activeListingsLabel": {},
+  "totalPublished": "إجمالي المنشورات",
+  "@totalPublished": {},
+  "balanceAndPoints": "الرصيد والنقاط",
+  "@balanceAndPoints": {},
+  "currentBalanceLabel": "الرصيد الحالي",
+  "@currentBalanceLabel": {},
+  "loyaltyPointsLabel": "نقاط الولاء",
+  "@loyaltyPointsLabel": {},
+  "weeklyPerformance": "الأداء الأسبوعي",
+  "@weeklyPerformance": {},
+  "last7DaysSales": "المبيعات خلال آخر 7 أيام",
+  "@last7DaysSales": {},
+  "accountHealth": "صحة الحساب",
+  "@accountHealth": {},
+  "accountActivation": "تفعيل الحساب",
+  "@accountActivation": {},
+  "basicPublishingRequirement": "شرط أساسي للنشر",
+  "@basicPublishingRequirement": {},
+  "digitalIdSubtitle": "QR Code + رقم الدبلة",
+  "@digitalIdSubtitle": {},
+  "mandatoryVideoLabel": "الفيديو الإلزامي",
+  "@mandatoryVideoLabel": {},
+  "fourStagesRequired": "4 مراحل مطلوبة",
+  "@fourStagesRequired": {},
+  "addAuctionLabel": "إضافة مزاد",
+  "@addAuctionLabel": {},
+  "firstAuctionOnPlatform": "أول مزاد لك على المنصة",
+  "@firstAuctionOnPlatform": {},
+  "recentActivities": "آخر النشاطات",
+  "@recentActivities": {},
+  "controlCenter": "مركز التحكم",
+  "@controlCenter": {},
+  "toolsPageTagline": "إشعاراتك • مميزاتك • أدواتك في مكان واحد",
+  "@toolsPageTagline": {},
+  "featuresChip": "المميزات",
+  "@featuresChip": {},
+  "toolsChip": "الأدوات",
+  "@toolsChip": {},
+  "myProducts": "منتجاتي",
+  "@myProducts": {},
+  "manageProductsInStore": "إضافة وإدارة منتجاتك في المتجر",
+  "@manageProductsInStore": {},
+  "myAuctionsWithCount": "مزاداتي ({count})",
+  "@myAuctionsWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeTabWithCount": "نشطة ({count})",
+  "@activeTabWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endedTabWithCount": "منتهية ({count})",
+  "@endedTabWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noEndedAuctions": "لا توجد مزادات منتهية",
+  "@noEndedAuctions": {},
+  "noActiveAuctions": "لا توجد مزادات نشطة",
+  "@noActiveAuctions": {},
+  "endedAuctionsWillAppearHere": "ستظهر هنا المزادات بعد انتهائها",
+  "@endedAuctionsWillAppearHere": {},
+  "createFirstAuction": "أنشئ مزادك الأول لعرض طيورك",
+  "@createFirstAuction": {},
+  "timeLabelDaysHours": "{days} يوم و{hours} ساعة",
+  "@timeLabelDaysHours": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "hours": { "type": "int" }
+    }
+  },
+  "timeLabelHoursMinutes": "{hours} ساعة و{minutes} دقيقة",
+  "@timeLabelHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "timeLabelMinutes": "{minutes} دقيقة",
+  "@timeLabelMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "auctionTypeDefault": "مزاد",
+  "@auctionTypeDefault": {},
+  "availableForAuction": "متاح للمزاد",
+  "@availableForAuction": {},
+  "inAuction": "في مزاد",
+  "@inAuction": {},
+  "noBirdsYet": "لا توجد طيور بعد",
+  "@noBirdsYet": {},
+  "addBirdsToAuctionsAndMarket": "أضف طيورك لعرضها في المزادات والسوق",
+  "@addBirdsToAuctionsAndMarket": {},
+  "noBirdsWithFilter": "لا توجد طيور بهذا الفلتر",
+  "@noBirdsWithFilter": {},
+  "clearFilters": "مسح الفلاتر",
+  "@clearFilters": {},
+  "availableBadge": "متاح",
+  "@availableBadge": {},
+  "daySun": "أحد",
+  "@daySun": {},
+  "dayMon": "اثن",
+  "@dayMon": {},
+  "dayTue": "ثلا",
+  "@dayTue": {},
+  "dayWed": "أرب",
+  "@dayWed": {},
+  "dayThu": "خمي",
+  "@dayThu": {},
+  "dayFri": "جمع",
+  "@dayFri": {},
+  "daySat": "سبت",
+  "@daySat": {},
+  "bidsCountLabel": "{count} مزايدة",
+  "@bidsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "usedPackageLabel": "الباقة المستخدمة",
+  "@usedPackageLabel": {},
+  "addNewBirdTitle": "إضافة طائر جديد",
+  "@addNewBirdTitle": {},
+  "addNewBirdSubtitle": "أنشئ بيانات طائر جديد وأضفه إلى المزاد",
+  "@addNewBirdSubtitle": {},
+  "chooseFromMyBirds": "اختيار من طيوري",
+  "@chooseFromMyBirds": {},
+  "chooseFromMyBirdsSub": "اختر طائراً موجوداً لم يُدرج في مزاد أو متجر",
+  "@chooseFromMyBirdsSub": {},
+  "selectBirdTitle": "اختر طائراً",
+  "@selectBirdTitle": {},
+  "myBirdsAvailableForAuction": "طيوري المتاحة للإضافة في المزاد",
+  "@myBirdsAvailableForAuction": {},
+  "noBirdsAvailable": "لا توجد طيور متاحة",
+  "@noBirdsAvailable": {},
+  "allBirdsListed": "جميع طيورك مدرجة في مزادات أو المتجر",
+  "@allBirdsListed": {},
+  "noActivePackageWarning": "لا توجد باقة نشطة — ستُرفض عملية الإنشاء",
+  "@noActivePackageWarning": {},
+  "subscribeBtn": "اشترك",
+  "@subscribeBtn": {},
+  "packagePointsInfo": "{remaining} نقطة متبقية · تكلفة المزاد: {cost} نقطة",
+  "@packagePointsInfo": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "endingSoonFilter": "ينتهي قريباً 🕐",
+  "@endingSoonFilter": {},
+  "myAuctionsFilter": "مزاداتي ✈️",
+  "@myAuctionsFilter": {},
+  "activeAuctionsCount": "{count} مزاد نشط",
+  "@activeAuctionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "loadingMore": "جارٍ التحميل...",
+  "@loadingMore": {},
+  "auctionCountBadge": "{count} مزاد",
+  "@auctionCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myBidsTooltip": "مزايداتي",
+  "@myBidsTooltip": {},
+  "refreshTooltip": "تحديث",
+  "@refreshTooltip": {},
+  "noResultsFor": "لا توجد نتائج لـ \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsHistoryTitle": "سجل النقاط",
+  "@pointsHistoryTitle": {},
+  "pointsLoadError": "تعذر تحميل السجل. تحقق من اتصالك وحاول مجدداً.",
+  "@pointsLoadError": {},
+  "pointsPaginationLabel": "{from}–{to} من {count}",
+  "@pointsPaginationLabel": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" },
+      "count": { "type": "int" }
+    }
+  },
+  "pointsBalanceAfter": "الرصيد: {balance}",
+  "@pointsBalanceAfter": {
+    "placeholders": {
+      "balance": { "type": "int" }
+    }
+  },
+  "noPointsTransactions": "لا توجد معاملات نقاط بعد",
+  "@noPointsTransactions": {},
+  "cashbackHistoryTitle": "سجل الكاش باك",
+  "@cashbackHistoryTitle": {},
+  "cashbackBalanceTitle": "رصيد الكاش باك",
+  "@cashbackBalanceTitle": {},
+  "egpCurrency": "ج.م",
+  "@egpCurrency": {},
+  "noCashbackTransactionsYet": "لا توجد معاملات حتى الآن",
+  "@noCashbackTransactionsYet": {},
+  "cashbackTransactionsWillAppear": "ستظهر هنا معاملات الكاش باك عند إتمام عمليات الشراء",
+  "@cashbackTransactionsWillAppear": {},
+  "followersAuctions": "مزادات المتابعين",
+  "@followersAuctions": {},
+  "whoIFollow": "من أتابعهم",
+  "@whoIFollow": {},
+  "suggestions": "اقتراحات",
+  "@suggestions": {},
+  "noFollowedAuctionsYet": "لا توجد مزادات بعد",
+  "@noFollowedAuctionsYet": {},
+  "followSellersToSeeAuctions": "تابع بائعين لترى مزاداتهم هنا أولاً",
+  "@followSellersToSeeAuctions": {},
+  "discoverSellers": "اكتشف بائعين",
+  "@discoverSellers": {},
+  "compactHoursMinutes": "{hours} س {minutes} د",
+  "@compactHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "compactMinutes": "{minutes} دقيقة",
+  "@compactMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "packageFollowing": "باقة متابعة",
+  "@packageFollowing": {},
+  "discovery": "اكتشاف",
+  "@discovery": {},
+  "editBird": "تعديل الطائر",
+  "@editBird": {},
+  "pigeonBasicData": "بيانات الطائر الأساسية",
+  "@pigeonBasicData": {},
+  "ringNumberRequired": "رقم الحلقة *",
+  "@ringNumberRequired": {},
+  "breedRequired": "السلالة *",
+  "@breedRequired": {},
+  "breedHint": "مثال: حمام زاجل",
+  "@breedHint": {},
+  "genderRequired": "الجنس *",
+  "@genderRequired": {},
+  "optionalData": "بيانات اختيارية",
+  "@optionalData": {},
+  "chooseHatchDate": "اختر تاريخ الفقس",
+  "@chooseHatchDate": {},
+  "achievementsRequired": "الإنجازات *",
+  "@achievementsRequired": {},
+  "achievementsHint": "اكتب أهم إنجازات الطائر",
+  "@achievementsHint": {},
+  "staminaRequired": "قدرة التحمل *",
+  "@staminaRequired": {},
+  "saleData": "بيانات البيع",
+  "@saleData": {},
+  "displayName": "اسم العرض",
+  "@displayName": {},
+  "displayNameHint": "الاسم الظاهر للمشترين",
+  "@displayNameHint": {},
+  "priceEgpRequired": "السعر (ج.م) *",
+  "@priceEgpRequired": {},
+  "priceHint": "مثال: 1500",
+  "@priceHint": {},
+  "flyingSpeedKmh": "سرعة الطيران (كم/س)",
+  "@flyingSpeedKmh": {},
+  "flyingSpeedHint": "مثال: 75.5",
+  "@flyingSpeedHint": {},
+  "birdStatus": "حالة الطائر",
+  "@birdStatus": {},
+  "pedigreeData": "بيانات النسب",
+  "@pedigreeData": {},
+  "fatherRingOptional": "رقم الأب (اختياري)",
+  "@fatherRingOptional": {},
+  "motherRingOptional": "رقم الأم (اختياري)",
+  "@motherRingOptional": {},
+  "birdIdHint": "معرّف الطائر",
+  "@birdIdHint": {},
+  "saving": "جارٍ الحفظ...",
+  "@saving": {},
+  "saveChanges": "حفظ التعديلات",
+  "@saveChanges": {},
+  "nextAddPhotos": "التالي - إضافة الصور",
+  "@nextAddPhotos": {},
+  "listInMarket": "عرض في المتجر",
+  "@listInMarket": {},
+  "listInMarketDesc": "سيظهر الطائر للمشترين في المتجر",
+  "@listInMarketDesc": {}
 }

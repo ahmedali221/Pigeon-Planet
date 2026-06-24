@@ -7,6 +7,7 @@ import '../widgets/market_product_card.dart';
 import 'product_detail_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class ProductsPage extends StatelessWidget {
   ProductsPage({super.key});
 
@@ -29,7 +30,10 @@ class ProductsPage extends StatelessWidget {
         } else if (state.status == CartStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ'),
+              content: Text(
+                state.errorMessage ??
+                    AppLocalizations.of(context).errorOccurred,
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -43,7 +47,8 @@ class ProductsPage extends StatelessWidget {
             BlocBuilder<MarketBloc, MarketState>(
               buildWhen: (p, c) => p.selectedCategory != c.selectedCategory,
               builder: (context, state) => _ProductsHeader(
-                title: state.selectedCategory?.name ?? AppLocalizations.of(context).products,
+                title: state.selectedCategory?.name ??
+                    AppLocalizations.of(context).products,
               ),
             ),
 
@@ -93,7 +98,9 @@ class ProductsPage extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      '${state.filteredProducts.length} منتج',
+                      AppLocalizations.of(context).productsCount(
+                        state.filteredProducts.length,
+                      ),
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -174,27 +181,29 @@ class _SortButton extends StatelessWidget {
   final String? activeOrdering;
   _SortButton({this.activeOrdering});
 
-  static final _options = [
-    (label: 'الأحدث', value: null),
-    (label: 'السعر: الأقل أولاً', value: 'price'),
-    (label: 'السعر: الأعلى أولاً', value: '-price'),
-  ];
+  List<({String label, String? value})> _options(AppLocalizations l) => [
+        (label: l.newest, value: null),
+        (label: l.priceLowToHigh, value: 'price'),
+        (label: l.priceHighToLow, value: '-price'),
+      ];
 
-  String get _activeLabel {
-    for (final o in _options) {
+  String _activeLabel(AppLocalizations l) {
+    for (final o in _options(l)) {
       if (o.value == activeOrdering) return o.label;
     }
-    return 'ترتيب';
+    return l.sort;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final options = _options(l);
     final isActive = activeOrdering != null;
     return PopupMenuButton<String?>(
       onSelected: (v) =>
           context.read<MarketBloc>().add(MarketSortChanged(v)),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      itemBuilder: (_) => _options
+      itemBuilder: (_) => options
           .map(
             (o) => PopupMenuItem<String?>(
               value: o.value,
@@ -241,7 +250,7 @@ class _SortButton extends StatelessWidget {
             ),
             SizedBox(width: 4),
             Text(
-              _activeLabel,
+              _activeLabel(l),
               style: TextStyle(
                 fontSize: 12,
                 color: isActive ? AppColors.primary : AppColors.textSecondary,

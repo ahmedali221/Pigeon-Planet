@@ -54,10 +54,11 @@ class _StatsAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = summary;
-    final pkg = s?.packageLabel ?? 'بدون باقة';
+    final l = AppLocalizations.of(context);
+    final pkg = s?.packageLabel ?? l.noPackage;
     final name = s?.nickname.trim().isNotEmpty == true
         ? s!.nickname.trim()
-        : 'مقدم الخدمة';
+        : l.serviceProvider;
 
     return SliverAppBar(
       expandedHeight: 220,
@@ -76,7 +77,7 @@ class _StatsAppBar extends StatelessWidget {
             Icon(Icons.bar_chart_rounded, color: Colors.white, size: 15),
             SizedBox(width: 5),
             Text(
-              'الإحصائيات',
+              l.statsPageTitle,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 15,
@@ -156,7 +157,7 @@ class _StatsAppBar extends StatelessWidget {
                               ),
                               SizedBox(height: 2),
                               Text(
-                                'لوحة الأداء الكاملة',
+                                l.fullPerformanceDashboard,
                                 style: TextStyle(
                                     color: Colors.white70, fontSize: 12),
                               ),
@@ -207,25 +208,25 @@ class _StatsAppBar extends StatelessWidget {
                           _MiniKpi(
                             icon: Icons.gavel_rounded,
                             value: '${s?.activeLiveAuctions ?? 0}',
-                            label: 'مزادات',
+                            label: l.miniKpiAuctions,
                           ),
                           _VertDivider(),
                           _MiniKpi(
                             icon: Icons.trending_up_rounded,
                             value: '${s?.totalSoldCount ?? 0}',
-                            label: 'مبيعات',
+                            label: l.miniKpiSales,
                           ),
                           _VertDivider(),
                           _MiniKpi(
                             icon: Icons.pending_actions_rounded,
                             value: '${s?.pendingOrderItems ?? 0}',
-                            label: 'طلبات',
+                            label: l.miniKpiOrders,
                           ),
                           _VertDivider(),
                           _MiniKpi(
                             icon: Icons.list_alt_rounded,
                             value: '${s?.myActiveListings ?? 0}',
-                            label: 'قوائم',
+                            label: l.miniKpiListings,
                           ),
                         ],
                       ),
@@ -254,7 +255,7 @@ class _KpiGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(label: 'إحصائيات اليوم', icon: Icons.today_rounded),
+        _SectionTitle(label: AppLocalizations.of(context).todayStats, icon: Icons.today_rounded),
         SizedBox(height: 12),
         GridView.count(
           crossAxisCount: 2,
@@ -266,20 +267,20 @@ class _KpiGrid extends StatelessWidget {
           children: [
             _KpiCard(
               value: '${s?.activeLiveAuctions ?? 0}',
-              label: 'مزادات نشطة',
+              label: AppLocalizations.of(context).activeAuctionsLabel,
               icon: Icons.gavel_rounded,
               color: AppColors.primary,
               bg: AppColors.primaryLight,
-              trend: '+2 من الأمس',
+              trend: AppLocalizations.of(context).trendFromYesterday,
               trendUp: true,
             ),
             _KpiCard(
               value: '${s?.totalSoldCount ?? 0}',
-              label: 'إجمالي المبيعات',
+              label: AppLocalizations.of(context).totalSalesLabel,
               icon: Icons.trending_up_rounded,
               color: Color(0xFF00897B),
               bg: Color(0xFFE0F2F1),
-              trend: 'المزاد + المتجر',
+              trend: AppLocalizations.of(context).auctionPlusStore,
               trendUp: true,
             ),
             _KpiCard(
@@ -288,16 +289,16 @@ class _KpiGrid extends StatelessWidget {
               icon: Icons.pending_actions_rounded,
               color: AppColors.red,
               bg: AppColors.redLight,
-              trend: 'تحتاج مراجعة',
+              trend: AppLocalizations.of(context).needsReview,
               trendUp: false,
             ),
             _KpiCard(
               value: '${s?.myActiveListings ?? 0}',
-              label: 'قوائم نشطة',
+              label: AppLocalizations.of(context).activeListingsLabel,
               icon: Icons.list_alt_rounded,
               color: AppColors.blue,
               bg: AppColors.blueLight,
-              trend: 'إجمالي المنشورات',
+              trend: AppLocalizations.of(context).totalPublished,
               trendUp: true,
             ),
           ],
@@ -411,14 +412,14 @@ class _BalancePointsRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionTitle(
-            label: 'الرصيد والنقاط', icon: Icons.account_balance_wallet_rounded),
+            label: AppLocalizations.of(context).balanceAndPoints, icon: Icons.account_balance_wallet_rounded),
         SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _FinanceCard(
                 value: s?.balanceDisplay ?? '0',
-                label: 'الرصيد الحالي',
+                label: AppLocalizations.of(context).currentBalanceLabel,
                 icon: Icons.account_balance_wallet_rounded,
                 color: AppColors.primary,
                 bg: AppColors.primaryLight,
@@ -428,7 +429,7 @@ class _BalancePointsRow extends StatelessWidget {
             Expanded(
               child: _FinanceCard(
                 value: '${s?.pointsBalance ?? 0}',
-                label: 'نقاط الولاء',
+                label: AppLocalizations.of(context).loyaltyPointsLabel,
                 icon: Icons.bolt_rounded,
                 color: Color(0xFF00897B),
                 bg: Color(0xFFE0F2F1),
@@ -513,7 +514,10 @@ class _WeeklyPerformance extends StatelessWidget {
   final int totalSoldCount;
   _WeeklyPerformance({required this.totalSoldCount});
 
-  static final _days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
+  List<String> _dayLabels(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [l.daySun, l.dayMon, l.dayTue, l.dayWed, l.dayThu, l.dayFri, l.daySat];
+  }
 
   List<int> _bars() {
     final today = totalSoldCount.clamp(0, 20);
@@ -522,6 +526,7 @@ class _WeeklyPerformance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final days = _dayLabels(context);
     final bars = _bars();
     final maxVal = bars.reduce((a, b) => a > b ? a : b);
 
@@ -542,10 +547,10 @@ class _WeeklyPerformance extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionTitle(
-              label: 'الأداء الأسبوعي', icon: Icons.show_chart_rounded, inline: true),
+              label: AppLocalizations.of(context).weeklyPerformance, icon: Icons.show_chart_rounded, inline: true),
           SizedBox(height: 4),
           Text(
-            'المبيعات خلال آخر 7 أيام',
+            AppLocalizations.of(context).last7DaysSales,
             style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
           ),
           SizedBox(height: 20),
@@ -586,7 +591,7 @@ class _WeeklyPerformance extends StatelessWidget {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          _days[i],
+                          days[i],
                           style: TextStyle(
                             fontSize: 10,
                             color: isToday
@@ -625,28 +630,29 @@ class _AccountHealth extends StatelessWidget {
     bool noteIsDone(String key) =>
         notes.any((n) => n.key == key && n.done);
 
+    final l = AppLocalizations.of(context);
     final items = [
       _HealthItem(
-        label: 'تفعيل الحساب',
-        subtitle: 'شرط أساسي للنشر',
+        label: l.accountActivation,
+        subtitle: l.basicPublishingRequirement,
         done: s?.profileActivated ?? false,
         icon: Icons.verified_user_rounded,
       ),
       _HealthItem(
-        label: AppLocalizations.of(context).digitalId,
-        subtitle: 'QR Code + رقم الدبلة',
+        label: l.digitalId,
+        subtitle: l.digitalIdSubtitle,
         done: noteIsDone('identity_qr'),
         icon: Icons.badge_rounded,
       ),
       _HealthItem(
-        label: 'الفيديو الإلزامي',
-        subtitle: '4 مراحل مطلوبة',
+        label: l.mandatoryVideoLabel,
+        subtitle: l.fourStagesRequired,
         done: noteIsDone('video'),
         icon: Icons.videocam_rounded,
       ),
       _HealthItem(
-        label: 'إضافة مزاد',
-        subtitle: 'أول مزاد لك على المنصة',
+        label: l.addAuctionLabel,
+        subtitle: l.firstAuctionOnPlatform,
         done: (s?.activeLiveAuctions ?? 0) > 0,
         icon: Icons.gavel_rounded,
       ),
@@ -672,7 +678,7 @@ class _AccountHealth extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionTitle(
-              label: 'صحة الحساب', icon: Icons.health_and_safety_rounded, inline: true),
+              label: AppLocalizations.of(context).accountHealth, icon: Icons.health_and_safety_rounded, inline: true),
           SizedBox(height: 12),
           Row(
             children: [
@@ -822,7 +828,7 @@ class _RecentActivity extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionTitle(
-              label: 'آخر النشاطات',
+              label: AppLocalizations.of(context).recentActivities,
               icon: Icons.history_rounded,
               inline: true),
           SizedBox(height: 12),
@@ -878,7 +884,7 @@ class _RecentActivity extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'جديد',
+                            AppLocalizations.of(context).newBadge,
                             style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 10,

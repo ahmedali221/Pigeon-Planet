@@ -71,7 +71,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
     if (confirmed == true && context.mounted) {
-      context.read<ProfileBloc>().add(ProfileDeleteRequested());
+      final profile = context.read<ProfileBloc>().state.profile!;
+      context.read<ProfileBloc>().add(ProfileDeleteRequested(profile));
     }
   }
 

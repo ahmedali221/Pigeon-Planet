@@ -74,20 +74,22 @@ class PendingSellerPackageModel {
   final String packageName;
   final String status;
   final String createdAt;
+  final String? paymentProofUrl;
 
   const PendingSellerPackageModel({
     required this.id,
     required this.packageName,
     required this.status,
     required this.createdAt,
+    this.paymentProofUrl,
   });
 
   factory PendingSellerPackageModel.fromJson(Map<String, dynamic> j) =>
       PendingSellerPackageModel(
         id: (j['id'] as num?)?.toInt() ?? 0,
-        packageName:
-            (j['package'] as Map?)?['name'] as String? ?? '',
+        packageName: (j['package'] as Map?)?['name'] as String? ?? '',
         status: j['status'] as String? ?? '',
         createdAt: j['created'] as String? ?? j['created_at'] as String? ?? '',
+        paymentProofUrl: j['payment_proof'] as String?,
       );
 }

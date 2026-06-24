@@ -45,7 +45,7 @@ class _PointsHistoryPageState extends State<PointsHistoryPage> {
     } catch (_) {
       setState(() {
         _loading = false;
-        _error = 'تعذر تحميل السجل. تحقق من اتصالك وحاول مجدداً.';
+        _error = AppLocalizations.of(context).pointsLoadError;
       });
     }
   }
@@ -57,7 +57,7 @@ class _PointsHistoryPageState extends State<PointsHistoryPage> {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PPWAppBar(
-        title: 'سجل النقاط',
+        title: AppLocalizations.of(context).pointsHistoryTitle,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh_rounded, color: Colors.white),
@@ -129,7 +129,7 @@ class _PaginationBar extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            '$from–$to من $count',
+            AppLocalizations.of(context).pointsPaginationLabel(from, to, count),
             style: TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
           ),
@@ -204,7 +204,7 @@ class _TransactionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tx.reason.isEmpty ? 'معاملة نقاط' : tx.reason,
+                  tx.reason.isEmpty ? AppLocalizations.of(context).pointsTransactionFallback : tx.reason,
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 13,
@@ -236,7 +236,7 @@ class _TransactionTile extends StatelessWidget {
                 ),
               ),
               Text(
-                'الرصيد: ${tx.balanceAfter}',
+                AppLocalizations.of(context).pointsBalanceAfter(tx.balanceAfter),
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 10,

@@ -76,7 +76,7 @@ class PackagesBloc extends Bloc<PackagesEvent, PackagesState> {
       requestSuccess: false,
     ));
     try {
-      await _datasource.requestPackage(event.packageId);
+      await _datasource.requestPackage(event.packageId, proofFile: event.proofFile);
       final pendingPackage = await _datasource.fetchPendingPackage();
       emit(state.copyWith(
         status: PackagesStatus.loaded,

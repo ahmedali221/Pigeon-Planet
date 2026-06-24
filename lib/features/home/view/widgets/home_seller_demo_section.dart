@@ -22,7 +22,7 @@ class HomeSellerDemoSection extends StatelessWidget {
               Icon(Icons.tune_rounded, color: AppColors.primary, size: 18),
               SizedBox(width: 8),
               Text(
-                'أدوات مقدم الخدمة',
+                AppLocalizations.of(context).sellerProviderTools,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class _MultiRoomCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            'إدارة الغرف المتعددة',
+                            AppLocalizations.of(context).multiRoomManagement,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -108,7 +108,7 @@ class _MultiRoomCard extends StatelessWidget {
                             color: Color(0xFFFFD700),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Text('NEW',
+                          child: Text(AppLocalizations.of(context).newBadgeLabel,
                               style: TextStyle(
                                   color: Colors.black87,
                                   fontSize: 9,
@@ -118,7 +118,7 @@ class _MultiRoomCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'إنشاء وإدارة عدة غرف مزادات',
+                      AppLocalizations.of(context).multiRoomDesc,
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
@@ -143,9 +143,9 @@ class _MultiRoomCard extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: [
-              _WhiteChip(icon: Icons.shopping_bag_rounded, label: '3 باقات مختلفة'),
-              _WhiteChip(icon: Icons.bolt_rounded, label: 'تخصيص كامل'),
-              _WhiteChip(icon: Icons.all_inclusive_rounded, label: 'غير محدود'),
+              _WhiteChip(icon: Icons.shopping_bag_rounded, label: AppLocalizations.of(context).threePackages),
+              _WhiteChip(icon: Icons.bolt_rounded, label: AppLocalizations.of(context).fullCustomization),
+              _WhiteChip(icon: Icons.all_inclusive_rounded, label: AppLocalizations.of(context).unlimited),
             ],
           ),
         ],
@@ -211,8 +211,8 @@ class _OwnershipRegistryCard extends StatelessWidget {
           // action tiles
           _RegistryTile(
             icon: Icons.description_rounded,
-            title: 'عرض سجل الملكية',
-            subtitle: 'سجل كامل لجميع عمليات النقل',
+            title: AppLocalizations.of(context).viewOwnershipRecord,
+            subtitle: AppLocalizations.of(context).ownershipRecordFull,
             color: HomeSellerDemoSection._accent,
             lightColor: HomeSellerDemoSection._accentLight,
             onTap: () {},
@@ -220,8 +220,8 @@ class _OwnershipRegistryCard extends StatelessWidget {
           Divider(height: 1, indent: 16, endIndent: 16),
           _RegistryTile(
             icon: Icons.swap_horiz_rounded,
-            title: 'عملية نقل الملكية',
-            subtitle: '3 مراحل: سداد ← تسليم ← تأكيد',
+            title: AppLocalizations.of(context).ownershipTransfer,
+            subtitle: AppLocalizations.of(context).ownershipTransferStages,
             color: HomeSellerDemoSection._accentMid,
             lightColor: HomeSellerDemoSection._accentLight,
             onTap: () {},
@@ -245,7 +245,7 @@ class _OwnershipRegistryCard extends StatelessWidget {
                         color: HomeSellerDemoSection._accent, size: 16),
                     SizedBox(width: 6),
                     Text(
-                      'حماية السجل:',
+                      AppLocalizations.of(context).recordProtectionLabel,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
@@ -254,10 +254,10 @@ class _OwnershipRegistryCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 4),
-                _ProtectionItem(label: 'غير قابل للتلاعب'),
-                _ProtectionItem(label: 'يظهر فقط للبائع والمشتري'),
-                _ProtectionItem(label: 'حذف تلقائي بعد 7 أيام'),
-                _ProtectionItem(label: 'حذف يدوي بعد شهر (للبائع)'),
+                _ProtectionItem(label: AppLocalizations.of(context).tamperProof),
+                _ProtectionItem(label: AppLocalizations.of(context).visibleToSellerBuyerOnly),
+                _ProtectionItem(label: AppLocalizations.of(context).autoDeleteAfter7Days),
+                _ProtectionItem(label: AppLocalizations.of(context).manualDeleteAfterMonth),
               ],
             ),
           ),
@@ -349,12 +349,12 @@ class _ReferralCardState extends State<_ReferralCard> {
                 Expanded(
                     child: _StatBox(
                         value: '50',
-                        label: 'لكل دعوة',
+                        label: AppLocalizations.of(context).perInviteLabel,
                         valueColor: HomeSellerDemoSection._accent)),
                 _VDivider(),
-                Expanded(child: _StatBox(value: '0', label: 'أرباح')),
+                Expanded(child: _StatBox(value: '0', label: AppLocalizations.of(context).earningsLabel)),
                 _VDivider(),
-                Expanded(child: _StatBox(value: '0', label: 'دعوات')),
+                Expanded(child: _StatBox(value: '0', label: AppLocalizations.of(context).invitesLabel)),
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import '../customer_home_summary.dart';
+import '../announcement_model.dart';
 import '../seller_home_summary.dart';
 import '../seller_model.dart';
 
@@ -14,4 +15,7 @@ abstract class SellerHomeRemoteDataSource {
 
   /// Paginated list of seller profiles visible to the current user.
   Future<List<SellerModel>> fetchSellers({int page = 1});
+
+  /// Active announcements for the current profile type.
+  Future<List<AnnouncementModel>> fetchAnnouncements();
 }

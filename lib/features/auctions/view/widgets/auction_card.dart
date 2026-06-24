@@ -25,6 +25,13 @@ class _AuctionCardState extends State<AuctionCard> {
     return '$h:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
+  Color _countdownColor(int? seconds) {
+    if (seconds == null || seconds <= 0) return AppColors.textHint;
+    if (seconds < 3600) return AppColors.red;
+    if (seconds < 21600) return AppColors.orange;
+    return AppColors.primary;
+  }
+
   String _formatPrice(double price) {
     if (price >= 1000) {
       final parts = price.toStringAsFixed(0);
@@ -83,45 +90,39 @@ class _AuctionCardState extends State<AuctionCard> {
                             a.thumbnailUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (_, _, _) => Container(
-                              color: AppColors.primary,
-                              child: const Icon(Icons.flutter_dash,
-                                  color: Colors.white54, size: 40),
+                              color: AppColors.primaryLight,
+                              child: const Icon(Icons.image_not_supported_rounded,
+                                  color: AppColors.primary, size: 40),
                             ),
                           )
                         : Container(
-                            color: AppColors.primary,
+                            color: AppColors.primaryLight,
                             child: const Icon(Icons.flutter_dash,
-                                color: Colors.white54, size: 40),
+                                color: AppColors.primary, size: 40),
                           ),
                   ),
                 ),
-                // end time — top right (RTL: start = right)
+                // auction type badge — top right
                 Positioned(
                   top: 8,
                   right: 8,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 3),
+                        horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.55),
+                      color: AppColors.primary.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.access_time_rounded,
-                            color: Colors.white, size: 10),
-                        const SizedBox(width: 3),
-                        Text(
-                          '${a.endTime.day}/${a.endTime.month}/${a.endTime.year}',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 9),
-                        ),
-                      ],
+                    child: Text(
+                      a.auctionTypeDisplay,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
-                // favorite — top left (RTL: end = left)
+                // favorite — top left
                 Positioned(
                   top: 6,
                   left: 6,
@@ -145,54 +146,46 @@ class _AuctionCardState extends State<AuctionCard> {
                     ),
                   ),
                 ),
-                // watermark
+                // end date — bottom left
                 Positioned(
-                  bottom: 8,
+                  bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: Text(
-                      'PIGEON PLANET',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4, horizontal: 8),
+                    color: Colors.black.withValues(alpha: 0.45),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.calendar_today_rounded,
+                            color: Colors.white70, size: 10),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${a.endTime.day}/${a.endTime.month}/${a.endTime.year}',
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 10),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
 
-            // ── Ring + bid count row ───────────────────────────────────────
+            // ── Ring number ────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      ringNumber,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '$bidsCount',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textHint,
-                    ),
-                  ),
-                ],
+              child: Text(
+                ringNumber,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                maxLines: 1,
               ),
             ),
 
@@ -201,17 +194,16 @@ class _AuctionCardState extends State<AuctionCard> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Icon(Icons.access_time_rounded,
-                      color: AppColors.red, size: 12),
+                  Icon(Icons.access_time_rounded,
+                      color: _countdownColor(a.timeRemaining), size: 12),
                   const SizedBox(width: 3),
                   Text(
                     _formatTimeLeft(context, a.timeRemaining),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.red,
+                      color: _countdownColor(a.timeRemaining),
                     ),
                   ),
                 ],

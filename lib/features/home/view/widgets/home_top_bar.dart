@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/shell_scaffold.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeTopBar extends StatelessWidget {
   final VoidCallback? onMenuPressed;
@@ -56,38 +58,14 @@ class HomeTopBar extends StatelessWidget {
           ),
           ShellBackButton(color: Colors.white),
           // Logo (center)
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('🕊️', style: TextStyle(fontSize: 22)),
-                  SizedBox(width: 6),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'PIGEON',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      Text(
-                        'PLANET',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white70,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              child: SizedBox(
+                height: 34,
+                child: SvgPicture.asset(
+                  'assets/brand/logo.svg',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
@@ -101,7 +79,7 @@ class HomeTopBar extends StatelessWidget {
             onPressed: onQrScanPressed,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            tooltip: 'مسح بطاقة طائر',
+            tooltip: AppLocalizations.of(context).scanBirdCardTooltip,
           ),
           const SizedBox(width: 4),
           // Hamburger — opens drawer (leftmost in RTL)

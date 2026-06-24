@@ -8,8 +8,8 @@ This project is a starting point for a Flutter application.
 
 ## Localization Audit
 
-Run this before or during localization work to find likely user-facing Dart
-string literals that still need to move into `AppLocalizations` / ARB files:
+Run this before or during localization work to find Dart files that likely
+contain user-facing string literals still needing `AppLocalizations`:
 
 ```sh
 dart run tool/check_unlocalized_text.dart
@@ -19,20 +19,14 @@ Useful variants:
 
 ```sh
 dart run tool/check_unlocalized_text.dart lib/features/cart
-dart run tool/check_unlocalized_text.dart --locations-only --output=unlocalized_locations.txt
-dart run tool/check_unlocalized_text.dart --write-arb lib/features/cart
-dart run tool/check_unlocalized_text.dart --format=json
+dart run tool/check_unlocalized_text.dart --output=unlocalized_files.txt
+dart run tool/check_unlocalized_text.dart --locations-only lib/features/cart
 dart run tool/check_unlocalized_text.dart --fail-on-findings
 ```
 
-`--locations-only` writes a compact `file:line:column` list. `--output`
-writes the same report shown in the terminal to a file.
-
-`--write-arb` adds missing findings to `lib/l10n/app_ar.arb` and
-`lib/l10n/app_en.arb`, using generated keys and metadata that points back to
-the source file/line. Review the generated translations, run Flutter
-localization generation, then replace the hard-coded Dart strings with
-`AppLocalizations` calls.
+By default the tool prints only the file path and number of findings in each
+file. `--locations-only` prints the exact `file:line:column` locations.
+`--output` writes the same report shown in the terminal to a file.
 
 `--fail-on-findings` exits with code `1`, so it is intended for CI once the
 current backlog has been cleaned up.

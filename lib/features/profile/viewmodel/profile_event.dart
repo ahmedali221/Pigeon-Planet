@@ -19,9 +19,10 @@ class ProfileUpdateRequested extends ProfileEvent {
 }
 
 class ProfileDeleteRequested extends ProfileEvent {
-  const ProfileDeleteRequested();
+  final ProfileModel profile;
+  const ProfileDeleteRequested(this.profile);
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [profile];
 }
 
 class ProfileRoomsLoadRequested extends ProfileEvent {

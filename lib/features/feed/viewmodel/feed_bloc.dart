@@ -35,46 +35,43 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     if (state.status == FeedStatus.loaded) return;
     emit(state.copyWith(status: FeedStatus.loading, errorMessage: null));
 
-    final suggestResult = await _repository.getSuggestions();
-    final feedResult = await _repository.getAuctionFeed();
-    final followingResult = await _repository.getFollowing();
-    final pkgFollowingResult = await _repository.getFollowingPackages();
-    final blocksResult = await _repository.getBlocks();
+    // Fire all requests concurrently — none blocks another.
+    final feedFuture = _repository.getAuctionFeed();
+    final suggestFuture = _repository.getSuggestions();
+    final followingFuture = _repository.getFollowing();
+    final pkgFollowingFuture = _repository.getFollowingPackages();
+    final blocksFuture = _repository.getBlocks();
 
-    final suggestions = suggestResult.getOrElse(() => []);
-    final following = followingResult.getOrElse(() => []);
-    final followedIds = following.map((f) => f.seller.id).toSet();
-    final pkgFollowing = pkgFollowingResult.getOrElse(() => []);
-    final followedPkgIds = pkgFollowing.map((p) => p.packageId).toSet();
-    final blocks = blocksResult.getOrElse(() => []);
-    final blockedIds = blocks.map((b) => b.profileId).toSet();
-
+    // Emit cards the moment the auction feed arrives.
+    final feedResult = await feedFuture;
     feedResult.fold(
       (failure) => emit(state.copyWith(
         status: FeedStatus.error,
         errorMessage: failure.message,
-        suggestions: suggestions,
-        following: following,
-        followedSellerIds: followedIds,
-        followingPackages: pkgFollowing,
-        followedPackageIds: followedPkgIds,
-        blocks: blocks,
-        blockedProfileIds: blockedIds,
       )),
       (result) => emit(state.copyWith(
         status: FeedStatus.loaded,
         auctionFeed: result.items,
         auctionCursor: result.nextCursor,
         auctionHasMore: result.nextCursor != null,
-        suggestions: suggestions,
-        following: following,
-        followedSellerIds: followedIds,
-        followingPackages: pkgFollowing,
-        followedPackageIds: followedPkgIds,
-        blocks: blocks,
-        blockedProfileIds: blockedIds,
       )),
     );
+
+    // Collect metadata (already in-flight) and patch state silently.
+    final suggestions = (await suggestFuture).getOrElse(() => []);
+    final following = (await followingFuture).getOrElse(() => []);
+    final pkgFollowing = (await pkgFollowingFuture).getOrElse(() => []);
+    final blocks = (await blocksFuture).getOrElse(() => []);
+
+    emit(state.copyWith(
+      suggestions: suggestions,
+      following: following,
+      followedSellerIds: following.map((f) => f.seller.id).toSet(),
+      followingPackages: pkgFollowing,
+      followedPackageIds: pkgFollowing.map((p) => p.packageId).toSet(),
+      blocks: blocks,
+      blockedProfileIds: blocks.map((b) => b.profileId).toSet(),
+    ));
   }
 
   Future<void> _onNextPage(

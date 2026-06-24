@@ -1218,6 +1218,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noProducts => 'No products';
 
   @override
+  String productsCount(int count) {
+    return '$count products';
+  }
+
+  @override
   String get newest => 'Newest';
 
   @override
@@ -1228,6 +1233,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sort => 'Sort';
+
+  @override
+  String reviewsCount(int count) {
+    return '($count reviews)';
+  }
 
   @override
   String get benefits => 'Benefits';
@@ -1828,4 +1838,665 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get available => 'Available';
+
+  @override
+  String get welcomeBackGeneric => 'Welcome back! 👋';
+
+  @override
+  String welcomeWithName(String name) {
+    return 'Hello $name 👋';
+  }
+
+  @override
+  String get noPackage => 'No package';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get activitySummary => 'Activity Summary';
+
+  @override
+  String get viewAllStats => 'View All Stats';
+
+  @override
+  String get myListedBirds => 'My Listed Birds';
+
+  @override
+  String get noAuctionsAddedYet => 'No auctions added yet';
+
+  @override
+  String get noBirdsAddedYet => 'No birds added yet';
+
+  @override
+  String endsInDays(int count) {
+    return 'Ends in $count day(s)';
+  }
+
+  @override
+  String endsInHours(int count) {
+    return 'Ends in $count hour(s)';
+  }
+
+  @override
+  String endsInMinutes(int count) {
+    return 'Ends in $count minute(s)';
+  }
+
+  @override
+  String get fixedPriceBirds => 'Fixed-Price Birds';
+
+  @override
+  String get kmUnit => 'km';
+
+  @override
+  String get platformFeatures => 'Platform Features';
+
+  @override
+  String get auctionSystem => 'Auction System';
+
+  @override
+  String get auctionSystemSub => 'Live and advanced bidding';
+
+  @override
+  String get ownershipRecordProtected => 'Protected & tamper-proof';
+
+  @override
+  String get marketSubtitle => 'Feed, medicine, supplies';
+
+  @override
+  String get pointsAndLoyalty => 'Points & Loyalty';
+
+  @override
+  String get pointsAndLoyaltySub => 'Earn with every transaction';
+
+  @override
+  String get referralCodeHint => 'Code: PIGEON123';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get sellerRole => 'Seller';
+
+  @override
+  String get buyerRole => 'Buyer';
+
+  @override
+  String get breedersYouMayKnow => 'Breeders You May Know';
+
+  @override
+  String get auctionCountUnit => 'auction';
+
+  @override
+  String get upcomingAuctions => 'Upcoming Auctions';
+
+  @override
+  String get auctionsComingSoonBanner => 'Auctions coming soon – stay ready!';
+
+  @override
+  String get countdownSecond => 'sec';
+
+  @override
+  String get countdownMinute => 'min';
+
+  @override
+  String get countdownHour => 'hr';
+
+  @override
+  String get countdownDay => 'day';
+
+  @override
+  String get providerFeatures => 'Provider Features';
+
+  @override
+  String get sellerActivationRequired =>
+      'Note: Seller account activation is required before full publishing.';
+
+  @override
+  String get digitalIdVideoRequired =>
+      'Note: Digital ID and video are mandatory before publishing any auction';
+
+  @override
+  String get addAuctionWithDigitalId => 'Add Auction with Digital ID';
+
+  @override
+  String get addAuctionWithDigitalIdSub =>
+      'Link the bird to a verified digital ID';
+
+  @override
+  String get viewDigitalId => 'View Digital ID';
+
+  @override
+  String get viewDigitalIdSub => 'QR Code + Ring Number';
+
+  @override
+  String get mandatoryVideo => 'Mandatory Video';
+
+  @override
+  String get mandatoryVideoSub => '4 required stages';
+
+  @override
+  String get importantNotifications => 'Important Notifications';
+
+  @override
+  String newCountBadge(int count) {
+    return '$count new';
+  }
+
+  @override
+  String get noRecentNotifications => 'No recent notifications';
+
+  @override
+  String get newBadge => 'New';
+
+  @override
+  String get myBirds => 'My Birds';
+
+  @override
+  String get addProductToStore => 'Add Product to Store';
+
+  @override
+  String get followers => 'Followers';
+
+  @override
+  String get bidsLabel => 'Bids';
+
+  @override
+  String get myToolsAndFeatures => 'My Tools & Features';
+
+  @override
+  String get toolsPageSubtitle =>
+      'Notifications · publishing requirements · advanced tools';
+
+  @override
+  String get sellerProviderTools => 'Provider Tools';
+
+  @override
+  String get multiRoomManagement => 'Multi-Room Management';
+
+  @override
+  String get newBadgeLabel => 'NEW';
+
+  @override
+  String get multiRoomDesc => 'Create and manage multiple auction rooms';
+
+  @override
+  String get threePackages => '3 packages';
+
+  @override
+  String get fullCustomization => 'Full customization';
+
+  @override
+  String get unlimited => 'Unlimited';
+
+  @override
+  String get viewOwnershipRecord => 'View Ownership Record';
+
+  @override
+  String get ownershipRecordFull => 'Full record of all transfers';
+
+  @override
+  String get ownershipTransfer => 'Ownership Transfer';
+
+  @override
+  String get ownershipTransferStages =>
+      '3 stages: payment ← delivery ← confirmation';
+
+  @override
+  String get recordProtectionLabel => 'Record protection:';
+
+  @override
+  String get tamperProof => 'Tamper-proof';
+
+  @override
+  String get visibleToSellerBuyerOnly => 'Visible only to seller and buyer';
+
+  @override
+  String get autoDeleteAfter7Days => 'Auto-deleted after 7 days';
+
+  @override
+  String get manualDeleteAfterMonth => 'Manual delete after 1 month (seller)';
+
+  @override
+  String get perInviteLabel => 'per invite';
+
+  @override
+  String get earningsLabel => 'Earnings';
+
+  @override
+  String get invitesLabel => 'Invites';
+
+  @override
+  String get scanBirdCardTooltip => 'Scan bird card';
+
+  @override
+  String get serviceProvider => 'Service Provider';
+
+  @override
+  String get statsPageTitle => 'Statistics';
+
+  @override
+  String get fullPerformanceDashboard => 'Full Performance Dashboard';
+
+  @override
+  String get miniKpiAuctions => 'auctions';
+
+  @override
+  String get miniKpiSales => 'sales';
+
+  @override
+  String get miniKpiOrders => 'orders';
+
+  @override
+  String get miniKpiListings => 'listings';
+
+  @override
+  String get todayStats => 'Today\'s Stats';
+
+  @override
+  String get activeAuctionsLabel => 'Active Auctions';
+
+  @override
+  String get trendFromYesterday => '+2 from yesterday';
+
+  @override
+  String get totalSalesLabel => 'Total Sales';
+
+  @override
+  String get auctionPlusStore => 'Auction + Store';
+
+  @override
+  String get needsReview => 'Needs review';
+
+  @override
+  String get activeListingsLabel => 'Active Listings';
+
+  @override
+  String get totalPublished => 'Total published';
+
+  @override
+  String get balanceAndPoints => 'Balance & Points';
+
+  @override
+  String get currentBalanceLabel => 'Current Balance';
+
+  @override
+  String get loyaltyPointsLabel => 'Loyalty Points';
+
+  @override
+  String get weeklyPerformance => 'Weekly Performance';
+
+  @override
+  String get last7DaysSales => 'Sales over the last 7 days';
+
+  @override
+  String get accountHealth => 'Account Health';
+
+  @override
+  String get accountActivation => 'Account Activation';
+
+  @override
+  String get basicPublishingRequirement => 'Required before publishing';
+
+  @override
+  String get digitalIdSubtitle => 'QR Code + Ring Number';
+
+  @override
+  String get mandatoryVideoLabel => 'Mandatory Video';
+
+  @override
+  String get fourStagesRequired => '4 required stages';
+
+  @override
+  String get addAuctionLabel => 'Add Auction';
+
+  @override
+  String get firstAuctionOnPlatform => 'Your first auction on the platform';
+
+  @override
+  String get recentActivities => 'Recent Activities';
+
+  @override
+  String get controlCenter => 'Control Center';
+
+  @override
+  String get toolsPageTagline =>
+      'Your notifications • features • tools in one place';
+
+  @override
+  String get featuresChip => 'Features';
+
+  @override
+  String get toolsChip => 'Tools';
+
+  @override
+  String get myProducts => 'My Products';
+
+  @override
+  String get manageProductsInStore =>
+      'Add and manage your products in the store';
+
+  @override
+  String myAuctionsWithCount(int count) {
+    return 'My Auctions ($count)';
+  }
+
+  @override
+  String activeTabWithCount(int count) {
+    return 'Active ($count)';
+  }
+
+  @override
+  String endedTabWithCount(int count) {
+    return 'Ended ($count)';
+  }
+
+  @override
+  String get noEndedAuctions => 'No ended auctions';
+
+  @override
+  String get noActiveAuctions => 'No active auctions';
+
+  @override
+  String get endedAuctionsWillAppearHere => 'Ended auctions will appear here';
+
+  @override
+  String get createFirstAuction =>
+      'Create your first auction to showcase your birds';
+
+  @override
+  String timeLabelDaysHours(int days, int hours) {
+    return '${days}d ${hours}h';
+  }
+
+  @override
+  String timeLabelHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String timeLabelMinutes(int minutes) {
+    return '${minutes}m';
+  }
+
+  @override
+  String get auctionTypeDefault => 'Auction';
+
+  @override
+  String get availableForAuction => 'Available for auction';
+
+  @override
+  String get inAuction => 'In auction';
+
+  @override
+  String get noBirdsYet => 'No birds yet';
+
+  @override
+  String get addBirdsToAuctionsAndMarket =>
+      'Add your birds to showcase them in auctions and the market';
+
+  @override
+  String get noBirdsWithFilter => 'No birds match this filter';
+
+  @override
+  String get clearFilters => 'Clear filters';
+
+  @override
+  String get availableBadge => 'Available';
+
+  @override
+  String get daySun => 'Sun';
+
+  @override
+  String get dayMon => 'Mon';
+
+  @override
+  String get dayTue => 'Tue';
+
+  @override
+  String get dayWed => 'Wed';
+
+  @override
+  String get dayThu => 'Thu';
+
+  @override
+  String get dayFri => 'Fri';
+
+  @override
+  String get daySat => 'Sat';
+
+  @override
+  String bidsCountLabel(int count) {
+    return '$count bid(s)';
+  }
+
+  @override
+  String get usedPackageLabel => 'الباقة المستخدمة';
+
+  @override
+  String get addNewBirdTitle => 'إضافة طائر جديد';
+
+  @override
+  String get addNewBirdSubtitle => 'أنشئ بيانات طائر جديد وأضفه إلى المزاد';
+
+  @override
+  String get chooseFromMyBirds => 'اختيار من طيوري';
+
+  @override
+  String get chooseFromMyBirdsSub =>
+      'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر';
+
+  @override
+  String get selectBirdTitle => 'اختر طائراً';
+
+  @override
+  String get myBirdsAvailableForAuction => 'طيوري المتاحة للإضافة في المزاد';
+
+  @override
+  String get noBirdsAvailable => 'لا توجد طيور متاحة';
+
+  @override
+  String get allBirdsListed => 'جميع طيورك مدرجة في مزادات أو المتجر';
+
+  @override
+  String get noActivePackageWarning =>
+      'لا توجد باقة نشطة — ستُرفض عملية الإنشاء';
+
+  @override
+  String get subscribeBtn => 'اشترك';
+
+  @override
+  String packagePointsInfo(int remaining, int cost) {
+    return '$remaining نقطة متبقية · تكلفة المزاد: $cost نقطة';
+  }
+
+  @override
+  String get endingSoonFilter => 'ينتهي قريباً 🕐';
+
+  @override
+  String get myAuctionsFilter => 'مزاداتي ✈️';
+
+  @override
+  String activeAuctionsCount(int count) {
+    return '$count مزاد نشط';
+  }
+
+  @override
+  String get loadingMore => 'جارٍ التحميل...';
+
+  @override
+  String auctionCountBadge(int count) {
+    return '$count مزاد';
+  }
+
+  @override
+  String get myBidsTooltip => 'مزايداتي';
+
+  @override
+  String get refreshTooltip => 'تحديث';
+
+  @override
+  String noResultsFor(String query) {
+    return 'لا توجد نتائج لـ \"$query\"';
+  }
+
+  @override
+  String get pointsHistoryTitle => 'Points History';
+
+  @override
+  String get pointsLoadError =>
+      'Failed to load history. Check your connection and try again.';
+
+  @override
+  String pointsPaginationLabel(int from, int to, int count) {
+    return '$from–$to of $count';
+  }
+
+  @override
+  String pointsBalanceAfter(int balance) {
+    return 'Balance: $balance';
+  }
+
+  @override
+  String get noPointsTransactions => 'No points transactions yet';
+
+  @override
+  String get cashbackHistoryTitle => 'Cashback History';
+
+  @override
+  String get cashbackBalanceTitle => 'Cashback Balance';
+
+  @override
+  String get egpCurrency => 'EGP';
+
+  @override
+  String get noCashbackTransactionsYet => 'No transactions yet';
+
+  @override
+  String get cashbackTransactionsWillAppear =>
+      'Cashback transactions will appear here after purchases are completed';
+
+  @override
+  String get followersAuctions => 'Followed Auctions';
+
+  @override
+  String get whoIFollow => 'Who I Follow';
+
+  @override
+  String get suggestions => 'Suggestions';
+
+  @override
+  String get noFollowedAuctionsYet => 'No auctions yet';
+
+  @override
+  String get followSellersToSeeAuctions =>
+      'Follow sellers to see their auctions here first';
+
+  @override
+  String get discoverSellers => 'Discover Sellers';
+
+  @override
+  String compactHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String compactMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get packageFollowing => 'Package following';
+
+  @override
+  String get discovery => 'Discovery';
+
+  @override
+  String get editBird => 'Edit Bird';
+
+  @override
+  String get pigeonBasicData => 'Basic bird data';
+
+  @override
+  String get ringNumberRequired => 'Ring number *';
+
+  @override
+  String get breedRequired => 'Breed *';
+
+  @override
+  String get breedHint => 'Example: racing pigeon';
+
+  @override
+  String get genderRequired => 'Gender *';
+
+  @override
+  String get optionalData => 'Optional data';
+
+  @override
+  String get chooseHatchDate => 'Choose hatch date';
+
+  @override
+  String get achievementsRequired => 'Achievements *';
+
+  @override
+  String get achievementsHint => "Write the bird's most important achievements";
+
+  @override
+  String get staminaRequired => 'Stamina ability *';
+
+  @override
+  String get saleData => 'Sale data';
+
+  @override
+  String get displayName => 'Display name';
+
+  @override
+  String get displayNameHint => 'Name shown to buyers';
+
+  @override
+  String get priceEgpRequired => 'Price (EGP) *';
+
+  @override
+  String get priceHint => 'Example: 1500';
+
+  @override
+  String get flyingSpeedKmh => 'Flying speed (km/h)';
+
+  @override
+  String get flyingSpeedHint => 'Example: 75.5';
+
+  @override
+  String get birdStatus => 'Bird status';
+
+  @override
+  String get pedigreeData => 'Pedigree data';
+
+  @override
+  String get fatherRingOptional => 'Father number (optional)';
+
+  @override
+  String get motherRingOptional => 'Mother number (optional)';
+
+  @override
+  String get birdIdHint => 'Bird ID';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get nextAddPhotos => 'Next - Add Photos';
+
+  @override
+  String get listInMarket => 'List in market';
+
+  @override
+  String get listInMarketDesc =>
+      'The bird will appear to buyers in the market';
 }

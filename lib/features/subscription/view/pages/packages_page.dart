@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -95,6 +96,31 @@ class _PackagesViewState extends State<_PackagesView> {
     lines.add('نشر منتج: ${p.productCost} نقطة لكل منتج');
     lines.add('صالحة لمدة ${_periodStr(p.activationPeriodDays)}');
     return lines;
+  }
+
+  Future<void> _showProofSheet(
+    BuildContext context,
+    PackagesBloc bloc,
+    int packageId,
+  ) async {
+    PlatformFile? pickedFile;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _ProofPickerSheet(
+        packageId: packageId,
+        onConfirm: (file) {
+          pickedFile = file;
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+    if (!context.mounted) return;
+    bloc.add(PackageRequestSubmitted(packageId, proofFile: pickedFile));
   }
 
   void _showSnackBar(BuildContext context, String message, Color color) {
@@ -260,7 +286,7 @@ class _PackagesViewState extends State<_PackagesView> {
               features: _features(pkg),
               isLoading: isRequesting,
               onSubscribe: _selectedIndex == i
-                  ? () => bloc.add(PackageRequestSubmitted(pkg.id))
+                  ? () => _showProofSheet(context, bloc, pkg.id)
                   : null,
             ),
           );
@@ -285,6 +311,9 @@ class _PendingPackageBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasProof = pending.paymentProofUrl != null &&
+        pending.paymentProofUrl!.isNotEmpty;
+
     return Container(
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -299,74 +328,115 @@ class _PendingPackageBanner extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.orangeLight,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.hourglass_top_rounded,
-              color: AppColors.orange,
-              size: 20,
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'طلب اشتراك معلق',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.orangeLight,
+                  shape: BoxShape.circle,
                 ),
-                SizedBox(height: 2),
+                child: Icon(
+                  Icons.hourglass_top_rounded,
+                  color: AppColors.orange,
+                  size: 20,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'طلب اشتراك معلق',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      pending.packageName.isNotEmpty
+                          ? pending.packageName
+                          : 'بانتظار تفعيل المشرف',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8),
+              cancelling
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.orange,
+                      ),
+                    )
+                  : TextButton(
+                      onPressed: onCancel,
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                              color: AppColors.error.withValues(alpha: 0.4)),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context).cancel,
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: hasProof
+                  ? AppColors.success.withValues(alpha: 0.08)
+                  : AppColors.orange.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: hasProof
+                    ? AppColors.success.withValues(alpha: 0.4)
+                    : AppColors.orange.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  hasProof
+                      ? Icons.check_circle_rounded
+                      : Icons.upload_file_rounded,
+                  color: hasProof ? AppColors.success : AppColors.orange,
+                  size: 14,
+                ),
+                SizedBox(width: 6),
                 Text(
-                  pending.packageName.isNotEmpty
-                      ? pending.packageName
-                      : 'بانتظار تفعيل المشرف',
+                  hasProof ? 'تم إرفاق إثبات الدفع' : 'لم يُرفق إثبات الدفع',
                   style: TextStyle(
                     fontSize: 11,
-                    color: AppColors.textSecondary,
+                    color: hasProof ? AppColors.success : AppColors.orange,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 8),
-          cancelling
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.orange,
-                  ),
-                )
-              : TextButton(
-                  onPressed: onCancel,
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(
-                          color: AppColors.error.withValues(alpha: 0.4)),
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).cancel,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                ),
         ],
       ),
     );
@@ -555,6 +625,118 @@ class _Chip extends StatelessWidget {
           SizedBox(width: 4),
           Text(label,
               style: TextStyle(color: Colors.white, fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Proof picker bottom sheet ─────────────────────────────────────────────────
+
+class _ProofPickerSheet extends StatefulWidget {
+  final int packageId;
+  final void Function(PlatformFile? file) onConfirm;
+
+  _ProofPickerSheet({required this.packageId, required this.onConfirm});
+
+  @override
+  State<_ProofPickerSheet> createState() => _ProofPickerSheetState();
+}
+
+class _ProofPickerSheetState extends State<_ProofPickerSheet> {
+  PlatformFile? _file;
+
+  Future<void> _pick() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      setState(() => _file = result.files.first);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        20,
+        20,
+        20 + MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text(
+            'إثبات الدفع',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            'يمكنك إرفاق صورة أو ملف إثبات الدفع ليتمكن المشرف من مراجعته',
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          ),
+          SizedBox(height: 20),
+          OutlinedButton.icon(
+            onPressed: _pick,
+            icon: Icon(Icons.attach_file_rounded, size: 18),
+            label: Text(
+              _file == null ? 'اختر ملف (JPG / PNG / PDF)' : _file!.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: BorderSide(color: AppColors.primary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              minimumSize: Size(double.infinity, 46),
+            ),
+          ),
+          if (_file != null) ...[
+            SizedBox(height: 6),
+            Text(
+              '${(_file!.size / 1024).toStringAsFixed(1)} KB',
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            ),
+          ],
+          SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () => widget.onConfirm(_file),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'تأكيد الطلب',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -4,6 +4,7 @@ class UserModel extends Equatable {
   final int id;
   final String phoneNumber;
   final String profileType; // 'Customer' | 'Seller' | 'Manager'
+  final int? profileId; // active profile's DB id
   final String accessToken;
   final String refreshToken;
   final String? avatarUrl;
@@ -12,6 +13,7 @@ class UserModel extends Equatable {
     required this.id,
     required this.phoneNumber,
     required this.profileType,
+    this.profileId,
     required this.accessToken,
     required this.refreshToken,
     this.avatarUrl,
@@ -24,6 +26,7 @@ class UserModel extends Equatable {
     int? id,
     String? phoneNumber,
     String? profileType,
+    int? profileId,
     String? accessToken,
     String? refreshToken,
     String? avatarUrl,
@@ -32,6 +35,7 @@ class UserModel extends Equatable {
         id: id ?? this.id,
         phoneNumber: phoneNumber ?? this.phoneNumber,
         profileType: profileType ?? this.profileType,
+        profileId: profileId ?? this.profileId,
         accessToken: accessToken ?? this.accessToken,
         refreshToken: refreshToken ?? this.refreshToken,
         avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -39,5 +43,5 @@ class UserModel extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, phoneNumber, profileType, accessToken, refreshToken, avatarUrl];
+      [id, phoneNumber, profileType, profileId, accessToken, refreshToken, avatarUrl];
 }

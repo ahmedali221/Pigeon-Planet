@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../subscription_package_model.dart';
@@ -5,7 +8,7 @@ import '../subscription_package_model.dart';
 abstract class SubscriptionPackagesRemoteDataSource {
   Future<List<PackageModel>> fetchPackages();
   Future<List<ActiveSellerPackageModel>> fetchActivePackages();
-  Future<void> requestPackage(int packageId);
+  Future<void> requestPackage(int packageId, {PlatformFile? proofFile});
   Future<PendingSellerPackageModel?> fetchPendingPackage();
   Future<void> cancelPackage(int id);
 }
@@ -56,11 +59,20 @@ class RealSubscriptionPackagesRemoteDataSource
   }
 
   @override
-  Future<void> requestPackage(int packageId) async {
-    await _dio.post(
-      ApiConstants.mySellerPackages,
-      data: {'package_id': packageId},
-    );
+  Future<void> requestPackage(int packageId, {PlatformFile? proofFile}) async {
+    final dynamic data;
+    if (proofFile != null && proofFile.path != null) {
+      data = FormData.fromMap({
+        'package_id': packageId,
+        'payment_proof': await MultipartFile.fromFile(
+          proofFile.path!,
+          filename: proofFile.name,
+        ),
+      });
+    } else {
+      data = {'package_id': packageId};
+    }
+    await _dio.post(ApiConstants.mySellerPackages, data: data);
   }
 
   @override

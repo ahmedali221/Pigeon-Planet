@@ -39,7 +39,7 @@ class _InsightsPreview extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'ملخص نشاطك',
+                    AppLocalizations.of(context).activitySummary,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -54,7 +54,7 @@ class _InsightsPreview extends StatelessWidget {
                           builder: (_) => InsightsPage()),
                     ),
                     child: Text(
-                      'عرض الكل',
+                      AppLocalizations.of(context).viewAll,
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.primary,
@@ -79,12 +79,12 @@ class _InsightsPreview extends StatelessWidget {
                         title: AppLocalizations.of(context).auctions,
                         stats: [
                           _PreviewStat(
-                            label: 'نشطة',
+                            label: AppLocalizations.of(context).statusActive,
                             value:
                                 '${insights?.auctionSummary.activeCount ?? '—'}',
                           ),
                           _PreviewStat(
-                            label: 'إجمالي العروض',
+                            label: AppLocalizations.of(context).totalOffersReceived,
                             value:
                                 '${insights?.auctionSummary.totalBidsReceived ?? '—'}',
                           ),
@@ -100,7 +100,7 @@ class _InsightsPreview extends StatelessWidget {
                         title: AppLocalizations.of(context).market,
                         stats: [
                           _PreviewStat(
-                            label: 'منتجات',
+                            label: AppLocalizations.of(context).products,
                             value:
                                 '${insights?.marketSummary.activeListingsCount ?? '—'}',
                           ),
@@ -138,7 +138,7 @@ class _InsightsPreview extends StatelessWidget {
                             color: AppColors.primary, size: 18),
                         SizedBox(width: 8),
                         Text(
-                          'عرض كل الإحصائيات',
+                          AppLocalizations.of(context).viewAllStats,
                           style: TextStyle(
                             color: AppColors.primary,
                             fontSize: 13,

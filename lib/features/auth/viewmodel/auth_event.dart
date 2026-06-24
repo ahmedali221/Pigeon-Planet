@@ -62,12 +62,19 @@ class AuthRegisterProviderRequested extends AuthEvent {
   List<Object?> get props => [phoneNumber, password, country, username, avatarPath];
 }
 
+/// Switch active profile.
+/// - [profileId] non-null → switch to a specific seller room by DB id
+/// - [profileId] null → switch to customer using [newProfile] = 'Customer'
 class AuthSwitchProfileRequested extends AuthEvent {
-  final String newProfile;
-  const AuthSwitchProfileRequested(this.newProfile);
+  final String? newProfile;
+  final int? profileId;
+
+  const AuthSwitchProfileRequested({this.newProfile, this.profileId})
+      : assert(newProfile != null || profileId != null,
+            'Must provide either newProfile or profileId');
 
   @override
-  List<Object?> get props => [newProfile];
+  List<Object?> get props => [newProfile, profileId];
 }
 
 /// Fired when a customer-profile user wants to switch to Seller.

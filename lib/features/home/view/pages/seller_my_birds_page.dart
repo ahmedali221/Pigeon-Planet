@@ -109,7 +109,9 @@ class _SellerMyBirdsViewState extends State<_SellerMyBirdsView> {
                 elevation: 0,
                 pinned: true,
                 title: Text(
-                  titleCount != null ? 'طيوري ($titleCount)' : 'طيوري',
+                  titleCount != null
+                      ? '${AppLocalizations.of(context).myBirds} ($titleCount)'
+                      : AppLocalizations.of(context).myBirds,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
@@ -229,7 +231,7 @@ class _FilterBar extends StatelessWidget {
 
             // ── Auction status group ──────────────────────────────────────
             _FilterChip(
-              label: 'متاح للمزاد',
+              label: AppLocalizations.of(context).availableForAuction,
               selected: auctionFilter == 'available',
               selectedColor: AppColors.primary,
               loading: !availableIdsLoaded,
@@ -239,7 +241,7 @@ class _FilterBar extends StatelessWidget {
             ),
             SizedBox(width: 6),
             _FilterChip(
-              label: 'في مزاد',
+              label: AppLocalizations.of(context).inAuction,
               selected: auctionFilter == 'in_auction',
               selectedColor: AppColors.orange,
               loading: !availableIdsLoaded,
@@ -332,7 +334,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 24),
             Text(
-              'لا توجد طيور بعد',
+              AppLocalizations.of(context).noBirdsYet,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -341,7 +343,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'أضف طيورك لعرضها في المزادات والسوق',
+              AppLocalizations.of(context).addBirdsToAuctionsAndMarket,
               style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
@@ -369,7 +371,7 @@ class _NoResultsState extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'لا توجد طيور بهذا الفلتر',
+            AppLocalizations.of(context).noBirdsWithFilter,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -380,7 +382,7 @@ class _NoResultsState extends StatelessWidget {
           TextButton(
             onPressed: onClear,
             child: Text(
-              'مسح الفلاتر',
+              AppLocalizations.of(context).clearFilters,
               style: TextStyle(color: AppColors.primary),
             ),
           ),
@@ -496,7 +498,9 @@ class _BirdListTile extends StatelessWidget {
                         // auction status badge
                         if (auctionStatusKnown)
                           _Badge(
-                            label: isAvailable ? 'متاح' : 'في مزاد',
+                            label: isAvailable
+                                ? AppLocalizations.of(context).availableBadge
+                                : AppLocalizations.of(context).inAuction,
                             color: isAvailable
                                 ? AppColors.primary
                                 : AppColors.orange,
@@ -504,7 +508,7 @@ class _BirdListTile extends StatelessWidget {
                         if (bird.price > 0) ...[
                           SizedBox(width: 8),
                           Text(
-                            'ج.م ${bird.price.toStringAsFixed(0)}',
+                            AppLocalizations.of(context).priceEgpFormat(bird.price.toStringAsFixed(0)),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,

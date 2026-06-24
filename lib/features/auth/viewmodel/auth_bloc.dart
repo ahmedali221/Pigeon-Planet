@@ -107,7 +107,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final sessionUser = previous;
 
     emit(AuthSwitchingProfile(sessionUser));
-    final result = await _repository.switchProfile(event.newProfile);
+
+    final result = event.profileId != null
+        ? await _repository.switchProfileById(event.profileId!)
+        : await _repository.switchProfile(event.newProfile!);
+
     result.fold(
       (failure) => emit(AuthProfileSwitchFailure(sessionUser, failure.message)),
       (user) => emit(AuthSuccess(user)),

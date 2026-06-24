@@ -495,10 +495,26 @@
   "more": "More",
   "followedAlt": "Followed",
   "noProducts": "No products",
+  "productsCount": "{count} products",
+  "@productsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "newest": "Newest",
   "priceLowToHigh": "Price: low to high",
   "priceHighToLow": "Price: high to low",
   "sort": "Sort",
+  "reviewsCount": "({count} reviews)",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "benefits": "Benefits",
   "myInsights": "My Insights",
   "insightsLoadError": "Failed to load insights",
@@ -812,5 +828,300 @@
     }
   },
   "earnedBadge": "Earned ✓",
-  "available": "Available"
+  "available": "Available",
+  "welcomeBackGeneric": "Welcome back! 👋",
+  "welcomeWithName": "Hello {name} 👋",
+  "@welcomeWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noPackage": "No package",
+  "viewAll": "View All",
+  "activitySummary": "Activity Summary",
+  "viewAllStats": "View All Stats",
+  "myListedBirds": "My Listed Birds",
+  "noAuctionsAddedYet": "No auctions added yet",
+  "noBirdsAddedYet": "No birds added yet",
+  "endsInDays": "Ends in {count} day(s)",
+  "@endsInDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endsInHours": "Ends in {count} hour(s)",
+  "@endsInHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endsInMinutes": "Ends in {count} minute(s)",
+  "@endsInMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fixedPriceBirds": "Fixed-Price Birds",
+  "kmUnit": "km",
+  "platformFeatures": "Platform Features",
+  "auctionSystem": "Auction System",
+  "auctionSystemSub": "Live and advanced bidding",
+  "ownershipRecordProtected": "Protected & tamper-proof",
+  "marketSubtitle": "Feed, medicine, supplies",
+  "pointsAndLoyalty": "Points & Loyalty",
+  "pointsAndLoyaltySub": "Earn with every transaction",
+  "referralCodeHint": "Code: PIGEON123",
+  "copied": "Copied",
+  "copy": "Copy",
+  "sellerRole": "Seller",
+  "buyerRole": "Buyer",
+  "breedersYouMayKnow": "Breeders You May Know",
+  "auctionCountUnit": "auction",
+  "upcomingAuctions": "Upcoming Auctions",
+  "auctionsComingSoonBanner": "Auctions coming soon – stay ready!",
+  "countdownSecond": "sec",
+  "countdownMinute": "min",
+  "countdownHour": "hr",
+  "countdownDay": "day",
+  "providerFeatures": "Provider Features",
+  "sellerActivationRequired": "Note: Seller account activation is required before full publishing.",
+  "digitalIdVideoRequired": "Note: Digital ID and video are mandatory before publishing any auction",
+  "addAuctionWithDigitalId": "Add Auction with Digital ID",
+  "addAuctionWithDigitalIdSub": "Link the bird to a verified digital ID",
+  "viewDigitalId": "View Digital ID",
+  "viewDigitalIdSub": "QR Code + Ring Number",
+  "mandatoryVideo": "Mandatory Video",
+  "mandatoryVideoSub": "4 required stages",
+  "importantNotifications": "Important Notifications",
+  "newCountBadge": "{count} new",
+  "@newCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRecentNotifications": "No recent notifications",
+  "newBadge": "New",
+  "myBirds": "My Birds",
+  "addProductToStore": "Add Product to Store",
+  "followers": "Followers",
+  "bidsLabel": "Bids",
+  "myToolsAndFeatures": "My Tools & Features",
+  "toolsPageSubtitle": "Notifications · publishing requirements · advanced tools",
+  "sellerProviderTools": "Provider Tools",
+  "multiRoomManagement": "Multi-Room Management",
+  "newBadgeLabel": "NEW",
+  "multiRoomDesc": "Create and manage multiple auction rooms",
+  "threePackages": "3 packages",
+  "fullCustomization": "Full customization",
+  "unlimited": "Unlimited",
+  "viewOwnershipRecord": "View Ownership Record",
+  "ownershipRecordFull": "Full record of all transfers",
+  "ownershipTransfer": "Ownership Transfer",
+  "ownershipTransferStages": "3 stages: payment ← delivery ← confirmation",
+  "recordProtectionLabel": "Record protection:",
+  "tamperProof": "Tamper-proof",
+  "visibleToSellerBuyerOnly": "Visible only to seller and buyer",
+  "autoDeleteAfter7Days": "Auto-deleted after 7 days",
+  "manualDeleteAfterMonth": "Manual delete after 1 month (seller)",
+  "perInviteLabel": "per invite",
+  "earningsLabel": "Earnings",
+  "invitesLabel": "Invites",
+  "scanBirdCardTooltip": "Scan bird card",
+  "serviceProvider": "Service Provider",
+  "statsPageTitle": "Statistics",
+  "fullPerformanceDashboard": "Full Performance Dashboard",
+  "miniKpiAuctions": "auctions",
+  "miniKpiSales": "sales",
+  "miniKpiOrders": "orders",
+  "miniKpiListings": "listings",
+  "todayStats": "Today's Stats",
+  "activeAuctionsLabel": "Active Auctions",
+  "trendFromYesterday": "+2 from yesterday",
+  "totalSalesLabel": "Total Sales",
+  "auctionPlusStore": "Auction + Store",
+  "needsReview": "Needs review",
+  "activeListingsLabel": "Active Listings",
+  "totalPublished": "Total published",
+  "balanceAndPoints": "Balance & Points",
+  "currentBalanceLabel": "Current Balance",
+  "loyaltyPointsLabel": "Loyalty Points",
+  "weeklyPerformance": "Weekly Performance",
+  "last7DaysSales": "Sales over the last 7 days",
+  "accountHealth": "Account Health",
+  "accountActivation": "Account Activation",
+  "basicPublishingRequirement": "Required before publishing",
+  "digitalIdSubtitle": "QR Code + Ring Number",
+  "mandatoryVideoLabel": "Mandatory Video",
+  "fourStagesRequired": "4 required stages",
+  "addAuctionLabel": "Add Auction",
+  "firstAuctionOnPlatform": "Your first auction on the platform",
+  "recentActivities": "Recent Activities",
+  "controlCenter": "Control Center",
+  "toolsPageTagline": "Your notifications • features • tools in one place",
+  "featuresChip": "Features",
+  "toolsChip": "Tools",
+  "myProducts": "My Products",
+  "manageProductsInStore": "Add and manage your products in the store",
+  "myAuctionsWithCount": "My Auctions ({count})",
+  "@myAuctionsWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeTabWithCount": "Active ({count})",
+  "@activeTabWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "endedTabWithCount": "Ended ({count})",
+  "@endedTabWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noEndedAuctions": "No ended auctions",
+  "noActiveAuctions": "No active auctions",
+  "endedAuctionsWillAppearHere": "Ended auctions will appear here",
+  "createFirstAuction": "Create your first auction to showcase your birds",
+  "timeLabelDaysHours": "{days}d {hours}h",
+  "@timeLabelDaysHours": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "hours": { "type": "int" }
+    }
+  },
+  "timeLabelHoursMinutes": "{hours}h {minutes}m",
+  "@timeLabelHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "timeLabelMinutes": "{minutes}m",
+  "@timeLabelMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "auctionTypeDefault": "Auction",
+  "@auctionTypeDefault": {},
+  "availableForAuction": "Available for auction",
+  "inAuction": "In auction",
+  "noBirdsYet": "No birds yet",
+  "addBirdsToAuctionsAndMarket": "Add your birds to showcase them in auctions and the market",
+  "noBirdsWithFilter": "No birds match this filter",
+  "clearFilters": "Clear filters",
+  "availableBadge": "Available",
+  "daySun": "Sun",
+  "dayMon": "Mon",
+  "dayTue": "Tue",
+  "dayWed": "Wed",
+  "dayThu": "Thu",
+  "dayFri": "Fri",
+  "daySat": "Sat",
+  "bidsCountLabel": "{count} bid(s)",
+  "@bidsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cashbackHistoryTitle": "Cashback History",
+  "cashbackBalanceTitle": "Cashback Balance",
+  "egpCurrency": "EGP",
+  "noCashbackTransactionsYet": "No transactions yet",
+  "cashbackTransactionsWillAppear": "Cashback transactions will appear here after purchases are completed",
+  "followersAuctions": "Followed Auctions",
+  "whoIFollow": "Who I Follow",
+  "suggestions": "Suggestions",
+  "noFollowedAuctionsYet": "No auctions yet",
+  "followSellersToSeeAuctions": "Follow sellers to see their auctions here first",
+  "discoverSellers": "Discover Sellers",
+  "compactHoursMinutes": "{hours}h {minutes}m",
+  "@compactHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "compactMinutes": "{minutes} min",
+  "@compactMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "packageFollowing": "Package following",
+  "discovery": "Discovery",
+  "editBird": "Edit Bird",
+  "pigeonBasicData": "Basic bird data",
+  "ringNumberRequired": "Ring number *",
+  "breedRequired": "Breed *",
+  "breedHint": "Example: racing pigeon",
+  "genderRequired": "Gender *",
+  "optionalData": "Optional data",
+  "chooseHatchDate": "Choose hatch date",
+  "achievementsRequired": "Achievements *",
+  "achievementsHint": "Write the bird's most important achievements",
+  "staminaRequired": "Stamina ability *",
+  "saleData": "Sale data",
+  "displayName": "Display name",
+  "displayNameHint": "Name shown to buyers",
+  "priceEgpRequired": "Price (EGP) *",
+  "priceHint": "Example: 1500",
+  "flyingSpeedKmh": "Flying speed (km/h)",
+  "flyingSpeedHint": "Example: 75.5",
+  "birdStatus": "Bird status",
+  "pedigreeData": "Pedigree data",
+  "fatherRingOptional": "Father number (optional)",
+  "motherRingOptional": "Mother number (optional)",
+  "birdIdHint": "Bird ID",
+  "saving": "Saving...",
+  "saveChanges": "Save Changes",
+  "nextAddPhotos": "Next - Add Photos",
+  "listInMarket": "List in market",
+  "listInMarketDesc": "The bird will appear to buyers in the market",
+  "pointsHistoryTitle": "Points History",
+  "@pointsHistoryTitle": {},
+  "pointsLoadError": "Failed to load history. Check your connection and try again.",
+  "@pointsLoadError": {},
+  "pointsPaginationLabel": "{from}–{to} of {count}",
+  "@pointsPaginationLabel": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" },
+      "count": { "type": "int" }
+    }
+  },
+  "pointsBalanceAfter": "Balance: {balance}",
+  "@pointsBalanceAfter": {
+    "placeholders": {
+      "balance": { "type": "int" }
+    }
+  },
+  "noPointsTransactions": "No points transactions yet",
+  "@noPointsTransactions": {}
 }

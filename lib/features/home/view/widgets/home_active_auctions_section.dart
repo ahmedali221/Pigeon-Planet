@@ -235,7 +235,7 @@ class _HomeActiveAuctionsSectionState
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'عرض ${filtered.length} من ${widget.auctions.length} مزاد',
+            'عرض ${filtered.length > 4 ? 4 : filtered.length} من ${widget.auctions.length} مزاد نشط',
             style: TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
             textAlign: TextAlign.start,
@@ -264,7 +264,7 @@ class _HomeActiveAuctionsSectionState
               ),
             ),
           )
-        else
+        else ...[
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: GridView.builder(
@@ -276,7 +276,7 @@ class _HomeActiveAuctionsSectionState
                 mainAxisSpacing: 10,
                 childAspectRatio: 0.72,
               ),
-              itemCount: filtered.length,
+              itemCount: filtered.length > 4 ? 4 : filtered.length,
               itemBuilder: (context, i) {
                 final a = filtered[i];
                 final id = a['id'] as int?;
@@ -289,6 +289,34 @@ class _HomeActiveAuctionsSectionState
               },
             ),
           ),
+          SizedBox(height: 14),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AuctionsPage()),
+                ),
+                icon: Icon(Icons.gavel_rounded, size: 18),
+                label: Text(
+                  'عرض جميع المزادات (${widget.auctions.length})',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

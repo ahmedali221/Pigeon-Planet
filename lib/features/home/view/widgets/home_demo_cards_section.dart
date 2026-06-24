@@ -36,7 +36,7 @@ class _SectionHeader extends StatelessWidget {
         Icon(Icons.grid_view_rounded, color: AppColors.primary, size: 18),
         SizedBox(width: 8),
         Text(
-          'مميزات المنصة',
+          AppLocalizations.of(context).platformFeatures,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -67,29 +67,29 @@ class _FeatureGrid extends StatelessWidget {
       children: [
         _FeatureTile(
           icon: Icons.gavel_rounded,
-          label: 'نظام المزايدات',
-          subtitle: 'مزايدة حية ومتقدمة',
+          label: AppLocalizations.of(context).auctionSystem,
+          subtitle: AppLocalizations.of(context).auctionSystemSub,
           color: AppColors.blue,
           bg: AppColors.blueLight,
         ),
         _FeatureTile(
           icon: Icons.shield_rounded,
           label: AppLocalizations.of(context).ownershipRecord,
-          subtitle: 'محمي وغير قابل للتلاعب',
+          subtitle: AppLocalizations.of(context).ownershipRecordProtected,
           color: AppColors.primaryDark,
           bg: AppColors.primaryLight,
         ),
         _FeatureTile(
           icon: Icons.storefront_rounded,
           label: AppLocalizations.of(context).market,
-          subtitle: 'علف، أدوية، مستلزمات',
+          subtitle: AppLocalizations.of(context).marketSubtitle,
           color: AppColors.orange,
           bg: AppColors.orangeLight,
         ),
         _FeatureTile(
           icon: Icons.bolt_rounded,
-          label: 'نقاط وولاء',
-          subtitle: 'اكسب مع كل عملية',
+          label: AppLocalizations.of(context).pointsAndLoyalty,
+          subtitle: AppLocalizations.of(context).pointsAndLoyaltySub,
           color: AppColors.primary,
           bg: AppColors.primaryLight,
         ),
@@ -225,7 +225,7 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
                 ),
               ),
               Text(
-                'كود: PIGEON123',
+                AppLocalizations.of(context).referralCodeHint,
                 style: TextStyle(
                   fontSize: 11,
                   color: AppColors.textSecondary,
@@ -256,7 +256,7 @@ class _CompactReferralBannerState extends State<_CompactReferralBanner> {
                   ),
                   SizedBox(width: 4),
                   Text(
-                    _copied ? 'تم النسخ' : 'نسخ',
+                    _copied ? AppLocalizations.of(context).copied : AppLocalizations.of(context).copy,
                     style: TextStyle(
                       fontSize: 11,
                       color: _copied

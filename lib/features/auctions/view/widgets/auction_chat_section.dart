@@ -8,6 +8,7 @@ import '../../../chat/view/pages/chat_room_page.dart';
 import '../../../chat/viewmodel/chat_bloc.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../../ratings/model/comment_model.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../ratings/model/ratings_repository.dart';
 import '../../model/auction_model.dart';
 

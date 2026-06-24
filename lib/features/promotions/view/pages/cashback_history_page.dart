@@ -8,6 +8,7 @@ import '../../model/cashback_transaction_model.dart';
 import '../../viewmodel/promotions_bloc.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class CashbackHistoryPage extends StatelessWidget {
   CashbackHistoryPage({super.key});
 
@@ -28,7 +29,7 @@ class _CashbackHistoryView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PPWAppBar(
-        title: 'سجل الكاش باك',
+        title: AppLocalizations.of(context).cashbackHistoryTitle,
         actions: [
           BlocBuilder<PromotionsBloc, PromotionsState>(
             buildWhen: (prev, curr) => prev.status != curr.status,
@@ -157,12 +158,12 @@ class _BalanceCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'رصيد الكاش باك',
+                AppLocalizations.of(context).cashbackBalanceTitle,
                 style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
               SizedBox(height: 4),
               Text(
-                '${balance.toStringAsFixed(2)} ج.م',
+                '${balance.toStringAsFixed(2)} ${AppLocalizations.of(context).egpCurrency}',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -255,7 +256,9 @@ class _TransactionTile extends StatelessWidget {
             ),
             SizedBox(width: 8),
             Text(
-              '$sign${transaction.amount.toStringAsFixed(2)} ج.م',
+              AppLocalizations.of(context).priceEgpFormat(
+                '$sign${transaction.amount.toStringAsFixed(2)}',
+              ),
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -290,7 +293,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'لا توجد معاملات حتى الآن',
+            AppLocalizations.of(context).noCashbackTransactionsYet,
             style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -298,7 +301,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            'ستظهر هنا معاملات الكاش باك عند إتمام عمليات الشراء',
+            AppLocalizations.of(context).cashbackTransactionsWillAppear,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
           ),

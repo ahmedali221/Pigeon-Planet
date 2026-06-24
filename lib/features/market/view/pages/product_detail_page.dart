@@ -9,6 +9,7 @@ import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class ProductDetailPage extends StatelessWidget {
   ProductDetailPage({super.key});
 
@@ -31,7 +32,9 @@ class ProductDetailPage extends StatelessWidget {
         } else if (state.status == CartStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred),
+              content: Text(
+                state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -231,7 +234,9 @@ class _ProductHeader extends StatelessWidget {
               ),
               SizedBox(width: 6),
               Text(
-                '(${product.reviewCount} تقييم)',
+                AppLocalizations.of(context).reviewsCount(
+                  product.reviewCount,
+                ),
                 style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
@@ -415,7 +420,9 @@ class _QuantityRow extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'ج.م ${total.toStringAsFixed(0)}',
+                    AppLocalizations.of(context).priceEgpFormat(
+                      total.toStringAsFixed(0),
+                    ),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

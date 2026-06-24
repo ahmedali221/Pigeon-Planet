@@ -101,6 +101,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, UserModel>> switchProfileById(int profileId) async {
+    try {
+      final user = await remoteDataSource.switchProfileById(profileId);
+      return Right(user);
+    } on ApiException catch (e) {
+      return Left(_mapApiException(e));
+    } catch (e, st) {
+      dev.log('switchProfileById error', error: e, stackTrace: st, name: 'AuthRepo');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> createSellerProfile() async {
     try {
       await remoteDataSource.createSellerProfile();

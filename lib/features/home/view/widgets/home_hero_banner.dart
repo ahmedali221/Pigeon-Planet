@@ -20,6 +20,7 @@ class _HomeHeroBannerState extends State<HomeHeroBanner> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (widget.banners.isEmpty || !_pageController.hasClients) return;
       final next = (_currentPage + 1) % widget.banners.length;
       _pageController.animateToPage(
         next,
@@ -38,6 +39,8 @@ class _HomeHeroBannerState extends State<HomeHeroBanner> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.banners.isEmpty) return const SizedBox.shrink();
+
     return Column(
       children: [
         Container(
@@ -61,18 +64,25 @@ class _HomeHeroBannerState extends State<HomeHeroBanner> {
               itemCount: widget.banners.length,
               itemBuilder: (context, i) {
                 final banner = widget.banners[i];
+                final imageUrl = banner['imageUrl'] as String? ?? '';
                 return Container(
                   decoration:
                       BoxDecoration(color: Color(banner['color'] as int)),
                   child: Stack(
                     children: [
                       Positioned.fill(
-                        child: Opacity(
-                          opacity: 0.12,
-                          child: Image.network(
-                            'https://picsum.photos/seed/${i + 10}/600/200',
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => const SizedBox(),
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => Container(
+                            color: Color(banner['color'] as int),
+                          ),
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.08),
                           ),
                         ),
                       ),

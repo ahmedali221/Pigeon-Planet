@@ -1,5 +1,6 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
+import '../announcement_model.dart';
 import '../customer_home_summary.dart';
 import '../seller_home_summary.dart';
 import '../seller_model.dart';
@@ -54,6 +55,20 @@ class RealSellerHomeRemoteDataSource implements SellerHomeRemoteDataSource {
         : (data is List ? data : []);
     return items
         .map((j) => SellerModel.fromJson(j as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<AnnouncementModel>> fetchAnnouncements() async {
+    final response = await _dio.get(ApiConstants.announcements);
+    final data = response.data;
+    if (data == null) return [];
+    final List<dynamic> items = data is Map
+        ? (data['results'] as List<dynamic>? ?? [])
+        : (data is List ? data : []);
+    return items
+        .map((json) => AnnouncementModel.fromJson(json as Map<String, dynamic>))
+        .where((announcement) => announcement.isActive)
         .toList();
   }
 }

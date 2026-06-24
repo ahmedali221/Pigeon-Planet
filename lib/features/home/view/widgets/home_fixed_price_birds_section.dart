@@ -35,7 +35,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'طيور بسعر ثابت',
+                AppLocalizations.of(context).fixedPriceBirds,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -135,7 +135,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                                             color: Colors.amber, size: 10),
                                         SizedBox(width: 2),
                                         Text(
-                                          '${bird.flyingSpeed!.toStringAsFixed(0)} كم',
+                                          '${bird.flyingSpeed!.toStringAsFixed(0)} ${AppLocalizations.of(context).kmUnit}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 10),
@@ -177,7 +177,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          'ج.م ${_fmt(bird.price)}',
+                          AppLocalizations.of(context).priceEgpFormat(_fmt(bird.price)),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

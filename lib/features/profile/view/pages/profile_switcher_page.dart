@@ -8,6 +8,7 @@ import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'create_room_page.dart';
+import 'edit_room_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class ProfileSwitcherPage extends StatelessWidget {
@@ -96,7 +97,7 @@ class _RoomTile extends StatelessWidget {
               ? null
               : () => context
                   .read<AuthBloc>()
-                  .add(AuthSwitchProfileRequested(room.type)),
+                  .add(AuthSwitchProfileRequested(profileId: room.id)),
           child: AnimatedContainer(
             duration: Duration(milliseconds: 200),
             padding: EdgeInsets.all(14),
@@ -203,18 +204,91 @@ class _RoomTile extends StatelessWidget {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                else
-                  Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textHint,
-                    size: 20,
                   ),
+                if (!isSwitching)
+                  _RoomMenuButton(room: room),
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _RoomMenuButton extends StatelessWidget {
+  final ProfileModel room;
+
+  const _RoomMenuButton({required this.room});
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final bloc = context.read<ProfileBloc>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('حذف الغرفة'),
+        content: Text(
+          'هل أنت متأكد من حذف "${room.displayName}"؟ لا يمكن التراجع عن هذا الإجراء.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('حذف', style: TextStyle(color: Colors.red.shade600)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      bloc.add(ProfileDeleteRequested(room));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<ProfileBloc>();
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert_rounded, color: AppColors.textHint, size: 20),
+      onSelected: (value) async {
+        if (value == 'edit') {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: bloc,
+                child: EditRoomPage(room: room),
+              ),
+            ),
+          );
+        } else if (value == 'delete') {
+          await _confirmDelete(context);
+        }
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit_outlined, size: 18, color: AppColors.textPrimary),
+              SizedBox(width: 8),
+              Text('تعديل'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red.shade500),
+              SizedBox(width: 8),
+              Text('حذف', style: TextStyle(color: Colors.red.shade500)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

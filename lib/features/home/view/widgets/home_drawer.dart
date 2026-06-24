@@ -25,12 +25,14 @@ class HomeDrawer extends StatelessWidget {
   final UserModel? authUser;
   final bool isSeller;
   final int unreadCount;
+  final String? sellerNickname;
 
   HomeDrawer({
     super.key,
     required this.authUser,
     required this.isSeller,
     required this.unreadCount,
+    this.sellerNickname,
   });
 
   @override
@@ -38,7 +40,11 @@ class HomeDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          _DrawerHeader(authUser: authUser, isSeller: isSeller),
+          _DrawerHeader(
+            authUser: authUser,
+            isSeller: isSeller,
+            sellerNickname: sellerNickname,
+          ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -72,8 +78,13 @@ class HomeDrawer extends StatelessWidget {
 class _DrawerHeader extends StatelessWidget {
   final UserModel? authUser;
   final bool isSeller;
+  final String? sellerNickname;
 
-  _DrawerHeader({required this.authUser, required this.isSeller});
+  _DrawerHeader({
+    required this.authUser,
+    required this.isSeller,
+    this.sellerNickname,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +111,22 @@ class _DrawerHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isSeller ? 'بائع' : 'مشتري',
+                  isSeller
+                      ? (sellerNickname?.isNotEmpty == true
+                          ? sellerNickname!
+                          : AppLocalizations.of(context).sellerRole)
+                      : AppLocalizations.of(context).buyerRole,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                if (isSeller)
+                  Text(
+                    AppLocalizations.of(context).sellerRole,
+                    style: TextStyle(color: Colors.white54, fontSize: 11),
+                  ),
                 if ((authUser?.phoneNumber ?? '').isNotEmpty)
                   Text(
                     authUser!.phoneNumber,
@@ -525,7 +545,7 @@ class _LogoutTile extends StatelessWidget {
                   authBloc.add(AuthLogoutRequested());
                 },
                 child: Text(
-                  'تسجيل خروج',
+                  AppLocalizations.of(context).logout,
                   style: TextStyle(color: Colors.red.shade400),
                 ),
               ),

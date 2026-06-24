@@ -118,7 +118,7 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
                   elevation: 0,
                   pinned: true,
                   title: Text(
-                    totalCount > 0 ? 'مزاداتي ($totalCount)' : AppLocalizations.of(context).myAuctions,
+                    totalCount > 0 ? AppLocalizations.of(context).myAuctionsWithCount(totalCount) : AppLocalizations.of(context).myAuctions,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
@@ -142,8 +142,8 @@ class _SellerMyAuctionsViewState extends State<_SellerMyAuctionsView>
                     indicatorColor: AppColors.primary,
                     indicatorWeight: 2.5,
                     tabs: [
-                      Tab(text: 'نشطة (${active.length})'),
-                      Tab(text: 'منتهية (${ended.length})'),
+                      Tab(text: AppLocalizations.of(context).activeTabWithCount(active.length)),
+                      Tab(text: AppLocalizations.of(context).endedTabWithCount(ended.length)),
                     ],
                   ),
                 ),
@@ -242,7 +242,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 24),
             Text(
-              isEnded ? 'لا توجد مزادات منتهية' : 'لا توجد مزادات نشطة',
+              isEnded ? AppLocalizations.of(context).noEndedAuctions : AppLocalizations.of(context).noActiveAuctions,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -252,8 +252,8 @@ class _EmptyState extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               isEnded
-                  ? 'ستظهر هنا المزادات بعد انتهائها'
-                  : 'أنشئ مزادك الأول لعرض طيورك',
+                  ? AppLocalizations.of(context).endedAuctionsWillAppearHere
+                  : AppLocalizations.of(context).createFirstAuction,
               style: TextStyle(
                   fontSize: 13, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
@@ -428,7 +428,7 @@ class _AuctionListTile extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'ج.م ${a.currentPrice.toStringAsFixed(0)}',
+                          AppLocalizations.of(context).priceEgpFormat(a.currentPrice.toStringAsFixed(0)),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -440,7 +440,7 @@ class _AuctionListTile extends StatelessWidget {
                             size: 12, color: AppColors.textSecondary),
                         SizedBox(width: 3),
                         Text(
-                          '$bids مزايدة',
+                          AppLocalizations.of(context).bidsCountLabel(bids),
                           style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary),

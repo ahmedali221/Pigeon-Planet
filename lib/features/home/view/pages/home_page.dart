@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
 import '../../viewmodel/home_bloc.dart';
-import '../data/home_mock_data.dart';
 import '../widgets/home_account_row.dart';
 import '../widgets/home_active_auctions_section.dart';
 import '../widgets/home_auctions_section.dart';
@@ -16,6 +15,7 @@ import '../widgets/home_insights_preview_section.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/points_system_modal.dart';
 import '../widgets/home_demo_cards_section.dart';
+import '../widgets/home_section_skeletons.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_create_page.dart';
 import '../../../auctions/view/pages/bird_detail_page.dart';
@@ -39,6 +39,7 @@ import '../../../subscription/view/pages/packages_page.dart';
 import '../widgets/home_drawer.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../model/announcement_model.dart';
 UserModel? _homeAuthUserForUi(AuthState authState) {
   if (authState is AuthSuccess) return authState.user;
   if (authState is AuthSwitchingProfile) return authState.user;
@@ -83,9 +84,11 @@ class _HomeViewState extends State<_HomeView> {
 
   // ── Adapters: model → map for existing widgets ────────────────────────────
 
-  static List<Map<String, dynamic>> _toActiveAuctionMaps(
+  List<Map<String, dynamic>> _toActiveAuctionMaps(
     List<AuctionModel> auctions,
+    BuildContext context,
   ) {
+    final l = AppLocalizations.of(context);
     return auctions.map((a) {
       final ring = a.items.isNotEmpty ? a.items.first.bird.ringNumber : a.title;
       final seconds = a.timeRemaining ?? 0;
@@ -94,16 +97,16 @@ class _HomeViewState extends State<_HomeView> {
       final minutes = (seconds % 3600) ~/ 60;
       String timeLabel;
       if (days > 0) {
-        timeLabel = '$days يوم و$hours ساعة';
+        timeLabel = l.timeLabelDaysHours(days, hours);
       } else if (hours > 0) {
-        timeLabel = '$hours ساعة و$minutes دقيقة';
+        timeLabel = l.timeLabelHoursMinutes(hours, minutes);
       } else {
-        timeLabel = '$minutes دقيقة';
+        timeLabel = l.timeLabelMinutes(minutes);
       }
       return {
         'id': a.id,
         'ring': ring,
-        'type': a.auctionTypeDisplay.isNotEmpty ? a.auctionTypeDisplay : 'مزاد',
+        'type': a.auctionTypeDisplay.isNotEmpty ? a.auctionTypeDisplay : l.auctionTypeDefault,
         'typeColor': 0xFF3E7B52,
         'breed': a.items.isNotEmpty ? a.items.first.bird.colour : '—',
         'desc': a.description,
@@ -145,6 +148,24 @@ class _HomeViewState extends State<_HomeView> {
         'thumbnailUrl': (a.thumbnailUrl?.isNotEmpty == true)
             ? a.thumbnailUrl
             : (a.items.isNotEmpty ? a.items.first.bird.thumbnailUrl : null),
+      };
+    }).toList();
+  }
+
+  static List<Map<String, dynamic>> _toAnnouncementBannerMaps(
+    List<AnnouncementModel> announcements,
+  ) {
+    const colors = [0xFF2B5876, 0xFF1A3A2A, 0xFF4E342E, 0xFF3E7B52];
+    return announcements.asMap().entries.map((entry) {
+      final index = entry.key;
+      final announcement = entry.value;
+      return {
+        'label': announcement.title,
+        'sub': announcement.subtitle.isNotEmpty
+            ? announcement.subtitle
+            : announcement.details,
+        'imageUrl': announcement.imageUrl,
+        'color': colors[index % colors.length],
       };
     }).toList();
   }
@@ -374,12 +395,10 @@ class _HomeViewState extends State<_HomeView> {
       },
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, homeState) {
-          final isLoading =
-              homeState.status == HomeStatus.loading ||
-              homeState.status == HomeStatus.initial;
-
-          final activeAuctions = _toActiveAuctionMaps(homeState.activeAuctions);
+          final activeAuctions = _toActiveAuctionMaps(homeState.activeAuctions, context);
           final endingSoon = _toEndingSoonMaps(homeState.endingSoonAuctions);
+          final announcementBanners =
+              _toAnnouncementBannerMaps(homeState.announcements);
 
           return BlocBuilder<AuthBloc, AuthState>(
             builder: (context, authState) {
@@ -409,6 +428,7 @@ class _HomeViewState extends State<_HomeView> {
                     authUser: authUser,
                     isSeller: isSeller,
                     unreadCount: homeState.unreadNotificationCount,
+                    sellerNickname: homeState.sellerSummary?.nickname,
                   ),
                 body: SafeArea(
                   child: Stack(
@@ -459,8 +479,8 @@ class _HomeViewState extends State<_HomeView> {
                                   );
                                 } else {
                                   context.read<AuthBloc>().add(
-                                    AuthSwitchProfileRequested(
-                                      'Customer',
+                                    const AuthSwitchProfileRequested(
+                                      newProfile: 'Customer',
                                     ),
                                   );
                                 }
@@ -473,122 +493,110 @@ class _HomeViewState extends State<_HomeView> {
                                     HomeRefreshRequested(isSeller: isSeller),
                                   );
                                 },
-                                child: isLoading
-                                    ? Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : SingleChildScrollView(
-                                        physics:
-                                            AlwaysScrollableScrollPhysics(),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // if (!isSeller)
-                                            //   HomeHeroBanner(
-                                            //       banners: HomeMockData.banners),
-                                            if (!isSeller) ...[
-                                              HomeWelcomeBanner(
-                                                displayName: displayName,
-                                              ),
-                                              SizedBox(height: 20),
-                                              HomeHeroBanner(
-                                                banners: HomeMockData.banners,
-                                              ),
-                                              SizedBox(height: 20),
-                                              HomeDemoCardsSection(),
-                                              SizedBox(height: 20),
-                                              HomeBreedersSection(
-                                                sellers: homeState.sellers,
-                                              ),
-                                            ],
-                                            if (isSeller) ...[
-                                              HomeSellerMetricsSection(
-                                                summary:
-                                                    homeState.sellerSummary,
-                                                displayName: displayName,
-                                                myAuctionsCount:
-                                                    homeState
-                                                        .sellerSummary
-                                                        ?.activeLiveAuctions ??
-                                                    0,
-                                                myBirdsCount:
-                                                    homeState.myBirds.length,
-                                              ),
-                                              SizedBox(height: 20),
-                                              HomeInsightsPreviewSection(),
-                                              SizedBox(height: 20),
-                                              HomeBreedersSection(
-                                                sellers: homeState.sellers,
-                                              ),
-                                            ],
-                                            SizedBox(height: 20),
-                                            if (homeState
-                                                .featuredBirds
-                                                .isNotEmpty)
-                                              HomeFixedPriceBirdsSection(
-                                                birds: homeState.featuredBirds,
-                                                onBirdTap: (bird) {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          BlocProvider.value(
-                                                            value: context
-                                                                .read<
-                                                                  CartBloc
-                                                                >(),
-                                                            child: BirdDetailPage(
-                                                              bird: bird,
-                                                              sellerNickname: bird
-                                                                  .sellerNickname,
-                                                            ),
-                                                          ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            if (homeState
-                                                .featuredBirds
-                                                .isNotEmpty)
-                                              SizedBox(height: 20),
-                                            if (activeAuctions.isNotEmpty)
-                                              HomeActiveAuctionsSection(
-                                                auctions: activeAuctions,
-                                              ),
-                                            if (activeAuctions.isNotEmpty)
-                                              SizedBox(height: 20),
-                                            HomeComingSoonSection(
-                                              auctions:
-                                                  homeState.comingSoonAuctions,
-                                            ),
-                                            SizedBox(height: 20),
-                                            if (endingSoon.isNotEmpty)
-                                              HomeAuctionsSection(
-                                                auctions: endingSoon,
-                                              ),
-                                            if (endingSoon.isNotEmpty)
-                                              SizedBox(height: 20),
-                                            if (homeState.status ==
-                                                HomeStatus.error)
-                                              Padding(
-                                                padding: EdgeInsets.all(
-                                                  16,
-                                                ),
-                                                child: Text(
-                                                  homeState.errorMessage ??
-                                                      AppLocalizations.of(context).dataLoadError,
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 14,
+                                child: SingleChildScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // ── Customer sections ───────────────────
+                                      if (!isSeller) ...[
+                                        HomeWelcomeBanner(displayName: displayName),
+                                        const SizedBox(height: 20),
+                                        if (homeState.announcementsLoading)
+                                          const HomeHeroBannerSkeleton()
+                                        else if (announcementBanners.isNotEmpty)
+                                          HomeHeroBanner(banners: announcementBanners),
+                                        if (homeState.announcementsLoading || announcementBanners.isNotEmpty)
+                                          const SizedBox(height: 20),
+                                        HomeDemoCardsSection(),
+                                        const SizedBox(height: 20),
+                                        if (homeState.sellersLoading)
+                                          const HomeBreedersSkeleton()
+                                        else
+                                          HomeBreedersSection(sellers: homeState.sellers),
+                                      ],
+                                      // ── Seller sections ─────────────────────
+                                      if (isSeller) ...[
+                                        if (homeState.summaryLoading)
+                                          const HomeSellerMetricsSkeleton()
+                                        else
+                                          HomeSellerMetricsSection(
+                                            summary: homeState.sellerSummary,
+                                            displayName: displayName,
+                                            myAuctionsCount: homeState.sellerSummary?.activeLiveAuctions ?? 0,
+                                            myBirdsCount: homeState.myBirds.length,
+                                          ),
+                                        const SizedBox(height: 20),
+                                        if (homeState.announcementsLoading)
+                                          const HomeHeroBannerSkeleton()
+                                        else if (announcementBanners.isNotEmpty)
+                                          HomeHeroBanner(banners: announcementBanners),
+                                        if (homeState.announcementsLoading || announcementBanners.isNotEmpty)
+                                          const SizedBox(height: 20),
+                                        HomeInsightsPreviewSection(),
+                                        const SizedBox(height: 20),
+                                        if (homeState.sellersLoading)
+                                          const HomeBreedersSkeleton()
+                                        else
+                                          HomeBreedersSection(sellers: homeState.sellers),
+                                      ],
+                                      const SizedBox(height: 20),
+                                      // ── Fixed-price birds ───────────────────
+                                      if (homeState.featuredBirds.isNotEmpty) ...[
+                                        HomeFixedPriceBirdsSection(
+                                          birds: homeState.featuredBirds,
+                                          onBirdTap: (bird) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => BlocProvider.value(
+                                                  value: context.read<CartBloc>(),
+                                                  child: BirdDetailPage(
+                                                    bird: bird,
+                                                    sellerNickname: bird.sellerNickname,
                                                   ),
-                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
-                                            SizedBox(height: 90),
-                                          ],
+                                            );
+                                          },
                                         ),
-                                      ),
+                                        const SizedBox(height: 20),
+                                      ],
+                                      // ── Active auctions ─────────────────────
+                                      if (homeState.activeAuctionsLoading)
+                                        const HomeActiveAuctionsSkeleton()
+                                      else if (activeAuctions.isNotEmpty)
+                                        HomeActiveAuctionsSection(auctions: activeAuctions),
+                                      if (homeState.activeAuctionsLoading || activeAuctions.isNotEmpty)
+                                        const SizedBox(height: 20),
+                                      // ── Coming soon ─────────────────────────
+                                      if (homeState.comingSoonLoading)
+                                        const HomeComingSoonSkeleton()
+                                      else
+                                        HomeComingSoonSection(auctions: homeState.comingSoonAuctions),
+                                      const SizedBox(height: 20),
+                                      // ── Ending soon ─────────────────────────
+                                      if (homeState.endingSoonLoading)
+                                        const HomeEndingSoonSkeleton()
+                                      else if (endingSoon.isNotEmpty)
+                                        HomeAuctionsSection(auctions: endingSoon),
+                                      if (homeState.endingSoonLoading || endingSoon.isNotEmpty)
+                                        const SizedBox(height: 20),
+                                      // ── Error banner ────────────────────────
+                                      if (homeState.status == HomeStatus.error)
+                                        Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Text(
+                                            homeState.errorMessage ??
+                                                AppLocalizations.of(context).dataLoadError,
+                                            style: const TextStyle(color: Colors.red, fontSize: 14),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      const SizedBox(height: 90),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -740,8 +748,9 @@ class HomeWelcomeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final name = displayName.trim();
-    final greeting = name.isEmpty ? 'مرحبا بعودتك!' : 'مرحبا $name 👋';
+    final greeting = name.isEmpty ? l.welcomeBackGeneric : l.welcomeWithName(name);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 16, 16, 0),

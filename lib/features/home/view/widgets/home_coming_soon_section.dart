@@ -24,7 +24,7 @@ class HomeComingSoonSection extends StatelessWidget {
               Text('🔥', style: TextStyle(fontSize: 18)),
               SizedBox(width: 6),
               Text(
-                'مزادات قادمة',
+                AppLocalizations.of(context).upcomingAuctions,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class HomeComingSoonSection extends StatelessWidget {
               border: Border.all(color: Color(0xFFFDD835)),
             ),
             child: Text(
-              'سوف تنزل المزادات قريباً - كن مستعداً!',
+              AppLocalizations.of(context).auctionsComingSoonBanner,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -139,7 +139,7 @@ class _ComingSoonCard extends StatelessWidget {
         : (bird?.name.isNotEmpty == true ? bird!.name : ring);
     final pedigree = auction.description.isNotEmpty
         ? auction.description
-        : 'لا يوجد وصف';
+        : AppLocalizations.of(context).noDescription;
     final price = auction.items.isNotEmpty
         ? auction.items.first.startingPrice
         : auction.currentPrice;
@@ -250,22 +250,22 @@ class _ComingSoonCard extends StatelessWidget {
                             value: t.seconds
                                 .toString()
                                 .padLeft(2, '0'),
-                            label: 'ثانية'),
+                            label: AppLocalizations.of(context).countdownSecond),
                         _sep(),
                         _CountdownUnit(
                             value: t.minutes
                                 .toString()
                                 .padLeft(2, '0'),
-                            label: 'دقيقة'),
+                            label: AppLocalizations.of(context).countdownMinute),
                         _sep(),
                         _CountdownUnit(
                             value: t.hours
                                 .toString()
                                 .padLeft(2, '0'),
-                            label: 'ساعة'),
+                            label: AppLocalizations.of(context).countdownHour),
                         _sep(),
                         _CountdownUnit(
-                            value: t.days.toString(), label: 'يوم'),
+                            value: t.days.toString(), label: AppLocalizations.of(context).countdownDay),
                       ],
                     ),
                   ),
@@ -374,13 +374,13 @@ class _ComingSoonCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'السعر المبدئي',
+                            AppLocalizations.of(context).startingPriceLabel,
                             style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textSecondary),
                           ),
                           Text(
-                            'ج.م ${_fmtPrice(price)}',
+                            AppLocalizations.of(context).priceEgpFormat(_fmtPrice(price)),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

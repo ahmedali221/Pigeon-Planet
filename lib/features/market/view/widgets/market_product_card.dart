@@ -6,6 +6,7 @@ import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class MarketProductCard extends StatelessWidget {
   final ProductModel product;
   final VoidCallback onTap;
@@ -179,7 +180,9 @@ class MarketProductCard extends StatelessWidget {
                 children: [
                   // price — start (right in RTL)
                   Text(
-                    '$basePrice ج.م',
+                    product.price > 0
+                        ? AppLocalizations.of(context).priceEgpFormat(basePrice)
+                        : basePrice,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

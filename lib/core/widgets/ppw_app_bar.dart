@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../constants/app_colors.dart';
 
@@ -39,7 +40,9 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (resolvedLeading == null && showBackButton && canPop) {
       resolvedLeading = IconButton(
         icon: Icon(
-          isRtl ? Icons.arrow_forward_ios_rounded : Icons.arrow_back_ios_rounded,
+          isRtl
+              ? Icons.arrow_forward_ios_rounded
+              : Icons.arrow_back_ios_rounded,
           size: 20,
           color: foregroundColor,
         ),
@@ -47,7 +50,8 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
-    final resolvedTitle = titleWidget ??
+    final resolvedTitle =
+        titleWidget ??
         (title != null
             ? Text(
                 title!,
@@ -57,7 +61,7 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
                   fontWeight: FontWeight.bold,
                 ),
               )
-            : null);
+            : const _PigeonPlanetLogo());
 
     return AppBar(
       backgroundColor: backgroundColor,
@@ -73,7 +77,18 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(
-        kToolbarHeight + (bottom?.preferredSize.height ?? 0),
-      );
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
+}
+
+class _PigeonPlanetLogo extends StatelessWidget {
+  const _PigeonPlanetLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 32,
+      child: SvgPicture.asset('assets/brand/logo.svg', fit: BoxFit.contain),
+    );
+  }
 }

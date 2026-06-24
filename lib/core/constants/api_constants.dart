@@ -34,6 +34,9 @@ class ApiConstants {
       '/notifications/mark-all-read/';
   static String notificationMarkRead(int id) => '/notifications/$id/mark-read/';
 
+  // Announcements
+  static const String announcements = '/announcements/';
+
   // ── Assets ────────────────────────────────────────────────────────────────
   static const String birds = '/assets/birds/';
   static String birdDetail(int id) => '/assets/birds/$id/';

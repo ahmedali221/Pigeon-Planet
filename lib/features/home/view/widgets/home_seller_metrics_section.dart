@@ -27,18 +27,19 @@ class HomeSellerMetricsSection extends StatelessWidget {
     this.showSellerTools = true,
   });
 
-  String get _greeting {
+  String _greeting(AppLocalizations l) {
     final n = summary?.nickname.trim().isNotEmpty == true
         ? summary!.nickname.trim()
         : (displayName ?? '').trim();
-    if (n.isEmpty) return 'مرحباً بعودتك! 👋';
-    return 'مرحباً $n 👋';
+    if (n.isEmpty) return l.welcomeBackGeneric;
+    return l.welcomeWithName(n);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final s = summary;
-    final pkg = s?.packageLabel ?? 'بدون باقة';
+    final pkg = s?.packageLabel ?? l.noPackage;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -66,7 +67,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _greeting,
+                          _greeting(l),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 17,
@@ -140,7 +141,7 @@ class HomeSellerMetricsSection extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'عرض الإحصائيات الكاملة',
+                          l.viewAllStats,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -262,7 +263,7 @@ class _ListingsCard extends StatelessWidget {
             iconColor: AppColors.orange,
             iconBg: AppColors.orangeLight,
             count: birdsCount,
-            label: 'طيوري',
+            label: AppLocalizations.of(context).myBirds,
             onTap: onBirdsTap,
           ),
           Divider(height: 1, indent: 14, endIndent: 14),
@@ -270,8 +271,8 @@ class _ListingsCard extends StatelessWidget {
             icon: Icons.storefront_rounded,
             iconColor: AppColors.primary,
             iconBg: AppColors.primaryLight,
-            label: 'إضافة منتج للمتجر',
-            subtitle: 'علف، أدوية، مستلزمات',
+            label: AppLocalizations.of(context).addProductToStore,
+            subtitle: AppLocalizations.of(context).marketSubtitle,
             onTap: onStoreTap,
             isLast: true,
           ),
@@ -412,7 +413,7 @@ class _EngagementRow extends StatelessWidget {
               icon: Icons.people_rounded,
               color: AppColors.blue,
               value: '${s.followersCount}',
-              label: 'متابع',
+              label: AppLocalizations.of(context).followers,
             ),
           if (s.followersCount > 0 && s.totalBidsReceived > 0)
             _VertDivider(),
@@ -421,7 +422,7 @@ class _EngagementRow extends StatelessWidget {
               icon: Icons.gavel_rounded,
               color: AppColors.primary,
               value: '${s.totalBidsReceived}',
-              label: 'مزايدة',
+              label: AppLocalizations.of(context).bidsLabel,
             ),
           if (s.totalBidsReceived > 0 && rating != null)
             _VertDivider(),
@@ -524,7 +525,7 @@ class _ToolsNavTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'أدواتي ومميزاتي',
+                  AppLocalizations.of(context).myToolsAndFeatures,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -532,7 +533,7 @@ class _ToolsNavTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'إشعارات · متطلبات النشر · أدوات متقدمة',
+                  AppLocalizations.of(context).toolsPageSubtitle,
                   style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,

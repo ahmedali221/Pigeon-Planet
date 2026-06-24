@@ -32,6 +32,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = payload['profile'] as String? ?? 'Customer';
+    final profileId = payload['profile_id'] as int?;
     final avatarUrl = _avatarUrlFrom(payload);
 
     if (profileType == 'Manager') {
@@ -42,6 +43,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       id: userId,
       phoneNumber: phoneNumber,
       profileType: profileType,
+      profileId: profileId,
       accessToken: access,
       refreshToken: refresh,
       avatarUrl: avatarUrl,
@@ -150,12 +152,14 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = response.data['profile'] as String? ?? newProfile;
+    final profileId = payload['profile_id'] as int?;
     final avatarUrl = _avatarUrlFrom(payload);
 
     return UserModel(
       id: userId,
       phoneNumber: '',
       profileType: profileType,
+      profileId: profileId,
       accessToken: access,
       refreshToken: refresh,
       avatarUrl: avatarUrl,
@@ -191,6 +195,7 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
       id: userId,
       phoneNumber: '',
       profileType: storedProfileType,
+      profileId: payload['profile_id'] as int?,
       accessToken: access,
       refreshToken: refresh,
       avatarUrl: _avatarUrlFrom(payload),
@@ -231,11 +236,13 @@ class RealAuthRemoteDataSource implements AuthRemoteDataSource {
     final payload = DioClient.decodeJwtPayload(access);
     final userId = payload['user_id'] as int? ?? 0;
     final profileType = response.data['profile'] as String? ?? 'Seller';
+    final newProfileId = (response.data['profile_id'] as int?) ?? payload['profile_id'] as int?;
     final avatarUrl = _avatarUrlFrom(payload);
     return UserModel(
       id: userId,
       phoneNumber: '',
       profileType: profileType,
+      profileId: newProfileId,
       accessToken: access,
       refreshToken: refresh,
       avatarUrl: avatarUrl,

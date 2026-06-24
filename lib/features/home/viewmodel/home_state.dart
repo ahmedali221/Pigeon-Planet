@@ -10,11 +10,21 @@ class HomeState extends Equatable {
   final List<BirdSummaryModel> featuredBirds;
   final List<BirdSummaryModel> myBirds;
   final List<SellerModel> sellers;
+  final List<AnnouncementModel> announcements;
   final SellerHomeSummary? sellerSummary;
   final CustomerHomeSummary? customerSummary;
   final int unreadNotificationCount;
   final int? pointsBalance;
   final String? errorMessage;
+
+  // Per-section loading flags — each section shows a skeleton until its flag is false.
+  final bool activeAuctionsLoading;
+  final bool endingSoonLoading;
+  final bool comingSoonLoading;
+  final bool sellersLoading;
+  final bool announcementsLoading;
+  final bool summaryLoading;
+  final bool sellerPrivateLoading;
 
   const HomeState({
     this.status = HomeStatus.initial,
@@ -24,12 +34,29 @@ class HomeState extends Equatable {
     this.featuredBirds = const [],
     this.myBirds = const [],
     this.sellers = const [],
+    this.announcements = const [],
     this.sellerSummary,
     this.customerSummary,
     this.unreadNotificationCount = 0,
     this.pointsBalance,
     this.errorMessage,
+    this.activeAuctionsLoading = false,
+    this.endingSoonLoading = false,
+    this.comingSoonLoading = false,
+    this.sellersLoading = false,
+    this.announcementsLoading = false,
+    this.summaryLoading = false,
+    this.sellerPrivateLoading = false,
   });
+
+  bool get anyLoading =>
+      activeAuctionsLoading ||
+      endingSoonLoading ||
+      comingSoonLoading ||
+      sellersLoading ||
+      announcementsLoading ||
+      summaryLoading ||
+      sellerPrivateLoading;
 
   HomeState copyWith({
     HomeStatus? status,
@@ -39,6 +66,7 @@ class HomeState extends Equatable {
     List<BirdSummaryModel>? featuredBirds,
     List<BirdSummaryModel>? myBirds,
     List<SellerModel>? sellers,
+    List<AnnouncementModel>? announcements,
     SellerHomeSummary? sellerSummary,
     CustomerHomeSummary? customerSummary,
     int? unreadNotificationCount,
@@ -47,6 +75,13 @@ class HomeState extends Equatable {
     bool clearError = false,
     bool clearSellerSummary = false,
     bool clearCustomerSummary = false,
+    bool? activeAuctionsLoading,
+    bool? endingSoonLoading,
+    bool? comingSoonLoading,
+    bool? sellersLoading,
+    bool? announcementsLoading,
+    bool? summaryLoading,
+    bool? sellerPrivateLoading,
   }) =>
       HomeState(
         status: status ?? this.status,
@@ -56,6 +91,7 @@ class HomeState extends Equatable {
         featuredBirds: featuredBirds ?? this.featuredBirds,
         myBirds: myBirds ?? this.myBirds,
         sellers: sellers ?? this.sellers,
+        announcements: announcements ?? this.announcements,
         sellerSummary: clearSellerSummary
             ? null
             : (sellerSummary ?? this.sellerSummary),
@@ -66,6 +102,14 @@ class HomeState extends Equatable {
             unreadNotificationCount ?? this.unreadNotificationCount,
         pointsBalance: pointsBalance ?? this.pointsBalance,
         errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+        activeAuctionsLoading:
+            activeAuctionsLoading ?? this.activeAuctionsLoading,
+        endingSoonLoading: endingSoonLoading ?? this.endingSoonLoading,
+        comingSoonLoading: comingSoonLoading ?? this.comingSoonLoading,
+        sellersLoading: sellersLoading ?? this.sellersLoading,
+        announcementsLoading: announcementsLoading ?? this.announcementsLoading,
+        summaryLoading: summaryLoading ?? this.summaryLoading,
+        sellerPrivateLoading: sellerPrivateLoading ?? this.sellerPrivateLoading,
       );
 
   @override
@@ -77,10 +121,18 @@ class HomeState extends Equatable {
         featuredBirds,
         myBirds,
         sellers,
+        announcements,
         sellerSummary,
         customerSummary,
         unreadNotificationCount,
         pointsBalance,
         errorMessage,
+        activeAuctionsLoading,
+        endingSoonLoading,
+        comingSoonLoading,
+        sellersLoading,
+        announcementsLoading,
+        summaryLoading,
+        sellerPrivateLoading,
       ];
 }

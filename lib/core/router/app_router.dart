@@ -16,6 +16,7 @@ import '../../features/auctions/view/pages/auctions_page.dart';
 import '../../features/market/view/pages/market_page.dart';
 import '../../features/rooms/view/pages/rooms_page.dart';
 import '../../features/races/view/pages/races_page.dart';
+import '../../features/splash/view/pages/splash_page.dart';
 
 class AppRouter {
   static final _rootKey = GlobalKey<NavigatorState>();
@@ -39,7 +40,8 @@ class AppRouter {
         return loc == AppRoutes.loading ? null : AppRoutes.loading;
       }
 
-      final authed = authState is AuthSuccess ||
+      final authed =
+          authState is AuthSuccess ||
           authState is AuthSwitchingProfile ||
           authState is AuthProfileSwitchFailure;
 
@@ -54,18 +56,10 @@ class AppRouter {
     },
     routes: [
       // ── Splash while AuthBloc initialises ──────────────────────────────────
-      GoRoute(
-        path: AppRoutes.loading,
-        builder: (_, _) => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      ),
+      GoRoute(path: AppRoutes.loading, builder: (_, _) => const SplashPage()),
 
       // ── Auth (unauthenticated entry point) ─────────────────────────────────
-      GoRoute(
-        path: AppRoutes.auth,
-        builder: (_, _) => const AccountTypePage(),
-      ),
+      GoRoute(path: AppRoutes.auth, builder: (_, _) => const AccountTypePage()),
 
       // ── Persistent shell with 5 bottom-nav tabs ────────────────────────────
       StatefulShellRoute.indexedStack(
@@ -75,9 +69,7 @@ class AppRouter {
               BlocProvider<CartBloc>(
                 create: (_) => sl<CartBloc>()..add(const CartStarted()),
               ),
-              BlocProvider<FeedBloc>(
-                create: (_) => sl<FeedBloc>(),
-              ),
+              BlocProvider<FeedBloc>(create: (_) => sl<FeedBloc>()),
             ],
             child: ShellScaffold(navigationShell: navigationShell),
           );
@@ -86,10 +78,7 @@ class AppRouter {
           StatefulShellBranch(
             navigatorKey: _homeKey,
             routes: [
-              GoRoute(
-                path: AppRoutes.home,
-                builder: (_, _) => HomePage(),
-              ),
+              GoRoute(path: AppRoutes.home, builder: (_, _) => HomePage()),
             ],
           ),
           StatefulShellBranch(
@@ -104,28 +93,19 @@ class AppRouter {
           StatefulShellBranch(
             navigatorKey: _marketKey,
             routes: [
-              GoRoute(
-                path: AppRoutes.market,
-                builder: (_, _) => MarketPage(),
-              ),
+              GoRoute(path: AppRoutes.market, builder: (_, _) => MarketPage()),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: _roomsKey,
             routes: [
-              GoRoute(
-                path: AppRoutes.rooms,
-                builder: (_, _) => RoomsPage(),
-              ),
+              GoRoute(path: AppRoutes.rooms, builder: (_, _) => RoomsPage()),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: _racesKey,
             routes: [
-              GoRoute(
-                path: AppRoutes.races,
-                builder: (_, _) => RacesPage(),
-              ),
+              GoRoute(path: AppRoutes.races, builder: (_, _) => RacesPage()),
             ],
           ),
         ],

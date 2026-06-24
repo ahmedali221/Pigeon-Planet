@@ -3,15 +3,12 @@ import '../../../../core/constants/app_colors.dart';
 import '../../model/category_model.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class MarketCategoryTile extends StatelessWidget {
   final CategoryModel category;
   final VoidCallback onTap;
 
-  MarketCategoryTile({
-    super.key,
-    required this.category,
-    required this.onTap,
-  });
+  MarketCategoryTile({super.key, required this.category, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +40,7 @@ class MarketCategoryTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: Text(category.emoji,
-                    style: TextStyle(fontSize: 26)),
+                child: Text(category.emoji, style: TextStyle(fontSize: 26)),
               ),
             ),
 
@@ -66,7 +62,9 @@ class MarketCategoryTile extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context).browseProducts,
                   style: TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary),
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -74,8 +72,7 @@ class MarketCategoryTile extends StatelessWidget {
             Spacer(),
 
             // arrow — end (left in RTL)
-            Icon(Icons.chevron_left_rounded,
-                color: AppColors.primary, size: 22),
+            Icon(Icons.forward, color: AppColors.primary, size: 22),
           ],
         ),
       ),

@@ -662,7 +662,9 @@ class _FeedProductCard extends StatelessWidget {
                   ),
                   Spacer(),
                   Text(
-                    '${product.price.toStringAsFixed(0)} ج.م',
+                    AppLocalizations.of(context).priceEgpFormat(
+                      product.price.toStringAsFixed(0),
+                    ),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
