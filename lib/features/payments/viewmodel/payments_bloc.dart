@@ -49,6 +49,22 @@ class PaymentsBloc extends Bloc<PaymentsEvent, PaymentsState> {
       requests: state.requests,
       isCreating: true,
     ));
+    final existingResult = await _repository.getPaymentRequests();
+    final existing = existingResult.fold(
+      (_) => null,
+      (requests) => _findActiveAuctionRequest(requests, event.auctionItemId),
+    );
+    if (existing != null) {
+      existingResult.fold((_) {}, (requests) {
+        emit(PaymentsState(
+          status: PaymentsStatus.loaded,
+          requests: requests,
+          reusedExistingRequest: true,
+        ));
+      });
+      return;
+    }
+
     final result = await _repository.createAuctionPaymentRequest(
       event.auctionItemId,
       buyerNote: event.buyerNote,
@@ -74,6 +90,22 @@ class PaymentsBloc extends Bloc<PaymentsEvent, PaymentsState> {
       requests: state.requests,
       isCreating: true,
     ));
+    final existingResult = await _repository.getPaymentRequests();
+    final existing = existingResult.fold(
+      (_) => null,
+      (requests) => _findActiveMarketRequest(requests, event.orderItemId),
+    );
+    if (existing != null) {
+      existingResult.fold((_) {}, (requests) {
+        emit(PaymentsState(
+          status: PaymentsStatus.loaded,
+          requests: requests,
+          reusedExistingRequest: true,
+        ));
+      });
+      return;
+    }
+
     final result = await _repository.createMarketPaymentRequest(
       event.orderItemId,
       buyerNote: event.buyerNote,
@@ -155,4 +187,34 @@ class PaymentsBloc extends Bloc<PaymentsEvent, PaymentsState> {
       state.requests
           .map((r) => r.id == updated.id ? updated : r)
           .toList();
+
+  PaymentRequestModel? _findActiveAuctionRequest(
+    List<PaymentRequestModel> requests,
+    int auctionItemId,
+  ) =>
+      _findActiveRequest(
+        requests,
+        (request) => request.auctionItemId == auctionItemId,
+      );
+
+  PaymentRequestModel? _findActiveMarketRequest(
+    List<PaymentRequestModel> requests,
+    int orderItemId,
+  ) =>
+      _findActiveRequest(
+        requests,
+        (request) => request.orderItemId == orderItemId,
+      );
+
+  PaymentRequestModel? _findActiveRequest(
+    List<PaymentRequestModel> requests,
+    bool Function(PaymentRequestModel request) matchesSource,
+  ) {
+    for (final request in requests) {
+      if (matchesSource(request) && (request.isPending || request.isRejected)) {
+        return request;
+      }
+    }
+    return null;
+  }
 }

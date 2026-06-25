@@ -55,6 +55,7 @@ class _PaymentsView extends StatelessWidget {
     return BlocListener<PaymentsBloc, PaymentsState>(
       listenWhen: (p, c) => p.isCreating && !c.isCreating,
       listener: (context, state) {
+        if (state.reusedExistingRequest) return;
         if (state.createError != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.createError!),
