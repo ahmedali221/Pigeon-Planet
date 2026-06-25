@@ -1,0 +1,86 @@
+name: Build Debug APK → Google Drive
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-apk:
+    name: Build & Upload Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - name: Set up Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        working-directory: pigeon_planet
+        run: flutter pub get
+
+      # ── Date-based version: YYYY.MM.DD+<run_number> — fully automatic ─────────
+      - name: Resolve version
+        id: version
+        run: |
+          DATE=$(date +'%Y.%m.%d')
+          BUILD_NUM=${{ github.run_number }}
+          echo "name=${DATE}" >> "$GITHUB_OUTPUT"
+          echo "build=${BUILD_NUM}" >> "$GITHUB_OUTPUT"
+          echo "full=${DATE}+${BUILD_NUM}" >> "$GITHUB_OUTPUT"
+
+      - name: Build debug APK
+        working-directory: pigeon_planet
+        run: |
+          flutter build apk --debug \
+            --build-name=${{ steps.version.outputs.name }} \
+            --build-number=${{ steps.version.outputs.build }}
+
+      # ── Naming: pigeon-planet-v2026.06.26+47-debug.apk ──────────────────────
+      - name: Compute APK filename
+        id: meta
+        run: |
+          echo "apk_name=pigeon-planet-v${{ steps.version.outputs.full }}-debug.apk" >> "$GITHUB_OUTPUT"
+
+      # ── Keep a copy as a GitHub artifact (7-day retention) ──────────────────
+      - name: Upload artifact (GitHub)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.apk_name }}
+          path: pigeon_planet/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+
+      # ── Upload to Google Drive via rclone + service account ─────────────────
+      - name: Install rclone
+        run: curl https://rclone.org/install.sh | sudo bash
+
+      - name: Configure rclone
+        env:
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          mkdir -p ~/.config/rclone
+          # Write service-account JSON from secret
+          printf '%s' '${{ secrets.GDRIVE_CREDENTIALS }}' > /tmp/sa.json
+          # Write rclone config — root_folder_id targets your shared folder
+          printf '[gdrive]\ntype = drive\nscope = drive\nservice_account_file = /tmp/sa.json\nroot_folder_id = %s\n' \
+            "$GDRIVE_FOLDER_ID" > ~/.config/rclone/rclone.conf
+
+      - name: Upload APK to Google Drive
+        run: |
+          APK_SRC="pigeon_planet/build/app/outputs/flutter-apk/app-debug.apk"
+          APK_DST="${{ steps.meta.outputs.apk_name }}"
+          # Copy file and rename it on the remote
+          rclone copyto "$APK_SRC" "gdrive:/$APK_DST" \
+            --drive-chunk-size 128M \
+            -v
