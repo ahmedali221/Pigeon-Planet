@@ -29,6 +29,10 @@ class LuckyWheelSpinRequested extends LuckyWheelEvent {
   const LuckyWheelSpinRequested();
 }
 
+class LuckyWheelReadyForNextSpin extends LuckyWheelEvent {
+  const LuckyWheelReadyForNextSpin();
+}
+
 // ── States ────────────────────────────────────────────────────────────────────
 
 enum LuckyWheelStatus { initial, loading, ready, spinning, error }
@@ -90,12 +94,13 @@ class LuckyWheelState extends Equatable {
     bool? isSeller,
     String? errorMessage,
     bool clearError = false,
+    bool clearSpin = false,
   }) =>
       LuckyWheelState(
         status: status ?? this.status,
         current: current ?? this.current,
-        spinResult: spinResult ?? this.spinResult,
-        winnerIndex: winnerIndex ?? this.winnerIndex,
+        spinResult: clearSpin ? null : (spinResult ?? this.spinResult),
+        winnerIndex: clearSpin ? null : (winnerIndex ?? this.winnerIndex),
         hasSpun: hasSpun ?? this.hasSpun,
         isSeller: isSeller ?? this.isSeller,
         errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -122,6 +127,7 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
         super(const LuckyWheelState()) {
     on<LuckyWheelLoadRequested>(_onLoad);
     on<LuckyWheelSpinRequested>(_onSpin);
+    on<LuckyWheelReadyForNextSpin>(_onReadyForNextSpin);
   }
 
   Future<void> _onLoad(
@@ -184,5 +190,16 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
         errorMessage: e.toString(),
       ));
     }
+  }
+
+  void _onReadyForNextSpin(
+    LuckyWheelReadyForNextSpin event,
+    Emitter<LuckyWheelState> emit,
+  ) {
+    emit(state.copyWith(
+      status: LuckyWheelStatus.ready,
+      hasSpun: false,
+      clearSpin: true,
+    ));
   }
 }

@@ -2920,6 +2920,38 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upcoming2 => 'حسناً، في المرة القادمة';
 
   @override
+  String get spinAgain => '🎰 أدر مرة أخرى!';
+
+  @override
+  String spinAttemptsRemaining(int count) {
+    return 'لديك $count محاولة متبقية';
+  }
+
+  @override
+  String get spinNowLabel => 'أدر الآن';
+
+  @override
+  String get spinningLabel => 'جاري الدوران...';
+
+  @override
+  String get noAttemptsLabel => 'لا توجد محاولات متاحة';
+
+  @override
+  String get noPrizesLabel => 'لا توجد جوائز مُعدّة';
+
+  @override
+  String get availableAttemptsTitle => 'المحاولات المتاحة';
+
+  @override
+  String get canSpinNowHint => 'يمكنك الآن تدوير عجلة الحظ.';
+
+  @override
+  String get earnAttemptsHint => 'احصل على محاولات من خلال نشاطك في المزادات.';
+
+  @override
+  String get noPrizesConfiguredHint => 'لم يتم تعيين جوائز لعجلة الحظ بعد.';
+
+  @override
   String get loading5 => 'فشل تحميل الإشعارات';
 
   @override

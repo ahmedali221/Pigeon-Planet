@@ -83,17 +83,24 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
     _controller.reset();
     _controller.forward().whenComplete(() {
       if (!mounted) return;
-      final state = context.read<LuckyWheelBloc>().state;
-      if (state.spinResult != null) {
+      final bloc = context.read<LuckyWheelBloc>();
+      final spinResult = bloc.state.spinResult;
+      if (spinResult != null) {
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           isDismissible: false,
           enableDrag: false,
-          builder: (_) => SpinResultSheet(result: state.spinResult!),
+          builder: (_) => SpinResultSheet(
+            result: spinResult,
+            onCollect: () {
+              if (!mounted) return;
+              bloc.add(const LuckyWheelReadyForNextSpin());
+            },
+          ),
         );
       }
     });
@@ -150,6 +157,8 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
     final isSpinning = state.status == LuckyWheelStatus.spinning;
     final remainingAttempts = state.current?.remainingAttempts ?? 0;
     final hasPrizes = state.prizes.isNotEmpty;
+    // hasSpun is reset to false after the user collects from the result sheet,
+    // so canSpin re-evaluates purely on remaining attempts.
     final canSpin =
         !state.hasSpun && !isSpinning && remainingAttempts > 0 && hasPrizes;
 
@@ -215,7 +224,7 @@ class _WheelInfoHeader extends StatelessWidget {
   final int remainingAttempts;
   final bool hasPrizes;
 
-  _WheelInfoHeader({
+  const _WheelInfoHeader({
     required this.isSeller,
     required this.remainingAttempts,
     required this.hasPrizes,
@@ -224,11 +233,11 @@ class _WheelInfoHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryDark],
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
         ),
@@ -286,22 +295,23 @@ class _AttemptsStatusCard extends StatelessWidget {
   final int remainingAttempts;
   final bool hasPrizes;
 
-  _AttemptsStatusCard({
+  const _AttemptsStatusCard({
     required this.remainingAttempts,
     required this.hasPrizes,
   });
 
   @override
   Widget build(BuildContext context) {
-    final status = !hasPrizes
-        ? 'Wheel prizes are not configured yet.'
+    final l = AppLocalizations.of(context);
+    final hint = !hasPrizes
+        ? l.noPrizesConfiguredHint
         : remainingAttempts > 0
-            ? 'You can spin the wheel now.'
-            : 'Earn attempts from eligible auction activity.';
+            ? l.canSpinNowHint
+            : l.earnAttemptsHint;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
-      padding: EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -319,7 +329,7 @@ class _AttemptsStatusCard extends StatelessWidget {
             child: Center(
               child: Text(
                 '$remainingAttempts',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
@@ -327,23 +337,23 @@ class _AttemptsStatusCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Available attempts',
-                  style: TextStyle(
+                  l.availableAttemptsTitle,
+                  style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  status,
-                  style: TextStyle(
+                  hint,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                     height: 1.35,
@@ -362,7 +372,7 @@ class _WheelWithPointer extends StatelessWidget {
   final List<WheelPrizeModel> prizes;
   final Animation<double> rotation;
 
-  _WheelWithPointer({
+  const _WheelWithPointer({
     required this.prizes,
     required this.rotation,
   });
@@ -432,7 +442,7 @@ class _WheelWithPointer extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF6366F1).withValues(alpha: 0.25),
+                color: AppColors.primary.withValues(alpha: 0.22),
                 blurRadius: 24,
                 spreadRadius: 4,
               ),
@@ -467,7 +477,7 @@ class _WheelWithPointer extends StatelessWidget {
 // ── Pointer triangle ──────────────────────────────────────────────────────────
 
 class _WheelPointer extends StatelessWidget {
-  _WheelPointer();
+  const _WheelPointer();
 
   @override
   Widget build(BuildContext context) {
@@ -475,16 +485,16 @@ class _WheelPointer extends StatelessWidget {
       width: 24,
       height: 36,
       decoration: BoxDecoration(
-        color: Color(0xFFDC2626),
-        borderRadius: BorderRadius.vertical(
+        color: AppColors.red,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(6),
           bottom: Radius.circular(3),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: AppColors.red.withValues(alpha: 0.4),
             blurRadius: 6,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -507,7 +517,7 @@ class _SpinButton extends StatelessWidget {
   final bool hasPrizes;
   final VoidCallback onSpin;
 
-  _SpinButton({
+  const _SpinButton({
     required this.hasSpun,
     required this.isSpinning,
     required this.canSpin,
@@ -518,26 +528,25 @@ class _SpinButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final enabled = canSpin;
     final label = isSpinning
-        ? 'Spinning...'
+        ? l.spinningLabel
         : !hasPrizes
-            ? 'No wheel prizes configured'
+            ? l.noPrizesLabel
             : remainingAttempts <= 0
-                ? 'No attempts available'
-                : hasSpun
-                    ? 'Spin completed'
-                    : 'Spin now';
+                ? l.noAttemptsLabel
+                : l.spinNowLabel;
 
     return GestureDetector(
       onTap: enabled ? onSpin : null,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         height: 56,
         decoration: BoxDecoration(
           gradient: enabled
-              ? LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              ? const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark],
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
                 )
@@ -547,9 +556,9 @@ class _SpinButton extends StatelessWidget {
           boxShadow: enabled
               ? [
                   BoxShadow(
-                    color: Color(0xFF6366F1).withValues(alpha: 0.4),
+                    color: AppColors.primary.withValues(alpha: 0.35),
                     blurRadius: 16,
-                    offset: Offset(0, 6),
+                    offset: const Offset(0, 6),
                   ),
                 ]
               : null,
@@ -575,7 +584,7 @@ class _SpinButton extends StatelessWidget {
 class _PrizeLegend extends StatelessWidget {
   final List<WheelPrizeModel> prizes;
 
-  _PrizeLegend({required this.prizes});
+  const _PrizeLegend({required this.prizes});
 
   @override
   Widget build(BuildContext context) {
@@ -660,7 +669,7 @@ class _PrizeRow extends StatelessWidget {
   final WheelPrizeModel prize;
   final String pct;
 
-  _PrizeRow({required this.prize, required this.pct});
+  const _PrizeRow({required this.prize, required this.pct});
 
   @override
   Widget build(BuildContext context) {
@@ -752,7 +761,7 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  _ErrorView({required this.message, required this.onRetry});
+  const _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {

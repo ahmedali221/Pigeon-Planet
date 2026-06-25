@@ -86,7 +86,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _loadFeaturedBirds(Emitter<HomeState> emit) async {
-    final result = await _auctionsRepository.getSellerBirds();
+    final result = await _auctionsRepository.getSellerBirds(isMarketListed: true);
     final birds = result.fold((_) => <BirdSummaryModel>[], (list) => list);
     emit(state.copyWith(featuredBirds: birds, featuredBirdsLoading: false));
   }

@@ -1,7 +1,6 @@
-import 'package:dio/dio.dart';
-
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/services/cloudinary_service.dart';
 import '../profile_model.dart';
 import 'profile_remote_datasource.dart';
 
@@ -101,15 +100,14 @@ class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
     final endpoint = profileType == 'Seller'
         ? ApiConstants.sellerAvatar(profileId)
         : ApiConstants.customerAvatar(profileId);
-    final fileName = filePath.replaceAll('\\', '/').split('/').last;
-    final formData = FormData.fromMap({
-      'avatar': await MultipartFile.fromFile(filePath, filename: fileName),
-    });
-    final response = await _dio.patch(
-      endpoint,
-      data: formData,
-      options: Options(contentType: Headers.multipartFormDataContentType),
+
+    final avatarUrl = await CloudinaryService.uploadAvatar(
+      filePath,
+      '${profileType.toLowerCase()}_$profileId',
     );
+    if (avatarUrl == null) throw Exception('Failed to upload avatar');
+
+    final response = await _dio.patch(endpoint, data: {'avatar': avatarUrl});
     return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

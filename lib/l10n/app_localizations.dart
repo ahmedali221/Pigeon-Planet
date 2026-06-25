@@ -5534,6 +5534,66 @@ abstract class AppLocalizations {
   /// **'حسناً، في المرة القادمة'**
   String get upcoming2;
 
+  /// No description provided for @spinAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'🎰 أدر مرة أخرى!'**
+  String get spinAgain;
+
+  /// No description provided for @spinAttemptsRemaining.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك {count} محاولة متبقية'**
+  String spinAttemptsRemaining(int count);
+
+  /// No description provided for @spinNowLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدر الآن'**
+  String get spinNowLabel;
+
+  /// No description provided for @spinningLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الدوران...'**
+  String get spinningLabel;
+
+  /// No description provided for @noAttemptsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد محاولات متاحة'**
+  String get noAttemptsLabel;
+
+  /// No description provided for @noPrizesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد جوائز مُعدّة'**
+  String get noPrizesLabel;
+
+  /// No description provided for @availableAttemptsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحاولات المتاحة'**
+  String get availableAttemptsTitle;
+
+  /// No description provided for @canSpinNowHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمكنك الآن تدوير عجلة الحظ.'**
+  String get canSpinNowHint;
+
+  /// No description provided for @earnAttemptsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'احصل على محاولات من خلال نشاطك في المزادات.'**
+  String get earnAttemptsHint;
+
+  /// No description provided for @noPrizesConfiguredHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم تعيين جوائز لعجلة الحظ بعد.'**
+  String get noPrizesConfiguredHint;
+
   /// No description provided for @loading5.
   ///
   /// In ar, this message translates to:

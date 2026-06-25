@@ -103,6 +103,11 @@ import '../../features/referrals/model/datasources/real_referrals_remote_datasou
 import '../../features/referrals/model/referrals_repository.dart';
 import '../../features/referrals/model/referrals_repository_impl.dart';
 import '../../features/referrals/viewmodel/referrals_bloc.dart';
+import '../../features/transfers/model/datasources/transfers_remote_datasource.dart';
+import '../../features/transfers/model/datasources/real_transfers_remote_datasource.dart';
+import '../../features/transfers/model/transfers_repository.dart';
+import '../../features/transfers/model/transfers_repository_impl.dart';
+import '../../features/transfers/viewmodel/transfers_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -300,4 +305,13 @@ void setupDependencies() {
     () => ReferralsRepositoryImpl(sl()),
   );
   sl.registerFactory(() => ReferralsBloc(repository: sl()));
+
+  // ── Transfers ─────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<TransfersRemoteDataSource>(
+    () => RealTransfersRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<TransfersRepository>(
+    () => TransfersRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => TransfersBloc(repository: sl()));
 }

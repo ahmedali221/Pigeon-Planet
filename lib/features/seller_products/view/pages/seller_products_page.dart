@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../transfers/view/pages/create_transfer_page.dart';
 import '../../model/seller_product_model.dart';
 import '../../viewmodel/seller_products_bloc.dart';
 import '../widgets/seller_product_card.dart';
@@ -265,6 +266,22 @@ class _Body extends StatelessWidget {
                     ),
                   );
                 },
+                onTransfer: products[i].category == 'birds'
+                    ? () {
+                        final sellerBloc =
+                            context.read<SellerProductsBloc>();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: sellerBloc,
+                              child: CreateTransferPage(
+                                  product: products[i]),
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
               );
             },
           ),

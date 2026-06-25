@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../transfers/view/pages/transfer_history_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class HomeSellerDemoSection extends StatelessWidget {
@@ -215,7 +216,12 @@ class _OwnershipRegistryCard extends StatelessWidget {
             subtitle: AppLocalizations.of(context).ownershipRecordFull,
             color: HomeSellerDemoSection._accent,
             lightColor: HomeSellerDemoSection._accentLight,
-            onTap: () {},
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const TransferHistoryPage(),
+              ),
+            ),
           ),
           Divider(height: 1, indent: 16, endIndent: 16),
           _RegistryTile(

@@ -15,6 +15,14 @@ class RacesRefreshRequested extends RacesEvent {
   const RacesRefreshRequested();
 }
 
+class RacesTypeChanged extends RacesEvent {
+  final RaceType raceType;
+  const RacesTypeChanged(this.raceType);
+
+  @override
+  List<Object?> get props => [raceType];
+}
+
 class RacesSearchChanged extends RacesEvent {
   final String query;
   const RacesSearchChanged(this.query);
@@ -24,16 +32,31 @@ class RacesSearchChanged extends RacesEvent {
 }
 
 class RacesFilterChanged extends RacesEvent {
+  // Club filters
+  final String country;
+  final String club;
   final String seasonYear;
+  // OLR filters
+  final String pointName;
   final String stationName;
+  final String hobbyistName;
+  final String rank;
+  final String birdNumber;
 
   const RacesFilterChanged({
-    required this.seasonYear,
-    required this.stationName,
+    this.country = '',
+    this.club = '',
+    this.seasonYear = '',
+    this.pointName = '',
+    this.stationName = '',
+    this.hobbyistName = '',
+    this.rank = '',
+    this.birdNumber = '',
   });
 
   @override
-  List<Object?> get props => [seasonYear, stationName];
+  List<Object?> get props =>
+      [country, club, seasonYear, pointName, stationName, hobbyistName, rank, birdNumber];
 }
 
 class RaceDetailRequested extends RacesEvent {

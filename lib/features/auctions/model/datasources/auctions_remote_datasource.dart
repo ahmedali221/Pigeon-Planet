@@ -25,6 +25,7 @@ abstract class AuctionsRemoteDataSource {
   Future<List<BirdSummaryModel>> getSellerBirds({
     bool mineOnly = false,
     bool availableForAuction = false,
+    bool? isMarketListed,
   });
   Future<List<AssetRatingModel>> getAssetRatings(int assetId);
 }

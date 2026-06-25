@@ -25,6 +25,7 @@ abstract class AuctionsRepository {
   Future<Either<Failure, List<BirdSummaryModel>>> getSellerBirds({
     bool mineOnly = false,
     bool availableForAuction = false,
+    bool? isMarketListed,
   });
   Future<Either<Failure, List<AssetRatingModel>>> getAssetRatings(int assetId);
 }

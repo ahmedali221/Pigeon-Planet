@@ -72,10 +72,12 @@ class AuctionsRepositoryImpl implements AuctionsRepository {
   Future<Either<Failure, List<BirdSummaryModel>>> getSellerBirds({
     bool mineOnly = false,
     bool availableForAuction = false,
+    bool? isMarketListed,
   }) =>
       _wrap(() => _dataSource.getSellerBirds(
             mineOnly: mineOnly,
             availableForAuction: availableForAuction,
+            isMarketListed: isMarketListed,
           ));
 
   @override

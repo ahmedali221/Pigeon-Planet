@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../transfers/view/pages/transfer_history_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class HomeDemoCardsSection extends StatelessWidget {
@@ -82,6 +83,12 @@ class _FeatureGrid extends StatelessWidget {
           subtitle: AppLocalizations.of(context).ownershipRecordProtected,
           color: AppColors.primaryDark,
           bg: AppColors.primaryLight,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const TransferHistoryPage(),
+            ),
+          ),
         ),
         _FeatureTile(
           icon: Icons.storefront_rounded,

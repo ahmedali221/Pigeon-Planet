@@ -144,10 +144,12 @@ class RealAuctionsRemoteDataSource implements AuctionsRemoteDataSource {
   Future<List<BirdSummaryModel>> getSellerBirds({
     bool mineOnly = false,
     bool availableForAuction = false,
+    bool? isMarketListed,
   }) async {
     final Map<String, String> params = {};
     if (mineOnly) params['mine'] = 'true';
     if (availableForAuction) params['available_for_auction'] = 'true';
+    if (isMarketListed != null) params['is_market_listed'] = isMarketListed.toString();
     final response = await _dio.get(
       ApiConstants.birds,
       queryParameters: params.isEmpty ? null : params,

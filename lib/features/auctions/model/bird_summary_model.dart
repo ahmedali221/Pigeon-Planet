@@ -14,6 +14,7 @@ class BirdSummaryModel {
   final String? videoUrl;
   final int? sellerId;
   final String sellerNickname;
+  final bool isMarketListed;
 
   const BirdSummaryModel({
     required this.id,
@@ -31,6 +32,7 @@ class BirdSummaryModel {
     this.videoUrl,
     this.sellerId,
     this.sellerNickname = '',
+    this.isMarketListed = false,
   });
 
   String? get thumbnailUrl => imageUrls.isNotEmpty ? imageUrls.first : null;
@@ -68,5 +70,6 @@ class BirdSummaryModel {
             .firstOrNull,
         sellerId: json['seller_id'] as int? ?? json['owner'] as int?,
         sellerNickname: json['seller_nickname'] as String? ?? '',
+        isMarketListed: json['is_market_listed'] as bool? ?? false,
       );
 }

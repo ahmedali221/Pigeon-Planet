@@ -4,6 +4,8 @@ enum RacesStatus { initial, loading, loaded, searchResults, error }
 
 enum RacesDetailStatus { initial, loading, loaded, error }
 
+enum RaceType { club, olr }
+
 class RacesState extends Equatable {
   final RacesStatus status;
   final RacesDetailStatus detailStatus;
@@ -19,8 +21,19 @@ class RacesState extends Equatable {
   final bool detailResultsLoadingMore;
   final String searchQuery;
   final String resultSearchQuery;
+  // ── Active race type ──────────────────────────────────────────────────────
+  final RaceType raceType;
+  // ── Club race filters ─────────────────────────────────────────────────────
+  final String countryFilter;
+  final String clubFilter;
   final String seasonYearFilter;
+  // ── OLR race filters ──────────────────────────────────────────────────────
+  final String pointNameFilter;
   final String stationNameFilter;
+  final String hobbyistNameFilter;
+  final String rankFilter;
+  final String birdNumberFilter;
+  // ── Errors / pagination ───────────────────────────────────────────────────
   final String? errorMessage;
   final String? detailErrorMessage;
   final int currentPage;
@@ -42,14 +55,35 @@ class RacesState extends Equatable {
     this.detailResultsLoadingMore = false,
     this.searchQuery = '',
     this.resultSearchQuery = '',
+    this.raceType = RaceType.club,
+    this.countryFilter = '',
+    this.clubFilter = '',
     this.seasonYearFilter = '',
+    this.pointNameFilter = '',
     this.stationNameFilter = '',
+    this.hobbyistNameFilter = '',
+    this.rankFilter = '',
+    this.birdNumberFilter = '',
     this.errorMessage,
     this.detailErrorMessage,
     this.currentPage = 1,
     this.hasMore = false,
     this.loadingMore = false,
   });
+
+  bool get hasActiveFilters {
+    if (raceType == RaceType.club) {
+      return countryFilter.isNotEmpty ||
+          clubFilter.isNotEmpty ||
+          seasonYearFilter.isNotEmpty;
+    }
+    return pointNameFilter.isNotEmpty ||
+        stationNameFilter.isNotEmpty ||
+        hobbyistNameFilter.isNotEmpty ||
+        seasonYearFilter.isNotEmpty ||
+        rankFilter.isNotEmpty ||
+        birdNumberFilter.isNotEmpty;
+  }
 
   RacesState copyWith({
     RacesStatus? status,
@@ -66,8 +100,15 @@ class RacesState extends Equatable {
     bool? detailResultsLoadingMore,
     String? searchQuery,
     String? resultSearchQuery,
+    RaceType? raceType,
+    String? countryFilter,
+    String? clubFilter,
     String? seasonYearFilter,
+    String? pointNameFilter,
     String? stationNameFilter,
+    String? hobbyistNameFilter,
+    String? rankFilter,
+    String? birdNumberFilter,
     String? errorMessage,
     String? detailErrorMessage,
     bool clearError = false,
@@ -87,7 +128,8 @@ class RacesState extends Equatable {
           resultSearchCurrentPage ?? this.resultSearchCurrentPage,
       resultSearchLoadingMore:
           resultSearchLoadingMore ?? this.resultSearchLoadingMore,
-      selectedRace: clearSelectedRace ? null : (selectedRace ?? this.selectedRace),
+      selectedRace:
+          clearSelectedRace ? null : (selectedRace ?? this.selectedRace),
       detailResults: detailResults ?? this.detailResults,
       detailResultsHasMore: detailResultsHasMore ?? this.detailResultsHasMore,
       detailResultsCurrentPage:
@@ -96,8 +138,15 @@ class RacesState extends Equatable {
           detailResultsLoadingMore ?? this.detailResultsLoadingMore,
       searchQuery: searchQuery ?? this.searchQuery,
       resultSearchQuery: resultSearchQuery ?? this.resultSearchQuery,
+      raceType: raceType ?? this.raceType,
+      countryFilter: countryFilter ?? this.countryFilter,
+      clubFilter: clubFilter ?? this.clubFilter,
       seasonYearFilter: seasonYearFilter ?? this.seasonYearFilter,
+      pointNameFilter: pointNameFilter ?? this.pointNameFilter,
       stationNameFilter: stationNameFilter ?? this.stationNameFilter,
+      hobbyistNameFilter: hobbyistNameFilter ?? this.hobbyistNameFilter,
+      rankFilter: rankFilter ?? this.rankFilter,
+      birdNumberFilter: birdNumberFilter ?? this.birdNumberFilter,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       detailErrorMessage: clearDetailError
           ? null
@@ -124,8 +173,15 @@ class RacesState extends Equatable {
         detailResultsLoadingMore,
         searchQuery,
         resultSearchQuery,
+        raceType,
+        countryFilter,
+        clubFilter,
         seasonYearFilter,
+        pointNameFilter,
         stationNameFilter,
+        hobbyistNameFilter,
+        rankFilter,
+        birdNumberFilter,
         errorMessage,
         detailErrorMessage,
         currentPage,

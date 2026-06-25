@@ -7,11 +7,21 @@ import '../../../../l10n/app_localizations.dart';
 class SpinResultSheet extends StatelessWidget {
   final WheelSpinResultModel result;
 
-  const SpinResultSheet({super.key, required this.result});
+  /// Called after the user dismisses the sheet — the page uses this to reset
+  /// hasSpun so the wheel becomes spinnable again (if attempts remain).
+  final VoidCallback onCollect;
+
+  const SpinResultSheet({
+    super.key,
+    required this.result,
+    required this.onCollect,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isLuckyNext = result.prizeType == 'lucky_next';
+    final hasMoreAttempts = result.remainingAttempts > 0;
 
     return SafeArea(
       child: Padding(
@@ -53,7 +63,7 @@ class SpinResultSheet extends StatelessWidget {
 
             // Title
             Text(
-              isLuckyNext ? AppLocalizations.of(context).jrbHzkMraAkhra : AppLocalizations.of(context).thanyna,
+              isLuckyNext ? l.jrbHzkMraAkhra : l.thanyna,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
@@ -76,22 +86,50 @@ class SpinResultSheet extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Description
-            Text(
-              result.prizeDescription,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                height: 1.5,
+            if (result.prizeDescription.isNotEmpty)
+              Text(
+                result.prizeDescription,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+
+            // Remaining attempts hint — shown when user can spin again
+            if (hasMoreAttempts) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Text(
+                  l.spinAttemptsRemaining(result.remainingAttempts),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+
             const SizedBox(height: 32),
 
-            // Confirm button
+            // Collect / confirm button — always collects and returns to wheel
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  onCollect();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
                       isLuckyNext ? AppColors.textSecondary : result.prizeColor,
@@ -103,7 +141,7 @@ class SpinResultSheet extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isLuckyNext ? AppLocalizations.of(context).upcoming2 : AppLocalizations.of(context).rayaAstlmJayztk,
+                  isLuckyNext ? l.upcoming2 : l.rayaAstlmJayztk,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

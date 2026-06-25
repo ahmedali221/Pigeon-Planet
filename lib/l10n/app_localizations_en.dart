@@ -2940,6 +2940,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upcoming2 => 'TODO: حسناً، في المرة القادمة';
 
   @override
+  String get spinAgain => '🎰 Spin Again!';
+
+  @override
+  String spinAttemptsRemaining(int count) {
+    return '$count attempts remaining';
+  }
+
+  @override
+  String get spinNowLabel => 'Spin Now';
+
+  @override
+  String get spinningLabel => 'Spinning...';
+
+  @override
+  String get noAttemptsLabel => 'No attempts available';
+
+  @override
+  String get noPrizesLabel => 'No prizes configured';
+
+  @override
+  String get availableAttemptsTitle => 'Available Attempts';
+
+  @override
+  String get canSpinNowHint => 'You can spin the wheel now.';
+
+  @override
+  String get earnAttemptsHint =>
+      'Earn attempts from eligible auction activity.';
+
+  @override
+  String get noPrizesConfiguredHint => 'Wheel prizes are not configured yet.';
+
+  @override
   String get loading5 => 'TODO: فشل تحميل الإشعارات';
 
   @override

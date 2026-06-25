@@ -232,12 +232,41 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onApproveItem(
       OrderItemApproveRequested event, Emitter<CartState> emit) async {
     emit(state.copyWith(itemActioning: true, clearItemActionError: true));
-    final result = await _repository.approveOrderItem(event.itemId);
-    await result.fold(
-      (f) async => emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
+
+    // Step 1: approve the order item
+    final approveResult = await _repository.approveOrderItem(event.itemId);
+    await approveResult.fold(
+      (f) async =>
+          emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
       (_) async {
-        emit(state.copyWith(itemActioning: false));
-        add(const SellerOrderItemsLoadRequested());
+        // Step 2: find and approve the pending payment request for this item
+        final requestsResult = await _paymentsRepository.getPaymentRequests();
+        await requestsResult.fold(
+          (f) async {
+            emit(state.copyWith(itemActioning: false, itemActionError: f.message));
+          },
+          (requests) async {
+            final request = requests
+                .where((r) => r.orderItemId == event.itemId && r.isPending)
+                .firstOrNull;
+            if (request == null) {
+              // No pending payment request — item approved, nothing more to do
+              emit(state.copyWith(itemActioning: false));
+              add(const SellerOrderItemsLoadRequested());
+              return;
+            }
+            final paymentResult =
+                await _paymentsRepository.approvePaymentRequest(request.id);
+            paymentResult.fold(
+              (f) => emit(
+                  state.copyWith(itemActioning: false, itemActionError: f.message)),
+              (_) {
+                emit(state.copyWith(itemActioning: false));
+                add(const SellerOrderItemsLoadRequested());
+              },
+            );
+          },
+        );
       },
     );
   }

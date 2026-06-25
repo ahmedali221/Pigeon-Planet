@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
@@ -8,20 +13,62 @@ import '../../model/race_model.dart';
 import '../../viewmodel/races_bloc.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class RaceDetailPage extends StatefulWidget {
   final int raceId;
 
-  RaceDetailPage({super.key, required this.raceId});
+  const RaceDetailPage({super.key, required this.raceId});
 
   @override
   State<RaceDetailPage> createState() => _RaceDetailPageState();
 }
 
 class _RaceDetailPageState extends State<RaceDetailPage> {
+  final _repaintKey = GlobalKey();
+  bool _saving = false;
+
   @override
   void initState() {
     super.initState();
     context.read<RacesBloc>().add(RaceDetailRequested(widget.raceId));
+  }
+
+  Future<void> _exportAsImage() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+    try {
+      final boundary = _repaintKey.currentContext?.findRenderObject()
+          as RenderRepaintBoundary?;
+      if (boundary == null) return;
+
+      final image = await boundary.toImage(pixelRatio: 3.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null || !mounted) return;
+
+      final dir = await getApplicationDocumentsDirectory();
+      final racesDir = Directory('${dir.path}/pigeon_races');
+      if (!racesDir.existsSync()) racesDir.createSync(recursive: true);
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final file =
+          File('${racesDir.path}/race_${widget.raceId}_$timestamp.png');
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('تم حفظ الصورة بنجاح'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذّر حفظ الصورة')),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -31,6 +78,30 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
       appBar: PPWAppBar(
         title: AppLocalizations.of(context).racingType4,
       ),
+      floatingActionButton: BlocBuilder<RacesBloc, RacesState>(
+        buildWhen: (p, n) => p.detailStatus != n.detailStatus,
+        builder: (context, state) {
+          if (state.detailStatus != RacesDetailStatus.loaded) {
+            return SizedBox.shrink();
+          }
+          return FloatingActionButton.extended(
+            onPressed: _saving ? null : _exportAsImage,
+            icon: _saving
+                ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Icon(Icons.download_rounded),
+            label: Text(_saving ? 'جاري الحفظ...' : 'تنزيل كصورة'),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+          );
+        },
+      ),
       body: BlocBuilder<RacesBloc, RacesState>(
         builder: (context, state) {
           if (state.detailStatus == RacesDetailStatus.loading) {
@@ -38,7 +109,8 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
           }
           if (state.detailStatus == RacesDetailStatus.error) {
             return _ErrorBody(
-              message: state.detailErrorMessage ?? AppLocalizations.of(context).loading9,
+              message: state.detailErrorMessage ??
+                  AppLocalizations.of(context).loading9,
               onRetry: () => context
                   .read<RacesBloc>()
                   .add(RaceDetailRequested(widget.raceId)),
@@ -48,7 +120,10 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
           if (race == null) {
             return Center(child: CircularProgressIndicator());
           }
-          return _RaceDetailBody(race: race, state: state);
+          return RepaintBoundary(
+            key: _repaintKey,
+            child: _RaceDetailBody(race: race, state: state),
+          );
         },
       ),
     );
@@ -59,7 +134,7 @@ class _RaceDetailBody extends StatelessWidget {
   final RaceModel race;
   final RacesState state;
 
-  _RaceDetailBody({required this.race, required this.state});
+  const _RaceDetailBody({required this.race, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +166,7 @@ class _RaceDetailBody extends StatelessWidget {
                     .add(RaceDetailResultsLoadMoreRequested(race.id)),
               ),
           ],
-          SizedBox(height: 24),
+          SizedBox(height: 80), // space for FAB
         ],
       ),
     );
@@ -101,7 +176,7 @@ class _RaceDetailBody extends StatelessWidget {
 class _RaceInfoCard extends StatelessWidget {
   final RaceModel race;
 
-  _RaceInfoCard({required this.race});
+  const _RaceInfoCard({required this.race});
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +201,7 @@ class _RaceInfoCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(8),
@@ -155,10 +229,22 @@ class _RaceInfoCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 14),
-          _DetailRow(icon: Icons.location_on_rounded, label: AppLocalizations.of(context).station, value: race.stationName),
-          _DetailRow(icon: Icons.access_time_rounded, label: AppLocalizations.of(context).no20, value: releaseDate),
-          _DetailRow(icon: Icons.flutter_dash_rounded, label: AppLocalizations.of(context).addAltywr, value: '${race.totalBirds}'),
-          _DetailRow(icon: Icons.group_rounded, label: AppLocalizations.of(context).addAlmtsabqyn, value: '${race.competitorsCount}'),
+          _DetailRow(
+              icon: Icons.location_on_rounded,
+              label: AppLocalizations.of(context).station,
+              value: race.stationName),
+          _DetailRow(
+              icon: Icons.access_time_rounded,
+              label: AppLocalizations.of(context).no20,
+              value: releaseDate),
+          _DetailRow(
+              icon: Icons.flutter_dash_rounded,
+              label: AppLocalizations.of(context).addAltywr,
+              value: '${race.totalBirds}'),
+          _DetailRow(
+              icon: Icons.group_rounded,
+              label: AppLocalizations.of(context).addAlmtsabqyn,
+              value: '${race.competitorsCount}'),
           if (race.plannedDistanceKm != null)
             _DetailRow(
               icon: Icons.straighten_rounded,
@@ -172,7 +258,10 @@ class _RaceInfoCard extends StatelessWidget {
               value: race.weatherCondition,
             ),
           if (race.notes.isNotEmpty)
-            _DetailRow(icon: Icons.notes_rounded, label: AppLocalizations.of(context).no21, value: race.notes),
+            _DetailRow(
+                icon: Icons.notes_rounded,
+                label: AppLocalizations.of(context).no21,
+                value: race.notes),
         ],
       ),
     );
@@ -184,7 +273,7 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  _DetailRow({
+  const _DetailRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -225,13 +314,12 @@ class _DetailRow extends StatelessWidget {
 class _ResultsTable extends StatelessWidget {
   final List<RaceResultModel> results;
 
-  _ResultsTable({required this.results});
+  const _ResultsTable({required this.results});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Header row
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
@@ -281,7 +369,6 @@ class _ResultsTable extends StatelessWidget {
           ),
         ),
         SizedBox(height: 4),
-        // Result rows
         ...results.asMap().entries.map((entry) {
           final i = entry.key;
           final r = entry.value;
@@ -387,7 +474,7 @@ class _ResultsTable extends StatelessWidget {
 }
 
 class _EmptyResults extends StatelessWidget {
-  _EmptyResults();
+  const _EmptyResults();
 
   @override
   Widget build(BuildContext context) {
@@ -417,7 +504,7 @@ class _LoadMoreButton extends StatelessWidget {
   final bool loading;
   final VoidCallback onTap;
 
-  _LoadMoreButton({required this.loading, required this.onTap});
+  const _LoadMoreButton({required this.loading, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +535,7 @@ class _ErrorBody extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  _ErrorBody({required this.message, required this.onRetry});
+  const _ErrorBody({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -476,6 +563,7 @@ class _ErrorBody extends StatelessWidget {
     );
   }
 }
+
 
 String _formatDatetime(String iso) {
   try {

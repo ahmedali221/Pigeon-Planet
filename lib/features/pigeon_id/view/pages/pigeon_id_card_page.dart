@@ -8,7 +8,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../core/di/injection.dart';
 import '../../../pedigrees/model/pedigree_document_model.dart';
-import '../../../pedigrees/view/pages/pedigrees_page.dart';
+// import '../../../pedigrees/view/pages/pedigrees_page.dart';
 import '../../../pedigrees/viewmodel/pedigrees_bloc.dart';
 import '../../../pedigrees/viewmodel/pedigrees_event.dart';
 import '../../../pedigrees/viewmodel/pedigrees_state.dart';
@@ -120,15 +120,15 @@ class PigeonIdCardPage extends StatelessWidget {
                           context, state.savedBird!.id!),
                 ),
               ],
-              IconButton(
-                icon: const Icon(Icons.share_rounded),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(AppLocalizations.of(context).shareFeatureComingSoon)),
-                  );
-                },
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.share_rounded),
+              //   onPressed: () {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       SnackBar(
+              //           content: Text(AppLocalizations.of(context).shareFeatureComingSoon)),
+              //     );
+              //   },
+              // ),
             ],
           ),
           body: SingleChildScrollView(
@@ -383,28 +383,28 @@ class PigeonIdCardPage extends StatelessWidget {
                 // ── Action buttons ────────────────────────────────────────
                 Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text(AppLocalizations.of(context).printFeatureComingSoon)),
-                          );
-                        },
-                        icon: Icon(Icons.print_rounded,
-                            color: AppColors.primary),
-                        label: Text(AppLocalizations.of(context).printBtn,
-                            style: TextStyle(color: AppColors.primary)),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.primary),
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
+                    // Expanded(
+                    //   child: OutlinedButton.icon(
+                    //     onPressed: () {
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //         SnackBar(
+                    //             content:
+                    //                 Text(AppLocalizations.of(context).printFeatureComingSoon)),
+                    //       );
+                    //     },
+                    //     icon: Icon(Icons.print_rounded,
+                    //         color: AppColors.primary),
+                    //     label: Text(AppLocalizations.of(context).printBtn,
+                    //         style: TextStyle(color: AppColors.primary)),
+                    //     style: OutlinedButton.styleFrom(
+                    //       side: BorderSide(color: AppColors.primary),
+                    //       padding: EdgeInsets.symmetric(vertical: 14),
+                    //       shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(12)),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {
@@ -588,28 +588,28 @@ class _BirdPedigreesSection extends StatelessWidget {
                   ...state.documents.map(
                     (doc) => _PedigreeDocTile(doc: doc),
                   ),
-                SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PedigreesPage(initialBirdId: birdId),
-                      ),
-                    ),
-                    icon: Icon(Icons.description_rounded, size: 16),
-                    label: Text(AppLocalizations.of(context).viewPedigreeCertificate),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      elevation: 0,
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 12),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: ElevatedButton.icon(
+                //     onPressed: () => Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (_) => PedigreesPage(initialBirdId: birdId),
+                //       ),
+                //     ),
+                //     icon: Icon(Icons.description_rounded, size: 16),
+                //     label: Text(AppLocalizations.of(context).viewPedigreeCertificate),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: AppColors.primary,
+                //       foregroundColor: Colors.white,
+                //       padding: EdgeInsets.symmetric(vertical: 12),
+                //       shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(10)),
+                //       elevation: 0,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           );

@@ -15,6 +15,7 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
         super(const RacesState()) {
     on<RacesStarted>(_onStarted);
     on<RacesRefreshRequested>(_onStarted);
+    on<RacesTypeChanged>(_onTypeChanged);
     on<RacesSearchChanged>(_onSearchChanged);
     on<RacesFilterChanged>(_onFilterChanged);
     on<RaceDetailRequested>(_onDetailRequested);
@@ -37,12 +38,46 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     ));
     final result = await _repository.getRaces(
       page: 1,
-      seasonYear: _nullableFilter(state.seasonYearFilter),
-      stationName: _nullableFilter(state.stationNameFilter),
+      seasonYear: _nullable(state.seasonYearFilter),
+      stationName: _nullable(state.stationNameFilter),
     );
     result.fold(
-      (f) => emit(state.copyWith(
-          status: RacesStatus.error, errorMessage: f.message)),
+      (f) => emit(
+          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
+      (page) => emit(state.copyWith(
+        status: RacesStatus.loaded,
+        races: page.races,
+        currentPage: 1,
+        hasMore: page.hasMore,
+      )),
+    );
+  }
+
+  Future<void> _onTypeChanged(
+    RacesTypeChanged event,
+    Emitter<RacesState> emit,
+  ) async {
+    emit(state.copyWith(
+      raceType: event.raceType,
+      // Clear all filter fields on type switch
+      countryFilter: '',
+      clubFilter: '',
+      seasonYearFilter: '',
+      pointNameFilter: '',
+      stationNameFilter: '',
+      hobbyistNameFilter: '',
+      rankFilter: '',
+      birdNumberFilter: '',
+      status: RacesStatus.loading,
+      clearError: true,
+      currentPage: 1,
+      hasMore: false,
+      loadingMore: false,
+    ));
+    final result = await _repository.getRaces(page: 1);
+    result.fold(
+      (f) => emit(
+          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
       (page) => emit(state.copyWith(
         status: RacesStatus.loaded,
         races: page.races,
@@ -61,8 +96,8 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     final nextPage = state.currentPage + 1;
     final result = await _repository.getRaces(
       page: nextPage,
-      seasonYear: _nullableFilter(state.seasonYearFilter),
-      stationName: _nullableFilter(state.stationNameFilter),
+      seasonYear: _nullable(state.seasonYearFilter),
+      stationName: _nullable(state.stationNameFilter),
     );
     result.fold(
       (f) => emit(state.copyWith(loadingMore: false)),
@@ -81,18 +116,15 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
   ) async {
     final query = event.query.trim();
     if (query.isEmpty) {
-      add(RacesFilterChanged(
-        seasonYear: state.seasonYearFilter,
-        stationName: state.stationNameFilter,
-      ));
+      add(const RacesFilterChanged());
       return;
     }
     emit(state.copyWith(
         status: RacesStatus.loading, searchQuery: query, clearError: true));
     final result = await _repository.searchResults(q: query, page: 1);
     result.fold(
-      (f) => emit(state.copyWith(
-          status: RacesStatus.error, errorMessage: f.message)),
+      (f) => emit(
+          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
       (results) => emit(state.copyWith(
         status: RacesStatus.searchResults,
         globalSearchResults: results.results,
@@ -107,26 +139,33 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     RacesFilterChanged event,
     Emitter<RacesState> emit,
   ) async {
-    final seasonYear = event.seasonYear.trim();
-    final stationName = event.stationName.trim();
     emit(state.copyWith(
       status: RacesStatus.loading,
-      seasonYearFilter: seasonYear,
-      stationNameFilter: stationName,
+      // Club filters
+      countryFilter: event.country,
+      clubFilter: event.club,
+      seasonYearFilter: event.seasonYear,
+      // OLR filters
+      pointNameFilter: event.pointName,
+      stationNameFilter: event.stationName,
+      hobbyistNameFilter: event.hobbyistName,
+      rankFilter: event.rank,
+      birdNumberFilter: event.birdNumber,
       searchQuery: '',
       currentPage: 1,
       hasMore: false,
       loadingMore: false,
       clearError: true,
     ));
+    // Pass only the fields the backend currently supports
     final result = await _repository.getRaces(
       page: 1,
-      seasonYear: _nullableFilter(seasonYear),
-      stationName: _nullableFilter(stationName),
+      seasonYear: _nullable(event.seasonYear),
+      stationName: _nullable(event.stationName),
     );
     result.fold(
-      (f) => emit(state.copyWith(
-          status: RacesStatus.error, errorMessage: f.message)),
+      (f) => emit(
+          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
       (page) => emit(state.copyWith(
         status: RacesStatus.loaded,
         races: page.races,
@@ -177,7 +216,8 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     if (!state.detailResultsHasMore || state.detailResultsLoadingMore) return;
     final nextPage = state.detailResultsCurrentPage + 1;
     emit(state.copyWith(detailResultsLoadingMore: true));
-    final result = await _repository.getRaceResults(event.raceId, page: nextPage);
+    final result =
+        await _repository.getRaceResults(event.raceId, page: nextPage);
     result.fold(
       (f) => emit(state.copyWith(detailResultsLoadingMore: false)),
       (page) => emit(state.copyWith(
@@ -210,8 +250,8 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     }
     final result = await _repository.searchResults(q: query, page: 1);
     result.fold(
-      (f) => emit(state.copyWith(
-          status: RacesStatus.error, errorMessage: f.message)),
+      (f) => emit(
+          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
       (results) => emit(state.copyWith(
         status: RacesStatus.searchResults,
         globalSearchResults: results.results,
@@ -246,7 +286,7 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     );
   }
 
-  String? _nullableFilter(String value) {
+  String? _nullable(String value) {
     final trimmed = value.trim();
     return trimmed.isEmpty ? null : trimmed;
   }

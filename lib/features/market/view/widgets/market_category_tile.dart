@@ -72,7 +72,7 @@ class MarketCategoryTile extends StatelessWidget {
             Spacer(),
 
             // arrow — end (left in RTL)
-            Icon(Icons.forward, color: AppColors.primary, size: 22),
+            Icon(Icons.arrow_forward_ios, color: AppColors.primary, size: 22),
           ],
         ),
       ),

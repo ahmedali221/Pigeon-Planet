@@ -44,6 +44,10 @@ class ProfilePage extends StatelessWidget {
           return;
         }
         if (state.status == ProfileStatus.photoUpdated) {
+          final newUrl = state.profile?.avatarUrl;
+          if (newUrl != null && newUrl.isNotEmpty) {
+            NetworkImage(newUrl).evict();
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم تحديث صورة الملف الشخصي'),
@@ -276,6 +280,7 @@ class _GreenAvatarHeader extends StatelessWidget {
                       child: hasAvatar
                           ? Image.network(
                               avatarUrl,
+                              key: ValueKey(avatarUrl),
                               fit: BoxFit.cover,
                               errorBuilder: (_, _, _) => Container(
                                 color: Colors.white.withValues(alpha: 0.2),

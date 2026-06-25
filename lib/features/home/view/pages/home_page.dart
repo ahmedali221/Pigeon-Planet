@@ -10,6 +10,7 @@ import '../widgets/home_breeders_section.dart';
 import '../widgets/home_coming_soon_section.dart';
 import '../widgets/home_hero_banner.dart';
 import '../widgets/home_seller_metrics_section.dart';
+import '../widgets/home_seller_demo_section.dart';
 import '../widgets/home_insights_preview_section.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/points_system_modal.dart';
@@ -553,6 +554,9 @@ class _HomeViewState extends State<_HomeView> {
                                           const SizedBox(height: 20),
                                         // 3. ملخص نشاطك
                                         HomeInsightsPreviewSection(),
+                                        const SizedBox(height: 20),
+                                        // 4. أدوات البائع (ملكية، إحالة، ...)
+                                        HomeSellerDemoSection(),
                                         const SizedBox(height: 20),
                                       ],
                                       const SizedBox(height: 20),

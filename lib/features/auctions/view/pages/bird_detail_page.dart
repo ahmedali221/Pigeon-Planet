@@ -6,6 +6,7 @@ import '../../../../../core/di/injection.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
+import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../pigeon_id/model/pigeon_model.dart';
 import '../../../pigeon_id/model/pigeon_repository.dart';
@@ -215,30 +216,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
     final canRate =
         authState is AuthSuccess && authState.user.isCustomer && !widget.isOwner;
 
-    return BlocListener<CartBloc, CartState>(
-      listenWhen: (prev, curr) =>
-          (curr.status == CartStatus.loaded &&
-              prev.status == CartStatus.mutating) ||
-          (curr.status == CartStatus.error &&
-              prev.status == CartStatus.mutating),
-      listener: (context, state) {
-        if (state.status == CartStatus.loaded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l.addedToCart),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        } else if (state.status == CartStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? l.errorOccurred),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: AppColors.pageBackground,
         appBar: PPWAppBar(
           title: l.pigeonDetails,
@@ -292,6 +270,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
                 data: d,
                 assetId: widget.bird.id,
                 isOwner: widget.isOwner,
+                isMarketListed: widget.bird.isMarketListed,
               ),
               const SizedBox(height: 12),
               const AuctionInquiriesSection(),
@@ -316,231 +295,272 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
             ],
           ),
         ),
-      ),
     );
   }
 }
 
 // ── Price section (buy now — no bidding) ─────────────────────────────────────
-class _BirdPriceSection extends StatelessWidget {
+class _BirdPriceSection extends StatefulWidget {
   final Map<String, dynamic> data;
   final int assetId;
   final bool isOwner;
+  final bool isMarketListed;
 
   const _BirdPriceSection({
     required this.data,
     required this.assetId,
     required this.isOwner,
+    required this.isMarketListed,
   });
+
+  @override
+  State<_BirdPriceSection> createState() => _BirdPriceSectionState();
+}
+
+class _BirdPriceSectionState extends State<_BirdPriceSection> {
+  bool _isAddingToCart = false;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.orange.withValues(alpha: 0.5)),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.specialPrice,
+    return BlocListener<CartBloc, CartState>(
+      listenWhen: (prev, curr) =>
+          _isAddingToCart &&
+          ((curr.status == CartStatus.loaded &&
+                  prev.status == CartStatus.mutating) ||
+              (curr.status == CartStatus.error &&
+                  prev.status == CartStatus.mutating)),
+      listener: (context, state) {
+        if (!_isAddingToCart) return;
+        setState(() => _isAddingToCart = false);
+        if (state.status == CartStatus.loaded) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<CartBloc>(),
+                child: const CartPage(),
+              ),
+            ),
+          );
+        } else if (state.status == CartStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? l.errorOccurred),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.orange.withValues(alpha: 0.5)),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.specialPrice,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${widget.data['discountedPrice']} ج.م',
+                          style: const TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('🔥', style: TextStyle(fontSize: 12)),
+                            const SizedBox(width: 4),
+                            Text(
+                              l.savingsAmount(widget.data['savings']),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.orange,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        l.discountPercent(widget.data['discountPercent']),
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
+                          color: Colors.white,
                           fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${data['discountedPrice']} ج.م',
-                        style: const TextStyle(
-                          fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
                         ),
                       ),
-                      Row(
+                    ),
+                  ],
+                ),
+              ),
+
+              const Divider(height: 20, color: AppColors.divider),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('🔥', style: TextStyle(fontSize: 12)),
+                          const Text('👥', style: TextStyle(fontSize: 12)),
                           const SizedBox(width: 4),
-                          Text(
-                            l.savingsAmount(data['savings']),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
+                          Flexible(
+                            child: Text(
+                              l.liveViewersCount(widget.data['liveViewers']),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.orange,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      l.discountPercent(data['discountPercent']),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const Divider(height: 20, color: AppColors.divider),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('👥', style: TextStyle(fontSize: 12)),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            l.liveViewersCount(data['liveViewers']),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('🔥', style: TextStyle(fontSize: 12)),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            l.todayRequestsCount(data['todayRequests']),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: BlocBuilder<CartBloc, CartState>(
-                  builder: (context, cartState) {
-                    final isBusy = cartState.status == CartStatus.mutating;
-                    return ElevatedButton(
-                      onPressed: isOwner || isBusy
-                          ? null
-                          : () {
-                              context.read<CartBloc>().add(
-                                CartItemAdded(assetId, 1),
-                              );
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.orange,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.textHint,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: isBusy
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              isOwner
-                                  ? l.thisBirdIsYours
-                                  : l.buyNowLimitedOffer,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('🔥', style: TextStyle(fontSize: 12)),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              l.todayRequestsCount(widget.data['todayRequests']),
                               style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                    );
-                  },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 4,
-                children: [
-                  Text(
-                    l.freeDelivery,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textSecondary,
-                    ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: BlocBuilder<CartBloc, CartState>(
+                    buildWhen: (p, c) => p.status != c.status,
+                    builder: (context, cartState) {
+                      final isBusy = _isAddingToCart ||
+                          cartState.status == CartStatus.mutating;
+                      return ElevatedButton(
+                        onPressed: widget.isOwner || isBusy || !widget.isMarketListed
+                            ? null
+                            : () {
+                                setState(() => _isAddingToCart = true);
+                                context.read<CartBloc>().add(
+                                  CartItemAdded(widget.assetId, 1),
+                                );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.orange,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppColors.textHint,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: isBusy
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                widget.isOwner
+                                    ? l.thisBirdIsYours
+                                    : l.buyNowLimitedOffer,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      );
+                    },
                   ),
-                  const Text(
-                    '|',
-                    style: TextStyle(color: AppColors.border, fontSize: 11),
-                  ),
-                  Text(
-                    l.cashOnDelivery,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 10),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 4,
+                  children: [
+                    Text(
+                      l.freeDelivery,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const Text(
+                      '|',
+                      style: TextStyle(color: AppColors.border, fontSize: 11),
+                    ),
+                    Text(
+                      l.cashOnDelivery,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

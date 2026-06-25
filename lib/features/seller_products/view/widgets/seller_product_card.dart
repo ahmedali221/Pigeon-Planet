@@ -8,11 +8,13 @@ import '../../../../l10n/app_localizations.dart';
 class SellerProductCard extends StatelessWidget {
   final SellerProductModel product;
   final VoidCallback onEdit;
+  final VoidCallback? onTransfer;
 
   SellerProductCard({
     super.key,
     required this.product,
     required this.onEdit,
+    this.onTransfer,
   });
 
   static final _statusColors = {
@@ -118,6 +120,19 @@ class SellerProductCard extends StatelessWidget {
                   constraints: BoxConstraints(),
                   splashRadius: 20,
                 ),
+                if (product.category == 'birds') ...[
+                  SizedBox(width: 2),
+                  // transfer ownership
+                  IconButton(
+                    onPressed: onTransfer,
+                    tooltip: 'نقل الملكية',
+                    icon: Icon(Icons.swap_horiz_rounded,
+                        color: AppColors.orange, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    splashRadius: 20,
+                  ),
+                ],
                 SizedBox(width: 4),
                 // delete icon
                 IconButton(
