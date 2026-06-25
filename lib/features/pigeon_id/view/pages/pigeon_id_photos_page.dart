@@ -108,8 +108,8 @@ class PigeonIdPhotosPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(
-            title: 'صور الحمامة',
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).swrAlhmama,
           ),
           body: Column(
             children: [
@@ -224,7 +224,7 @@ class PigeonIdPhotosPage extends StatelessWidget {
               ),
 
               PigeonNextButton(
-                label: 'التالي — تسجيل فيديو زاجل',
+                label: AppLocalizations.of(context).next2,
                 enabled: state.canProceedToVideo,
                 onTap: () => _next(context),
               ),
@@ -334,7 +334,7 @@ class _AddPhotoSlot extends StatelessWidget {
             ),
             SizedBox(height: 4),
             Text(
-              isMandatory ? AppLocalizations.of(context).requiredField : 'اختياري',
+              isMandatory ? AppLocalizations.of(context).requiredField : AppLocalizations.of(context).akhtyary,
               style: TextStyle(
                 fontSize: 10,
                 color: isMandatory

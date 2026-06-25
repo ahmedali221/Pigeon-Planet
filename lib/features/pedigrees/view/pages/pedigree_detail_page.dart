@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -89,7 +89,7 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
-            title: 'شهادة نسب #${doc.id}',
+            title: AppLocalizations.of(context).shhadaNsb(doc.id),
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(16),
@@ -139,27 +139,27 @@ class _StatusCard extends StatelessWidget {
     final (icon, label, color, desc) = switch (doc.status) {
       'reviewed' => (
           Icons.check_circle_rounded,
-          'تمت المراجعة',
+          AppLocalizations.of(context).tmtAlmrajaa,
           AppColors.success,
-          'تم حفظ البيانات المُراجَعة بنجاح.',
+          AppLocalizations.of(context).save2,
         ),
       'processed' => (
           Icons.auto_awesome_rounded,
-          'تمت المعالجة',
+          AppLocalizations.of(context).tmtAlmaalja,
           AppColors.blue,
-          'تم استخراج البيانات. راجعها أدناه.',
+          AppLocalizations.of(context).tmAstkhrajAlbyanatRajahaAdnah,
         ),
       'failed' => (
           Icons.warning_amber_rounded,
-          'فشل التعرف التلقائي',
+          AppLocalizations.of(context).fshlAltarfAltlqayy,
           AppColors.orange,
-          'لم يتم التعرف تلقائياً، يمكنك المراجعة اليدوية.',
+          AppLocalizations.of(context).lmYtmAltarfTlqayyaYmknk,
         ),
       _ => (
           Icons.upload_rounded,
-          'مرفوع',
+          AppLocalizations.of(context).mrfwa,
           AppColors.textSecondary,
-          'جاري معالجة الملف.',
+          AppLocalizations.of(context).jaryMaaljaAlmlf,
         ),
     };
 
@@ -419,7 +419,7 @@ class _ReviewForm extends StatelessWidget {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Icon(Icons.save_rounded, size: 18),
-              label: Text(isReviewing ? 'جاري الحفظ...' : 'حفظ المراجعة'),
+              label: Text(isReviewing ? AppLocalizations.of(context).save3 : AppLocalizations.of(context).save4),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.purple,
                 foregroundColor: Colors.white,

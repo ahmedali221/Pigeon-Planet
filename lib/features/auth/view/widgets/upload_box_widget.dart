@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/services/permission_service.dart';
+import '../../../../core/widgets/file_source_sheet.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class UploadBoxWidget extends StatefulWidget {
   final String label;
@@ -23,18 +22,12 @@ class UploadBoxWidget extends StatefulWidget {
 
 class _UploadBoxWidgetState extends State<UploadBoxWidget> {
   String? _imagePath;
-  final _picker = ImagePicker();
 
   Future<void> _pick() async {
-    final granted = await PermissionService.requestGalleryPermission();
-    if (!granted) return;
-    final picked = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-    if (picked != null) {
-      setState(() => _imagePath = picked.path);
-      widget.onImagePicked?.call(picked.path);
+    final file = await FileSourceSheet.show(context);
+    if (file?.path != null) {
+      setState(() => _imagePath = file!.path);
+      widget.onImagePicked?.call(file!.path!);
     }
   }
 

@@ -140,7 +140,7 @@ class _LuckyWheelViewState extends State<_LuckyWheelView>
     }
     if (state.status == LuckyWheelStatus.error) {
       return _ErrorView(
-        message: state.errorMessage ?? 'حدث خطأ في تحميل العجلة',
+        message: state.errorMessage ?? AppLocalizations.of(context).loading4,
         onRetry: () => context
             .read<LuckyWheelBloc>()
             .add(LuckyWheelLoadRequested(isSeller: widget.isSeller)),
@@ -251,8 +251,8 @@ class _WheelInfoHeader extends StatelessWidget {
                 SizedBox(height: 6),
                 Text(
                   isSeller
-                      ? 'حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة'
-                      : 'حصلت على دورة مجانية بعد مشاركتك في المزاد',
+                      ? AppLocalizations.of(context).auction8
+                      : AppLocalizations.of(context).auction9,
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 12,

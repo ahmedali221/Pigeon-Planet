@@ -64,11 +64,14 @@ class AppRouter {
       // ── Persistent shell with 5 bottom-nav tabs ────────────────────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
+          // Use BlocProvider.value for the CartBloc singleton so the provider
+          // never closes it — closing a singleton would break any widget still
+          // holding a reference to it (e.g. the drawer during animations).
+          final cartBloc = sl<CartBloc>();
+          if (!cartBloc.isClosed) cartBloc.add(const CartStarted());
           return MultiBlocProvider(
             providers: [
-              BlocProvider<CartBloc>(
-                create: (_) => sl<CartBloc>()..add(const CartStarted()),
-              ),
+              BlocProvider<CartBloc>.value(value: cartBloc),
               BlocProvider<FeedBloc>(create: (_) => sl<FeedBloc>()),
             ],
             child: ShellScaffold(navigationShell: navigationShell),

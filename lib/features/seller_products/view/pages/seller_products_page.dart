@@ -42,7 +42,7 @@ class _SellerProductsView extends StatelessWidget {
         } else if (state.mutationStatus == SellerMutationStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.mutationError ?? 'حدث خطأ'),
+              content: Text(state.mutationError ?? AppLocalizations.of(context).errorOccurred7),
               backgroundColor: AppColors.error,
             ),
           );
@@ -144,15 +144,15 @@ class _Header extends StatelessWidget {
 // ── Category filter chips ─────────────────────────────────────────────────────
 
 class _CategoryFilter extends StatelessWidget {
-  static final _chips = [
-    (null, 'الكل'),
-    ('accessories', 'إكسسوارات'),
-    ('supplements', 'مكملات'),
-    ('feeds', 'أعلاف'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final chips = [
+      (null, AppLocalizations.of(context).all3),
+      ('birds', 'طيور'),
+      ('accessories', AppLocalizations.of(context).iksswarat2),
+      ('supplements', AppLocalizations.of(context).no26),
+      ('feeds', AppLocalizations.of(context).no27),
+    ];
     return BlocBuilder<SellerProductsBloc, SellerProductsState>(
       buildWhen: (p, c) => p.selectedCategory != c.selectedCategory,
       builder: (context, state) => SizedBox(
@@ -160,7 +160,7 @@ class _CategoryFilter extends StatelessWidget {
         child: ListView(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          children: _chips
+          children: chips
               .map((chip) => _FilterChip(
                     label: chip.$2,
                     category: chip.$1,
@@ -328,7 +328,7 @@ class _EmptyState extends StatelessWidget {
               size: 64, color: AppColors.textHint.withValues(alpha: 0.5)),
           SizedBox(height: 16),
           Text(
-            hasFilter ? 'لا توجد منتجات في هذه الفئة' : 'لم تضف أي منتجات بعد',
+            hasFilter ? AppLocalizations.of(context).no28 : AppLocalizations.of(context).lmTdfAyMntjatBad,
             style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -360,7 +360,7 @@ class _ErrorState extends StatelessWidget {
               size: 48, color: AppColors.error),
           SizedBox(height: 12),
           Text(
-            message ?? 'حدث خطأ في تحميل المنتجات',
+            message ?? AppLocalizations.of(context).loading11,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 14, color: AppColors.textSecondary),

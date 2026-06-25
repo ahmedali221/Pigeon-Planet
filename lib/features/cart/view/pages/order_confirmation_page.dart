@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -8,7 +9,8 @@ import '../../model/order_model.dart';
 
 class OrderConfirmationPage extends StatelessWidget {
   final OrderModel order;
-  const OrderConfirmationPage({super.key, required this.order});
+  final PlatformFile? proofFile;
+  const OrderConfirmationPage({super.key, required this.order, this.proofFile});
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,52 @@ class OrderConfirmationPage extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 12),
+
+            // ── Proof file banner ───────────────────────────────────
+            if (proofFile != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.primary, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.attach_file_rounded,
+                        color: AppColors.primary, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context).proofAttached,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            proofFile!.name,
+                            style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             const SizedBox(height: 20),
 

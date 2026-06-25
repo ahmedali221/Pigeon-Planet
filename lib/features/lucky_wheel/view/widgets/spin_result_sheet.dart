@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../model/wheel_spin_result_model.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SpinResultSheet extends StatelessWidget {
   final WheelSpinResultModel result;
@@ -52,7 +53,7 @@ class SpinResultSheet extends StatelessWidget {
 
             // Title
             Text(
-              isLuckyNext ? '🎲 جرّب حظك مرة أخرى!' : '🎉 تهانينا!',
+              isLuckyNext ? AppLocalizations.of(context).jrbHzkMraAkhra : AppLocalizations.of(context).thanyna,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
@@ -102,7 +103,7 @@ class SpinResultSheet extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isLuckyNext ? 'حسناً، في المرة القادمة' : 'رائع! استلم جائزتك',
+                  isLuckyNext ? AppLocalizations.of(context).upcoming2 : AppLocalizations.of(context).rayaAstlmJayztk,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

@@ -199,7 +199,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         state.messages.isEmpty) {
       return Center(
         child: Text(
-          state.errorMessage ?? 'فشل تحميل الرسائل',
+          state.errorMessage ?? AppLocalizations.of(context).loading3,
           style: TextStyle(color: AppColors.textSecondary),
         ),
       );

@@ -43,14 +43,14 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     ));
 
     // Kick off all network requests in parallel
-    final productsFut = categories.isNotEmpty
-        ? _repository.getProducts(categories.first.id)
-        : null;
+    final allCategoryFuts = categories
+        .map((c) => _repository.getProducts(c.id))
+        .toList();
     final discountsFut = _repository.getDiscountOffers();
     final cashbackFut = _repository.getCashbackOffers();
     final feedFut = _repository.getFeedMarket();
 
-    final productsResult = await productsFut;
+    final allCategoryResults = await Future.wait(allCategoryFuts);
     final discountsResult = await discountsFut;
     final cashbackResult = await cashbackFut;
     final feedResult = await feedFut;
@@ -61,8 +61,16 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     MarketFeedResult? feedData;
     feedResult.fold((_) {}, (r) => feedData = r);
 
-    if (productsResult != null) {
-      productsResult.fold(
+    // Sum total market-listed products across all categories
+    final totalCount = allCategoryResults.fold<int>(
+      0,
+      (sum, r) => sum + r.fold((_) => 0, (products) => products.length),
+    );
+
+    final firstResult = categories.isNotEmpty ? allCategoryResults.first : null;
+
+    if (firstResult != null) {
+      firstResult.fold(
         (f) => emit(state.copyWith(
           status: MarketStatus.categoriesLoaded,
           allProducts: MarketMockData.products,
@@ -76,6 +84,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
           feedCursor: feedData?.nextCursor,
           feedHasMore: feedData?.nextCursor != null,
           feedLoading: false,
+          totalProductsCount: totalCount,
         )),
         (products) => emit(state.copyWith(
           status: MarketStatus.productsLoaded,
@@ -88,6 +97,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
           feedCursor: feedData?.nextCursor,
           feedHasMore: feedData?.nextCursor != null,
           feedLoading: false,
+          totalProductsCount: totalCount,
         )),
       );
     } else {
@@ -96,6 +106,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
         discountOffers: discounts,
         cashbackOffers: cashbacks,
         feedLoading: false,
+        totalProductsCount: totalCount,
       ));
     }
   }

@@ -28,8 +28,8 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: const PPWAppBar(
-        title: 'تفاصيل السباق',
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).racingType4,
       ),
       body: BlocBuilder<RacesBloc, RacesState>(
         builder: (context, state) {
@@ -38,7 +38,7 @@ class _RaceDetailPageState extends State<RaceDetailPage> {
           }
           if (state.detailStatus == RacesDetailStatus.error) {
             return _ErrorBody(
-              message: state.detailErrorMessage ?? 'حدث خطأ في تحميل السباق',
+              message: state.detailErrorMessage ?? AppLocalizations.of(context).loading9,
               onRetry: () => context
                   .read<RacesBloc>()
                   .add(RaceDetailRequested(widget.raceId)),
@@ -156,23 +156,23 @@ class _RaceInfoCard extends StatelessWidget {
           ),
           SizedBox(height: 14),
           _DetailRow(icon: Icons.location_on_rounded, label: AppLocalizations.of(context).station, value: race.stationName),
-          _DetailRow(icon: Icons.access_time_rounded, label: 'وقت الإطلاق', value: releaseDate),
-          _DetailRow(icon: Icons.flutter_dash_rounded, label: 'عدد الطيور', value: '${race.totalBirds}'),
-          _DetailRow(icon: Icons.group_rounded, label: 'عدد المتسابقين', value: '${race.competitorsCount}'),
+          _DetailRow(icon: Icons.access_time_rounded, label: AppLocalizations.of(context).no20, value: releaseDate),
+          _DetailRow(icon: Icons.flutter_dash_rounded, label: AppLocalizations.of(context).addAltywr, value: '${race.totalBirds}'),
+          _DetailRow(icon: Icons.group_rounded, label: AppLocalizations.of(context).addAlmtsabqyn, value: '${race.competitorsCount}'),
           if (race.plannedDistanceKm != null)
             _DetailRow(
               icon: Icons.straighten_rounded,
-              label: 'المسافة المخططة',
+              label: AppLocalizations.of(context).almsafaAlmkhtta,
               value: '${race.plannedDistanceKm!.toStringAsFixed(3)} كم',
             ),
           if (race.weatherCondition.isNotEmpty)
             _DetailRow(
               icon: Icons.wb_sunny_rounded,
-              label: 'حالة الطقس',
+              label: AppLocalizations.of(context).halaAltqs,
               value: race.weatherCondition,
             ),
           if (race.notes.isNotEmpty)
-            _DetailRow(icon: Icons.notes_rounded, label: 'ملاحظات', value: race.notes),
+            _DetailRow(icon: Icons.notes_rounded, label: AppLocalizations.of(context).no21, value: race.notes),
         ],
       ),
     );

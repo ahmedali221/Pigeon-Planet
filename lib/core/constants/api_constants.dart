@@ -1,7 +1,8 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  // static const String baseUrl = 'http://10.0.2.2:8000/api';      // Android emulator
+  static const String baseUrl = 'http://192.168.1.36:8000/api';   // real device (same Wi-Fi)
   // static const String baseUrl = 'http://127.0.0.1:8000/api';
   // static const String baseUrl = 'https://ppw-backend.vercel.app/api';
 

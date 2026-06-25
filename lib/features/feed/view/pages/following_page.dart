@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -14,8 +14,8 @@ class FollowingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: const PPWAppBar(
-        title: 'من أتابع',
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).following,
       ),
       body: BlocBuilder<FeedBloc, FeedState>(
         buildWhen: (p, c) =>
@@ -73,7 +73,7 @@ class FollowingPage extends StatelessWidget {
               if (state.following.isNotEmpty) ...[
                 _SectionHeader(
                   icon: Icons.people_rounded,
-                  label: 'المربّون المتابَعون (${state.following.length})',
+                  label: AppLocalizations.of(context).almrbwnAlmtabawn(state.following.length),
                 ),
                 SizedBox(height: 10),
                 ...state.following.map((follow) {
@@ -194,7 +194,7 @@ class FollowingPage extends StatelessWidget {
                 if (state.following.isNotEmpty) SizedBox(height: 8),
                 _SectionHeader(
                   icon: Icons.inventory_2_rounded,
-                  label: 'الباقات المتابَعة (${state.followingPackages.length})',
+                  label: AppLocalizations.of(context).albaqatAlmtabaa(state.followingPackages.length),
                   color: AppColors.purple,
                 ),
                 SizedBox(height: 10),

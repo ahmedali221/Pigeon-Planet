@@ -15,6 +15,16 @@ class SellerOrdersPage extends StatefulWidget {
 }
 
 class _SellerOrdersPageState extends State<SellerOrdersPage> {
+  String? _selectedStatus;
+
+  static const _filters = [
+    null,
+    'pending_seller',
+    'approved',
+    'rejected',
+    'completed',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -68,30 +78,118 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
                   .add(const SellerOrderItemsLoadRequested()),
             );
           }
-          if (state.sellerOrderItems.isEmpty) {
-            return const _EmptyView();
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: state.sellerOrderItems.length +
-                (state.sellerItemsHasMore ? 1 : 0),
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (context, i) {
-              if (i == state.sellerOrderItems.length) {
-                return _LoadMoreButton(
-                  loading: state.sellerItemsLoadingMore,
-                  onPressed: () => context
-                      .read<CartBloc>()
-                      .add(const SellerOrderItemsLoadMoreRequested()),
-                );
-              }
-              return _SellerOrderItemCard(
-                item: state.sellerOrderItems[i],
-                actioning: state.itemActioning,
-              );
-            },
+
+          final filtered = _selectedStatus == null
+              ? state.sellerOrderItems
+              : state.sellerOrderItems
+                  .where((i) => i.status == _selectedStatus)
+                  .toList();
+
+          return Column(
+            children: [
+              _FilterChips(
+                filters: _filters,
+                selected: _selectedStatus,
+                onSelected: (s) => setState(() => _selectedStatus = s),
+              ),
+              Expanded(
+                child: filtered.isEmpty
+                    ? const _EmptyView()
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filtered.length +
+                            (state.sellerItemsHasMore && _selectedStatus == null
+                                ? 1
+                                : 0),
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        itemBuilder: (context, i) {
+                          if (i == filtered.length) {
+                            return _LoadMoreButton(
+                              loading: state.sellerItemsLoadingMore,
+                              onPressed: () => context
+                                  .read<CartBloc>()
+                                  .add(const SellerOrderItemsLoadMoreRequested()),
+                            );
+                          }
+                          return _SellerOrderItemCard(
+                            item: filtered[i],
+                            actioning: state.itemActioning,
+                          );
+                        },
+                      ),
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _FilterChips extends StatelessWidget {
+  final List<String?> filters;
+  final String? selected;
+  final void Function(String?) onSelected;
+
+  const _FilterChips({
+    required this.filters,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  String _label(BuildContext context, String? status) {
+    if (status == null) return AppLocalizations.of(context).all;
+    switch (status) {
+      case 'pending_seller':
+        return AppLocalizations.of(context).statusPending;
+      case 'approved':
+        return AppLocalizations.of(context).statusApproved;
+      case 'rejected':
+        return AppLocalizations.of(context).statusCancelled;
+      case 'completed':
+        return AppLocalizations.of(context).statusCompleted;
+      default:
+        return status;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 44,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        children: filters.map((f) {
+          final isSelected = f == selected;
+          return Padding(
+            padding: const EdgeInsetsDirectional.only(end: 8),
+            child: GestureDetector(
+              onTap: () => onSelected(f),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : AppColors.border,
+                  ),
+                ),
+                child: Text(
+                  _label(context, f),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? Colors.white
+                        : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

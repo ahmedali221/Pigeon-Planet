@@ -246,7 +246,7 @@ class _RoomsHeader extends StatelessWidget {
                 onPressed: onRefresh,
                 icon: const Icon(Icons.refresh_rounded),
                 color: Colors.white,
-                tooltip: 'تحديث',
+                tooltip: AppLocalizations.of(context).refresh2,
               ),
             ],
           ),
@@ -256,13 +256,13 @@ class _RoomsHeader extends StatelessWidget {
               _HeaderStat(
                 icon: Icons.meeting_room_rounded,
                 value: '$totalRooms',
-                label: 'غرفة',
+                label: AppLocalizations.of(context).room,
               ),
               const SizedBox(width: 8),
               _HeaderStat(
                 icon: Icons.visibility_rounded,
                 value: '$visibleRooms',
-                label: 'معروضة',
+                label: AppLocalizations.of(context).listed,
                 color: AppColors.orange,
               ),
             ],
@@ -273,7 +273,7 @@ class _RoomsHeader extends StatelessWidget {
             onChanged: onChanged,
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              hintText: 'ابحث باسم الغرفة أو الدولة',
+              hintText: AppLocalizations.of(context).search2,
               hintStyle: const TextStyle(
                 color: AppColors.textHint,
                 fontSize: 13,
@@ -454,7 +454,7 @@ class _FeaturedRoomCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              _displayName(seller),
+              _displayName(context, seller),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -521,7 +521,7 @@ class _RoomCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                _displayName(seller),
+                                _displayName(context, seller),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -584,21 +584,21 @@ class _RoomCard extends StatelessWidget {
                   _MiniStat(
                     icon: Icons.gavel_rounded,
                     value: '${seller.activeAuctionsCount}',
-                    label: 'مزاد',
+                    label: AppLocalizations.of(context).auction4,
                     color: AppColors.orange,
                   ),
                   const SizedBox(width: 8),
                   _MiniStat(
                     icon: Icons.collections_bookmark_rounded,
                     value: '${seller.totalBirdsCount}',
-                    label: 'عنصر',
+                    label: AppLocalizations.of(context).item,
                     color: const Color(0xFF2563EB),
                   ),
                   const SizedBox(width: 8),
                   _MiniStat(
                     icon: Icons.reviews_rounded,
                     value: '${seller.ratingsCount}',
-                    label: 'تقييم',
+                    label: AppLocalizations.of(context).rating,
                     color: AppColors.primary,
                   ),
                 ],
@@ -690,7 +690,7 @@ class _RoomAvatar extends StatelessWidget {
         child: hasAvatar
             ? null
             : Text(
-                _initial(seller),
+                _initial(context, seller),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: radius * 0.7,
@@ -815,7 +815,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Text(
-              hasQuery ? 'لا توجد نتائج مطابقة' : 'لا توجد غرف حالياً',
+              hasQuery ? AppLocalizations.of(context).no7 : AppLocalizations.of(context).no6,
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
@@ -826,8 +826,8 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               hasQuery
-                  ? 'جرّب البحث باسم آخر أو دولة مختلفة'
-                  : 'اسحب للأسفل للتحديث والمحاولة مجدداً',
+                  ? AppLocalizations.of(context).search3
+                  : AppLocalizations.of(context).refresh3,
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
@@ -903,15 +903,15 @@ class _ErrorState extends StatelessWidget {
   }
 }
 
-String _displayName(SellerModel seller) {
+String _displayName(BuildContext context, SellerModel seller) {
   final nickname = seller.nickname.trim();
   if (nickname.isNotEmpty) return nickname;
   final username = seller.username.trim();
-  return username.isEmpty ? 'غرفة' : username;
+  return username.isEmpty ? AppLocalizations.of(context).room2 : username;
 }
 
-String _initial(SellerModel seller) {
-  final name = _displayName(seller);
+String _initial(BuildContext context, SellerModel seller) {
+  final name = _displayName(context, seller);
   return name[0];
 }
 

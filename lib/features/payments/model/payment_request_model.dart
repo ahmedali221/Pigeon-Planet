@@ -43,8 +43,13 @@ class PaymentRequestModel {
   bool get isApproved => status == 'approved';
   bool get isRejected => status == 'rejected';
   bool get isCancelled => status == 'cancelled';
-  bool get canUpdate => status == 'pending' || status == 'rejected';
   bool get isAuction => type == 'auction';
+
+  /// Auction rejections are final — the item reverts to UNSOLD and the buyer
+  /// loses their claim. Only market rejections can be resubmitted.
+  bool get canUpdate =>
+      status == 'pending' ||
+      (status == 'rejected' && !isAuction);
 
   factory PaymentRequestModel.fromJson(Map<String, dynamic> json) {
     // Detail serializer returns auction_item_id / order_item_id as flat ints.

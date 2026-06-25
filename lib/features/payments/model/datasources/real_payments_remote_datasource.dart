@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/services/cloudinary_service.dart';
 import '../payment_request_model.dart';
 import 'payments_remote_datasource.dart';
 
@@ -27,18 +27,11 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
     return items.map((e) => _parse(e)).toList();
   }
 
-  Future<FormData?> _buildProofFormData(
-    Map<String, dynamic> fields,
-    PlatformFile? proofFile,
-  ) async {
-    if (proofFile == null || proofFile.path == null) return null;
-    return FormData.fromMap({
-      ...fields,
-      'payment_proof': await MultipartFile.fromFile(
-        proofFile.path!,
-        filename: proofFile.name,
-      ),
-    });
+  Future<String> _uploadProof(PlatformFile file) async {
+    assert(file.path != null, 'PlatformFile must have a path');
+    final url = await CloudinaryService.uploadPaymentProof(file.path!);
+    if (url == null) throw const ServerException('Failed to upload payment proof');
+    return url;
   }
 
   @override
@@ -53,14 +46,15 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
     String? buyerNote,
     PlatformFile? proofFile,
   }) async {
-    final fields = <String, dynamic>{
-      'auction_item_id': auctionItemId,
-      if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
-    };
-    final formData = await _buildProofFormData(fields, proofFile);
+    assert(proofFile != null, 'payment_proof is required');
+    final proofUrl = await _uploadProof(proofFile!);
     final response = await _dio.post(
       ApiConstants.auctionPaymentRequest,
-      data: formData ?? fields,
+      data: {
+        'auction_item_id': auctionItemId,
+        if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
+        'payment_proof': proofUrl,
+      },
     );
     return _parse(response.data);
   }
@@ -71,14 +65,15 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
     String? buyerNote,
     PlatformFile? proofFile,
   }) async {
-    final fields = <String, dynamic>{
-      'order_item_id': orderItemId,
-      if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
-    };
-    final formData = await _buildProofFormData(fields, proofFile);
+    assert(proofFile != null, 'payment_proof is required');
+    final proofUrl = await _uploadProof(proofFile!);
     final response = await _dio.post(
       ApiConstants.marketPaymentRequest,
-      data: formData ?? fields,
+      data: {
+        'order_item_id': orderItemId,
+        if (buyerNote != null && buyerNote.isNotEmpty) 'buyer_note': buyerNote,
+        'payment_proof': proofUrl,
+      },
     );
     return _parse(response.data);
   }
@@ -89,11 +84,13 @@ class RealPaymentsRemoteDataSource implements PaymentsRemoteDataSource {
     String buyerNote, {
     PlatformFile? proofFile,
   }) async {
-    final fields = <String, dynamic>{'buyer_note': buyerNote};
-    final formData = await _buildProofFormData(fields, proofFile);
+    final data = <String, dynamic>{'buyer_note': buyerNote};
+    if (proofFile != null) {
+      data['payment_proof'] = await _uploadProof(proofFile);
+    }
     final response = await _dio.patch(
       ApiConstants.paymentRequestDetail(requestId),
-      data: formData ?? fields,
+      data: data,
     );
     return _parse(response.data);
   }

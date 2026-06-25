@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../model/seller_product_model.dart';
@@ -22,6 +22,7 @@ class SellerProductCard extends StatelessWidget {
   };
 
   static final _categoryColors = {
+    'birds': AppColors.primaryDark,
     'supplies': AppColors.primary,
     'accessories': AppColors.purple,
     'feeds': AppColors.orange,
@@ -75,9 +76,16 @@ class SellerProductCard extends StatelessWidget {
                             ),
                           )
                         : Container(
-                            color: AppColors.primaryLight,
-                            child: Icon(Icons.storefront_outlined,
-                                color: AppColors.primary, size: 22),
+                            color: product.category == 'birds'
+                                ? AppColors.primaryLight
+                                : AppColors.primaryLight,
+                            child: Icon(
+                              product.category == 'birds'
+                                  ? Icons.flutter_dash_rounded
+                                  : Icons.storefront_outlined,
+                              color: _categoryColor,
+                              size: 22,
+                            ),
                           ),
                   ),
                 ),
@@ -134,14 +142,14 @@ class SellerProductCard extends StatelessWidget {
                 // price
                 _InfoChip(
                   icon: Icons.attach_money_rounded,
-                  label: '${product.price.toStringAsFixed(0)} ج.م',
+                  label: AppLocalizations.of(context).jM4(product.price),
                   color: AppColors.primary,
                 ),
                 SizedBox(width: 8),
                 // stock
                 _InfoChip(
                   icon: Icons.inventory_2_outlined,
-                  label: '${product.count} قطعة',
+                  label: AppLocalizations.of(context).qtaa(product.count),
                   color: AppColors.textSecondary,
                 ),
                 Spacer(),

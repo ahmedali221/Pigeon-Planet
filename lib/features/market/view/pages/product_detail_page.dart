@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
+import '../../../cart/view/pages/buy_now_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../ratings/view/widgets/ratings_section.dart';
 import '../../model/product_model.dart';
@@ -69,6 +70,13 @@ class ProductDetailPage extends StatelessWidget {
                   // ── Description ────────────────────────────────────────────
                   _ProductDescription(product: product),
                   SizedBox(height: 12),
+
+                  // ── Seller ─────────────────────────────────────────────────
+                  if (product.displaySellerName.isNotEmpty)
+                    _SellerSection(product: product),
+                  if (product.displaySellerName.isNotEmpty)
+                    SizedBox(height: 12),
+
                   if (assetId != null) ...[
                     _ProductRatingsSection(
                       assetId: assetId,
@@ -306,6 +314,61 @@ class _ProductDescription extends StatelessWidget {
   }
 }
 
+// ── Seller ────────────────────────────────────────────────────────────────────
+class _SellerSection extends StatelessWidget {
+  final ProductModel product;
+  _SellerSection({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.storefront_rounded,
+              color: AppColors.primary,
+              size: 22,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'البائع',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  product.displaySellerName,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Benefits ──────────────────────────────────────────────────────────────────
 class _ProductRatingsSection extends StatelessWidget {
   final int assetId;
@@ -495,29 +558,35 @@ class _ActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartState>(
+      buildWhen: (p, c) => p.status != c.status,
       builder: (context, cartState) {
         final isBusy = cartState.status == CartStatus.mutating;
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              // Buy now — adds to cart and stays on the current page
+              // Buy Now — skips cart, goes directly to order confirmation
               Expanded(
                 child: SizedBox(
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: isBusy
-                        ? null
-                        : () {
-                            final ms = context.read<MarketBloc>().state;
-                            final id = ms.selectedProduct?.id;
-                            final assetId = int.tryParse(id ?? '');
-                            if (assetId != null) {
-                              context.read<CartBloc>().add(
-                                CartItemAdded(assetId, ms.quantity),
-                              );
-                            }
-                          },
+                    onPressed: () {
+                      final ms = context.read<MarketBloc>().state;
+                      final product = ms.selectedProduct;
+                      if (product == null) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<CartBloc>(),
+                            child: BuyNowPage(
+                              product: product,
+                              quantity: ms.quantity,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.orange,
                       foregroundColor: Colors.white,
@@ -528,7 +597,7 @@ class _ActionButtons extends StatelessWidget {
                     ),
                     child: Text(
                       AppLocalizations.of(context).buyNow,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
@@ -537,9 +606,9 @@ class _ActionButtons extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-              // Add to cart — dispatches to CartBloc; listener shows snackbar
+              // Add to Cart — adds item, stays on page, listener shows toast
               Expanded(
                 child: SizedBox(
                   height: 50,
@@ -548,8 +617,7 @@ class _ActionButtons extends StatelessWidget {
                         ? null
                         : () {
                             final ms = context.read<MarketBloc>().state;
-                            final id = ms.selectedProduct?.id;
-                            final assetId = int.tryParse(id ?? '');
+                            final assetId = int.tryParse(ms.selectedProduct?.id ?? '');
                             if (assetId != null) {
                               context.read<CartBloc>().add(
                                 CartItemAdded(assetId, ms.quantity),
@@ -557,7 +625,7 @@ class _ActionButtons extends StatelessWidget {
                             }
                           },
                     icon: isBusy
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
@@ -565,20 +633,17 @@ class _ActionButtons extends StatelessWidget {
                               color: AppColors.primary,
                             ),
                           )
-                        : Icon(Icons.shopping_cart_outlined, size: 18),
+                        : const Icon(Icons.shopping_cart_outlined, size: 18),
                     label: Text(
                       AppLocalizations.of(context).addToCart,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,
-                      side: BorderSide(
-                        color: AppColors.primary,
-                        width: 2,
-                      ),
+                      side: const BorderSide(color: AppColors.primary, width: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

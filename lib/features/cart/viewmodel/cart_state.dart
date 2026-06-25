@@ -6,6 +6,7 @@ class CartState extends Equatable {
   final CartStatus status;
   final CartModel? cart;
   final OrderModel? lastOrder;
+  final PlatformFile? checkoutProofFile;
   final List<OrderModel> orders;
   final OrderModel? selectedOrder;
   final List<OrderItemModel> sellerOrderItems;
@@ -26,6 +27,7 @@ class CartState extends Equatable {
     this.status = CartStatus.initial,
     this.cart,
     this.lastOrder,
+    this.checkoutProofFile,
     this.orders = const [],
     this.selectedOrder,
     this.sellerOrderItems = const [],
@@ -50,6 +52,8 @@ class CartState extends Equatable {
     CartStatus? status,
     CartModel? cart,
     OrderModel? lastOrder,
+    PlatformFile? checkoutProofFile,
+    bool clearCheckoutProof = false,
     List<OrderModel>? orders,
     OrderModel? selectedOrder,
     bool clearSelectedOrder = false,
@@ -73,6 +77,7 @@ class CartState extends Equatable {
         status: status ?? this.status,
         cart: cart ?? this.cart,
         lastOrder: lastOrder ?? this.lastOrder,
+        checkoutProofFile: clearCheckoutProof ? null : (checkoutProofFile ?? this.checkoutProofFile),
         orders: orders ?? this.orders,
         selectedOrder: clearSelectedOrder ? null : (selectedOrder ?? this.selectedOrder),
         sellerOrderItems: sellerOrderItems ?? this.sellerOrderItems,
@@ -94,7 +99,7 @@ class CartState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status, cart, lastOrder, orders, selectedOrder,
+        status, cart, lastOrder, checkoutProofFile, orders, selectedOrder,
         sellerOrderItems, ordersLoading, ordersLoadingMore, ordersHasMore,
         ordersCurrentPage, sellerItemsLoading, sellerItemsLoadingMore,
         sellerItemsHasMore, sellerItemsCurrentPage,

@@ -28,6 +28,9 @@ class MarketState extends Equatable {
   // Ordering — null = default (newest first)
   final String? activeOrdering;
 
+  // Total market-listed products across all categories
+  final int totalProductsCount;
+
   const MarketState({
     this.status = MarketStatus.initial,
     this.categories = const [],
@@ -47,6 +50,7 @@ class MarketState extends Equatable {
     this.discountOffers = const [],
     this.cashbackOffers = const [],
     this.activeOrdering,
+    this.totalProductsCount = 0,
   });
 
   double get currentPrice {
@@ -74,6 +78,7 @@ class MarketState extends Equatable {
     List<CashbackOfferModel>? cashbackOffers,
     String? activeOrdering,
     bool clearOrdering = false,
+    int? totalProductsCount,
   }) {
     return MarketState(
       status: status ?? this.status,
@@ -94,6 +99,7 @@ class MarketState extends Equatable {
       discountOffers: discountOffers ?? this.discountOffers,
       cashbackOffers: cashbackOffers ?? this.cashbackOffers,
       activeOrdering: clearOrdering ? null : (activeOrdering ?? this.activeOrdering),
+      totalProductsCount: totalProductsCount ?? this.totalProductsCount,
     );
   }
 
@@ -117,5 +123,6 @@ class MarketState extends Equatable {
         discountOffers,
         cashbackOffers,
         activeOrdering,
+        totalProductsCount,
       ];
 }

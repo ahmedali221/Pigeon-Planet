@@ -204,9 +204,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final myAuctions =
         auctionsResult.fold((_) => <AuctionModel>[], (list) => list);
 
-    // If the summary API failed (nickname is empty), build a fallback from local data.
-    final needsFallback = state.sellerSummary == null ||
-        state.sellerSummary!.nickname.isEmpty;
+    // If the summary API failed (nickname is empty), build a fallback from local data
+    // but preserve any notifications that were already fetched from the API.
+    final existingSummary = state.sellerSummary;
+    final needsFallback = existingSummary == null ||
+        existingSummary.nickname.isEmpty;
     emit(state.copyWith(
       sellerSummary: needsFallback
           ? _buildSellerSummary(
@@ -214,6 +216,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               myBirds: myBirds,
               pointsBalance: state.pointsBalance,
               unreadCount: state.unreadNotificationCount,
+              existingNotifications: existingSummary?.notifications,
             )
           : null, // keep the API-fetched summary
       sellerPrivateLoading: false,
@@ -235,6 +238,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required List<BirdSummaryModel> myBirds,
     required int? pointsBalance,
     required int unreadCount,
+    List<SellerHomeNotification>? existingNotifications,
   }) {
     final activeAuctions = myAuctions.where((a) => a.isActive).length;
     final closedAuctions = myAuctions.where((a) => a.isEnded).length;
@@ -248,7 +252,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       auctionClosedCount: closedAuctions,
       myActiveListings: myBirds.length,
       pendingOrderItems: 0,
-      notifications: const [],
+      notifications: existingNotifications ?? const [],
       notificationsNewCount: unreadCount,
       providerNotes: const [],
     );

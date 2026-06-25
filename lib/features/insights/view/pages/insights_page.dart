@@ -78,13 +78,13 @@ class _InsightsView extends StatelessWidget {
             title: AppLocalizations.of(context).auctions,
             children: [
               _StatRow(
-                  label: 'مزادات نشطة',
+                  label: AppLocalizations.of(context).active2,
                   value: '${insights.auctionSummary.activeCount}'),
               _StatRow(
                   label: AppLocalizations.of(context).closedAuctions,
                   value: '${insights.auctionSummary.closedCount}'),
               _StatRow(
-                  label: 'تنتهي قريباً',
+                  label: AppLocalizations.of(context).tnthyQryba,
                   value: '${insights.auctionSummary.endingSoonCount}'),
               _StatRow(
                   label: AppLocalizations.of(context).totalOffersReceived,

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../viewmodel/profile_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CreateRoomPage extends StatefulWidget {
   final String country;
@@ -42,8 +43,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: const PPWAppBar(
-        title: 'إضافة غرفة جديدة',
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).add2,
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listenWhen: (p, c) => p.roomsStatus != c.roomsStatus,
@@ -59,7 +60,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           } else if (state.roomsStatus == RoomsStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'حدث خطأ، حاول مجدداً'),
+                content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred3),
                 backgroundColor: AppColors.error,
               ),
             );
@@ -87,13 +88,13 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   TextFormField(
                     controller: _nicknameCtrl,
                     textInputAction: TextInputAction.next,
-                    decoration: _inputDecor('مثال: حمام الزاجل الذهبي'),
+                    decoration: _inputDecor(AppLocalizations.of(context).mthalHmamAlzajlAlthhby),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) {
-                        return 'أدخل اسم الغرفة';
+                        return AppLocalizations.of(context).rooms2;
                       }
                       if (v.trim().length < 3) {
-                        return 'الاسم قصير جداً';
+                        return AppLocalizations.of(context).no15;
                       }
                       return null;
                     },

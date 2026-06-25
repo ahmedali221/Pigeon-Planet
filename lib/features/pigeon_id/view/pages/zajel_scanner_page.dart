@@ -23,12 +23,7 @@ class ZajelScannerPage extends StatefulWidget {
 }
 
 class _ZajelScannerPageState extends State<ZajelScannerPage> {
-  static final _steps = [
-    _ScanStep(label: 'الجسم كاملاً', emoji: '🦢', hint: 'وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب'),
-    _ScanStep(label: 'الجناح (يمين / يسار)', emoji: '🪶', hint: 'افرد الجناح وقربه من الكاميرا'),
-    _ScanStep(label: 'العين (ماكرو)', emoji: '👁️', hint: 'قرّب الكاميرا من العين لالتقاط التفاصيل'),
-    _ScanStep(label: 'رقم الدبلة', emoji: '🔢', hint: 'تأكد من وضوح أرقام الدبلة في المربع أسفل الشاشة'),
-  ];
+  late final List<_ScanStep> _steps;
 
   // Camera
   CameraController? _cameraController;
@@ -58,6 +53,12 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
   @override
   void initState() {
     super.initState();
+    _steps = [
+      _ScanStep(label: AppLocalizations.of(context).no11, emoji: '🦢', hint: AppLocalizations.of(context).no12),
+      _ScanStep(label: AppLocalizations.of(context).aljnahYmynYsar, emoji: '🪶', hint: AppLocalizations.of(context).afrdAljnahWqrbhMnAlkamyra),
+      _ScanStep(label: AppLocalizations.of(context).alaynMakrw, emoji: '👁️', hint: AppLocalizations.of(context).no13),
+      _ScanStep(label: AppLocalizations.of(context).rqmAldbla, emoji: '🔢', hint: AppLocalizations.of(context).takdMnWdwhArqamAldbla),
+    ];
     _initCamera();
     _listenAccelerometer();
   }
@@ -66,13 +67,13 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
     final cameraStatus = await Permission.camera.request();
     final micStatus = await Permission.microphone.request();
     if (!cameraStatus.isGranted) {
-      if (mounted) setState(() => _cameraError = 'مطلوب إذن الكاميرا');
+      if (mounted) setState(() => _cameraError = AppLocalizations.of(context).mtlwbIthnAlkamyra);
       return;
     }
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
-        setState(() => _cameraError = 'لا توجد كاميرا متاحة');
+        setState(() => _cameraError = AppLocalizations.of(context).no14);
         return;
       }
       final back = cameras.firstWhere(
@@ -92,7 +93,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       _cameraController = controller;
       setState(() => _cameraReady = true);
     } catch (e) {
-      if (mounted) setState(() => _cameraError = 'تعذّر تشغيل الكاميرا');
+      if (mounted) setState(() => _cameraError = AppLocalizations.of(context).tathrTshghylAlkamyra);
     }
   }
 
@@ -254,14 +255,14 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
         }
         setState(() {
           _isProcessing = false;
-          _processingError = 'فشل دمج الفيديو';
+          _processingError = AppLocalizations.of(context).fshlDmjAlfydyw;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _isProcessing = false;
-          _processingError = 'فشل دمج الفيديو';
+          _processingError = AppLocalizations.of(context).fshlDmjAlfydyw2;
         });
       }
     }
@@ -516,8 +517,8 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
                           child: Center(
                             child: Text(
                               _isStable
-                                  ? 'ثابت ✓ — سيبدأ التسجيل تلقائياً'
-                                  : 'ثبّت الكاميرا لبدء التسجيل',
+                                  ? AppLocalizations.of(context).thabtSybdaAltsjylTlqayya
+                                  : AppLocalizations.of(context).thbtAlkamyraLbdAltsjyl,
                               style: TextStyle(
                                 color: _isStable
                                     ? AppColors.primary

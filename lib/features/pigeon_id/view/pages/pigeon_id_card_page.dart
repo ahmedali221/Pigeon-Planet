@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +67,7 @@ class PigeonIdCardPage extends StatelessWidget {
         } else if (state.status == PigeonIdStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ أثناء الحذف'),
+              content: Text(state.errorMessage ?? AppLocalizations.of(context).delete2),
               backgroundColor: AppColors.error,
             ),
           );
@@ -244,8 +244,8 @@ class PigeonIdCardPage extends StatelessWidget {
                                   SizedBox(height: 12),
                                   _InfoRow(
                                     icon: Icons.verified_rounded,
-                                    label: 'الحالة',
-                                    value: 'موثّق ✓',
+                                    label: AppLocalizations.of(context).alhala,
+                                    value: AppLocalizations.of(context).mwthq,
                                     valueColor: AppColors.success,
                                   ),
                                 ],
@@ -574,7 +574,7 @@ class _BirdPedigreesSection extends StatelessWidget {
                 SizedBox(height: 12),
                 if (state.status == PedigreesStatus.error)
                   Text(
-                    state.errorMessage ?? 'تعذّر تحميل وثائق النسب',
+                    state.errorMessage ?? AppLocalizations.of(context).loading7,
                     style: TextStyle(
                         fontSize: 12, color: AppColors.textSecondary),
                   )
@@ -623,13 +623,6 @@ class _PedigreeDocTile extends StatelessWidget {
   final PedigreeDocumentModel doc;
   _PedigreeDocTile({required this.doc});
 
-  static final _statusLabels = {
-    'uploaded': 'جارٍ المعالجة',
-    'processed': 'تمت المعالجة',
-    'reviewed': 'مراجع',
-    'failed': 'فشل',
-  };
-
   static final _statusColors = {
     'uploaded': AppColors.orange,
     'processed': AppColors.primary,
@@ -639,7 +632,13 @@ class _PedigreeDocTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = _statusLabels[doc.status] ?? doc.status;
+    final statusLabels = {
+      'uploaded': AppLocalizations.of(context).jarAlmaalja,
+      'processed': AppLocalizations.of(context).tmtAlmaalja3,
+      'reviewed': AppLocalizations.of(context).mraja,
+      'failed': AppLocalizations.of(context).fshl,
+    };
+    final label = statusLabels[doc.status] ?? doc.status;
     final color = _statusColors[doc.status] ?? AppColors.textSecondary;
     return Padding(
       padding: EdgeInsets.only(bottom: 8),
@@ -652,7 +651,7 @@ class _PedigreeDocTile extends StatelessWidget {
             child: Text(
               doc.reviewedBirdRingNumber ??
                   doc.extractedBirdRingNumber ??
-                  'وثيقة #${doc.id}',
+                  AppLocalizations.of(context).wthyqa(doc.id),
               style: TextStyle(
                   fontSize: 13, color: AppColors.textPrimary),
             ),

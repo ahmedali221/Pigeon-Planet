@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../viewmodel/market_bloc.dart';
@@ -118,15 +119,21 @@ class ProductsPage extends StatelessWidget {
             // ── Grid ─────────────────────────────────────────────────────────
             Expanded(
               child: BlocBuilder<MarketBloc, MarketState>(
-                buildWhen: (p, c) => p.filteredProducts != c.filteredProducts,
+                buildWhen: (p, c) =>
+                    p.filteredProducts != c.filteredProducts ||
+                    p.status != c.status,
                 builder: (context, state) {
+                  if (state.status == MarketStatus.loading) {
+                    return const _ProductsShimmer();
+                  }
+
                   final products = state.filteredProducts;
 
                   if (products.isEmpty) {
                     return Center(
                       child: Text(
                         AppLocalizations.of(context).noProducts,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           color: AppColors.textSecondary,
                         ),
@@ -135,9 +142,9 @@ class ProductsPage extends StatelessWidget {
                   }
 
                   return GridView.builder(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
@@ -302,6 +309,79 @@ class _ProductsHeader extends StatelessWidget {
               Icons.arrow_back_ios_rounded,
               color: Colors.white,
               size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Shimmer loading grid ──────────────────────────────────────────────────────
+class _ProductsShimmer extends StatelessWidget {
+  const _ProductsShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade200,
+      highlightColor: Colors.grey.shade100,
+      child: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.72,
+        ),
+        itemCount: 6,
+        itemBuilder: (_, _) => const _ShimmerCard(),
+      ),
+    );
+  }
+}
+
+class _ShimmerCard extends StatelessWidget {
+  const _ShimmerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 12,
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 6),
+                  Container(height: 10, width: 80, color: Colors.white),
+                  const SizedBox(height: 8),
+                  Container(height: 14, width: 60, color: Colors.white),
+                ],
+              ),
             ),
           ),
         ],

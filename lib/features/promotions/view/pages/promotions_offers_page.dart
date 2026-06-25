@@ -31,7 +31,7 @@ class _PromotionsOffersView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PPWAppBar(
-        title: 'العروض والتخفيضات',
+        title: AppLocalizations.of(context).alarwdWaltkhfydat,
         actions: [
           BlocBuilder<PromotionsBloc, PromotionsState>(
             buildWhen: (prev, curr) => prev.offersLoading != curr.offersLoading,
@@ -70,7 +70,7 @@ class _PromotionsOffersView extends StatelessWidget {
               if (state.grants.isNotEmpty) ...[
                 _SectionHeader(
                   icon: Icons.card_giftcard_rounded,
-                  title: 'عروضك الخاصة',
+                  title: AppLocalizations.of(context).arwdkAlkhasa,
                   color: AppColors.primary,
                 ),
                 SliverPadding(
@@ -94,7 +94,7 @@ class _PromotionsOffersView extends StatelessWidget {
               if (state.discountOffers.isNotEmpty) ...[
                 _SectionHeader(
                   icon: Icons.local_offer_rounded,
-                  title: 'عروض التخفيض',
+                  title: AppLocalizations.of(context).arwdAltkhfyd,
                   color: Color(0xFF6B4FBB),
                 ),
                 SliverPadding(
@@ -111,7 +111,7 @@ class _PromotionsOffersView extends StatelessWidget {
               if (state.cashbackOffers.isNotEmpty) ...[
                 _SectionHeader(
                   icon: Icons.account_balance_wallet_rounded,
-                  title: 'عروض الكاش باك',
+                  title: AppLocalizations.of(context).arwdAlkashBak,
                   color: Color(0xFF2B8A3E),
                 ),
                 SliverPadding(
@@ -238,7 +238,7 @@ class _GrantTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                grant.grantType == 'discount' ? 'تخفيض' : 'كاش باك',
+                grant.grantType == 'discount' ? AppLocalizations.of(context).tkhfyd : AppLocalizations.of(context).kashBak,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,

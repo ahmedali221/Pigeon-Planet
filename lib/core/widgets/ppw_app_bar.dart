@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../constants/app_colors.dart';
+import '../di/injection.dart';
+import '../../features/auth/viewmodel/auth_bloc.dart';
+import '../../features/cart/view/pages/cart_page.dart';
+import '../../features/cart/viewmodel/cart_bloc.dart';
+import '../../l10n/app_localizations.dart';
 
 class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PPWAppBar({
@@ -17,6 +23,7 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.centerTitle = true,
     this.bottom,
+    this.showCartAction = true,
   });
 
   final String? title;
@@ -30,6 +37,7 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final bool centerTitle;
   final PreferredSizeWidget? bottom;
+  final bool showCartAction;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +79,10 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: resolvedLeading,
       centerTitle: centerTitle,
       title: resolvedTitle,
-      actions: actions,
+      actions: [
+        ...?actions,
+        if (showCartAction) _CustomerCartAction(color: foregroundColor),
+      ],
       bottom: bottom,
     );
   }
@@ -79,6 +90,84 @@ class PPWAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize =>
       Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
+}
+
+class _CustomerCartAction extends StatelessWidget {
+  const _CustomerCartAction({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<AuthBloc, AuthState, bool>(
+      selector: (state) {
+        if (state is AuthSuccess) return state.user.isCustomer;
+        if (state is AuthSwitchingProfile) return state.user.isCustomer;
+        if (state is AuthProfileSwitchFailure) return state.user.isCustomer;
+        return false;
+      },
+      builder: (context, isCustomer) {
+        if (!isCustomer) return const SizedBox.shrink();
+
+        final cartBloc = sl<CartBloc>();
+        return BlocBuilder<CartBloc, CartState>(
+          bloc: cartBloc,
+          buildWhen: (previous, current) =>
+              previous.itemsCount != current.itemsCount,
+          builder: (context, state) {
+            return IconButton(
+              tooltip: AppLocalizations.of(context).cartTitle,
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(Icons.shopping_cart_outlined, color: color),
+                  if (state.itemsCount > 0)
+                    PositionedDirectional(
+                      top: -7,
+                      end: -7,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: const BoxDecoration(
+                          color: AppColors.orange,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          state.itemsCount > 99 ? '99+' : '${state.itemsCount}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              onPressed: () {
+                if (cartBloc.state.status == CartStatus.initial) {
+                  cartBloc.add(const CartStarted());
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: cartBloc,
+                      child: const CartPage(),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class _PigeonPlanetLogo extends StatelessWidget {

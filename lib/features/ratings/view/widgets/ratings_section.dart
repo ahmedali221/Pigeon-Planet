@@ -139,7 +139,7 @@ class _RatingsSectionBody extends StatelessWidget {
                 ...state.ratings.map((r) => _RatingTile(rating: r)),
               ],
               if (state.comments.isNotEmpty) ...[
-                _SubHeading('التعليقات'),
+                _SubHeading(AppLocalizations.of(context).altalyqat),
                 ...state.comments.map((c) => _CommentTile(comment: c)),
               ],
               if (state.hasMore)

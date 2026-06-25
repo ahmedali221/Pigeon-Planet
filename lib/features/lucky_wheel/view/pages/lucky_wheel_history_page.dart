@@ -29,7 +29,7 @@ class _HistoryView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PPWAppBar(
-        title: 'سجل عجلة الحظ',
+        title: AppLocalizations.of(context).sjlAjlaAlhz,
         actions: [
           BlocBuilder<LuckyWheelHistoryCubit, LuckyWheelHistoryState>(
             buildWhen: (prev, curr) => prev.status != curr.status,
@@ -162,7 +162,7 @@ class _SpinTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              awarded ? 'تم الفوز' : 'لم تفز',
+              awarded ? AppLocalizations.of(context).tmAlfwz : AppLocalizations.of(context).lmTfz,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,

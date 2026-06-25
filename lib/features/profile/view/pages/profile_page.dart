@@ -14,10 +14,12 @@ import '../../../promotions/view/pages/promotions_offers_page.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
 import 'edit_profile_page.dart';
+import '../../../notifications/view/pages/notifications_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class ProfilePage extends StatelessWidget {
-  ProfilePage({super.key});
+  final int unreadNotificationCount;
+  ProfilePage({super.key, this.unreadNotificationCount = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   Icon(Icons.error_outline, color: Colors.red, size: 48),
                   SizedBox(height: 12),
-                  Text(state.errorMessage ?? 'حدث خطأ في تحميل الملف الشخصي'),
+                  Text(state.errorMessage ?? AppLocalizations.of(context).loading8),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<ProfileBloc>().add(
@@ -110,6 +112,10 @@ class ProfilePage extends StatelessWidget {
                         _BenefitsCard(profile: profile),
                         SizedBox(height: 16),
                       ],
+                      _NotificationsNavTile(
+                        unreadCount: unreadNotificationCount,
+                      ),
+                      SizedBox(height: 12),
                       _PaymentsNavTile(),
                       SizedBox(height: 12),
                       _ComplaintsNavTile(),
@@ -201,7 +207,7 @@ class _ProfileHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    profile.isSeller ? 'بائع' : 'مشتري',
+                    profile.isSeller ? AppLocalizations.of(context).baya : AppLocalizations.of(context).buyer3,
                     style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
@@ -225,7 +231,7 @@ class _StatusChips extends StatelessWidget {
       runSpacing: 8,
       children: [
         _chip(
-          label: profile.activated ? 'مفعّل' : 'غير مفعّل',
+          label: profile.activated ? AppLocalizations.of(context).mfal : AppLocalizations.of(context).ghyrMfal,
           color: profile.activated ? Colors.green : Colors.orange,
           icon: profile.activated
               ? Icons.check_circle_outline
@@ -239,7 +245,7 @@ class _StatusChips extends StatelessWidget {
               : Icons.visibility_off_outlined,
         ),
         _chip(
-          label: profile.isValid ? 'صالح' : 'غير صالح',
+          label: profile.isValid ? AppLocalizations.of(context).salh : AppLocalizations.of(context).ghyrSalh,
           color: profile.isValid ? Colors.teal : Colors.red,
           icon: profile.isValid
               ? Icons.verified_outlined
@@ -319,7 +325,7 @@ class _InfoCard extends StatelessWidget {
           if (!profile.isSeller) ...[
             _InfoRow(
               icon: Icons.account_balance_wallet_outlined,
-              label: 'رصيد الكاشباك',
+              label: AppLocalizations.of(context).rsydAlkashbak,
               value:
                   '${(profile.cashbackBalance ?? 0.0).toStringAsFixed(2)} ${profile.currency}',
             ),
@@ -333,14 +339,14 @@ class _InfoCard extends StatelessWidget {
           Divider(height: 1, indent: 16, endIndent: 16),
           _InfoRow(
             icon: Icons.currency_exchange_outlined,
-            label: 'العملة',
+            label: AppLocalizations.of(context).alamla2,
             value: profile.currency,
           ),
           if (profile.created != null) ...[
             Divider(height: 1, indent: 16, endIndent: 16),
             _InfoRow(
               icon: Icons.calendar_today_outlined,
-              label: 'تاريخ الانضمام',
+              label: AppLocalizations.of(context).no19,
               value:
                   '${profile.created!.year}-${profile.created!.month.toString().padLeft(2, '0')}-${profile.created!.day.toString().padLeft(2, '0')}',
             ),
@@ -536,14 +542,14 @@ class _StatsCard extends StatelessWidget {
           children: [
             _StatCell(
               icon: Icons.shopping_bag_outlined,
-              label: 'الطلبات المكتملة',
+              label: AppLocalizations.of(context).altlbatAlmktmla,
               value: profile.completedOrdersCount.toString(),
               color: AppColors.blue,
             ),
             VerticalDivider(width: 1, thickness: 1),
             _StatCell(
               icon: Icons.person_add_alt_1_outlined,
-              label: 'الدعوات الناجحة',
+              label: AppLocalizations.of(context).aldawatAlnajha,
               value: profile.successfulInvitesCount.toString(),
               color: AppColors.purple,
             ),
@@ -625,7 +631,7 @@ class _BenefitsCard extends StatelessWidget {
           if (discount > 0)
             Expanded(
               child: _BenefitChip(
-                label: 'خصم المستوى',
+                label: AppLocalizations.of(context).khsmAlmstwa,
                 value: '$discount%',
                 color: AppColors.blue,
                 icon: Icons.local_offer_outlined,
@@ -635,7 +641,7 @@ class _BenefitsCard extends StatelessWidget {
           if (cashback > 0)
             Expanded(
               child: _BenefitChip(
-                label: 'كاش باك المستوى',
+                label: AppLocalizations.of(context).kashBakAlmstwa,
                 value: '$cashback%',
                 color: AppColors.primary,
                 icon: Icons.account_balance_wallet_outlined,
@@ -690,6 +696,97 @@ class _BenefitChip extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NotificationsNavTile extends StatelessWidget {
+  final int unreadCount;
+  _NotificationsNavTile({this.unreadCount = 0});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => NotificationsPage()),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.orange.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: AppColors.orange,
+                    size: 20,
+                  ),
+                ),
+                if (unreadCount > 0)
+                  Positioned(
+                    top: -4,
+                    right: -4,
+                    child: Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: AppColors.red,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          unreadCount > 99 ? '99+' : '$unreadCount',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context).notifications,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.arrow_back_ios_rounded,
+              color: AppColors.textSecondary,
+              size: 14,
+            ),
+          ],
+        ),
       ),
     );
   }

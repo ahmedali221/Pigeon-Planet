@@ -12,16 +12,15 @@ class HomeBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  static final _items = [
-    _NavItem(icon: Icons.home_rounded, label: 'الرئيسية'),
-    _NavItem(icon: Icons.gavel_rounded, label: 'المزادات'),
-    _NavItem(icon: Icons.storefront_rounded, label: 'المتجر'),
-    _NavItem(icon: Icons.meeting_room_rounded, label: 'الغرف'),
-    _NavItem(icon: Icons.emoji_events_rounded, label: 'النتائج'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final items = [
+      _NavItem(icon: Icons.home_rounded, label: AppLocalizations.of(context).alryysya),
+      _NavItem(icon: Icons.gavel_rounded, label: AppLocalizations.of(context).auction7),
+      _NavItem(icon: Icons.storefront_rounded, label: AppLocalizations.of(context).almtjr),
+      _NavItem(icon: Icons.meeting_room_rounded, label: AppLocalizations.of(context).rooms),
+      _NavItem(icon: Icons.emoji_events_rounded, label: AppLocalizations.of(context).alntayj),
+    ];
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -38,8 +37,8 @@ class HomeBottomNavBar extends StatelessWidget {
         child: SizedBox(
           height: 62,
           child: Row(
-            children: List.generate(_items.length, (i) {
-              final item = _items[i];
+            children: List.generate(items.length, (i) {
+              final item = items[i];
               final active = i == currentIndex;
               final color =
                   active ? AppColors.primary : AppColors.textSecondary;

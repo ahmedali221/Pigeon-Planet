@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -59,7 +59,7 @@ class ConversationsPage extends StatelessWidget {
                             color: AppColors.error, size: 48),
                         SizedBox(height: 12),
                         Text(
-                          state.errorMessage ?? 'حدث خطأ',
+                          state.errorMessage ?? AppLocalizations.of(context).errorOccurred2,
                           style: TextStyle(color: AppColors.textSecondary),
                           textAlign: TextAlign.center,
                         ),
@@ -162,13 +162,13 @@ class _ConversationTile extends StatelessWidget {
     required this.onTap,
   });
 
-  String _formatTime(DateTime? dt) {
+  String _formatTime(BuildContext context, DateTime? dt) {
     if (dt == null) return '';
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} د';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} س';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} أيام';
+    if (diff.inMinutes < 1) return AppLocalizations.of(context).now3;
+    if (diff.inMinutes < 60) return AppLocalizations.of(context).mnthD(diff.inMinutes);
+    if (diff.inHours < 24) return AppLocalizations.of(context).mnthS(diff.inHours);
+    if (diff.inDays < 7) return AppLocalizations.of(context).mnthAyam(diff.inDays);
     return DateFormat('d/M').format(dt);
   }
 
@@ -252,7 +252,7 @@ class _ConversationTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  _formatTime(conversation.lastMessageAt),
+                  _formatTime(context, conversation.lastMessageAt),
                   style: TextStyle(
                     fontSize: 11,
                     color: hasUnread ? AppColors.primary : AppColors.textHint,

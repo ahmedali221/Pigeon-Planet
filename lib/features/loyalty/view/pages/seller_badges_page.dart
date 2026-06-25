@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -41,7 +41,7 @@ class _BadgesView extends StatelessWidget {
                 pinned: true,
                 title: Text(
                   state.badges.isNotEmpty
-                      ? 'الأوسمة (${state.badges.length})'
+                      ? AppLocalizations.of(context).alawsma(state.badges.length)
                       : AppLocalizations.of(context).badgesTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -290,7 +290,7 @@ class _BadgeCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                isRevoked ? 'مُلغى' : isExpired ? AppLocalizations.of(context).expired : AppLocalizations.of(context).statusActive,
+                isRevoked ? AppLocalizations.of(context).mlgha : isExpired ? AppLocalizations.of(context).expired : AppLocalizations.of(context).statusActive,
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.bold,

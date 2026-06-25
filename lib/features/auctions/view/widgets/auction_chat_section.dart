@@ -271,7 +271,7 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
                     minLines: 1,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: 'Write a comment',
+                      hintText: AppLocalizations.of(context).writeComment,
                       filled: true,
                       fillColor: _canComment
                           ? AppColors.pageBackground

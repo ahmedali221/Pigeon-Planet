@@ -34,6 +34,7 @@ class SellerProductModel extends Equatable {
   });
 
   static const categoryNames = {
+    'birds': 'طيور',
     'supplies': 'مستلزمات',
     'accessories': 'إكسسوارات',
     'feeds': 'أعلاف',
@@ -66,7 +67,9 @@ class SellerProductModel extends Equatable {
 
     return SellerProductModel(
       id: json['id'] as int? ?? 0,
-      title: json['title'] as String? ?? json['name'] as String? ?? '',
+      title: category == 'birds'
+          ? (json['name'] as String? ?? json['title'] as String? ?? '')
+          : (json['title'] as String? ?? json['name'] as String? ?? ''),
       description: json['description'] as String? ?? '',
       price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
       count: json['count'] as int? ?? 0,

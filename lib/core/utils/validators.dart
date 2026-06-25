@@ -17,8 +17,7 @@ class AppValidators {
 
   static String? password(String? value) {
     if (value == null || value.trim().isEmpty) return AppStrings.fieldRequired;
-    if (value.length < 12) return AppStrings.passwordTooShort;
-    return null;
+return null;
   }
 
   static String? confirmPassword(String? value, String original) {

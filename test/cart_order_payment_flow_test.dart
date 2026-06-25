@@ -15,84 +15,94 @@ import 'package:pigeon_planet/features/payments/viewmodel/payments_bloc.dart';
 
 void main() {
   group('cart/order checkout and payment proof flow', () {
-    test('checks out cart, creates one payment request, uploads proof, and approves it',
-        () async {
-      final cartRepository = _FakeCartRepository();
-      final paymentsRepository = _FakePaymentsRepository();
-      final cartBloc = CartBloc(repository: cartRepository);
-      final paymentsBloc = PaymentsBloc(repository: paymentsRepository);
+    test(
+      'checks out cart, creates one payment request, uploads proof, and approves it',
+      () async {
+        final cartRepository = _FakeCartRepository();
+        final paymentsRepository = _FakePaymentsRepository();
+        final cartBloc = CartBloc(repository: cartRepository);
+        final paymentsBloc = PaymentsBloc(repository: paymentsRepository);
 
-      addTearDown(cartBloc.close);
-      addTearDown(paymentsBloc.close);
+        addTearDown(cartBloc.close);
+        addTearDown(paymentsBloc.close);
 
-      cartBloc.add(const CartStarted());
-      await pumpEventQueue();
-      expect(cartBloc.state.status, CartStatus.loaded);
-      expect(cartBloc.state.cart!.items, isEmpty);
+        cartBloc.add(const CartStarted());
+        await pumpEventQueue();
+        expect(cartBloc.state.status, CartStatus.loaded);
+        expect(cartBloc.state.cart!.items, isEmpty);
 
-      cartBloc.add(const CartItemAdded(10, 2));
-      await pumpEventQueue();
-      expect(cartBloc.state.status, CartStatus.loaded);
-      expect(cartBloc.state.cart!.items.single.assetId, 10);
-      expect(cartBloc.state.cart!.items.single.quantity, 2);
+        cartBloc.add(const CartItemAdded(10, 2));
+        await pumpEventQueue();
+        expect(cartBloc.state.status, CartStatus.loaded);
+        expect(cartBloc.state.cart!.items.single.assetId, 10);
+        expect(cartBloc.state.cart!.items.single.quantity, 2);
 
-      cartBloc.add(const CartCheckoutRequested());
-      await pumpEventQueue();
-      expect(cartBloc.state.status, CartStatus.checkedOut);
-      expect(cartBloc.state.lastOrder!.status, 'pending');
-      expect(cartBloc.state.lastOrder!.items.single.status, 'pending_seller');
+        cartBloc.add(const CartCheckoutRequested());
+        await pumpEventQueue();
+        expect(cartBloc.state.status, CartStatus.checkedOut);
+        expect(cartBloc.state.lastOrder!.status, 'pending');
+        expect(cartBloc.state.lastOrder!.items.single.status, 'pending_seller');
 
-      cartBloc.add(const SellerOrderItemsLoadRequested());
-      await pumpEventQueue();
-      expect(cartBloc.state.sellerOrderItems.single.status, 'pending_seller');
+        cartBloc.add(const SellerOrderItemsLoadRequested());
+        await pumpEventQueue();
+        expect(cartBloc.state.sellerOrderItems.single.status, 'pending_seller');
 
-      cartBloc.add(OrderItemApproveRequested(_FakeCartRepository.orderItemId));
-      await pumpEventQueue(times: 3);
-      expect(cartBloc.state.itemActioning, isFalse);
-      expect(cartBloc.state.sellerOrderItems.single.status, 'approved');
+        cartBloc.add(
+          OrderItemApproveRequested(_FakeCartRepository.orderItemId),
+        );
+        await pumpEventQueue(times: 3);
+        expect(cartBloc.state.itemActioning, isFalse);
+        expect(cartBloc.state.sellerOrderItems.single.status, 'approved');
 
-      paymentsBloc.add(
-        MarketPaymentCreateRequested(_FakeCartRepository.orderItemId),
-      );
-      await pumpEventQueue(times: 3);
-      expect(paymentsRepository.createMarketCalls, 1);
-      expect(paymentsBloc.state.requests.single.orderItemId,
-          _FakeCartRepository.orderItemId);
-      expect(paymentsBloc.state.requests.single.status, 'pending');
+        paymentsBloc.add(
+          MarketPaymentCreateRequested(_FakeCartRepository.orderItemId),
+        );
+        await pumpEventQueue(times: 3);
+        expect(paymentsRepository.createMarketCalls, 1);
+        expect(
+          paymentsBloc.state.requests.single.orderItemId,
+          _FakeCartRepository.orderItemId,
+        );
+        expect(paymentsBloc.state.requests.single.status, 'pending');
 
-      paymentsBloc.add(
-        MarketPaymentCreateRequested(_FakeCartRepository.orderItemId),
-      );
-      await pumpEventQueue(times: 3);
-      expect(paymentsRepository.createMarketCalls, 1);
-      expect(paymentsBloc.state.reusedExistingRequest, isTrue);
-      expect(paymentsBloc.state.requests.single.status, 'pending');
+        paymentsBloc.add(
+          MarketPaymentCreateRequested(_FakeCartRepository.orderItemId),
+        );
+        await pumpEventQueue(times: 3);
+        expect(paymentsRepository.createMarketCalls, 1);
+        expect(paymentsBloc.state.reusedExistingRequest, isTrue);
+        expect(paymentsBloc.state.requests.single.status, 'pending');
 
-      final proofFile = PlatformFile(
-        name: 'payment-proof.jpg',
-        size: 2048,
-        path: r'C:\tmp\payment-proof.jpg',
-      );
-      paymentsBloc.add(
-        PaymentBuyerNoteUpdateRequested(
-          paymentsBloc.state.requests.single.id,
+        final proofFile = PlatformFile(
+          name: 'payment-proof.jpg',
+          size: 2048,
+          path: r'C:\tmp\payment-proof.jpg',
+        );
+        paymentsBloc.add(
+          PaymentBuyerNoteUpdateRequested(
+            paymentsBloc.state.requests.single.id,
+            'Transferred manually',
+            proofFile: proofFile,
+          ),
+        );
+        await pumpEventQueue();
+        expect(paymentsRepository.lastProofFile, proofFile);
+        expect(
+          paymentsBloc.state.requests.single.buyerNote,
           'Transferred manually',
-          proofFile: proofFile,
-        ),
-      );
-      await pumpEventQueue();
-      expect(paymentsRepository.lastProofFile, proofFile);
-      expect(paymentsBloc.state.requests.single.buyerNote,
-          'Transferred manually');
-      expect(paymentsBloc.state.requests.single.paymentProofUrl,
-          endsWith('payment-proof.jpg'));
+        );
+        expect(
+          paymentsBloc.state.requests.single.paymentProofUrl,
+          endsWith('payment-proof.jpg'),
+        );
 
-      paymentsBloc.add(
-        PaymentApproveRequested(paymentsBloc.state.requests.single.id),
-      );
-      await pumpEventQueue();
-      expect(paymentsBloc.state.requests.single.status, 'approved');
-    });
+        paymentsBloc.add(
+          PaymentApproveRequested(paymentsBloc.state.requests.single.id),
+        );
+        await pumpEventQueue();
+        expect(paymentsBloc.state.requests.single.status, 'approved');
+      },
+    );
   });
 }
 
@@ -163,7 +173,10 @@ class _FakeCartRepository implements CartRepository {
     String? status,
     int page = 1,
   }) async {
-    return Right((items: _order == null ? <OrderModel>[] : [_order!], hasMore: false));
+    return Right((
+      items: _order == null ? <OrderModel>[] : [_order!],
+      hasMore: false,
+    ));
   }
 
   @override
@@ -198,43 +211,41 @@ class _FakeCartRepository implements CartRepository {
   static CartModel _cartWithItems(
     List<CartItemModel> items, {
     String status = 'active',
-  }) =>
-      CartModel(
-        id: 301,
-        status: status,
-        items: items,
-        subtotal: items.fold<double>(0, (sum, item) => sum + item.total),
-        itemsCount: items.length,
-      );
+  }) => CartModel(
+    id: 301,
+    status: status,
+    items: items,
+    subtotal: items.fold<double>(0, (sum, item) => sum + item.total),
+    itemsCount: items.length,
+  );
 
   static OrderItemModel _orderItemWithStatus(String status) => OrderItemModel(
-        id: orderItemId,
-        orderId: 701,
-        assetId: 10,
-        title: 'Race bird',
-        sellerId: 77,
-        sellerNickname: 'Seller 77',
-        quantity: 2,
-        unitPrice: 125,
-        grossTotal: 250,
-        discountAmount: 0,
-        cashbackRedeemedAmount: 0,
-        cashbackEarnedAmount: 0,
-        total: 250,
-        status: status,
-      );
+    id: orderItemId,
+    orderId: 701,
+    assetId: 10,
+    title: 'Race bird',
+    sellerId: 77,
+    sellerNickname: 'Seller 77',
+    quantity: 2,
+    unitPrice: 125,
+    grossTotal: 250,
+    discountAmount: 0,
+    cashbackRedeemedAmount: 0,
+    cashbackEarnedAmount: 0,
+    total: 250,
+    status: status,
+  );
 
   static OrderModel _orderWithItem(
     OrderItemModel item, {
     required String status,
-  }) =>
-      OrderModel(
-        id: 701,
-        status: status,
-        totalPrice: item.total,
-        sellersInvolved: [item.sellerId],
-        items: [item],
-      );
+  }) => OrderModel(
+    id: 701,
+    status: status,
+    totalPrice: item.total,
+    sellersInvolved: [item.sellerId],
+    items: [item],
+  );
 }
 
 class _FakePaymentsRepository implements PaymentsRepository {
@@ -243,7 +254,8 @@ class _FakePaymentsRepository implements PaymentsRepository {
   PlatformFile? lastProofFile;
 
   @override
-  Future<Either<Failure, List<PaymentRequestModel>>> getPaymentRequests() async {
+  Future<Either<Failure, List<PaymentRequestModel>>>
+  getPaymentRequests() async {
     return Right(List.unmodifiable(_requests));
   }
 
@@ -253,7 +265,9 @@ class _FakePaymentsRepository implements PaymentsRepository {
     String? buyerNote,
     PlatformFile? proofFile,
   }) async {
-    return const Left(ValidationFailure('Auction payments are not in this flow.'));
+    return const Left(
+      ValidationFailure('Auction payments are not in this flow.'),
+    );
   }
 
   @override
@@ -320,20 +334,19 @@ class _FakePaymentsRepository implements PaymentsRepository {
     required int orderItemId,
     String? buyerNote,
     String? proofUrl,
-  }) =>
-      PaymentRequestModel(
-        id: 801,
-        status: status,
-        type: 'market',
-        amount: 250,
-        buyerNote: buyerNote,
-        orderItemId: orderItemId,
-        assetId: 10,
-        assetTitle: 'Race bird',
-        assetCategory: 'bird',
-        buyerProfileId: 33,
-        sellerProfileId: 77,
-        created: DateTime(2026, 6, 25),
-        paymentProofUrl: proofUrl,
-      );
+  }) => PaymentRequestModel(
+    id: 801,
+    status: status,
+    type: 'market',
+    amount: 250,
+    buyerNote: buyerNote,
+    orderItemId: orderItemId,
+    assetId: 10,
+    assetTitle: 'Race bird',
+    assetCategory: 'bird',
+    buyerProfileId: 33,
+    sellerProfileId: 77,
+    created: DateTime(2026, 6, 25),
+    paymentProofUrl: proofUrl,
+  );
 }

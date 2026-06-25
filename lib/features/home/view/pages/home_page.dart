@@ -456,7 +456,10 @@ class _HomeViewState extends State<_HomeView> {
                                       create: (_) =>
                                           sl<ProfileBloc>()
                                             ..add(ProfileStarted(profileType)),
-                                      child: ProfilePage(),
+                                      child: ProfilePage(
+                                        unreadNotificationCount:
+                                            homeState.unreadNotificationCount,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -534,6 +537,15 @@ class _HomeViewState extends State<_HomeView> {
                                         if (homeState.announcementsLoading || announcementBanners.isNotEmpty)
                                           const SizedBox(height: 20),
                                         HomeInsightsPreviewSection(),
+                                        const SizedBox(height: 20),
+                                        HomeDemoCardsSection(
+                                          onMarketTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => SellerProductsPage(),
+                                            ),
+                                          ),
+                                        ),
                                         const SizedBox(height: 20),
                                         if (homeState.sellersLoading)
                                           const HomeBreedersSkeleton()

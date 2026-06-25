@@ -334,7 +334,18 @@ _Replacement _buildReplacement(
   if (placeholders.isEmpty) {
     expr = '$_l10nAccessor.$key';
   } else {
-    final argList = placeholders.map((p) => p.dartExpr).join(', ');
+    // dartExpr is the raw interpolation token (e.g. "${days ~/ 30}" or "$days").
+    // Strip the wrapping ${ } / $ to get the bare Dart expression for the call arg.
+    final argList = placeholders.map((p) {
+      final raw = p.dartExpr;
+      if (raw.startsWith(r'${') && raw.endsWith('}')) {
+        return raw.substring(2, raw.length - 1);
+      }
+      if (raw.startsWith(r'$')) {
+        return raw.substring(1);
+      }
+      return raw;
+    }).join(', ');
     expr = '$_l10nAccessor.$key($argList)';
   }
 

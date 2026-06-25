@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -279,7 +279,7 @@ class BreederProfilePage extends StatelessWidget {
                     children: [
                       Text(
                         seller.country.isNotEmpty
-                            ? 'مربي محترف من ${seller.country}'
+                            ? AppLocalizations.of(context).mrbyMhtrfMn(seller.country)
                             : AppLocalizations.of(context).noAdditionalInfo,
                         style: TextStyle(
                           fontSize: 14,
@@ -292,9 +292,9 @@ class BreederProfilePage extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 8,
                         children: [
-                          _Tag(label: 'حمام زاجل'),
-                          _Tag(label: 'مربي محترف'),
-                          _Tag(label: 'مزادات'),
+                          _Tag(label: AppLocalizations.of(context).hmamZajl),
+                          _Tag(label: AppLocalizations.of(context).mrbyMhtrf),
+                          _Tag(label: AppLocalizations.of(context).auction5),
                         ],
                       ),
                     ],
@@ -612,7 +612,7 @@ class _AuctionPlaceholderTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  index == 0 ? 'مزاد زاجل بلجيكي' : 'مزاد زوج تربية',
+                  index == 0 ? AppLocalizations.of(context).auction6 : AppLocalizations.of(context).pairType4,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -621,7 +621,7 @@ class _AuctionPlaceholderTile extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  index == 0 ? 'سعر مبدئي: ج.م 5,000' : 'سعر مبدئي: ج.م 12,000',
+                  index == 0 ? AppLocalizations.of(context).sarMbdyyJM : AppLocalizations.of(context).sarMbdyyJM2,
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColors.primary,

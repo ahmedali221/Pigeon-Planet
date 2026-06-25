@@ -31,8 +31,8 @@ class _ComplaintsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: const PPWAppBar(
-        title: 'الشكاوى',
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).complaints,
       ),
       body: BlocConsumer<ComplaintsBloc, ComplaintsState>(
         listenWhen: (p, c) =>

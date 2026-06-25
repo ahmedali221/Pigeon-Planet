@@ -66,8 +66,8 @@ class _PedigreesView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(
-            title: 'شهادات النسب',
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).shhadatAlnsb,
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: isUploading ? null : () => _pickAndUpload(context),
@@ -81,7 +81,7 @@ class _PedigreesView extends StatelessWidget {
                         strokeWidth: 2, color: Colors.white),
                   )
                 : Icon(Icons.upload_file_rounded),
-            label: Text(isUploading ? 'جاري الرفع...' : 'رفع شهادة'),
+            label: Text(isUploading ? AppLocalizations.of(context).jaryAlrfa : AppLocalizations.of(context).rfaShhada),
           ),
           body: _Body(state: state),
         );
@@ -264,10 +264,10 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (status) {
-      'reviewed' => ('تمت المراجعة', AppColors.success),
-      'processed' => ('تمت المعالجة', AppColors.blue),
-      'failed' => ('OCR فشل — مراجعة يدوية', AppColors.orange),
-      _ => ('مرفوع', AppColors.textSecondary),
+      'reviewed' => (AppLocalizations.of(context).tmtAlmrajaa2, AppColors.success),
+      'processed' => (AppLocalizations.of(context).tmtAlmaalja2, AppColors.blue),
+      'failed' => (AppLocalizations.of(context).fshlMrajaaYdwya, AppColors.orange),
+      _ => (AppLocalizations.of(context).mrfwa2, AppColors.textSecondary),
     };
 
     return Container(

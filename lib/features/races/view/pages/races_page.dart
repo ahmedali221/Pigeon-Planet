@@ -133,7 +133,7 @@ class _RacesListTab extends StatelessWidget {
     }
     if (state.status == RacesStatus.error) {
       return _ErrorView(
-        message: state.errorMessage ?? 'حدث خطأ',
+        message: state.errorMessage ?? AppLocalizations.of(context).errorOccurred5,
         onRetry: () =>
             context.read<RacesBloc>().add(RacesRefreshRequested()),
       );
@@ -359,28 +359,28 @@ class _ResultsSearchTab extends StatelessWidget {
                   .read<RacesBloc>()
                   .add(RaceResultSearchChanged(q)),
             ),
-            Expanded(child: _buildBody(state)),
+            Expanded(child: _buildBody(context, state)),
           ],
         );
       },
     );
   }
 
-  Widget _buildBody(RacesState state) {
+  Widget _buildBody(BuildContext context, RacesState state) {
     if (state.status == RacesStatus.loading) {
       return Center(child: CircularProgressIndicator());
     }
     if (state.resultSearchQuery.isEmpty) {
       return _EmptyView(
         icon: Icons.search_rounded,
-        message: 'ابحث برقم حلقة الحمام أو اسم المتسابق',
+        message: AppLocalizations.of(context).search4,
       );
     }
     if (state.status == RacesStatus.error) {
-      return _ErrorView(message: state.errorMessage ?? 'حدث خطأ');
+      return _ErrorView(message: state.errorMessage ?? AppLocalizations.of(context).errorOccurred6);
     }
     if (state.globalSearchResults.isEmpty) {
-      return _EmptyView(message: 'لا توجد نتائج مطابقة');
+      return _EmptyView(message: AppLocalizations.of(context).no22);
     }
     final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
     return ListView.separated(

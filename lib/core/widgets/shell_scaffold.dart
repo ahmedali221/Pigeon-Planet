@@ -52,10 +52,10 @@ class _ShellScaffoldState extends State<ShellScaffold> {
     return _ShellBackScope(
       controller: _backController,
       child: PopScope(
-        canPop: !_backController.canGoBack,
+        canPop: !_backController.canNavigateBack,
         onPopInvokedWithResult: (didPop, _) {
-          if (!didPop && _backController.canGoBack) {
-            _backController.goBack();
+          if (!didPop && _backController.canNavigateBack) {
+            _backController.goBackOrHome();
           }
         },
         child: Scaffold(
@@ -112,7 +112,7 @@ class ShellBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = _ShellBackScope.maybeOf(context);
-    final canGoBack = (controller?.canGoBack ?? false) ||
+    final canGoBack = (controller?.canNavigateBack ?? false) ||
         Navigator.of(context).canPop();
 
     if (!canGoBack) {
@@ -124,8 +124,8 @@ class ShellBackButton extends StatelessWidget {
       icon: const BackButtonIcon(),
       color: color,
       onPressed: () {
-        if (controller?.canGoBack ?? false) {
-          controller!.goBack();
+        if (controller?.canNavigateBack ?? false) {
+          controller!.goBackOrHome();
           return;
         }
         Navigator.of(context).maybePop();
@@ -135,24 +135,19 @@ class ShellBackButton extends StatelessWidget {
 }
 
 class _ShellBackController extends ChangeNotifier {
-  _ShellBackController(this._navigationShell)
-      : _history = [_navigationShell.currentIndex];
+  static const _homeIndex = 0;
+
+  _ShellBackController(this._navigationShell);
 
   StatefulNavigationShell _navigationShell;
-  final List<int> _history;
 
-  bool get canGoBack => _history.length > 1;
+  bool get isHome => _navigationShell.currentIndex == _homeIndex;
+  bool get canNavigateBack => !isHome;
 
   void attach(StatefulNavigationShell navigationShell) {
+    final previous = _navigationShell.currentIndex;
     _navigationShell = navigationShell;
-    final current = navigationShell.currentIndex;
-    if (_history.isEmpty) {
-      _history.add(current);
-      notifyListeners();
-      return;
-    }
-    if (_history.last != current && !_history.contains(current)) {
-      _history.add(current);
+    if (previous != navigationShell.currentIndex) {
       notifyListeners();
     }
   }
@@ -164,16 +159,18 @@ class _ShellBackController extends ChangeNotifier {
       initialLocation: index == current,
     );
     if (index != current) {
-      _history.remove(index);
-      _history.add(index);
       notifyListeners();
     }
   }
 
-  void goBack() {
-    if (!canGoBack) return;
-    _history.removeLast();
-    _navigationShell.goBranch(_history.last);
+  void goHome() {
+    if (isHome) return;
+    _navigationShell.goBranch(_homeIndex);
     notifyListeners();
+  }
+
+  void goBackOrHome() {
+    if (!canNavigateBack) return;
+    goHome();
   }
 }

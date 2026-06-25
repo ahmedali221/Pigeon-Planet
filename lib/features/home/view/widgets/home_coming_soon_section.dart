@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_detail_page.dart';
+import '../../../auctions/view/pages/auctions_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class HomeComingSoonSection extends StatelessWidget {
@@ -12,6 +13,8 @@ class HomeComingSoonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (auctions.isEmpty) return SizedBox.shrink();
+
+    final visibleAuctions = auctions.take(4).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -33,7 +36,7 @@ class HomeComingSoonSection extends StatelessWidget {
               ),
               Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () => _openAllAuctions(context),
                 child: Row(
                   children: [
                     Text(
@@ -80,17 +83,62 @@ class HomeComingSoonSection extends StatelessWidget {
 
         SizedBox(height: 12),
 
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'عرض ${visibleAuctions.length} من ${auctions.length} مزاد قادم',
+            style: TextStyle(
+                fontSize: 12, color: AppColors.textSecondary),
+            textAlign: TextAlign.start,
+          ),
+        ),
+
+        SizedBox(height: 10),
+
         // ── Cards list ─────────────────────────────────────────────────────
         ListView.separated(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 16),
-          itemCount: auctions.length,
+          itemCount: visibleAuctions.length,
           separatorBuilder: (_, _) => SizedBox(height: 14),
           itemBuilder: (context, i) =>
-              _ComingSoonCard(auction: auctions[i]),
+              _ComingSoonCard(auction: visibleAuctions[i]),
+        ),
+
+        SizedBox(height: 14),
+
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton.icon(
+              onPressed: () => _openAllAuctions(context),
+              icon: Icon(Icons.gavel_rounded, size: 18),
+              label: Text(
+                'عرض جميع المزادات (${auctions.length})',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
+    );
+  }
+
+  void _openAllAuctions(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AuctionsPage()),
     );
   }
 }

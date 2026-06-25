@@ -259,7 +259,7 @@ class _ErrorView extends StatelessWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: AppColors.error),
             SizedBox(height: 12),
-            Text(message ?? 'فشل تحميل الإشعارات',
+            Text(message ?? AppLocalizations.of(context).loading5,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: AppColors.textSecondary, fontSize: 14)),

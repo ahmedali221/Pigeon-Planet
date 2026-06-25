@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../viewmodel/referrals_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ReferralsPage extends StatefulWidget {
   ReferralsPage({super.key});
@@ -63,8 +64,8 @@ class _ReferralsPageState extends State<ReferralsPage> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(
-            title: 'برنامج الإحالة',
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).brnamjAlihala,
           ),
           body: ListView(
             padding: EdgeInsets.all(16),
@@ -175,7 +176,7 @@ class _MyCodeCard extends StatelessWidget {
             ],
           ] else if (state.status == ReferralsStatus.error)
             Text(
-              state.errorMessage ?? 'فشل في تحميل الكود',
+              state.errorMessage ?? AppLocalizations.of(context).loading10,
               style: TextStyle(color: AppColors.error, fontSize: 13),
             ),
         ],
@@ -278,7 +279,7 @@ class _RedeemCard extends StatelessWidget {
             enabled: !isRedeeming,
             textCapitalization: TextCapitalization.characters,
             decoration: InputDecoration(
-              hintText: 'أدخل الكود هنا...',
+              hintText: AppLocalizations.of(context).adkhlAlkwdHna,
               filled: true,
               fillColor: AppColors.pageBackground,
               border: OutlineInputBorder(

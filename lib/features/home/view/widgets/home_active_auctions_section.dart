@@ -16,12 +16,13 @@ class HomeActiveAuctionsSection extends StatefulWidget {
 
 class _HomeActiveAuctionsSectionState
     extends State<HomeActiveAuctionsSection> {
-  static String _allTypes = 'كل الأنواع';
+  String _allTypes = '';
 
-  String _selectedType = _allTypes;
+  String _selectedType = '';
   String _query = '';
   bool _favoritesOnly = false;
   bool _searchOpen = false;
+  bool _initialized = false;
   final _searchCtrl = TextEditingController();
   final Set<int> _favorites = {};
 
@@ -32,6 +33,16 @@ class _HomeActiveAuctionsSectionState
       if (a['isFavorite'] == true && a['id'] is int) {
         _favorites.add(a['id'] as int);
       }
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _allTypes = AppLocalizations.of(context).klAlanwaa;
+      _selectedType = _allTypes;
+      _initialized = true;
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,16 +11,19 @@ import '../../viewmodel/payments_bloc.dart';
 import 'payment_request_detail_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class PaymentsPage extends StatelessWidget {
   final int? pendingAuctionItemId;
   final int? pendingOrderItemId;
   final String? pendingBuyerNote;
+  final PlatformFile? pendingProofFile;
 
   PaymentsPage({
     super.key,
     this.pendingAuctionItemId,
     this.pendingOrderItemId,
     this.pendingBuyerNote,
+    this.pendingProofFile,
   });
 
   @override
@@ -28,15 +32,20 @@ class PaymentsPage extends StatelessWidget {
       create: (_) {
         final bloc = sl<PaymentsBloc>();
         if (pendingAuctionItemId != null) {
-          bloc.add(AuctionPaymentCreateRequested(
-            pendingAuctionItemId!,
-            buyerNote: pendingBuyerNote,
-          ));
+          bloc.add(
+            AuctionPaymentCreateRequested(
+              pendingAuctionItemId!,
+              buyerNote: pendingBuyerNote,
+            ),
+          );
         } else if (pendingOrderItemId != null) {
-          bloc.add(MarketPaymentCreateRequested(
-            pendingOrderItemId!,
-            buyerNote: pendingBuyerNote,
-          ));
+          bloc.add(
+            MarketPaymentCreateRequested(
+              pendingOrderItemId!,
+              buyerNote: pendingBuyerNote,
+              proofFile: pendingProofFile,
+            ),
+          );
         } else {
           bloc.add(PaymentsLoadRequested());
         }
@@ -57,24 +66,28 @@ class _PaymentsView extends StatelessWidget {
       listener: (context, state) {
         if (state.reusedExistingRequest) return;
         if (state.createError != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(state.createError!),
-            backgroundColor: AppColors.error,
-            behavior: SnackBarBehavior.floating,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.createError!),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context).paymentRequestSentSuccess),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).paymentRequestSentSuccess,
+              ),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.pageBackground,
-        appBar: PPWAppBar(
-          title: AppLocalizations.of(context).paymentRequests,
-        ),
+        appBar: PPWAppBar(title: AppLocalizations.of(context).paymentRequests),
         body: BlocBuilder<PaymentsBloc, PaymentsState>(
           builder: (context, state) {
             if (state.isCreating) {
@@ -84,9 +97,13 @@ class _PaymentsView extends StatelessWidget {
                   children: [
                     CircularProgressIndicator(color: AppColors.primary),
                     SizedBox(height: 16),
-                    Text(AppLocalizations.of(context).sendingPaymentRequest,
-                        style:
-                            TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                    Text(
+                      AppLocalizations.of(context).sendingPaymentRequest,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -105,23 +122,32 @@ class _PaymentsView extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.error_outline,
-                          size: 48, color: AppColors.error),
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: AppColors.error,
+                      ),
                       SizedBox(height: 12),
-                      Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppColors.textSecondary, fontSize: 14)),
+                      Text(
+                        state.errorMessage ??
+                            AppLocalizations.of(context).errorOccurred,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
                       SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () => context
-                            .read<PaymentsBloc>()
-                            .add(PaymentsLoadRequested()),
+                        onPressed: () => context.read<PaymentsBloc>().add(
+                          PaymentsLoadRequested(),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         child: Text(AppLocalizations.of(context).retry),
                       ),
@@ -136,12 +162,19 @@ class _PaymentsView extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.receipt_long_outlined,
-                        size: 64, color: AppColors.textHint),
+                    Icon(
+                      Icons.receipt_long_outlined,
+                      size: 64,
+                      color: AppColors.textHint,
+                    ),
                     SizedBox(height: 12),
-                    Text(AppLocalizations.of(context).noPaymentRequests,
-                        style: TextStyle(
-                            color: AppColors.textSecondary, fontSize: 15)),
+                    Text(
+                      AppLocalizations.of(context).noPaymentRequests,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 15,
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -149,9 +182,8 @@ class _PaymentsView extends StatelessWidget {
 
             return RefreshIndicator(
               color: AppColors.primary,
-              onRefresh: () async => context
-                  .read<PaymentsBloc>()
-                  .add(PaymentsLoadRequested()),
+              onRefresh: () async =>
+                  context.read<PaymentsBloc>().add(PaymentsLoadRequested()),
               child: ListView.separated(
                 padding: EdgeInsets.all(16),
                 itemCount: state.requests.length,
@@ -164,7 +196,8 @@ class _PaymentsView extends StatelessWidget {
                       builder: (_) => BlocProvider.value(
                         value: context.read<PaymentsBloc>(),
                         child: PaymentRequestDetailPage(
-                            initialRequest: state.requests[i]),
+                          initialRequest: state.requests[i],
+                        ),
                       ),
                     ),
                   ),
@@ -185,11 +218,11 @@ class _PaymentRequestCard extends StatelessWidget {
   _PaymentRequestCard({required this.request, required this.onTap});
 
   Color get _statusColor => switch (request.status) {
-        'pending' => AppColors.orange,
-        'approved' => AppColors.success,
-        'rejected' => AppColors.error,
-        _ => AppColors.textSecondary,
-      };
+    'pending' => AppColors.orange,
+    'approved' => AppColors.success,
+    'rejected' => AppColors.error,
+    _ => AppColors.textSecondary,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -230,16 +263,19 @@ class _PaymentRequestCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'طلب #${request.id}',
+                        AppLocalizations.of(context).paymentRequestNum(request.id),
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: AppColors.textPrimary),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       SizedBox(width: 8),
                       Container(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
@@ -247,9 +283,10 @@ class _PaymentRequestCard extends StatelessWidget {
                         child: Text(
                           request.typeLabel,
                           style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: color),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: color,
+                          ),
                         ),
                       ),
                     ],
@@ -259,31 +296,35 @@ class _PaymentRequestCard extends StatelessWidget {
                     Text(
                       request.assetTitle,
                       style: TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary),
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                   SizedBox(height: 4),
                   Text(
-                    '${request.amount.toStringAsFixed(2)} ج.م',
+                    AppLocalizations.of(context).jM4(request.amount),
                     style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
                   ),
                   SizedBox(height: 2),
                   Text(
                     fmt.format(request.created),
                     style: TextStyle(
-                        fontSize: 11, color: AppColors.textSecondary),
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
             ),
             Container(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -292,9 +333,10 @@ class _PaymentRequestCard extends StatelessWidget {
               child: Text(
                 request.statusLabel,
                 style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: color),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
             ),
           ],

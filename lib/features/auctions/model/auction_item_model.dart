@@ -7,6 +7,7 @@ class AuctionItemModel {
   final String auctionTitle;
   final String status;
   final double startingPrice;
+  final double? reservePrice;
   final double currentPrice;
   final String? currentHighestBidder;
   final bool isActive;
@@ -23,6 +24,7 @@ class AuctionItemModel {
     required this.auctionTitle,
     required this.status,
     required this.startingPrice,
+    this.reservePrice,
     required this.currentPrice,
     this.currentHighestBidder,
     required this.isActive,
@@ -39,12 +41,14 @@ class AuctionItemModel {
 
   factory AuctionItemModel.fromJson(Map<String, dynamic> json) {
     final pairedBirdJson = json['paired_bird'] as Map<String, dynamic>?;
+    final reserveRaw = json['reserve_price'];
     return AuctionItemModel(
       id: json['id'] as int,
       auctionId: json['auction_id'] as int? ?? 0,
       auctionTitle: json['auction_title'] as String? ?? '',
       status: json['status'] as String? ?? '',
       startingPrice: double.parse(json['starting_price'].toString()),
+      reservePrice: reserveRaw != null ? double.tryParse(reserveRaw.toString()) : null,
       currentPrice: double.parse(json['current_price'].toString()),
       currentHighestBidder: json['current_highest_bidder'] as String?,
       isActive: json['is_active'] as bool? ?? false,

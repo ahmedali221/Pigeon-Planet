@@ -40,9 +40,10 @@ class CartCleared extends CartEvent {
 }
 
 class CartCheckoutRequested extends CartEvent {
-  const CartCheckoutRequested();
+  final PlatformFile? proofFile;
+  const CartCheckoutRequested({this.proofFile});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [proofFile?.path];
 }
 
 class OrdersLoadRequested extends CartEvent {

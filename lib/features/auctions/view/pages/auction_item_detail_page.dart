@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -17,6 +17,7 @@ import '../widgets/auction_media_section.dart';
 import '../widgets/auction_pedigree_button.dart';
 import '../widgets/auction_reviews_section.dart';
 import '../widgets/auction_verification_row.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AuctionItemDetailPage extends StatefulWidget {
   final AuctionModel auction;
@@ -69,11 +70,11 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
         ? ((savings / startingPrice) * 100).round()
         : 0;
 
-    String age = 'غير محدد';
+    String age = AppLocalizations.of(context).notSpecified;
     if (bird.birthday != null) {
       final years =
           DateTime.now().difference(bird.birthday!).inDays ~/ 365;
-      age = years > 0 ? '$years سنة' : 'أقل من سنة';
+      age = years > 0 ? AppLocalizations.of(context).sna(years) : AppLocalizations.of(context).aqlMnSna;
     }
 
     return {
@@ -81,7 +82,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
       'breed': bird.colour.isNotEmpty ? bird.colour : '—',
       'isLimited': widget.auction.isActive && !widget.auction.isEnded,
       'age': age,
-      'location': 'غير متاح',
+      'location': AppLocalizations.of(context).notAvailable2,
       'breeder': widget.auction.sellerNickname.isNotEmpty
           ? widget.auction.sellerNickname
           : '—',
@@ -96,7 +97,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
       'todayRequests': 0,
       'description': widget.auction.description.isNotEmpty
           ? widget.auction.description
-          : 'لا يوجد وصف.',
+          : AppLocalizations.of(context).no,
       'ringNumber': bird.ringNumber,
       'gender': bird.gender,
       'flyingSpeed': bird.flyingSpeed,
@@ -166,8 +167,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
             Text('المبلغ: ${_fmt(amount)} ج.م'),
             const SizedBox(height: 12),
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'ملاحظة للبائع (اختياري)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).no2,
                 border: OutlineInputBorder(),
               ),
               onChanged: (v) => note = v,
@@ -360,20 +361,9 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                         ),
                       )
                     else ...[
-                      BlocBuilder<FeedBloc, FeedState>(
-                        buildWhen: (p, c) =>
-                            p.blockedProfileIds != c.blockedProfileIds,
-                        builder: (context, feedState) => AuctionBidsSection(
-                          bids: state.itemBids,
-                          isOwner: widget.auction.isOwner,
-                          blockedProfileIds: feedState.blockedProfileIds,
-                          onBlockBidder: (profileId) => context
-                              .read<FeedBloc>()
-                              .add(FeedBlockRequested(profileId)),
-                          onUnblockBidder: (profileId) => context
-                              .read<FeedBloc>()
-                              .add(FeedUnblockRequested(profileId)),
-                        ),
+                      AuctionBidsSection(
+                        bids: state.itemBids,
+                        isOwner: widget.auction.isOwner,
                       ),
                       if (item.hasWinner) ...[
                         const SizedBox(height: 8),
@@ -551,10 +541,10 @@ class _ItemBidCard extends StatelessWidget {
                 child: Text(
                   blockedMessage ??
                   (auction.isOwner
-                      ? 'هذا مزادك — لا يمكنك المزايدة'
+                      ? AppLocalizations.of(context).no3
                       : auction.isEnded
-                          ? 'انتهى المزاد'
-                          : 'المزاد لم يبدأ بعد'),
+                          ? AppLocalizations.of(context).auctionEnded2
+                          : AppLocalizations.of(context).auctionNotStarted),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 13, color: AppColors.textSecondary),
@@ -579,19 +569,19 @@ class _StatusBadge extends StatelessWidget {
 
     if (item.status == 'sold') {
       color = AppColors.orange;
-      label = 'مُباع';
+      label = AppLocalizations.of(context).sold;
     } else if (item.status == 'unsold' || item.status == 'cancelled') {
       color = AppColors.textSecondary;
-      label = 'غير مُباع';
+      label = AppLocalizations.of(context).sold2;
     } else if (auction.isActive) {
       color = AppColors.primary;
-      label = 'نشط';
+      label = AppLocalizations.of(context).active;
     } else if (auction.isEnded) {
       color = AppColors.textSecondary;
-      label = 'منتهي';
+      label = AppLocalizations.of(context).expired2;
     } else {
       color = AppColors.blue;
-      label = 'قادم';
+      label = AppLocalizations.of(context).upcoming;
     }
 
     return Container(
@@ -722,10 +712,10 @@ class _BidSheetState extends State<_BidSheet> {
     final v = double.tryParse(_ctrl.text.trim());
     setState(() {
       if (v == null) {
-        _validationError = 'أدخل رقمًا صحيحًا';
+        _validationError = AppLocalizations.of(context).enterValidNumber2;
       } else if (v < widget.minBid) {
         _validationError =
-            'الحد الأدنى ${widget.fmtFn(widget.minBid)} ج.م';
+            AppLocalizations.of(context).minimumBid(widget.fmtFn(widget.minBid));
       } else {
         _validationError = null;
       }
@@ -752,7 +742,7 @@ class _BidSheetState extends State<_BidSheet> {
   Widget build(BuildContext context) {
     final inc = widget.auction.minBidIncrement;
     final chips = [
-      ('الحد الأدنى', widget.minBid),
+      (AppLocalizations.of(context).minimumBid2, widget.minBid),
       ('+${widget.fmtFn(inc * 2)}', widget.minBid + inc),
       ('+${widget.fmtFn(inc * 5)}', widget.minBid + inc * 4),
       ('+${widget.fmtFn(inc * 10)}', widget.minBid + inc * 9),
@@ -826,9 +816,9 @@ class _BidSheetState extends State<_BidSheet> {
                 child: Row(
                   children: [
                     _PricePill(
-                      label: 'السعر الحالي',
+                      label: AppLocalizations.of(context).currentPrice2,
                       value:
-                          '${widget.fmtFn(widget.item.currentPrice)} ج.م',
+                          AppLocalizations.of(context).jM(widget.fmtFn(widget.item.currentPrice)),
                       valueColor: AppColors.textPrimary,
                     ),
                     Container(
@@ -838,8 +828,8 @@ class _BidSheetState extends State<_BidSheet> {
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16)),
                     _PricePill(
-                      label: 'الحد الأدنى',
-                      value: '${widget.fmtFn(widget.minBid)} ج.م',
+                      label: AppLocalizations.of(context).minimumBid3,
+                      value: AppLocalizations.of(context).jM2(widget.fmtFn(widget.minBid)),
                       valueColor: AppColors.primary,
                     ),
                   ],
@@ -906,7 +896,7 @@ class _BidSheetState extends State<_BidSheet> {
                     color: AppColors.textPrimary),
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
-                  prefixText: 'ج.م  ',
+                  prefixText: AppLocalizations.of(context).jM3,
                   prefixStyle: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,

@@ -62,7 +62,7 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
     String age = l.unspecified;
     if (bird.birthday != null) {
       final years = DateTime.now().difference(bird.birthday!).inDays ~/ 365;
-      age = years > 0 ? '$years سنة' : l.lessThanAYear;
+      age = years > 0 ? AppLocalizations.of(context).sna2(years) : l.lessThanAYear;
     }
 
     return {

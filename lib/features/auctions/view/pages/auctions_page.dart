@@ -35,11 +35,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
   String _searchQuery = '';
   final _searchCtrl = TextEditingController();
 
-  static const _filterKeys = [
-    {'filter': 'all', 'label': 'الكل'},
-    {'filter': 'ending_soon', 'label': 'ينتهي قريباً 🕐'},
-    {'filter': 'my_auctions', 'label': 'مزاداتي ✈️'},
-  ];
+  static const _filterValues = ['all', 'ending_soon', 'my_auctions'];
 
   @override
   void dispose() {
@@ -50,8 +46,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
   void _onFilterTap(int i) {
     if (_filterIndex == i) return;
     setState(() => _filterIndex = i);
-    final filter = _filterKeys[i]['filter'] as String;
-    context.read<AuctionsBloc>().add(AuctionsFilterChanged(filter));
+    context.read<AuctionsBloc>().add(AuctionsFilterChanged(_filterValues[i]));
   }
 
   List<AuctionModel> _applySearch(List<AuctionModel> auctions) {
@@ -71,6 +66,11 @@ class _AuctionsViewState extends State<_AuctionsView> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final filterKeys = [
+      {'filter': 'all', 'label': l.all2},
+      {'filter': 'ending_soon', 'label': l.ynthyQryba},
+      {'filter': 'my_auctions', 'label': l.auction3},
+    ];
     final isSeller = context.select<AuthBloc, bool>((b) {
       final s = b.state;
       if (s is AuthSuccess) return s.user.isSeller;
@@ -159,7 +159,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(_filterKeys.length, (i) {
+                children: List.generate(filterKeys.length, (i) {
                   final isSelected = _filterIndex == i;
                   return Padding(
                     padding: const EdgeInsetsDirectional.only(end: 8),
@@ -182,7 +182,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                           ),
                         ),
                         child: Text(
-                          _filterKeys[i]['label'] as String,
+                          filterKeys[i]['label'] as String,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: isSelected
@@ -280,7 +280,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                         const SizedBox(height: 16),
                         Text(
                           _searchQuery.isNotEmpty
-                              ? 'لا توجد نتائج لـ "$_searchQuery"'
+                              ? AppLocalizations.of(context).no4(_searchQuery)
                               : l.noAuctions,
                           style: const TextStyle(
                               color: AppColors.textSecondary, fontSize: 14),
@@ -380,7 +380,7 @@ class _AuctionLoadMoreTile extends StatelessWidget {
                       strokeWidth: 2, color: Colors.white),
                 )
               : const Icon(Icons.expand_more_rounded, size: 20),
-          label: Text(loading ? 'جارٍ التحميل...' : 'تحميل المزيد'),
+          label: Text(loading ? AppLocalizations.of(context).loading2 : AppLocalizations.of(context).loading),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
@@ -456,13 +456,13 @@ class _AuctionsHeader extends StatelessWidget {
           const SizedBox(width: 8),
           _HeaderBtn(
             icon: Icons.gavel_rounded,
-            tooltip: 'مزايداتي',
+            tooltip: AppLocalizations.of(context).myBids2,
             onTap: onMyBids,
           ),
           const SizedBox(width: 8),
           _HeaderBtn(
             icon: Icons.refresh_rounded,
-            tooltip: 'تحديث',
+            tooltip: AppLocalizations.of(context).refresh,
             onTap: onRefresh,
           ),
         ],

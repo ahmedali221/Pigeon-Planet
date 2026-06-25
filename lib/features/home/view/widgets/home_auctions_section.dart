@@ -137,17 +137,17 @@ class _AuctionCard extends StatelessWidget {
                     children: [
                       _CountdownUnit(
                           value: auction['seconds'] as String,
-                          label: 'ثانية'),
+                          label: AppLocalizations.of(context).thanya),
                       _sep(),
                       _CountdownUnit(
                           value: auction['minutes'] as String,
-                          label: 'دقيقة'),
+                          label: AppLocalizations.of(context).dqyqa),
                       _sep(),
                       _CountdownUnit(
-                          value: auction['hours'] as String, label: 'ساعة'),
+                          value: auction['hours'] as String, label: AppLocalizations.of(context).saaa2),
                       _sep(),
                       _CountdownUnit(
-                          value: auction['days'] as String, label: 'يوم'),
+                          value: auction['days'] as String, label: AppLocalizations.of(context).ywm2),
                     ],
                   ),
                 ),

@@ -98,35 +98,35 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
         return (
           icon: Icons.looks_one_rounded,
           color: AppColors.primary,
-          text: 'هذا المزاد يقبل طائراً واحداً فقط',
+          text: AppLocalizations.of(context).auction,
           counter: '$count / 1',
         );
       case 'multi':
         return (
           icon: Icons.format_list_numbered_rounded,
           color: AppColors.blue,
-          text: 'أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل',
+          text: AppLocalizations.of(context).adfMnIla,
           counter: '$count / 10',
         );
       case 'pair':
         return (
           icon: Icons.people_alt_rounded,
           color: AppColors.orange,
-          text: 'أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)',
+          text: AppLocalizations.of(context).pairType,
           counter: '$count / 1',
         );
       case 'breeding':
         return (
           icon: Icons.egg_outlined,
           color: const Color(0xFF7B5EA7),
-          text: 'مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر',
+          text: AppLocalizations.of(context).pairType2,
           counter: '$count / 1',
         );
       default: // racing
         return (
           icon: Icons.flag_rounded,
           color: AppColors.error,
-          text: 'أضف طائرين على الأقل لمجموعة السباق',
+          text: AppLocalizations.of(context).racingType,
           counter: count >= 2 ? null : '$count / 2+',
         );
     }
@@ -260,6 +260,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
                 birdId: i.bird.id,
                 pairedBirdId: i.pairedBird?.id,
                 startingPrice: i.startingPrice,
+                reservePrice: i.reservePrice.isNotEmpty ? i.reservePrice : null,
               ))
           .toList(),
     );
@@ -359,8 +360,8 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
       listener: (context, state) {
         if (state.createError != null) {
           final isPackageError = state.createError!.toLowerCase().contains('package') ||
-              state.createError!.contains('باقة') ||
-              state.createError!.contains('نقاط') ||
+              state.createError!.contains(AppLocalizations.of(context).packageLabel) ||
+              state.createError!.contains(AppLocalizations.of(context).pointsLabel) ||
               state.createError!.contains('permission') ||
               state.createError!.contains('403');
           ScaffoldMessenger.of(context).showSnackBar(
@@ -488,7 +489,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
             ),
             SizedBox(height: 14),
             _FieldLabel(l.tagsFieldLabel),
-            _Input(controller: _tagsCtrl, hint: 'racing, champion, ...'),
+            _Input(controller: _tagsCtrl, hint: AppLocalizations.of(context).racingChampion),
             SizedBox(height: 14),
             _FieldLabel(l.usedPackageLabel),
             _PackageSelector(
@@ -754,34 +755,82 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
               ),
           ],
           SizedBox(height: 10),
-          Text(l.startingPriceField,
-              style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-          SizedBox(height: 6),
-          TextField(
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            textAlign: TextAlign.start,
-            decoration: InputDecoration(
-              hintText: '0.00',
-              hintStyle: TextStyle(color: AppColors.textHint),
-              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                    color: item.priceError != null ? AppColors.error : AppColors.border),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.startingPriceField,
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                    SizedBox(height: 6),
+                    TextField(
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        hintStyle: TextStyle(color: AppColors.textHint),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: item.priceError != null
+                                  ? AppColors.error
+                                  : AppColors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: item.priceError != null
+                                  ? AppColors.error
+                                  : AppColors.border),
+                        ),
+                        errorText: item.priceError,
+                      ),
+                      onChanged: (v) => setState(() {
+                        item.startingPrice = v;
+                        item.priceError = null;
+                      }),
+                    ),
+                  ],
+                ),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                    color: item.priceError != null ? AppColors.error : AppColors.border),
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.reservePriceField,
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                    SizedBox(height: 6),
+                    TextField(
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        hintStyle: TextStyle(color: AppColors.textHint),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: AppColors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: AppColors.border),
+                        ),
+                      ),
+                      onChanged: (v) => setState(() => item.reservePrice = v),
+                    ),
+                  ],
+                ),
               ),
-              errorText: item.priceError,
-            ),
-            onChanged: (v) => setState(() {
-              item.startingPrice = v;
-              item.priceError = null;
-            }),
+            ],
           ),
         ],
       ),
@@ -837,6 +886,7 @@ class _AuctionCreatePageState extends State<AuctionCreatePage> {
 class _ItemRow {
   final BirdSummaryModel bird;
   String startingPrice = '';
+  String reservePrice = '';
   BirdSummaryModel? pairedBird;
   String? priceError;
 
@@ -1171,20 +1221,19 @@ class _AuctionTypeSelector extends StatelessWidget {
   final ValueChanged<String> onChanged;
   _AuctionTypeSelector({required this.selected, required this.onChanged});
 
-  static final _types = [
-    ('single', 'فردي', '🐦'),
-    ('multi', 'متعدد', '🐦‍🐦'),
-    ('pair', 'زوج', '💑'),
-    ('breeding', 'تناسل', '🥚'),
-    ('racing', 'سباق', '🏁'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final types = [
+      ('single', AppLocalizations.of(context).singleType, '🐦'),
+      ('multi', AppLocalizations.of(context).multipleType, '🐦‍🐦'),
+      ('pair', AppLocalizations.of(context).pairType3, '💑'),
+      ('breeding', AppLocalizations.of(context).breedingType, '🥚'),
+      ('racing', AppLocalizations.of(context).racingType2, '🏁'),
+    ];
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: _types.map((t) {
+      children: types.map((t) {
         final isSelected = selected == t.$1;
         return GestureDetector(
           onTap: () => onChanged(t.$1),
@@ -1315,16 +1364,16 @@ class _AddBirdChoiceSheet extends StatelessWidget {
           _ChoiceOptionTile(
             icon: Icons.add_circle_outline_rounded,
             iconColor: AppColors.primary,
-            title: 'إضافة طائر جديد',
-            subtitle: 'أنشئ بيانات طائر جديد وأضفه إلى المزاد',
+            title: AppLocalizations.of(context).add,
+            subtitle: AppLocalizations.of(context).auction2,
             onTap: onNewBird,
           ),
           const SizedBox(height: 12),
           _ChoiceOptionTile(
             icon: Icons.inventory_2_outlined,
             iconColor: AppColors.blue,
-            title: 'اختيار من طيوري',
-            subtitle: 'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر',
+            title: AppLocalizations.of(context).chooseFromMyBirds,
+            subtitle: AppLocalizations.of(context).chooseBird,
             onTap: onExistingBird,
           ),
         ],
@@ -1432,18 +1481,18 @@ class _ExistingBirdsPicker extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'اختر طائراً',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context).selectBirdTitle,
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'طيوري المتاحة للإضافة في المزاد',
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                Text(
+                  AppLocalizations.of(context).selectBirdSubtitle,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -1475,18 +1524,18 @@ class _ExistingBirdsPicker extends StatelessWidget {
                           Icon(Icons.flutter_dash_rounded,
                               size: 48, color: AppColors.textHint),
                           const SizedBox(height: 12),
-                          const Text(
-                            'لا توجد طيور متاحة',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context).noBirdsAvailable,
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
-                            'جميع طيورك مدرجة في مزادات أو المتجر',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context).allBirdsListed,
+                            style: const TextStyle(
                               fontSize: 13,
                               color: AppColors.textSecondary,
                             ),
@@ -1654,7 +1703,7 @@ class _PackageSelector extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'لا توجد باقة نشطة — ستُرفض عملية الإنشاء',
+                    AppLocalizations.of(context).noActivePackageWarning,
                     style: TextStyle(
                         color: AppColors.orange,
                         fontSize: 13,
@@ -1667,7 +1716,7 @@ class _PackageSelector extends StatelessWidget {
                     foregroundColor: AppColors.orange,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                   ),
-                  child: Text('اشترك', style: TextStyle(fontSize: 12)),
+                  child: Text(AppLocalizations.of(context).subscribe, style: TextStyle(fontSize: 12)),
                 ),
               ],
             ),
@@ -1699,7 +1748,7 @@ class _PackageSelector extends StatelessWidget {
                             fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        '${p.remainingPoints} نقطة متبقية · تكلفة المزاد: ${p.auctionCost} نقطة',
+                        AppLocalizations.of(context).packagePointsInfo(p.remainingPoints, p.auctionCost),
                         style: TextStyle(
                             color: AppColors.primary.withValues(alpha: 0.8),
                             fontSize: 11),
@@ -1755,7 +1804,7 @@ class _PackageSelector extends StatelessWidget {
                                   color: AppColors.textPrimary),
                             ),
                             Text(
-                              '${p.remainingPoints} نقطة متبقية · تكلفة المزاد: ${p.auctionCost} نقطة',
+                              AppLocalizations.of(context).packagePointsInfo(p.remainingPoints, p.auctionCost),
                               style: TextStyle(
                                   fontSize: 11,
                                   color: AppColors.textSecondary),

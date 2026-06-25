@@ -25,7 +25,7 @@ class _PeopleYouMayKnowPageState extends State<PeopleYouMayKnowPage> {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PPWAppBar(
-        title: 'مربيون قد تعرفهم',
+        title: AppLocalizations.of(context).peopleMayKnow,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh_rounded, color: Colors.white),

@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/shell_scaffold.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
+import '../../../seller_products/view/pages/seller_products_page.dart';
 import '../../model/cashback_offer_model.dart';
 import '../../model/discount_offer_model.dart';
 import '../../model/product_model.dart';
@@ -86,7 +88,7 @@ class _MarketView extends StatelessWidget {
                   padding: EdgeInsets.only(top: 16, bottom: 24),
                   children: [
                     // ── Stats bar ─────────────────────────────────────────
-                    _StatsBar(totalProducts: state.allProducts.length),
+                    _StatsBar(totalProducts: state.totalProductsCount),
                     SizedBox(height: 12),
 
                     // ── Active promotions ─────────────────────────────────
@@ -159,6 +161,11 @@ class _MarketHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
+    final authState = context.read<AuthBloc>().state;
+    final isSeller = authState is AuthSuccess
+        ? authState.user.isSeller
+        : false;
+
     return Container(
       color: AppColors.primary,
       padding: EdgeInsets.only(
@@ -230,6 +237,38 @@ class _MarketHeader extends StatelessWidget {
               ),
             ),
           ),
+          if (isSeller)
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => SellerProductsPage()),
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white30),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.storefront_rounded, color: Colors.white, size: 15),
+                    SizedBox(width: 4),
+                    Text(
+                      AppLocalizations.of(context).myProducts,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            SizedBox(width: 26),
         ],
       ),
     );

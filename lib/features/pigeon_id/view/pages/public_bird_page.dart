@@ -58,8 +58,8 @@ class _PublicBirdPageState extends State<PublicBirdPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: const PPWAppBar(
-        title: 'بطاقة الطائر',
+      appBar: PPWAppBar(
+        title: AppLocalizations.of(context).btaqaAltayr,
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator())
@@ -271,7 +271,7 @@ class _IdentityCard extends StatelessWidget {
             SizedBox(height: 8),
             _Row(
               icon: Icons.speed_rounded,
-              label: 'سرعة الطيران',
+              label: AppLocalizations.of(context).sraaAltyran,
               value: '${bird.flyingSpeed!.toStringAsFixed(1)} م/ث',
             ),
           ],
@@ -280,7 +280,7 @@ class _IdentityCard extends StatelessWidget {
             SizedBox(height: 8),
             _Row(
               icon: Icons.bolt_rounded,
-              label: 'القدرة على التحمل',
+              label: AppLocalizations.of(context).alqdraAlaAlthml,
               value: bird.staminaAbility.label,
             ),
           ],
@@ -290,7 +290,7 @@ class _IdentityCard extends StatelessWidget {
             SizedBox(height: 8),
             _Row(
               icon: Icons.storefront_rounded,
-              label: 'المربّي',
+              label: AppLocalizations.of(context).almrby,
               value: bird.sellerNickname!,
             ),
           ],

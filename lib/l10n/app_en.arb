@@ -313,37 +313,13 @@
   "noDescription": "No description.",
   "pigeonDetails": "Pigeon Details",
   "savingsAmount": "Save {amount} EGP",
-  "@savingsAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "@savingsAmount": {"placeholders":{"amount":{"type":"String"}}},
   "discountPercent": "Discount {percent}%",
-  "@discountPercent": {
-    "placeholders": {
-      "percent": {
-        "type": "Object"
-      }
-    }
-  },
+  "@discountPercent": {"placeholders":{"percent":{"type":"Object"}}},
   "liveViewersCount": "{count} people watching now",
-  "@liveViewersCount": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
+  "@liveViewersCount": {"placeholders":{"count":{"type":"Object"}}},
   "todayRequestsCount": "{count} requests today",
-  "@todayRequestsCount": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
+  "@todayRequestsCount": {"placeholders":{"count":{"type":"Object"}}},
   "thisBirdIsYours": "This bird is yours",
   "buyNowLimitedOffer": "🛒 Buy Now - Limited Time Offer!",
   "dnaRegistered": "DNA Registered",
@@ -352,58 +328,39 @@
   "birdEye": "Eye",
   "ringNumberThumbnail": "Ring No.",
   "photoNumber": "Photo {number}",
-  "@photoNumber": {
-    "placeholders": {
-      "number": {
-        "type": "int"
-      }
-    }
-  },
+  "@photoNumber": {"placeholders":{"number":{"type":"int"}}},
   "birdVideo": "Bird Video",
   "zeroViews": "0 Views",
   "noReviewsYet": "No reviews yet",
-  "@noReviewsYet": {
-    "description": "Empty state when there are no reviews"
-  },
+  "@noReviewsYet": {"description":"Empty state when there are no reviews"},
   "viewAllReviews": "View all reviews ({count})",
-  "@viewAllReviews": {
-    "description": "Button to view all reviews with count",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@viewAllReviews": {"description":"Button to view all reviews with count","placeholders":{"count":{"type":"int"}}},
   "emptyCartTitle": "Your cart is empty",
   "@emptyCartTitle": {},
   "emptyCartSubtitle": "Browse the market and add products to your cart",
   "@emptyCartSubtitle": {},
   "completeOrder": "Complete Order",
   "@completeOrder": {},
-  "@birdNumber": {
-    "placeholders": {
-      "number": {
-        "type": "int"
-      }
-    }
-  },
+  "paymentProofSheetTitle": "Payment Proof",
+  "@paymentProofSheetTitle": {},
+  "paymentProofSheetSubtitle": "Please attach your payment proof before completing the order",
+  "@paymentProofSheetSubtitle": {},
+  "attachProofBtn": "Attach Payment Proof",
+  "@attachProofBtn": {},
+  "changeProofBtn": "Change File",
+  "@changeProofBtn": {},
+  "proofRequired": "Payment proof is required to proceed",
+  "@proofRequired": {},
+  "proofAttached": "Payment proof attached",
+  "@proofAttached": {},
+  "confirmAndCheckout": "Confirm & Complete Order",
+  "@confirmAndCheckout": {},
+  "@birdNumber": {"placeholders":{"number":{"type":"int"}}},
   "byProceedingYouAgree": "By proceeding, you agree to ",
   "andConnector": " and ",
   "auctionBidAmountEgp": "{amount} EGP",
-  "@auctionBidAmountEgp": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "@priceEgpFormat": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "@auctionBidAmountEgp": {"placeholders":{"amount":{"type":"String"}}},
+  "@priceEgpFormat": {"placeholders":{"amount":{"type":"String"}}},
   "viewAllReviewsText": "View all reviews",
   "statusActive": "Active",
   "statusEnded": "Ended",
@@ -413,53 +370,17 @@
   "statusCancelled": "Cancelled",
   "birdsInThisAuction": "Birds in this auction",
   "daysRemaining": "{count} days remaining",
-  "@daysRemaining": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@daysRemaining": {"placeholders":{"count":{"type":"int"}}},
   "hoursRemaining": "{count} hours remaining",
-  "@hoursRemaining": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@hoursRemaining": {"placeholders":{"count":{"type":"int"}}},
   "minutesRemaining": "{count} minutes remaining",
-  "@minutesRemaining": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@minutesRemaining": {"placeholders":{"count":{"type":"int"}}},
   "minBidLabel": "Minimum: {amount} EGP",
-  "@minBidLabel": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "@minBidLabel": {"placeholders":{"amount":{"type":"String"}}},
   "birdCount": "{count} birds",
-  "@birdCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@birdCount": {"placeholders":{"count":{"type":"int"}}},
   "bidCountLabel": "{count} bids",
-  "@bidCountLabel": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@bidCountLabel": {"placeholders":{"count":{"type":"int"}}},
   "blockSeller": "Block seller",
   "unblockSeller": "Unblock",
   "followingNow": "Following now",
@@ -496,25 +417,13 @@
   "followedAlt": "Followed",
   "noProducts": "No products",
   "productsCount": "{count} products",
-  "@productsCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@productsCount": {"placeholders":{"count":{"type":"int"}}},
   "newest": "Newest",
   "priceLowToHigh": "Price: low to high",
   "priceHighToLow": "Price: high to low",
   "sort": "Sort",
   "reviewsCount": "({count} reviews)",
-  "@reviewsCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@reviewsCount": {"placeholders":{"count":{"type":"int"}}},
   "benefits": "Benefits",
   "myInsights": "My Insights",
   "insightsLoadError": "Failed to load insights",
@@ -578,155 +487,62 @@
   "depositRequiredDesc": "Require a deposit to confirm bids",
   "paymentDeadlineDays": "Payment Deadline Days",
   "birdsCount": "Birds: {arg0}",
-  "@birdsCount": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@birdsCount": {"placeholders":{"arg0":{"type":"Object"}}},
   "createAuction": "Create Auction",
   "nextArrow": "Next →",
   "settings": "Settings",
   "birds": "Birds",
   "chick": "Chick",
   "buyNowConfirmMessage": "Do you want to buy now for {arg0} EGP?",
-  "@buyNowConfirmMessage": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@buyNowConfirmMessage": {"placeholders":{"arg0":{"type":"Object"}}},
   "amountDisplay": "Amount: {arg0} EGP",
-  "@amountDisplay": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@amountDisplay": {"placeholders":{"arg0":{"type":"Object"}}},
   "viewPaymentDetails": "View Payment Details",
   "minBidDisplay": "Minimum bid: {arg0} EGP",
-  "@minBidDisplay": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@minBidDisplay": {"placeholders":{"arg0":{"type":"Object"}}},
   "yourAuctionCannotBid": "You cannot bid on your own auction",
   "auctionNotStartedYet": "Auction has not started yet",
   "wonAuction": "You won auction #{arg0}",
-  "@wonAuction": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@wonAuction": {"placeholders":{"arg0":{"type":"Object"}}},
   "enterValidNumber": "Enter a valid number",
   "minBidValidation": "Bid must be at least {arg0}",
-  "@minBidValidation": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@minBidValidation": {"placeholders":{"arg0":{"type":"Object"}}},
   "minimumLabel": "Minimum",
   "orderConfirmationTitle": "Order Confirmation",
   "orderSentSuccess": "Order sent successfully",
   "awaitingSellerApproval": "Awaiting seller approval",
   "orderNumber": "Order #{arg0}",
-  "@orderNumber": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@orderNumber": {"placeholders":{"arg0":{"type":"Object"}}},
   "statusLabel": "Status",
   "backToHome": "Back to Home",
   "quantityLabel": "Quantity: {arg0}",
-  "@quantityLabel": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@quantityLabel": {"placeholders":{"arg0":{"type":"Object"}}},
   "orderDetails": "Order Details",
   "sellerName": "Seller: {arg0}",
-  "@sellerName": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@sellerName": {"placeholders":{"arg0":{"type":"Object"}}},
   "cashbackEarned": "Cashback earned: {arg0}",
-  "@cashbackEarned": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@cashbackEarned": {"placeholders":{"arg0":{"type":"Object"}}},
   "cashbackRedeemed": "Cashback redeemed: {arg0}",
-  "@cashbackRedeemed": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@cashbackRedeemed": {"placeholders":{"arg0":{"type":"Object"}}},
   "statusPending": "Pending",
   "statusProcessing": "Processing",
   "statusCompleted": "Completed",
+  "statusApproved": "Approved",
+  "orderItemRejected": "Rejected by seller",
+  "paymentUnderReview": "Payment under review",
   "statusPartialRejected": "Partially rejected",
   "orderSummary": "{arg0} items - {arg1}",
-  "@orderSummary": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      },
-      "arg1": {
-        "type": "Object"
-      }
-    }
-  },
+  "@orderSummary": {"placeholders":{"arg0":{"type":"Object"},"arg1":{"type":"Object"}}},
   "orderItemSummary": "{arg0} × {arg1}",
-  "@orderItemSummary": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      },
-      "arg1": {
-        "type": "Object"
-      }
-    }
-  },
+  "@orderItemSummary": {"placeholders":{"arg0":{"type":"Object"},"arg1":{"type":"Object"}}},
   "orderTotalSar": "Total: {arg0} SAR",
-  "@orderTotalSar": {
-    "placeholders": {
-      "arg0": {
-        "type": "Object"
-      }
-    }
-  },
+  "@orderTotalSar": {"placeholders":{"arg0":{"type":"Object"}}},
   "pointsLoyaltyLoadError": "Could not load loyalty data from the server",
   "pointsSystemTitle": "PP Coins System",
   "pointsSystemSubtitle": "Earn points and redeem them for exclusive rewards",
   "currentBalance": "Current balance",
   "pointsAmount": "{count} points",
-  "@pointsAmount": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
+  "@pointsAmount": {"placeholders":{"count":{"type":"Object"}}},
   "pointsTabLabel": "🪙  Points",
   "rewardsTabLabel": "🎁  Rewards",
   "totalPoints": "Total points",
@@ -798,46 +614,22 @@
   "convertCashbackToPoints": "Convert cashback to PP points",
   "cashbackConversionRate": "Each 1 cashback = 20 PP points",
   "cashbackConversionSuccess": "Done! You earned {count} PP points",
-  "@cashbackConversionSuccess": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
+  "@cashbackConversionSuccess": {"placeholders":{"count":{"type":"Object"}}},
   "tryAgainError": "An error occurred, please try again",
   "cashbackBalanceLabel": "Cashback balance:",
   "cashbackAmountHint": "Enter amount (cashback)",
   "convertNow": "Convert now",
   "pointsTransactionFallback": "Points transaction",
   "balanceAfterTransaction": "Balance after transaction: {balance}",
-  "@balanceAfterTransaction": {
-    "placeholders": {
-      "balance": {
-        "type": "Object"
-      }
-    }
-  },
+  "@balanceAfterTransaction": {"placeholders":{"balance":{"type":"Object"}}},
   "revoked": "Revoked",
   "thresholdLabel": "Threshold: {value}",
-  "@thresholdLabel": {
-    "placeholders": {
-      "value": {
-        "type": "Object"
-      }
-    }
-  },
+  "@thresholdLabel": {"placeholders":{"value":{"type":"Object"}}},
   "earnedBadge": "Earned ✓",
   "available": "Available",
   "welcomeBackGeneric": "Welcome back! 👋",
   "welcomeWithName": "Hello {name} 👋",
-  "@welcomeWithName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
+  "@welcomeWithName": {"placeholders":{"name":{"type":"String"}}},
   "noPackage": "No package",
   "viewAll": "View All",
   "activitySummary": "Activity Summary",
@@ -846,29 +638,11 @@
   "noAuctionsAddedYet": "No auctions added yet",
   "noBirdsAddedYet": "No birds added yet",
   "endsInDays": "Ends in {count} day(s)",
-  "@endsInDays": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@endsInDays": {"placeholders":{"count":{"type":"int"}}},
   "endsInHours": "Ends in {count} hour(s)",
-  "@endsInHours": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@endsInHours": {"placeholders":{"count":{"type":"int"}}},
   "endsInMinutes": "Ends in {count} minute(s)",
-  "@endsInMinutes": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@endsInMinutes": {"placeholders":{"count":{"type":"int"}}},
   "fixedPriceBirds": "Fixed-Price Birds",
   "kmUnit": "km",
   "platformFeatures": "Platform Features",
@@ -902,13 +676,7 @@
   "mandatoryVideoSub": "4 required stages",
   "importantNotifications": "Important Notifications",
   "newCountBadge": "{count} new",
-  "@newCountBadge": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@newCountBadge": {"placeholders":{"count":{"type":"int"}}},
   "noRecentNotifications": "No recent notifications",
   "newBadge": "New",
   "myBirds": "My Birds",
@@ -973,53 +741,21 @@
   "myProducts": "My Products",
   "manageProductsInStore": "Add and manage your products in the store",
   "myAuctionsWithCount": "My Auctions ({count})",
-  "@myAuctionsWithCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@myAuctionsWithCount": {"placeholders":{"count":{"type":"int"}}},
   "activeTabWithCount": "Active ({count})",
-  "@activeTabWithCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@activeTabWithCount": {"placeholders":{"count":{"type":"int"}}},
   "endedTabWithCount": "Ended ({count})",
-  "@endedTabWithCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@endedTabWithCount": {"placeholders":{"count":{"type":"int"}}},
   "noEndedAuctions": "No ended auctions",
   "noActiveAuctions": "No active auctions",
   "endedAuctionsWillAppearHere": "Ended auctions will appear here",
   "createFirstAuction": "Create your first auction to showcase your birds",
   "timeLabelDaysHours": "{days}d {hours}h",
-  "@timeLabelDaysHours": {
-    "placeholders": {
-      "days": { "type": "int" },
-      "hours": { "type": "int" }
-    }
-  },
+  "@timeLabelDaysHours": {"placeholders":{"days":{"type":"int"},"hours":{"type":"int"}}},
   "timeLabelHoursMinutes": "{hours}h {minutes}m",
-  "@timeLabelHoursMinutes": {
-    "placeholders": {
-      "hours": { "type": "int" },
-      "minutes": { "type": "int" }
-    }
-  },
+  "@timeLabelHoursMinutes": {"placeholders":{"hours":{"type":"int"},"minutes":{"type":"int"}}},
   "timeLabelMinutes": "{minutes}m",
-  "@timeLabelMinutes": {
-    "placeholders": {
-      "minutes": { "type": "int" }
-    }
-  },
+  "@timeLabelMinutes": {"placeholders":{"minutes":{"type":"int"}}},
   "auctionTypeDefault": "Auction",
   "@auctionTypeDefault": {},
   "availableForAuction": "Available for auction",
@@ -1037,13 +773,7 @@
   "dayFri": "Fri",
   "daySat": "Sat",
   "bidsCountLabel": "{count} bid(s)",
-  "@bidsCountLabel": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@bidsCountLabel": {"placeholders":{"count":{"type":"int"}}},
   "cashbackHistoryTitle": "Cashback History",
   "cashbackBalanceTitle": "Cashback Balance",
   "egpCurrency": "EGP",
@@ -1056,24 +786,9 @@
   "followSellersToSeeAuctions": "Follow sellers to see their auctions here first",
   "discoverSellers": "Discover Sellers",
   "compactHoursMinutes": "{hours}h {minutes}m",
-  "@compactHoursMinutes": {
-    "placeholders": {
-      "hours": {
-        "type": "int"
-      },
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
+  "@compactHoursMinutes": {"placeholders":{"hours":{"type":"int"},"minutes":{"type":"int"}}},
   "compactMinutes": "{minutes} min",
-  "@compactMinutes": {
-    "placeholders": {
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
+  "@compactMinutes": {"placeholders":{"minutes":{"type":"int"}}},
   "packageFollowing": "Package following",
   "discovery": "Discovery",
   "editBird": "Edit Bird",
@@ -1109,19 +824,725 @@
   "pointsLoadError": "Failed to load history. Check your connection and try again.",
   "@pointsLoadError": {},
   "pointsPaginationLabel": "{from}–{to} of {count}",
-  "@pointsPaginationLabel": {
-    "placeholders": {
-      "from": { "type": "int" },
-      "to": { "type": "int" },
-      "count": { "type": "int" }
-    }
-  },
+  "@pointsPaginationLabel": {"placeholders":{"from":{"type":"int"},"to":{"type":"int"},"count":{"type":"int"}}},
   "pointsBalanceAfter": "Balance: {balance}",
-  "@pointsBalanceAfter": {
-    "placeholders": {
-      "balance": { "type": "int" }
-    }
-  },
+  "@pointsBalanceAfter": {"placeholders":{"balance":{"type":"int"}}},
   "noPointsTransactions": "No points transactions yet",
-  "@noPointsTransactions": {}
+  "@noPointsTransactions": {},
+  "auction": "TODO: هذا المزاد يقبل طائراً واحداً فقط",
+  "@auction": {},
+  "adfMnIla": "TODO: أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل",
+  "@adfMnIla": {},
+  "pairType": "TODO: أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)",
+  "@pairType": {},
+  "pairType2": "TODO: مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر",
+  "@pairType2": {},
+  "racingType": "TODO: أضف طائرين على الأقل لمجموعة السباق",
+  "@racingType": {},
+  "packageLabel": "TODO: باقة",
+  "@packageLabel": {},
+  "pointsLabel": "TODO: نقاط",
+  "@pointsLabel": {},
+  "singleType": "TODO: فردي",
+  "@singleType": {},
+  "multipleType": "TODO: متعدد",
+  "@multipleType": {},
+  "pairType3": "TODO: زوج",
+  "@pairType3": {},
+  "breedingType": "TODO: تناسل",
+  "@breedingType": {},
+  "racingType2": "TODO: سباق",
+  "@racingType2": {},
+  "add": "TODO: إضافة طائر جديد",
+  "@add": {},
+  "auction2": "TODO: أنشئ بيانات طائر جديد وأضفه إلى المزاد",
+  "@auction2": {},
+  "chooseFromMyBirds": "TODO: اختيار من طيوري",
+  "@chooseFromMyBirds": {},
+  "chooseBird": "TODO: اختر طائراً موجوداً لم يُدرج في مزاد أو متجر",
+  "@chooseBird": {},
+  "notSpecified": "TODO: غير محدد",
+  "@notSpecified": {},
+  "sna": "TODO: {years} سنة",
+  "@sna": {"placeholders":{"years":{"type":"Object"}}},
+  "aqlMnSna": "TODO: أقل من سنة",
+  "@aqlMnSna": {},
+  "notAvailable2": "TODO: غير متاح",
+  "@notAvailable2": {},
+  "no": "TODO: لا يوجد وصف.",
+  "@no": {},
+  "no2": "TODO: ملاحظة للبائع (اختياري)",
+  "@no2": {},
+  "no3": "TODO: هذا مزادك — لا يمكنك المزايدة",
+  "@no3": {},
+  "auctionEnded2": "TODO: انتهى المزاد",
+  "@auctionEnded2": {},
+  "auctionNotStarted": "TODO: المزاد لم يبدأ بعد",
+  "@auctionNotStarted": {},
+  "sold": "TODO: مُباع",
+  "@sold": {},
+  "sold2": "TODO: غير مُباع",
+  "@sold2": {},
+  "active": "TODO: نشط",
+  "@active": {},
+  "expired2": "TODO: منتهي",
+  "@expired2": {},
+  "upcoming": "TODO: قادم",
+  "@upcoming": {},
+  "enterValidNumber2": "TODO: أدخل رقمًا صحيحًا",
+  "@enterValidNumber2": {},
+  "minimumBid": "TODO: الحد الأدنى {value} ج.م",
+  "@minimumBid": {"placeholders":{"value":{"type":"Object"}}},
+  "minimumBid2": "TODO: الحد الأدنى",
+  "@minimumBid2": {},
+  "currentPrice2": "TODO: السعر الحالي",
+  "@currentPrice2": {},
+  "jM": "TODO: {value} ج.م",
+  "@jM": {"placeholders":{"value":{"type":"Object"}}},
+  "minimumBid3": "TODO: الحد الأدنى",
+  "@minimumBid3": {},
+  "jM2": "TODO: {value} ج.م",
+  "@jM2": {"placeholders":{"value":{"type":"Object"}}},
+  "jM3": "TODO: ج.م",
+  "@jM3": {},
+  "all2": "TODO: الكل",
+  "@all2": {},
+  "ynthyQryba": "TODO: ينتهي قريباً 🕐",
+  "@ynthyQryba": {},
+  "auction3": "TODO: مزاداتي ✈️",
+  "@auction3": {},
+  "no4": "TODO: لا توجد نتائج لـ \"{_searchQuery}\"",
+  "@no4": {"placeholders":{"_searchQuery":{"type":"Object"}}},
+  "loading": "TODO: تحميل المزيد",
+  "@loading": {},
+  "loading2": "TODO: جارٍ التحميل...",
+  "@loading2": {},
+  "myBids2": "TODO: مزايداتي",
+  "@myBids2": {},
+  "refresh": "TODO: تحديث",
+  "@refresh": {},
+  "sna2": "TODO: {years} سنة",
+  "@sna2": {"placeholders":{"years":{"type":"Object"}}},
+  "buyer": "TODO: مشتري",
+  "@buyer": {},
+  "user": "TODO: مستخدم",
+  "@user": {},
+  "shhr": "TODO: {floor} شهر",
+  "@shhr": {"placeholders":{"floor":{"type":"int"}}},
+  "ywm": "TODO: {inDays} يوم",
+  "@ywm": {"placeholders":{"inDays":{"type":"int"}}},
+  "saaa": "TODO: {inHours} ساعة",
+  "@saaa": {"placeholders":{"inHours":{"type":"int"}}},
+  "now2": "TODO: الآن",
+  "@now2": {},
+  "loading3": "TODO: فشل تحميل الرسائل",
+  "@loading3": {},
+  "errorOccurred2": "TODO: حدث خطأ",
+  "@errorOccurred2": {},
+  "now3": "TODO: الآن",
+  "@now3": {},
+  "mnthD": "TODO: منذ {inMinutes} د",
+  "@mnthD": {"placeholders":{"inMinutes":{"type":"int"}}},
+  "mnthS": "TODO: منذ {inHours} س",
+  "@mnthS": {"placeholders":{"inHours":{"type":"int"}}},
+  "mnthAyam": "TODO: منذ {inDays} أيام",
+  "@mnthAyam": {"placeholders":{"inDays":{"type":"int"}}},
+  "paymentRejectionDispute": "TODO: اعتراض على رفض الدفع",
+  "@paymentRejectionDispute": {},
+  "postSaleComplaint": "TODO: شكوى ما بعد البيع",
+  "@postSaleComplaint": {},
+  "submitComplaint": "TODO: تقديم شكوى",
+  "@submitComplaint": {},
+  "submit": "TODO: جاري الإرسال...",
+  "@submit": {},
+  "submitComplaintAction": "TODO: تقديم الشكوى",
+  "@submitComplaintAction": {},
+  "shkwa": "TODO: شكوى #{id}",
+  "@shkwa": {"placeholders":{"id":{"type":"Object"}}},
+  "complaintNumber": "TODO: رقم الشكوى",
+  "@complaintNumber": {},
+  "paymentRequest": "TODO: طلب الدفع",
+  "@paymentRequest": {},
+  "type": "TODO: النوع",
+  "@type": {},
+  "creationDate": "TODO: تاريخ الإنشاء",
+  "@creationDate": {},
+  "resolutionDate": "TODO: تاريخ الحل",
+  "@resolutionDate": {},
+  "cancel2": "TODO: تاريخ الإلغاء",
+  "@cancel2": {},
+  "no5": "TODO: لا يوجد وصف",
+  "@no5": {},
+  "complaints": "TODO: الشكاوى",
+  "@complaints": {},
+  "following": "TODO: من أتابع",
+  "@following": {},
+  "almrbwnAlmtabawn": "TODO: المربّون المتابَعون ({length})",
+  "@almrbwnAlmtabawn": {"placeholders":{"length":{"type":"int"}}},
+  "albaqatAlmtabaa": "TODO: الباقات المتابَعة ({length})",
+  "@albaqatAlmtabaa": {"placeholders":{"length":{"type":"int"}}},
+  "peopleMayKnow": "TODO: مربيون قد تعرفهم",
+  "@peopleMayKnow": {},
+  "refresh2": "TODO: تحديث",
+  "@refresh2": {},
+  "room": "TODO: غرفة",
+  "@room": {},
+  "listed": "TODO: معروضة",
+  "@listed": {},
+  "search2": "TODO: ابحث باسم الغرفة أو الدولة",
+  "@search2": {},
+  "auction4": "TODO: مزاد",
+  "@auction4": {},
+  "item": "TODO: عنصر",
+  "@item": {},
+  "rating": "TODO: تقييم",
+  "@rating": {},
+  "no6": "TODO: لا توجد غرف حالياً",
+  "@no6": {},
+  "no7": "TODO: لا توجد نتائج مطابقة",
+  "@no7": {},
+  "search3": "TODO: جرّب البحث باسم آخر أو دولة مختلفة",
+  "@search3": {},
+  "refresh3": "TODO: اسحب للأسفل للتحديث والمحاولة مجدداً",
+  "@refresh3": {},
+  "room2": "TODO: غرفة",
+  "@room2": {},
+  "mrbyMhtrfMn": "TODO: مربي محترف من {country}",
+  "@mrbyMhtrfMn": {"placeholders":{"country":{"type":"String"}}},
+  "hmamZajl": "TODO: حمام زاجل",
+  "@hmamZajl": {},
+  "mrbyMhtrf": "TODO: مربي محترف",
+  "@mrbyMhtrf": {},
+  "auction5": "TODO: مزادات",
+  "@auction5": {},
+  "pairType4": "TODO: مزاد زوج تربية",
+  "@pairType4": {},
+  "auction6": "TODO: مزاد زاجل بلجيكي",
+  "@auction6": {},
+  "sarMbdyyJM": "TODO: سعر مبدئي: ج.م 5,000",
+  "@sarMbdyyJM": {},
+  "sarMbdyyJM2": "TODO: سعر مبدئي: ج.م 12,000",
+  "@sarMbdyyJM2": {},
+  "klAlanwaa": "TODO: كل الأنواع",
+  "@klAlanwaa": {},
+  "thanya": "TODO: ثانية",
+  "@thanya": {},
+  "dqyqa": "TODO: دقيقة",
+  "@dqyqa": {},
+  "saaa2": "TODO: ساعة",
+  "@saaa2": {},
+  "ywm2": "TODO: يوم",
+  "@ywm2": {},
+  "alryysya": "TODO: الرئيسية",
+  "@alryysya": {},
+  "auction7": "TODO: المزادات",
+  "@auction7": {},
+  "almtjr": "TODO: المتجر",
+  "@almtjr": {},
+  "rooms": "TODO: الغرف",
+  "@rooms": {},
+  "alntayj": "TODO: النتائج",
+  "@alntayj": {},
+  "active2": "TODO: مزادات نشطة",
+  "@active2": {},
+  "tnthyQryba": "TODO: تنتهي قريباً",
+  "@tnthyQryba": {},
+  "alawsma": "TODO: الأوسمة ({length})",
+  "@alawsma": {"placeholders":{"length":{"type":"int"}}},
+  "mlgha": "TODO: مُلغى",
+  "@mlgha": {},
+  "sjlAjlaAlhz": "TODO: سجل عجلة الحظ",
+  "@sjlAjlaAlhz": {},
+  "tmAlfwz": "TODO: تم الفوز",
+  "@tmAlfwz": {},
+  "lmTfz": "TODO: لم تفز",
+  "@lmTfz": {},
+  "loading4": "TODO: حدث خطأ في تحميل العجلة",
+  "@loading4": {},
+  "auction8": "TODO: حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة",
+  "@auction8": {},
+  "auction9": "TODO: حصلت على دورة مجانية بعد مشاركتك في المزاد",
+  "@auction9": {},
+  "thanyna": "TODO: 🎉 تهانينا!",
+  "@thanyna": {},
+  "jrbHzkMraAkhra": "TODO: 🎲 جرّب حظك مرة أخرى!",
+  "@jrbHzkMraAkhra": {},
+  "rayaAstlmJayztk": "TODO: رائع! استلم جائزتك",
+  "@rayaAstlmJayztk": {},
+  "upcoming2": "TODO: حسناً، في المرة القادمة",
+  "@upcoming2": {},
+  "loading5": "TODO: فشل تحميل الإشعارات",
+  "@loading5": {},
+  "tlbDfa": "TODO: طلب دفع #{id}",
+  "@tlbDfa": {"placeholders":{"id":{"type":"Object"}}},
+  "rqmAltlb": "TODO: رقم الطلب",
+  "@rqmAltlb": {},
+  "type2": "TODO: النوع",
+  "@type2": {},
+  "almntj": "TODO: المنتج",
+  "@almntj": {},
+  "alfya": "TODO: الفئة",
+  "@alfya": {},
+  "buyer2": "TODO: رقم المشتري",
+  "@buyer2": {},
+  "auction10": "TODO: رقم قطعة المزاد",
+  "@auction10": {},
+  "item2": "TODO: رقم عنصر الطلب",
+  "@item2": {},
+  "creationDate2": "TODO: تاريخ الإنشاء",
+  "@creationDate2": {},
+  "tarykhAlqbwl": "TODO: تاريخ القبول",
+  "@tarykhAlqbwl": {},
+  "tarykhAlrfd": "TODO: تاريخ الرفض",
+  "@tarykhAlrfd": {},
+  "no8": "TODO: ملاحظة المشتري",
+  "@no8": {},
+  "no9": "TODO: ملاحظة البائع",
+  "@no9": {},
+  "fthAlswra": "TODO: فتح الصورة",
+  "@fthAlswra": {},
+  "irfaqIthbatAldfa": "TODO: إرفاق إثبات الدفع",
+  "@irfaqIthbatAldfa": {},
+  "resubmitPaymentTitle": "Resubmit Payment Request",
+  "@resubmitPaymentTitle": {},
+  "resubmitPaymentSubtitle": "Payment proof is required to resubmit",
+  "@resubmitPaymentSubtitle": {},
+  "proofRequiredHint": "Payment proof is required",
+  "@proofRequiredHint": {},
+  "resubmit": "Resubmit",
+  "@resubmit": {},
+  "shhadaNsb": "TODO: شهادة نسب #{id}",
+  "@shhadaNsb": {"placeholders":{"id":{"type":"Object"}}},
+  "tmtAlmrajaa": "TODO: تمت المراجعة",
+  "@tmtAlmrajaa": {},
+  "save2": "TODO: تم حفظ البيانات المُراجَعة بنجاح.",
+  "@save2": {},
+  "tmtAlmaalja": "TODO: تمت المعالجة",
+  "@tmtAlmaalja": {},
+  "tmAstkhrajAlbyanatRajahaAdnah": "TODO: تم استخراج البيانات. راجعها أدناه.",
+  "@tmAstkhrajAlbyanatRajahaAdnah": {},
+  "fshlAltarfAltlqayy": "TODO: فشل التعرف التلقائي",
+  "@fshlAltarfAltlqayy": {},
+  "lmYtmAltarfTlqayyaYmknk": "TODO: لم يتم التعرف تلقائياً، يمكنك المراجعة اليدوية.",
+  "@lmYtmAltarfTlqayyaYmknk": {},
+  "mrfwa": "TODO: مرفوع",
+  "@mrfwa": {},
+  "jaryMaaljaAlmlf": "TODO: جاري معالجة الملف.",
+  "@jaryMaaljaAlmlf": {},
+  "save3": "TODO: جاري الحفظ...",
+  "@save3": {},
+  "save4": "TODO: حفظ المراجعة",
+  "@save4": {},
+  "shhadatAlnsb": "TODO: شهادات النسب",
+  "@shhadatAlnsb": {},
+  "rfaShhada": "TODO: رفع شهادة",
+  "@rfaShhada": {},
+  "jaryAlrfa": "TODO: جاري الرفع...",
+  "@jaryAlrfa": {},
+  "tmtAlmrajaa2": "TODO: تمت المراجعة",
+  "@tmtAlmrajaa2": {},
+  "tmtAlmaalja2": "TODO: تمت المعالجة",
+  "@tmtAlmaalja2": {},
+  "fshlMrajaaYdwya": "TODO: OCR فشل — مراجعة يدوية",
+  "@fshlMrajaaYdwya": {},
+  "mrfwa2": "TODO: مرفوع",
+  "@mrfwa2": {},
+  "mshRmz": "TODO: مسح رمز QR",
+  "@mshRmz": {},
+  "no10": "TODO: الفلاش",
+  "@no10": {},
+  "loading6": "TODO: جارٍ تحميل بيانات الطائر...",
+  "@loading6": {},
+  "wjhAlkamyraNhwRmzAla": "TODO: وجّه الكاميرا نحو رمز QR على بطاقة الطائر",
+  "@wjhAlkamyraNhwRmzAla": {},
+  "delete2": "TODO: حدث خطأ أثناء الحذف",
+  "@delete2": {},
+  "alhala": "TODO: الحالة",
+  "@alhala": {},
+  "mwthq": "TODO: موثّق ✓",
+  "@mwthq": {},
+  "loading7": "TODO: تعذّر تحميل وثائق النسب",
+  "@loading7": {},
+  "jarAlmaalja": "TODO: جارٍ المعالجة",
+  "@jarAlmaalja": {},
+  "tmtAlmaalja3": "TODO: تمت المعالجة",
+  "@tmtAlmaalja3": {},
+  "mraja": "TODO: مراجع",
+  "@mraja": {},
+  "fshl": "TODO: فشل",
+  "@fshl": {},
+  "wthyqa": "TODO: وثيقة #{id}",
+  "@wthyqa": {"placeholders":{"id":{"type":"Object"}}},
+  "swrAlhmama": "TODO: صور الحمامة",
+  "@swrAlhmama": {},
+  "next2": "TODO: التالي — تسجيل فيديو زاجل",
+  "@next2": {},
+  "akhtyary": "TODO: اختياري",
+  "@akhtyary": {},
+  "mrajaaAlbyanat": "TODO: مراجعة البيانات",
+  "@mrajaaAlbyanat": {},
+  "almrajaaAlnhayya": "TODO: المراجعة النهائية",
+  "@almrajaaAlnhayya": {},
+  "albyanatAlasasya": "TODO: البيانات الأساسية",
+  "@albyanatAlasasya": {},
+  "thkr": "TODO: ذكر 🔵",
+  "@thkr": {},
+  "antha": "TODO: أنثى 🔴",
+  "@antha": {},
+  "alswr": "TODO: الصور ({length})",
+  "@alswr": {"placeholders":{"length":{"type":"int"}}},
+  "fydywZajl": "TODO: فيديو زاجل",
+  "@fydywZajl": {},
+  "tmTsjylFydywZajlBnjah": "TODO: تم تسجيل فيديو زاجل بنجاح ✓",
+  "@tmTsjylFydywZajlBnjah": {},
+  "lmYtmTsjylAlfydywBad": "TODO: لم يتم تسجيل الفيديو بعد",
+  "@lmYtmTsjylAlfydywBad": {},
+  "racingType3": "TODO: نتائج السباقات ({length})",
+  "@racingType3": {"placeholders":{"length":{"type":"int"}}},
+  "inshaAlhwyaAlrqmya": "TODO: إنشاء الهوية الرقمية",
+  "@inshaAlhwyaAlrqmya": {},
+  "mktml": "TODO: مكتمل",
+  "@mktml": {},
+  "naqs": "TODO: ناقص",
+  "@naqs": {},
+  "btaqaAltayr": "TODO: بطاقة الطائر",
+  "@btaqaAltayr": {},
+  "sraaAltyran": "TODO: سرعة الطيران",
+  "@sraaAltyran": {},
+  "alqdraAlaAlthml": "TODO: القدرة على التحمل",
+  "@alqdraAlaAlthml": {},
+  "almrby": "TODO: المربّي",
+  "@almrby": {},
+  "no11": "TODO: الجسم كاملاً",
+  "@no11": {},
+  "no12": "TODO: وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب",
+  "@no12": {},
+  "aljnahYmynYsar": "TODO: الجناح (يمين / يسار)",
+  "@aljnahYmynYsar": {},
+  "afrdAljnahWqrbhMnAlkamyra": "TODO: افرد الجناح وقربه من الكاميرا",
+  "@afrdAljnahWqrbhMnAlkamyra": {},
+  "alaynMakrw": "TODO: العين (ماكرو)",
+  "@alaynMakrw": {},
+  "no13": "TODO: قرّب الكاميرا من العين لالتقاط التفاصيل",
+  "@no13": {},
+  "takdMnWdwhArqamAldbla": "TODO: تأكد من وضوح أرقام الدبلة في المربع أسفل الشاشة",
+  "@takdMnWdwhArqamAldbla": {},
+  "rqmAldbla": "TODO: رقم الدبلة",
+  "@rqmAldbla": {},
+  "mtlwbIthnAlkamyra": "TODO: مطلوب إذن الكاميرا",
+  "@mtlwbIthnAlkamyra": {},
+  "no14": "TODO: لا توجد كاميرا متاحة",
+  "@no14": {},
+  "tathrTshghylAlkamyra": "TODO: تعذّر تشغيل الكاميرا",
+  "@tathrTshghylAlkamyra": {},
+  "fshlDmjAlfydyw": "TODO: فشل دمج الفيديو",
+  "@fshlDmjAlfydyw": {},
+  "fshlDmjAlfydyw2": "TODO: فشل دمج الفيديو",
+  "@fshlDmjAlfydyw2": {},
+  "thabtSybdaAltsjylTlqayya": "TODO: ثابت ✓ — سيبدأ التسجيل تلقائياً",
+  "@thabtSybdaAltsjylTlqayya": {},
+  "thbtAlkamyraLbdAltsjyl": "TODO: ثبّت الكاميرا لبدء التسجيل",
+  "@thbtAlkamyraLbdAltsjyl": {},
+  "add2": "TODO: إضافة غرفة جديدة",
+  "@add2": {},
+  "errorOccurred3": "TODO: حدث خطأ، حاول مجدداً",
+  "@errorOccurred3": {},
+  "mthalHmamAlzajlAlthhby": "TODO: مثال: حمام الزاجل الذهبي",
+  "@mthalHmamAlzajlAlthhby": {},
+  "rooms2": "TODO: أدخل اسم الغرفة",
+  "@rooms2": {},
+  "no15": "TODO: الاسم قصير جداً",
+  "@no15": {},
+  "no16": "TODO: الاسم المعروض",
+  "@no16": {},
+  "asmkFyAlmnsa": "TODO: اسمك في المنصة",
+  "@asmkFyAlmnsa": {},
+  "no17": "TODO: الاسم مطلوب",
+  "@no17": {},
+  "akhtrDwltk": "TODO: اختر دولتك",
+  "@akhtrDwltk": {},
+  "alamla": "TODO: العملة",
+  "@alamla": {},
+  "akhtrAlamla": "TODO: اختر العملة",
+  "@akhtrAlamla": {},
+  "mntqaAlkhtr": "TODO: منطقة الخطر",
+  "@mntqaAlkhtr": {},
+  "msr": "TODO: مصر",
+  "@msr": {},
+  "alsawdya": "TODO: السعودية",
+  "@alsawdya": {},
+  "alimarat": "TODO: الإمارات",
+  "@alimarat": {},
+  "alkwyt": "TODO: الكويت",
+  "@alkwyt": {},
+  "qtr": "TODO: قطر",
+  "@qtr": {},
+  "albhryn": "TODO: البحرين",
+  "@albhryn": {},
+  "aman": "TODO: عُمان",
+  "@aman": {},
+  "alardn": "TODO: الأردن",
+  "@alardn": {},
+  "alaraq": "TODO: العراق",
+  "@alaraq": {},
+  "lbnan": "TODO: لبنان",
+  "@lbnan": {},
+  "swrya": "TODO: سوريا",
+  "@swrya": {},
+  "flstyn": "TODO: فلسطين",
+  "@flstyn": {},
+  "alymn": "TODO: اليمن",
+  "@alymn": {},
+  "almghrb": "TODO: المغرب",
+  "@almghrb": {},
+  "twns": "TODO: تونس",
+  "@twns": {},
+  "aljzayr": "TODO: الجزائر",
+  "@aljzayr": {},
+  "lybya": "TODO: ليبيا",
+  "@lybya": {},
+  "alswdan": "TODO: السودان",
+  "@alswdan": {},
+  "trkya": "TODO: تركيا",
+  "@trkya": {},
+  "errorOccurred4": "TODO: حدث خطأ، حاول مجدداً",
+  "@errorOccurred4": {},
+  "edit2": "TODO: تعديل الغرفة",
+  "@edit2": {},
+  "rooms3": "TODO: اسم الغرفة",
+  "@rooms3": {},
+  "mthalHmamAlzajlAlthhby2": "TODO: مثال: حمام الزاجل الذهبي",
+  "@mthalHmamAlzajlAlthhby2": {},
+  "rooms4": "TODO: أدخل اسم الغرفة",
+  "@rooms4": {},
+  "no18": "TODO: الاسم قصير جداً",
+  "@no18": {},
+  "aldwla": "TODO: الدولة",
+  "@aldwla": {},
+  "loading8": "TODO: حدث خطأ في تحميل الملف الشخصي",
+  "@loading8": {},
+  "buyer3": "TODO: مشتري",
+  "@buyer3": {},
+  "baya": "TODO: بائع",
+  "@baya": {},
+  "ghyrMfal": "TODO: غير مفعّل",
+  "@ghyrMfal": {},
+  "mfal": "TODO: مفعّل",
+  "@mfal": {},
+  "salh": "TODO: صالح",
+  "@salh": {},
+  "ghyrSalh": "TODO: غير صالح",
+  "@ghyrSalh": {},
+  "rsydAlkashbak": "TODO: رصيد الكاشباك",
+  "@rsydAlkashbak": {},
+  "alamla2": "TODO: العملة",
+  "@alamla2": {},
+  "no19": "TODO: تاريخ الانضمام",
+  "@no19": {},
+  "altlbatAlmktmla": "TODO: الطلبات المكتملة",
+  "@altlbatAlmktmla": {},
+  "aldawatAlnajha": "TODO: الدعوات الناجحة",
+  "@aldawatAlnajha": {},
+  "khsmAlmstwa": "TODO: خصم المستوى",
+  "@khsmAlmstwa": {},
+  "kashBakAlmstwa": "TODO: كاش باك المستوى",
+  "@kashBakAlmstwa": {},
+  "alarwdWaltkhfydat": "TODO: العروض والتخفيضات",
+  "@alarwdWaltkhfydat": {},
+  "arwdkAlkhasa": "TODO: عروضك الخاصة",
+  "@arwdkAlkhasa": {},
+  "arwdAltkhfyd": "TODO: عروض التخفيض",
+  "@arwdAltkhfyd": {},
+  "arwdAlkashBak": "TODO: عروض الكاش باك",
+  "@arwdAlkashBak": {},
+  "tkhfyd": "TODO: تخفيض",
+  "@tkhfyd": {},
+  "kashBak": "TODO: كاش باك",
+  "@kashBak": {},
+  "racingType4": "TODO: تفاصيل السباق",
+  "@racingType4": {},
+  "loading9": "TODO: حدث خطأ في تحميل السباق",
+  "@loading9": {},
+  "no20": "TODO: وقت الإطلاق",
+  "@no20": {},
+  "addAltywr": "TODO: عدد الطيور",
+  "@addAltywr": {},
+  "addAlmtsabqyn": "TODO: عدد المتسابقين",
+  "@addAlmtsabqyn": {},
+  "almsafaAlmkhtta": "TODO: المسافة المخططة",
+  "@almsafaAlmkhtta": {},
+  "halaAltqs": "TODO: حالة الطقس",
+  "@halaAltqs": {},
+  "no21": "TODO: ملاحظات",
+  "@no21": {},
+  "errorOccurred5": "TODO: حدث خطأ",
+  "@errorOccurred5": {},
+  "search4": "TODO: ابحث برقم حلقة الحمام أو اسم المتسابق",
+  "@search4": {},
+  "errorOccurred6": "TODO: حدث خطأ",
+  "@errorOccurred6": {},
+  "no22": "TODO: لا توجد نتائج مطابقة",
+  "@no22": {},
+  "altalyqat": "TODO: التعليقات",
+  "@altalyqat": {},
+  "brnamjAlihala": "TODO: برنامج الإحالة",
+  "@brnamjAlihala": {},
+  "loading10": "TODO: فشل في تحميل الكود",
+  "@loading10": {},
+  "adkhlAlkwdHna": "TODO: أدخل الكود هنا...",
+  "@adkhlAlkwdHna": {},
+  "alfya2": "TODO: الفئة",
+  "@alfya2": {},
+  "asmAlmntj": "TODO: اسم المنتج",
+  "@asmAlmntj": {},
+  "mthalAlfHmamBrymks": "TODO: مثال: علف حمام بريمكس",
+  "@mthalAlfHmamBrymks": {},
+  "no23": "TODO: الاسم يجب أن يكون 3 أحرف على الأقل",
+  "@no23": {},
+  "sfAlmntjBshklWadh": "TODO: صف المنتج بشكل واضح...",
+  "@sfAlmntjBshklWadh": {},
+  "alwsfMtlwb": "TODO: الوصف مطلوب",
+  "@alwsfMtlwb": {},
+  "alsarJM": "TODO: السعر (ج.م)",
+  "@alsarJM": {},
+  "sarGhyrSalh": "TODO: سعر غير صالح",
+  "@sarGhyrSalh": {},
+  "kmyaGhyrSalha": "TODO: كمية غير صالحة",
+  "@kmyaGhyrSalha": {},
+  "alhala2": "TODO: الحالة",
+  "@alhala2": {},
+  "alswrHta": "TODO: الصور (حتى 5)",
+  "@alswrHta": {},
+  "packageLabel2": "TODO: الباقة المستخدمة",
+  "@packageLabel2": {},
+  "add3": "TODO: إضافة المنتج",
+  "@add3": {},
+  "save5": "TODO: حفظ التعديلات",
+  "@save5": {},
+  "edit3": "TODO: تعديل المنتج",
+  "@edit3": {},
+  "add4": "TODO: إضافة منتج جديد",
+  "@add4": {},
+  "iksswarat": "TODO: إكسسوارات",
+  "@iksswarat": {},
+  "no24": "TODO: أعلاف والحبوب",
+  "@no24": {},
+  "no25": "TODO: مكملات غذائية",
+  "@no25": {},
+  "mtah": "TODO: متاح",
+  "@mtah": {},
+  "mbaa": "TODO: مباع",
+  "@mbaa": {},
+  "active3": "TODO: غير نشط",
+  "@active3": {},
+  "errorOccurred7": "TODO: حدث خطأ",
+  "@errorOccurred7": {},
+  "all3": "TODO: الكل",
+  "@all3": {},
+  "iksswarat2": "TODO: إكسسوارات",
+  "@iksswarat2": {},
+  "no26": "TODO: مكملات",
+  "@no26": {},
+  "no27": "TODO: أعلاف",
+  "@no27": {},
+  "lmTdfAyMntjatBad": "TODO: لم تضف أي منتجات بعد",
+  "@lmTdfAyMntjatBad": {},
+  "no28": "TODO: لا توجد منتجات في هذه الفئة",
+  "@no28": {},
+  "loading11": "TODO: حدث خطأ في تحميل المنتجات",
+  "@loading11": {},
+  "jM4": "TODO: {price} ج.م",
+  "@jM4": {"placeholders":{"price":{"type":"double"}}},
+  "qtaa": "TODO: {count} قطعة",
+  "@qtaa": {"placeholders":{"count":{"type":"int"}}},
+  "alakthrShabya": "TODO: الأكثر شعبية",
+  "@alakthrShabya": {},
+  "shhr2": "TODO: شهر",
+  "@shhr2": {},
+  "shhran": "TODO: شهران",
+  "@shhran": {},
+  "ashhr": "TODO: {days} أشهر",
+  "@ashhr": {"placeholders":{"days":{"type":"int"}}},
+  "ywm3": "TODO: {days} يوم",
+  "@ywm3": {"placeholders":{"days":{"type":"Object"}}},
+  "nqtaIjmalya": "TODO: {points} نقطة إجمالية",
+  "@nqtaIjmalya": {"placeholders":{"points":{"type":"Object"}}},
+  "auction11": "TODO: إنشاء مزاد: {auctionCost} نقطة لكل مزاد",
+  "@auction11": {"placeholders":{"auctionCost":{"type":"Object"}}},
+  "nshrMntjNqtaLklMntj": "TODO: نشر منتج: {productCost} نقطة لكل منتج",
+  "@nshrMntjNqtaLklMntj": {"placeholders":{"productCost":{"type":"Object"}}},
+  "salhaLmda": "TODO: صالحة لمدة {value}",
+  "@salhaLmda": {"placeholders":{"value":{"type":"Object"}}},
+  "no29": "TODO: تم تقديم طلب الاشتراك بنجاح سيتم تفعيل الباقة من قِبَل المشرف قريباً",
+  "@no29": {},
+  "errorOccurred8": "TODO: حدث خطأ غير متوقع",
+  "@errorOccurred8": {},
+  "bantzarTfaylAlmshrf": "TODO: بانتظار تفعيل المشرف",
+  "@bantzarTfaylAlmshrf": {},
+  "tmIrfaqIthbatAldfa": "TODO: تم إرفاق إثبات الدفع",
+  "@tmIrfaqIthbatAldfa": {},
+  "lmYrfqIthbatAldfa": "TODO: لم يُرفق إثبات الدفع",
+  "@lmYrfqIthbatAldfa": {},
+  "ynayr": "TODO: يناير",
+  "@ynayr": {},
+  "ywnyw": "TODO: يونيو",
+  "@ywnyw": {},
+  "mayw": "TODO: مايو",
+  "@mayw": {},
+  "fbrayr": "TODO: فبراير",
+  "@fbrayr": {},
+  "mars": "TODO: مارس",
+  "@mars": {},
+  "abryl": "TODO: أبريل",
+  "@abryl": {},
+  "dysmbr": "TODO: ديسمبر",
+  "@dysmbr": {},
+  "ywlyw": "TODO: يوليو",
+  "@ywlyw": {},
+  "aghsts": "TODO: أغسطس",
+  "@aghsts": {},
+  "sbtmbr": "TODO: سبتمبر",
+  "@sbtmbr": {},
+  "aktwbr": "TODO: أكتوبر",
+  "@aktwbr": {},
+  "nwfmbr": "TODO: نوفمبر",
+  "@nwfmbr": {},
+  "auction12": "TODO: مزاد: {auctionCost} نقطة",
+  "@auction12": {"placeholders":{"auctionCost":{"type":"Object"}}},
+  "mntjNqta": "TODO: منتج: {productCost} نقطة",
+  "@mntjNqta": {"placeholders":{"productCost":{"type":"Object"}}},
+  "akhtrMlf": "TODO: اختر ملف (JPG / PNG / PDF)",
+  "@akhtrMlf": {},
+  "jM5": "TODO: ج.م",
+  "@jM5": {},
+  "packageLabel3": "TODO: اختر هذه الباقة",
+  "@packageLabel3": {},
+  "subscribe": "TODO: اشترك الآن",
+  "@subscribe": {},
+  "racingChampion": "racing, champion, ...",
+  "@racingChampion": {},
+  "writeComment": "Write a comment",
+  "@writeComment": {},
+  "notesTitle": "Notes",
+  "@notesTitle": {},
+  "paymentProofTitle": "Payment Proof",
+  "@paymentProofTitle": {},
+  "sellerActionTitle": "Seller Action",
+  "@sellerActionTitle": {},
+  "paymentRequestNum": "Request #{id}",
+  "@paymentRequestNum": {"placeholders":{"id":{"type":"Object"}}},
+  "auctionPaymentRejectedNotice": "The payment request was rejected by the seller. You cannot resubmit a payment request for this auction item.",
+  "@auctionPaymentRejectedNotice": {},
+  "selectBirdSubtitle": "My birds available to add to the auction",
+  "@selectBirdSubtitle": {},
+  "reservePriceField": "Reserve Price",
+  "@reservePriceField": {},
+  "pickSourceTitle": "Choose upload method",
+  "@pickSourceTitle": {},
+  "browseFiles": "Browse Files",
+  "@browseFiles": {},
+  "selectFromGallery": "Select from Gallery",
+  "@selectFromGallery": {},
+  "takePhoto": "Take a Photo",
+  "@takePhoto": {}
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pigeon_planet/core/constants/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PlanCard extends StatelessWidget {
   final int index;
@@ -152,7 +153,7 @@ class PlanCard extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'ج.م ',
+                                text: AppLocalizations.of(context).jM5,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: color,
@@ -254,7 +255,7 @@ class PlanCard extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          _isSelected ? 'اشترك الآن' : 'اختر هذه الباقة',
+                          _isSelected ? AppLocalizations.of(context).subscribe : AppLocalizations.of(context).packageLabel3,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,

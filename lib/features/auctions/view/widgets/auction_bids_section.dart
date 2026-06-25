@@ -6,17 +6,11 @@ import '../../model/bid_model.dart';
 class AuctionBidsSection extends StatelessWidget {
   final List<BidModel> bids;
   final bool isOwner;
-  final Set<int> blockedProfileIds;
-  final ValueChanged<int>? onBlockBidder;
-  final ValueChanged<int>? onUnblockBidder;
 
   const AuctionBidsSection({
     super.key,
     required this.bids,
     this.isOwner = false,
-    this.blockedProfileIds = const {},
-    this.onBlockBidder,
-    this.onUnblockBidder,
   });
 
   String _fmtPrice(double v) {
@@ -55,7 +49,6 @@ class AuctionBidsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
               child: Row(
@@ -97,9 +90,7 @@ class AuctionBidsSection extends StatelessWidget {
                 ],
               ),
             ),
-
             const Divider(height: 1, color: AppColors.divider),
-
             if (bids.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24),
@@ -121,133 +112,237 @@ class AuctionBidsSection extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final bid = bids[i];
                   final isTop = i == 0;
-                  final isBlocked = blockedProfileIds.contains(bid.bidder);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    child: Row(
-                      children: [
-                        // rank badge / avatar
-                        Stack(
-                          alignment: Alignment.bottomLeft,
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: isTop
-                                  ? const Color(0xFFD4A017)
-                                  : AppColors.primary.withValues(alpha: 0.15),
-                              child: Text(
-                                bid.bidderUsername.isNotEmpty
-                                    ? bid.bidderUsername[0].toUpperCase()
-                                    : '?',
-                                style: TextStyle(
-                                  color: isTop
-                                      ? Colors.white
-                                      : AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                            if (isTop)
-                              Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.emoji_events_rounded,
-                                  color: Color(0xFFD4A017),
-                                  size: 12,
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(width: 10),
-                        // username + time
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                bid.bidderUsername.isNotEmpty
-                                    ? bid.bidderUsername
-                                    : l.unknown,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: isTop
-                                      ? const Color(0xFFD4A017)
-                                      : AppColors.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                _fmtDate(bid.created, l),
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.textSecondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // amount
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              l.auctionBidAmountEgp(_fmtPrice(bid.amount)),
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: isTop
-                                    ? const Color(0xFFD4A017)
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            if (bid.isWinningBid)
-                              Text(
-                                l.highestBid,
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Color(0xFFD4A017),
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            if (isOwner && bid.bidder != 0) ...[
-                              const SizedBox(height: 6),
-                              TextButton.icon(
-                                onPressed: () => isBlocked
-                                    ? onUnblockBidder?.call(bid.bidder)
-                                    : onBlockBidder?.call(bid.bidder),
-                                icon: Icon(
-                                  isBlocked
-                                      ? Icons.lock_open_rounded
-                                      : Icons.block_rounded,
-                                  size: 15,
-                                ),
-                                label: Text(isBlocked ? 'Unblock' : 'Block'),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: isBlocked
-                                      ? AppColors.primary
-                                      : AppColors.error,
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: const Size(0, 28),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
+                  return isOwner
+                      ? _OwnerBidRow(
+                          bid: bid,
+                          isTop: isTop,
+                          rank: i + 1,
+                          fmtPrice: _fmtPrice,
+                          fmtDate: (dt) => _fmtDate(dt, l),
+                          l: l,
+                        )
+                      : _AnonymousBidRow(
+                          bid: bid,
+                          isTop: isTop,
+                          rank: i + 1,
+                          fmtPrice: _fmtPrice,
+                          fmtDate: (dt) => _fmtDate(dt, l),
+                          l: l,
+                        );
                 },
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Owner view: shows username, phone, block/unblock ─────────────────────────
+class _OwnerBidRow extends StatelessWidget {
+  final BidModel bid;
+  final bool isTop;
+  final int rank;
+  final String Function(double) fmtPrice;
+  final String Function(DateTime) fmtDate;
+  final AppLocalizations l;
+
+  const _OwnerBidRow({
+    required this.bid,
+    required this.isTop,
+    required this.rank,
+    required this.fmtPrice,
+    required this.fmtDate,
+    required this.l,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final username = bid.bidderUsername?.isNotEmpty == true
+        ? bid.bidderUsername!
+        : l.unknown;
+    final avatarLetter =
+        bid.bidderUsername?.isNotEmpty == true ? bid.bidderUsername![0].toUpperCase() : '?';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(
+        children: [
+          Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: isTop
+                    ? const Color(0xFFD4A017)
+                    : AppColors.primary.withValues(alpha: 0.15),
+                child: Text(
+                  avatarLetter,
+                  style: TextStyle(
+                    color: isTop ? Colors.white : AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              if (isTop)
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.emoji_events_rounded,
+                    color: Color(0xFFD4A017),
+                    size: 12,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  username,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isTop ? const Color(0xFFD4A017) : AppColors.textPrimary,
+                  ),
+                ),
+                if (bid.bidderPhone != null) ...[
+                  const SizedBox(height: 1),
+                  Text(
+                    bid.bidderPhone!,
+                    style: const TextStyle(
+                        fontSize: 11, color: AppColors.textSecondary),
+                  ),
+                ],
+                const SizedBox(height: 2),
+                Text(
+                  fmtDate(bid.created),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                l.auctionBidAmountEgp(fmtPrice(bid.amount)),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: isTop ? const Color(0xFFD4A017) : AppColors.textPrimary,
+                ),
+              ),
+              if (bid.isWinningBid)
+                Text(
+                  l.highestBid,
+                  style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFFD4A017),
+                      fontWeight: FontWeight.w600),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Anonymous view: rank number + amount + time ───────────────────────────────
+class _AnonymousBidRow extends StatelessWidget {
+  final BidModel bid;
+  final bool isTop;
+  final int rank;
+  final String Function(double) fmtPrice;
+  final String Function(DateTime) fmtDate;
+  final AppLocalizations l;
+
+  const _AnonymousBidRow({
+    required this.bid,
+    required this.isTop,
+    required this.rank,
+    required this.fmtPrice,
+    required this.fmtDate,
+    required this.l,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(
+        children: [
+          Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: isTop
+                    ? const Color(0xFFD4A017)
+                    : AppColors.primary.withValues(alpha: 0.15),
+                child: Text(
+                  '#$rank',
+                  style: TextStyle(
+                    color: isTop ? Colors.white : AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              if (isTop)
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.emoji_events_rounded,
+                    color: Color(0xFFD4A017),
+                    size: 12,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              fmtDate(bid.created),
+              style: const TextStyle(
+                  fontSize: 12, color: AppColors.textSecondary),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                l.auctionBidAmountEgp(fmtPrice(bid.amount)),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: isTop ? const Color(0xFFD4A017) : AppColors.textPrimary,
+                ),
+              ),
+              if (bid.isWinningBid)
+                Text(
+                  l.highestBid,
+                  style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFFD4A017),
+                      fontWeight: FontWeight.w600),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

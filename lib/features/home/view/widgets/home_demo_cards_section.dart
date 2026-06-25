@@ -3,7 +3,9 @@ import '../../../../../core/constants/app_colors.dart';
 
 import '../../../../l10n/app_localizations.dart';
 class HomeDemoCardsSection extends StatelessWidget {
-  HomeDemoCardsSection({super.key});
+  final VoidCallback? onMarketTap;
+
+  HomeDemoCardsSection({super.key, this.onMarketTap});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class HomeDemoCardsSection extends StatelessWidget {
         children: [
           _SectionHeader(),
           SizedBox(height: 12),
-          _FeatureGrid(),
+          _FeatureGrid(onMarketTap: onMarketTap),
           SizedBox(height: 10),
           _CompactReferralBanner(),
         ],
@@ -53,7 +55,9 @@ class _SectionHeader extends StatelessWidget {
 // 2×2 feature grid
 // ─────────────────────────────────────────────────────────────────────────────
 class _FeatureGrid extends StatelessWidget {
-  _FeatureGrid();
+  final VoidCallback? onMarketTap;
+
+  _FeatureGrid({this.onMarketTap});
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +89,7 @@ class _FeatureGrid extends StatelessWidget {
           subtitle: AppLocalizations.of(context).marketSubtitle,
           color: AppColors.orange,
           bg: AppColors.orangeLight,
+          onTap: onMarketTap,
         ),
         _FeatureTile(
           icon: Icons.bolt_rounded,
@@ -104,6 +109,7 @@ class _FeatureTile extends StatelessWidget {
   final String subtitle;
   final Color color;
   final Color bg;
+  final VoidCallback? onTap;
 
   _FeatureTile({
     required this.icon,
@@ -111,15 +117,21 @@ class _FeatureTile extends StatelessWidget {
     required this.subtitle,
     required this.color,
     required this.bg,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: onTap != null
+            ? Border.all(color: color.withValues(alpha: 0.35), width: 1.5)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -168,6 +180,7 @@ class _FeatureTile extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

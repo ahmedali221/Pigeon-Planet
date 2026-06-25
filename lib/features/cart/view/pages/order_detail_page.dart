@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../payments/view/pages/payments_page.dart';
+import '../../../payments/view/pages/payment_proof_page.dart';
 import '../../model/order_item_model.dart';
 import '../../model/order_model.dart';
 import '../../viewmodel/cart_bloc.dart';
@@ -91,6 +91,45 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         const SizedBox(height: 8),
         ...order.items.map((item) => _OrderItemTile(item: item)),
       ],
+    );
+  }
+}
+
+class _StatusHint extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String text;
+
+  const _StatusHint({
+    required this.icon,
+    required this.color,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -337,18 +376,48 @@ class _OrderItemTile extends StatelessWidget {
               ],
             ),
           ],
-          if (item.status == 'approved') ...[
+          // ── Status-driven CTAs ─────────────────────────────────────
+          if (item.status == 'pending_seller') ...[
+            const SizedBox(height: 10),
+            _StatusHint(
+              icon: Icons.hourglass_empty_rounded,
+              color: AppColors.orange,
+              text: l.awaitingSellerApproval,
+            ),
+          ] else if (item.status == 'rejected') ...[
+            const SizedBox(height: 10),
+            _StatusHint(
+              icon: Icons.cancel_outlined,
+              color: AppColors.error,
+              text: l.orderItemRejected,
+            ),
+          ] else if (item.status == 'awaiting_payment_review') ...[
+            const SizedBox(height: 10),
+            _StatusHint(
+              icon: Icons.pending_outlined,
+              color: AppColors.blue,
+              text: l.paymentUnderReview,
+            ),
+          ] else if (item.status == 'completed') ...[
+            const SizedBox(height: 10),
+            _StatusHint(
+              icon: Icons.check_circle_outline_rounded,
+              color: AppColors.success,
+              text: l.statusCompleted,
+            ),
+          ] else if (item.status == 'approved') ...[
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        PaymentsPage(pendingOrderItemId: item.id),
-                  ),
-                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PaymentProofPage(item: item),
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.payment_rounded,
                     color: Colors.white, size: 16),
                 label: Text(l.sendPaymentRequestBtn,

@@ -32,28 +32,26 @@ class PaymentsState extends Equatable {
     bool? reusedExistingRequest,
     bool? isActing,
     String? actionError,
-  }) =>
-      PaymentsState(
-        status: status ?? this.status,
-        requests: requests ?? this.requests,
-        errorMessage: errorMessage ?? this.errorMessage,
-        isCreating: isCreating ?? this.isCreating,
-        createError: createError ?? this.createError,
-        reusedExistingRequest:
-            reusedExistingRequest ?? this.reusedExistingRequest,
-        isActing: isActing ?? this.isActing,
-        actionError: actionError ?? this.actionError,
-      );
+  }) => PaymentsState(
+    status: status ?? this.status,
+    requests: requests ?? this.requests,
+    errorMessage: errorMessage ?? this.errorMessage,
+    isCreating: isCreating ?? this.isCreating,
+    createError: createError ?? this.createError,
+    reusedExistingRequest: reusedExistingRequest ?? this.reusedExistingRequest,
+    isActing: isActing ?? this.isActing,
+    actionError: actionError ?? this.actionError,
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        requests,
-        errorMessage,
-        isCreating,
-        createError,
-        reusedExistingRequest,
-        isActing,
-        actionError,
-      ];
+    status,
+    requests,
+    errorMessage,
+    isCreating,
+    createError,
+    reusedExistingRequest,
+    isActing,
+    actionError,
+  ];
 }

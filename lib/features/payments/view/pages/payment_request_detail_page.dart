@@ -1,4 +1,4 @@
-import 'package:file_picker/file_picker.dart';
+﻿import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -56,12 +56,16 @@ class PaymentRequestDetailPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
-            title: 'طلب دفع #${request.id}',
+            title: AppLocalizations.of(context).tlbDfa(request.id),
           ),
           body: ListView(
             padding: EdgeInsets.all(16),
             children: [
               _StatusCard(request: request),
+              if (request.isRejected && request.isAuction) ...[
+                SizedBox(height: 14),
+                _AuctionRejectionBanner(),
+              ],
               SizedBox(height: 14),
               _DetailsCard(request: request),
               if (request.buyerNote != null || request.sellerNote != null) ...[
@@ -80,7 +84,7 @@ class PaymentRequestDetailPage extends StatelessWidget {
               if (isSeller && request.isPending) ...[
                 _SellerActions(request: request, isActing: state.isActing),
               ] else if (!isSeller && request.canUpdate) ...[
-                _BuyerNoteEditor(request: request, isActing: state.isActing),
+                _BuyerResubmitPanel(request: request, isActing: state.isActing),
               ],
               SizedBox(height: 40),
             ],
@@ -109,7 +113,7 @@ class _ComplaintActionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الشكاوى',
+            AppLocalizations.of(context).complaints,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -131,7 +135,7 @@ class _ComplaintActionCard extends StatelessWidget {
                 color: AppColors.orange,
               ),
               label: Text(
-                'تقديم شكوى',
+                AppLocalizations.of(context).submitComplaint,
                 style: TextStyle(color: AppColors.orange),
               ),
               style: OutlinedButton.styleFrom(
@@ -140,6 +144,39 @@ class _ComplaintActionCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Auction rejection notice ───────────────────────────────────────────────────
+
+class _AuctionRejectionBanner extends StatelessWidget {
+  const _AuctionRejectionBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.error.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, color: AppColors.error, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context).auctionPaymentRejectedNotice,
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.error,
               ),
             ),
           ),
@@ -191,7 +228,7 @@ class _StatusCard extends StatelessWidget {
           ),
           SizedBox(height: 12),
           Text(
-            '${request.amount.toStringAsFixed(2)} ج.م',
+            AppLocalizations.of(context).jM4(request.amount),
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -240,7 +277,7 @@ class _DetailsCard extends StatelessWidget {
         children: [
           _Row(
             icon: Icons.tag_rounded,
-            label: 'رقم الطلب',
+            label: AppLocalizations.of(context).rqmAltlb,
             value: '#${request.id}',
           ),
           Divider(height: 1, indent: 16, endIndent: 16),
@@ -248,14 +285,14 @@ class _DetailsCard extends StatelessWidget {
             icon: request.isAuction
                 ? Icons.gavel_rounded
                 : Icons.shopping_bag_outlined,
-            label: 'النوع',
+            label: AppLocalizations.of(context).type2,
             value: request.typeLabel,
           ),
           if (request.assetTitle.isNotEmpty) ...[
             Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.pets_rounded,
-              label: 'المنتج',
+              label: AppLocalizations.of(context).almntj,
               value: request.assetTitle,
             ),
           ],
@@ -263,7 +300,7 @@ class _DetailsCard extends StatelessWidget {
             Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.category_outlined,
-              label: 'الفئة',
+              label: AppLocalizations.of(context).alfya,
               value: request.categoryLabel,
             ),
           ],
@@ -271,7 +308,7 @@ class _DetailsCard extends StatelessWidget {
             Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.person_outline_rounded,
-              label: 'رقم المشتري',
+              label: AppLocalizations.of(context).buyer2,
               value: '#${request.buyerProfileId}',
             ),
           ],
@@ -279,7 +316,7 @@ class _DetailsCard extends StatelessWidget {
           if (request.auctionItemId != null) ...[
             _Row(
               icon: Icons.inventory_2_outlined,
-              label: 'رقم قطعة المزاد',
+              label: AppLocalizations.of(context).auction10,
               value: '#${request.auctionItemId}',
             ),
             Divider(height: 1, indent: 16, endIndent: 16),
@@ -287,21 +324,21 @@ class _DetailsCard extends StatelessWidget {
           if (request.orderItemId != null) ...[
             _Row(
               icon: Icons.receipt_outlined,
-              label: 'رقم عنصر الطلب',
+              label: AppLocalizations.of(context).item2,
               value: '#${request.orderItemId}',
             ),
             Divider(height: 1, indent: 16, endIndent: 16),
           ],
           _Row(
             icon: Icons.calendar_today_outlined,
-            label: 'تاريخ الإنشاء',
+            label: AppLocalizations.of(context).creationDate2,
             value: fmt.format(request.created),
           ),
           if (request.approvedAt != null) ...[
             Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.check_circle_outline_rounded,
-              label: 'تاريخ القبول',
+              label: AppLocalizations.of(context).tarykhAlqbwl,
               value: fmt.format(request.approvedAt!),
             ),
           ],
@@ -309,7 +346,7 @@ class _DetailsCard extends StatelessWidget {
             Divider(height: 1, indent: 16, endIndent: 16),
             _Row(
               icon: Icons.cancel_outlined,
-              label: 'تاريخ الرفض',
+              label: AppLocalizations.of(context).tarykhAlrfd,
               value: fmt.format(request.rejectedAt!),
             ),
           ],
@@ -375,7 +412,7 @@ class _NotesCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الملاحظات',
+            AppLocalizations.of(context).notesTitle,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -384,12 +421,12 @@ class _NotesCard extends StatelessWidget {
           ),
           if (request.buyerNote != null) ...[
             SizedBox(height: 10),
-            _NoteChip(label: 'ملاحظة المشتري', text: request.buyerNote!),
+            _NoteChip(label: AppLocalizations.of(context).no8, text: request.buyerNote!),
           ],
           if (request.sellerNote != null) ...[
             SizedBox(height: 10),
             _NoteChip(
-              label: 'ملاحظة البائع',
+              label: AppLocalizations.of(context).no9,
               text: request.sellerNote!,
               isRed: true,
             ),
@@ -468,7 +505,7 @@ class _ProofCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'إثبات الدفع',
+            AppLocalizations.of(context).paymentProofTitle,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -482,7 +519,7 @@ class _ProofCard extends StatelessWidget {
               child: Image.network(
                 url,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => _ProofFallbackLink(label: 'فتح الصورة'),
+                errorBuilder: (_, _, _) => _ProofFallbackLink(label: AppLocalizations.of(context).fthAlswra),
               ),
             )
           else
@@ -564,7 +601,7 @@ class _SellerActionsState extends State<_SellerActions> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'إجراء البائع',
+            AppLocalizations.of(context).sellerActionTitle,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -641,19 +678,19 @@ class _SellerActionsState extends State<_SellerActions> {
   }
 }
 
-// ── Buyer: update note ─────────────────────────────────────────────────────────
+// ── Buyer: resubmit with proof ─────────────────────────────────────────────────
 
-class _BuyerNoteEditor extends StatefulWidget {
+class _BuyerResubmitPanel extends StatefulWidget {
   final PaymentRequestModel request;
   final bool isActing;
 
-  _BuyerNoteEditor({required this.request, required this.isActing});
+  const _BuyerResubmitPanel({required this.request, required this.isActing});
 
   @override
-  State<_BuyerNoteEditor> createState() => _BuyerNoteEditorState();
+  State<_BuyerResubmitPanel> createState() => _BuyerResubmitPanelState();
 }
 
-class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
+class _BuyerResubmitPanelState extends State<_BuyerResubmitPanel> {
   late final TextEditingController _ctrl;
   PlatformFile? _proofFile;
 
@@ -681,6 +718,8 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final hasProof = _proofFile != null;
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -692,19 +731,24 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'تحديث ملاحظتك',
+            l.resubmitPaymentTitle,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
+          SizedBox(height: 4),
+          Text(
+            l.resubmitPaymentSubtitle,
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          ),
           SizedBox(height: 12),
           TextField(
             controller: _ctrl,
             decoration: InputDecoration(
-              labelText: AppLocalizations.of(context).noteForBuyerLabel,
-              hintText: AppLocalizations.of(context).noteForBuyerHint,
+              labelText: l.noteForBuyerLabel,
+              hintText: l.noteForBuyerHint,
               border: OutlineInputBorder(),
               filled: true,
               fillColor: AppColors.pageBackground,
@@ -717,23 +761,29 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
             onPressed: _pickFile,
             icon: Icon(Icons.attach_file_rounded, size: 18),
             label: Text(
-              _proofFile == null ? 'إرفاق إثبات الدفع' : _proofFile!.name,
+              hasProof ? _proofFile!.name : l.irfaqIthbatAldfa,
               overflow: TextOverflow.ellipsis,
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
+              foregroundColor: hasProof ? AppColors.primary : AppColors.error,
               side: BorderSide(
-                color: _proofFile != null ? AppColors.primary : AppColors.border,
+                color: hasProof ? AppColors.primary : AppColors.error,
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 14),
             ),
           ),
-          if (_proofFile != null) ...[
+          if (!hasProof) ...[
+            SizedBox(height: 4),
+            Text(
+              l.proofRequiredHint,
+              style: TextStyle(fontSize: 11, color: AppColors.error),
+            ),
+          ] else ...[
             SizedBox(height: 6),
             Text(
-              'الملف: ${_proofFile!.name} (${(_proofFile!.size / 1024).toStringAsFixed(1)} KB)',
+              '${_proofFile!.name} (${(_proofFile!.size / 1024).toStringAsFixed(1)} KB)',
               style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
           ],
@@ -746,15 +796,15 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: (_ctrl.text.trim().isEmpty && _proofFile == null)
-                    ? null
-                    : () => context.read<PaymentsBloc>().add(
-                        PaymentBuyerNoteUpdateRequested(
-                          widget.request.id,
-                          _ctrl.text.trim(),
-                          proofFile: _proofFile,
-                        ),
-                      ),
+                onPressed: hasProof
+                    ? () => context.read<PaymentsBloc>().add(
+                          PaymentBuyerNoteUpdateRequested(
+                            widget.request.id,
+                            _ctrl.text.trim(),
+                            proofFile: _proofFile,
+                          ),
+                        )
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -764,7 +814,7 @@ class _BuyerNoteEditorState extends State<_BuyerNoteEditor> {
                   ),
                   elevation: 0,
                 ),
-                child: Text(AppLocalizations.of(context).save),
+                child: Text(l.resubmit),
               ),
             ),
         ],

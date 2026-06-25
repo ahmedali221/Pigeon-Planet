@@ -132,7 +132,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                   children: [
                     // ── Category (create only) ────────────────────────────
                     if (!widget.isEdit) ...[
-                      _SectionLabel('الفئة'),
+                      _SectionLabel(AppLocalizations.of(context).alfya2),
                       SizedBox(height: 8),
                       _CategoryDropdown(
                         value: _selectedCategory,
@@ -143,14 +143,14 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                     ],
 
                     // ── Title ─────────────────────────────────────────────
-                    _SectionLabel('اسم المنتج'),
+                    _SectionLabel(AppLocalizations.of(context).asmAlmntj),
                     SizedBox(height: 8),
                     _Field(
                       controller: _titleCtrl,
-                      hint: 'مثال: علف حمام بريمكس',
+                      hint: AppLocalizations.of(context).mthalAlfHmamBrymks,
                       validator: (v) =>
                           (v == null || v.trim().length < 3)
-                              ? 'الاسم يجب أن يكون 3 أحرف على الأقل'
+                              ? AppLocalizations.of(context).no23
                               : null,
                     ),
                     SizedBox(height: 20),
@@ -160,11 +160,11 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                     SizedBox(height: 8),
                     _Field(
                       controller: _descCtrl,
-                      hint: 'صف المنتج بشكل واضح...',
+                      hint: AppLocalizations.of(context).sfAlmntjBshklWadh,
                       maxLines: 3,
                       validator: (v) =>
                           (v == null || v.trim().isEmpty)
-                              ? 'الوصف مطلوب'
+                              ? AppLocalizations.of(context).alwsfMtlwb
                               : null,
                     ),
                     SizedBox(height: 20),
@@ -176,7 +176,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _SectionLabel('السعر (ج.م)'),
+                              _SectionLabel(AppLocalizations.of(context).alsarJM),
                               SizedBox(height: 8),
                               _Field(
                                 controller: _priceCtrl,
@@ -186,7 +186,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                                 validator: (v) {
                                   final n = double.tryParse(v ?? '');
                                   if (n == null || n <= 0) {
-                                    return 'سعر غير صالح';
+                                    return AppLocalizations.of(context).sarGhyrSalh;
                                   }
                                   return null;
                                 },
@@ -208,7 +208,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                                 validator: (v) {
                                   final n = int.tryParse(v ?? '');
                                   if (n == null || n < 1) {
-                                    return 'كمية غير صالحة';
+                                    return AppLocalizations.of(context).kmyaGhyrSalha;
                                   }
                                   return null;
                                 },
@@ -222,7 +222,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
 
                     // ── Status (edit only) ────────────────────────────────
                     if (widget.isEdit) ...[
-                      _SectionLabel('الحالة'),
+                      _SectionLabel(AppLocalizations.of(context).alhala2),
                       SizedBox(height: 8),
                       _StatusDropdown(
                         value: _selectedStatus,
@@ -233,7 +233,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                     ],
 
                     // ── Images ───────────────────────────────────────────
-                    _SectionLabel('الصور (حتى 5)'),
+                    _SectionLabel(AppLocalizations.of(context).alswrHta),
                     SizedBox(height: 8),
                     SizedBox(
                       height: 96,
@@ -311,7 +311,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
 
                     // ── Package selector (create only) ────────────────────
                     if (!widget.isEdit) ...[
-                      _SectionLabel('الباقة المستخدمة'),
+                      _SectionLabel(AppLocalizations.of(context).packageLabel2),
                       SizedBox(height: 8),
                       _ProductPackageSelector(
                         future: _activePackagesFuture,
@@ -369,7 +369,7 @@ class _SellerProductFormPageState extends State<SellerProductFormPage> {
                                     ],
                                   )
                                 : Text(
-                                    widget.isEdit ? 'حفظ التعديلات' : 'إضافة المنتج',
+                                    widget.isEdit ? AppLocalizations.of(context).save5 : AppLocalizations.of(context).add3,
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
@@ -467,7 +467,7 @@ class _FormHeader extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              isEdit ? 'تعديل المنتج' : 'إضافة منتج جديد',
+              isEdit ? AppLocalizations.of(context).edit3 : AppLocalizations.of(context).add4,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -560,16 +560,15 @@ class _CategoryDropdown extends StatelessWidget {
   final String value;
   final ValueChanged<String?> onChanged;
 
-  static final _categories = [
-    ('accessories', 'إكسسوارات', '💊'),
-    ('feeds', 'أعلاف والحبوب', '🌾'),
-    ('supplements', 'مكملات غذائية', '⚡'),
-  ];
-
   _CategoryDropdown({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final categories = [
+      ('accessories', AppLocalizations.of(context).iksswarat, '💊'),
+      ('feeds', AppLocalizations.of(context).no24, '🌾'),
+      ('supplements', AppLocalizations.of(context).no25, '⚡'),
+    ];
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
@@ -582,7 +581,7 @@ class _CategoryDropdown extends StatelessWidget {
           value: value,
           isExpanded: true,
           onChanged: onChanged,
-          items: _categories
+          items: categories
               .map((c) => DropdownMenuItem(
                     value: c.$1,
                     child: Text('${c.$3}  ${c.$2}',
@@ -599,16 +598,15 @@ class _StatusDropdown extends StatelessWidget {
   final String value;
   final ValueChanged<String?> onChanged;
 
-  static final _statuses = [
-    ('available', 'متاح'),
-    ('sold', 'مباع'),
-    ('inactive', 'غير نشط'),
-  ];
-
   _StatusDropdown({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final statuses = [
+      ('available', AppLocalizations.of(context).mtah),
+      ('sold', AppLocalizations.of(context).mbaa),
+      ('inactive', AppLocalizations.of(context).active3),
+    ];
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
@@ -621,7 +619,7 @@ class _StatusDropdown extends StatelessWidget {
           value: value,
           isExpanded: true,
           onChanged: onChanged,
-          items: _statuses
+          items: statuses
               .map((s) => DropdownMenuItem(
                     value: s.$1,
                     child: Text(s.$2,

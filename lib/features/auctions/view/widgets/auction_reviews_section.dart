@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../model/asset_rating_model.dart';
@@ -121,23 +121,23 @@ class _ReviewCard extends StatelessWidget {
     AppColors.purple,
   ];
 
-  String get _roleLabel =>
-      review.ownerType == 'Customer' ? 'مشتري' : 'مستخدم';
+  String _roleLabel(BuildContext context) =>
+      review.ownerType == 'Customer' ? AppLocalizations.of(context).buyer : AppLocalizations.of(context).user;
 
   String get _initial => review.ownerType == 'Customer' ? 'م' : 'م';
 
   Color get _avatarColor => _avatarColors[index % _avatarColors.length];
 
-  String _formatDate(DateTime dt) {
+  String _formatDate(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inDays >= 30) {
-      return '${(diff.inDays / 30).floor()} شهر';
+      return AppLocalizations.of(context).shhr((diff.inDays / 30).floor());
     } else if (diff.inDays >= 1) {
-      return '${diff.inDays} يوم';
+      return AppLocalizations.of(context).ywm(diff.inDays);
     } else if (diff.inHours >= 1) {
-      return '${diff.inHours} ساعة';
+      return AppLocalizations.of(context).saaa(diff.inHours);
     }
-    return 'الآن';
+    return AppLocalizations.of(context).now2;
   }
 
   @override
@@ -174,7 +174,7 @@ class _ReviewCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _roleLabel,
+                        _roleLabel(context),
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _ReviewCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(_formatDate(review.created),
+              Text(_formatDate(context, review.created),
                   style: TextStyle(
                       fontSize: 11, color: AppColors.textHint)),
             ],

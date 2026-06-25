@@ -10,6 +10,7 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
   const RealSellerProductsDataSource(this._dio);
 
   static const _categoryEndpoints = {
+    'birds': ApiConstants.birds,
     'supplies': ApiConstants.supplies,
     'accessories': ApiConstants.accessories,
     'feeds': ApiConstants.feeds,
@@ -21,17 +22,25 @@ class RealSellerProductsDataSource implements SellerProductsDataSource {
     final response = await _dio.get(ApiConstants.mySellers);
     final data = response.data;
 
+    List<dynamic> items;
     if (data is Map && data.containsKey('results')) {
-      final results = data['results'] as List<dynamic>;
-      if (results.isNotEmpty) {
-        return (results.first as Map<String, dynamic>)['id'] as int;
-      }
-    } else if (data is List && data.isNotEmpty) {
-      return (data.first as Map<String, dynamic>)['id'] as int;
+      items = data['results'] as List<dynamic>? ?? [];
+    } else if (data is List) {
+      items = data;
     } else if (data is Map && data.containsKey('id')) {
       return data['id'] as int;
+    } else {
+      throw const ServerException('Could not resolve seller profile');
     }
-    throw const ServerException('Could not resolve seller profile');
+
+    if (items.isEmpty) throw const ServerException('Could not resolve seller profile');
+
+    // Prefer the profile the backend considers active
+    final active = items.cast<Map<String, dynamic>>().firstWhere(
+      (p) => p['is_active'] == true,
+      orElse: () => items.first as Map<String, dynamic>,
+    );
+    return active['id'] as int;
   }
 
   @override

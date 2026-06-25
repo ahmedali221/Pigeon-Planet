@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,13 +76,13 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(
-            title: 'مراجعة البيانات',
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).mrajaaAlbyanat,
           ),
           body: Column(
             children: [
               PigeonStepHeader(
-                  current: 4, total: 4, label: 'المراجعة النهائية'),
+                  current: 4, total: 4, label: AppLocalizations.of(context).almrajaaAlnhayya),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(20),
@@ -91,7 +91,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                     children: [
                       // ── Basic info card ──────────────────────────────
                       _SectionCard(
-                        title: 'البيانات الأساسية',
+                        title: AppLocalizations.of(context).albyanatAlasasya,
                         icon: Icons.info_outline_rounded,
                         child: Column(
                           children: [
@@ -104,7 +104,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                             Divider(height: 20),
                             _PreviewRow(
                               label: AppLocalizations.of(context).gender,
-                              value: isMale ? 'ذكر 🔵' : 'أنثى 🔴',
+                              value: isMale ? AppLocalizations.of(context).thkr : AppLocalizations.of(context).antha,
                               valueColor: isMale
                                   ? AppColors.blue
                                   : AppColors.red,
@@ -125,7 +125,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
 
                       // ── Photos card ──────────────────────────────────
                       _SectionCard(
-                        title: 'الصور (${state.photoPaths.length})',
+                        title: AppLocalizations.of(context).alswr(state.photoPaths.length),
                         icon: Icons.photo_library_rounded,
                         trailing: state.photoPaths.length >= 4
                             ? _CheckBadge(ok: true)
@@ -168,7 +168,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
 
                       // ── Video card ───────────────────────────────────
                       _SectionCard(
-                        title: 'فيديو زاجل',
+                        title: AppLocalizations.of(context).fydywZajl,
                         icon: Icons.videocam_rounded,
                         trailing:
                             _CheckBadge(ok: state.videoPath != null),
@@ -253,8 +253,8 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                                   Expanded(
                                     child: Text(
                                       state.videoPath != null
-                                          ? 'تم تسجيل فيديو زاجل بنجاح ✓'
-                                          : 'لم يتم تسجيل الفيديو بعد',
+                                          ? AppLocalizations.of(context).tmTsjylFydywZajlBnjah
+                                          : AppLocalizations.of(context).lmYtmTsjylAlfydywBad,
                                       style: TextStyle(
                                         fontSize: 13,
                                         color: state.videoPath != null
@@ -272,7 +272,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
                         SizedBox(height: 16),
                         _SectionCard(
                           title:
-                              'نتائج السباقات (${state.raceResults.length})',
+                              AppLocalizations.of(context).racingType3(state.raceResults.length),
                           icon: Icons.emoji_events_rounded,
                           child: Column(
                             children: state.raceResults
@@ -308,7 +308,7 @@ class _PigeonIdPreviewPageState extends State<PigeonIdPreviewPage> {
               ),
 
               PigeonNextButton(
-                label: 'إنشاء الهوية الرقمية',
+                label: AppLocalizations.of(context).inshaAlhwyaAlrqmya,
                 enabled: state.isReadyToSubmit,
                 onTap: () => _submit(context),
               ),
@@ -428,7 +428,7 @@ class _CheckBadge extends StatelessWidget {
           ),
           SizedBox(width: 4),
           Text(
-            ok ? 'مكتمل' : 'ناقص',
+            ok ? AppLocalizations.of(context).mktml : AppLocalizations.of(context).naqs,
             style: TextStyle(
               fontSize: 11,
               color: ok ? AppColors.success : AppColors.error,

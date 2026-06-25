@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/profile_model.dart';
 import '../../viewmodel/profile_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class EditRoomPage extends StatefulWidget {
   final ProfileModel room;
@@ -68,7 +69,7 @@ class _EditRoomPageState extends State<EditRoomPage> {
         } else if (state.status == ProfileStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'حدث خطأ، حاول مجدداً'),
+              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred4),
               backgroundColor: AppColors.error,
             ),
           );
@@ -79,7 +80,7 @@ class _EditRoomPageState extends State<EditRoomPage> {
         final isLoading = state.status == ProfileStatus.updating;
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(title: 'تعديل الغرفة'),
+          appBar: PPWAppBar(title: AppLocalizations.of(context).edit2),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Form(
@@ -87,20 +88,20 @@ class _EditRoomPageState extends State<EditRoomPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _label('اسم الغرفة'),
+                  _label(AppLocalizations.of(context).rooms3),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _nicknameCtrl,
                     textInputAction: TextInputAction.next,
-                    decoration: _inputDecor('مثال: حمام الزاجل الذهبي'),
+                    decoration: _inputDecor(AppLocalizations.of(context).mthalHmamAlzajlAlthhby2),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'أدخل اسم الغرفة';
-                      if (v.trim().length < 3) return 'الاسم قصير جداً';
+                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context).rooms4;
+                      if (v.trim().length < 3) return AppLocalizations.of(context).no18;
                       return null;
                     },
                   ),
                   const SizedBox(height: 20),
-                  _label('الدولة'),
+                  _label(AppLocalizations.of(context).aldwla),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCountry,

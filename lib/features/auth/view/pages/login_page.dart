@@ -17,10 +17,31 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+class _DemoAccount {
+  const _DemoAccount({required this.label, required this.phone, required this.role});
+  final String label;
+  final String phone;
+  final String role;
+}
+
+const _demoAccounts = [
+  _DemoAccount(label: 'عميل 1 — EG Pigeons', phone: '+201000000001', role: 'customer'),
+  _DemoAccount(label: 'عميل 2 — Gulf Wings', phone: '+201000000002', role: 'customer'),
+  _DemoAccount(label: 'عميل 5 — Doha Pigeons', phone: '+201000000005', role: 'customer'),
+  _DemoAccount(label: 'بائع 1 — EG Pigeons', phone: '+201000000001', role: 'seller'),
+  _DemoAccount(label: 'بائع 2 — Gulf Wings', phone: '+201000000002', role: 'seller'),
+  _DemoAccount(label: 'بائع 5 — Doha Pigeons', phone: '+201000000005', role: 'seller'),
+];
+
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneCtrl = TextEditingController(text: '+201000000006');
-  final _passwordCtrl = TextEditingController(text: 'Password123!');
+  final _phoneCtrl = TextEditingController(text: '+201000000001');
+  final _passwordCtrl = TextEditingController(text: 'Test@1234');
+
+  void _fillDemo(_DemoAccount account) {
+    _phoneCtrl.text = account.phone;
+    _passwordCtrl.text = 'Test@1234';
+  }
 
   @override
   void dispose() {
@@ -153,6 +174,40 @@ class _LoginPageState extends State<LoginPage> {
                             )
                           : const Text(AppStrings.login),
                     ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  const Row(
+                    children: [
+                      Expanded(child: Divider()),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          'حسابات تجريبية',
+                          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        ),
+                      ),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: _demoAccounts.map((account) {
+                      return OutlinedButton(
+                        onPressed: () => _fillDemo(account),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
+                        child: Text(account.label),
+                      );
+                    }).toList(),
                   ),
 
                   const SizedBox(height: 20),

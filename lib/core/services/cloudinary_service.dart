@@ -67,6 +67,15 @@ class CloudinaryService {
     );
   }
 
+  /// Upload a payment proof (image or PDF). Returns the secure_url or null on failure.
+  static Future<String?> uploadPaymentProof(String filePath) async {
+    return _upload(
+      filePath: filePath,
+      resourceType: 'auto',
+      folder: 'pigeon-planet/payment-proofs',
+    );
+  }
+
   /// Upload a video file. Returns the secure_url or null on failure.
   static Future<String?> uploadVideo(
       String filePath, String ringNumber) async {

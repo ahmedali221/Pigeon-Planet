@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/file_source_sheet.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../model/subscription_package_model.dart';
 import '../../viewmodel/packages_bloc.dart';
@@ -51,7 +52,7 @@ class _PackagesViewState extends State<_PackagesView> {
         icon: Icons.workspace_premium_rounded,
         color: AppColors.primary,
         light: AppColors.primaryLight,
-        badge: 'الأكثر شعبية',
+        badge: AppLocalizations.of(context).alakthrShabya,
       );
     }
     if (p.points <= 600) {
@@ -77,10 +78,10 @@ class _PackagesViewState extends State<_PackagesView> {
   }
 
   String _periodStr(int days) {
-    if (days == 30) return 'شهر';
-    if (days == 60) return 'شهران';
-    if (days % 30 == 0) return '${days ~/ 30} أشهر';
-    return '$days يوم';
+    if (days == 30) return AppLocalizations.of(context).shhr2;
+    if (days == 60) return AppLocalizations.of(context).shhran;
+    if (days % 30 == 0) return AppLocalizations.of(context).ashhr(days ~/ 30);
+    return AppLocalizations.of(context).ywm3(days);
   }
 
   List<String> _features(PackageModel p) {
@@ -91,10 +92,10 @@ class _PackagesViewState extends State<_PackagesView> {
         if (t.isNotEmpty) lines.add(t);
       }
     }
-    lines.add('${p.points} نقطة إجمالية');
-    lines.add('إنشاء مزاد: ${p.auctionCost} نقطة لكل مزاد');
-    lines.add('نشر منتج: ${p.productCost} نقطة لكل منتج');
-    lines.add('صالحة لمدة ${_periodStr(p.activationPeriodDays)}');
+    lines.add(AppLocalizations.of(context).nqtaIjmalya(p.points));
+    lines.add(AppLocalizations.of(context).auction11(p.auctionCost));
+    lines.add(AppLocalizations.of(context).nshrMntjNqtaLklMntj(p.productCost));
+    lines.add(AppLocalizations.of(context).salhaLmda(_periodStr(p.activationPeriodDays)));
     return lines;
   }
 
@@ -149,7 +150,7 @@ class _PackagesViewState extends State<_PackagesView> {
         if (state.requestSuccess) {
           _showSnackBar(
             context,
-            'تم تقديم طلب الاشتراك بنجاح\nسيتم تفعيل الباقة من قِبَل المشرف قريباً',
+            AppLocalizations.of(context).no29,
             AppColors.success,
           );
         } else if (state.requestError != null) {
@@ -205,7 +206,7 @@ class _PackagesViewState extends State<_PackagesView> {
             PackagesStatus.loading || PackagesStatus.initial =>
               Center(child: CircularProgressIndicator()),
             PackagesStatus.error => _ErrorView(
-                message: state.errorMessage ?? 'حدث خطأ غير متوقع',
+                message: state.errorMessage ?? AppLocalizations.of(context).errorOccurred8,
                 onRetry: () => bloc.add(PackagesLoadRequested()),
               ),
             _ => _buildLoaded(context, state, bloc, isRequesting),
@@ -363,7 +364,7 @@ class _PendingPackageBanner extends StatelessWidget {
                     Text(
                       pending.packageName.isNotEmpty
                           ? pending.packageName
-                          : 'بانتظار تفعيل المشرف',
+                          : AppLocalizations.of(context).bantzarTfaylAlmshrf,
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,
@@ -427,7 +428,7 @@ class _PendingPackageBanner extends StatelessWidget {
                 ),
                 SizedBox(width: 6),
                 Text(
-                  hasProof ? 'تم إرفاق إثبات الدفع' : 'لم يُرفق إثبات الدفع',
+                  hasProof ? AppLocalizations.of(context).tmIrfaqIthbatAldfa : AppLocalizations.of(context).lmYrfqIthbatAldfa,
                   style: TextStyle(
                     fontSize: 11,
                     color: hasProof ? AppColors.success : AppColors.orange,
@@ -454,16 +455,17 @@ class _ActivePackageBanner extends StatelessWidget {
     required this.periodStr,
   });
 
-  String _formatDate(DateTime dt) {
+  String _formatDate(DateTime dt, AppLocalizations l10n) {
     final months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+      l10n.ynayr, l10n.fbrayr, l10n.mars, l10n.abryl, l10n.mayw, l10n.ywnyw,
+      l10n.ywlyw, l10n.aghsts, l10n.sbtmbr, l10n.aktwbr, l10n.nwfmbr, l10n.dysmbr,
     ];
     return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final total = active.package.points;
     final remaining = active.remainingPoints;
     final progress = total > 0 ? (remaining / total).clamp(0.0, 1.0) : 0.0;
@@ -548,17 +550,17 @@ class _ActivePackageBanner extends StatelessWidget {
             children: [
               _Chip(
                 icon: Icons.gavel_rounded,
-                label: 'مزاد: ${active.auctionCost} نقطة',
+                label: l10n.auction12(active.auctionCost),
               ),
               SizedBox(width: 8),
               _Chip(
                 icon: Icons.inventory_2_rounded,
-                label: 'منتج: ${active.productCost} نقطة',
+                label: l10n.mntjNqta(active.productCost),
               ),
               Spacer(),
               if (active.expiresAt != null)
                 Text(
-                  'تنتهي ${_formatDate(active.expiresAt!)}',
+                  'تنتهي ${_formatDate(active.expiresAt!, l10n)}',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 11,
@@ -647,13 +649,11 @@ class _ProofPickerSheetState extends State<_ProofPickerSheet> {
   PlatformFile? _file;
 
   Future<void> _pick() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
+    final file = await FileSourceSheet.show(
+      context,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() => _file = result.files.first);
-    }
+    if (file != null) setState(() => _file = file);
   }
 
   @override
@@ -698,7 +698,7 @@ class _ProofPickerSheetState extends State<_ProofPickerSheet> {
             onPressed: _pick,
             icon: Icon(Icons.attach_file_rounded, size: 18),
             label: Text(
-              _file == null ? 'اختر ملف (JPG / PNG / PDF)' : _file!.name,
+              _file == null ? AppLocalizations.of(context).akhtrMlf : _file!.name,
               overflow: TextOverflow.ellipsis,
             ),
             style: OutlinedButton.styleFrom(

@@ -2084,6 +2084,48 @@ abstract class AppLocalizations {
   /// **'إتمام الطلب'**
   String get completeOrder;
 
+  /// No description provided for @paymentProofSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إثبات الدفع'**
+  String get paymentProofSheetTitle;
+
+  /// No description provided for @paymentProofSheetSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إرفاق صورة إثبات الدفع قبل إتمام الطلب'**
+  String get paymentProofSheetSubtitle;
+
+  /// No description provided for @attachProofBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرفاق إثبات الدفع'**
+  String get attachProofBtn;
+
+  /// No description provided for @changeProofBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الملف'**
+  String get changeProofBtn;
+
+  /// No description provided for @proofRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجب إرفاق إثبات الدفع للمتابعة'**
+  String get proofRequired;
+
+  /// No description provided for @proofAttached.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرفاق إثبات الدفع'**
+  String get proofAttached;
+
+  /// No description provided for @confirmAndCheckout.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد وإتمام الطلب'**
+  String get confirmAndCheckout;
+
   /// Section header listing the birds in a given auction
   ///
   /// In ar, this message translates to:
@@ -2983,6 +3025,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مكتمل'**
   String get statusCompleted;
+
+  /// No description provided for @statusApproved.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق عليه'**
+  String get statusApproved;
+
+  /// No description provided for @orderItemRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوض من البائع'**
+  String get orderItemRejected;
+
+  /// No description provided for @paymentUnderReview.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع قيد المراجعة'**
+  String get paymentUnderReview;
 
   /// No description provided for @statusPartialRejected.
   ///
@@ -4478,49 +4538,2405 @@ abstract class AppLocalizations {
   /// **'لا توجد معاملات نقاط بعد'**
   String get noPointsTransactions;
 
+  /// No description provided for @cashbackHistoryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل الكاش باك'**
   String get cashbackHistoryTitle;
+
+  /// No description provided for @cashbackBalanceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد الكاش باك'**
   String get cashbackBalanceTitle;
+
+  /// No description provided for @egpCurrency.
+  ///
+  /// In ar, this message translates to:
+  /// **'ج.م'**
   String get egpCurrency;
+
+  /// No description provided for @noCashbackTransactionsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد معاملات حتى الآن'**
   String get noCashbackTransactionsYet;
+
+  /// No description provided for @cashbackTransactionsWillAppear.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستظهر هنا معاملات الكاش باك عند إتمام عمليات الشراء'**
   String get cashbackTransactionsWillAppear;
+
+  /// No description provided for @followersAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات المتابعين'**
   String get followersAuctions;
+
+  /// No description provided for @whoIFollow.
+  ///
+  /// In ar, this message translates to:
+  /// **'من أتابعهم'**
   String get whoIFollow;
+
+  /// No description provided for @suggestions.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقتراحات'**
   String get suggestions;
+
+  /// No description provided for @noFollowedAuctionsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مزادات بعد'**
   String get noFollowedAuctionsYet;
+
+  /// No description provided for @followSellersToSeeAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'تابع بائعين لترى مزاداتهم هنا أولاً'**
   String get followSellersToSeeAuctions;
+
+  /// No description provided for @discoverSellers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتشف بائعين'**
   String get discoverSellers;
+
+  /// No description provided for @compactHoursMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{hours} س {minutes} د'**
   String compactHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @compactMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} دقيقة'**
   String compactMinutes(int minutes);
+
+  /// No description provided for @packageFollowing.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقة متابعة'**
   String get packageFollowing;
+
+  /// No description provided for @discovery.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتشاف'**
   String get discovery;
+
+  /// No description provided for @editBird.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الطائر'**
   String get editBird;
+
+  /// No description provided for @pigeonBasicData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات الطائر الأساسية'**
   String get pigeonBasicData;
+
+  /// No description provided for @ringNumberRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الحلقة *'**
   String get ringNumberRequired;
+
+  /// No description provided for @breedRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'السلالة *'**
   String get breedRequired;
+
+  /// No description provided for @breedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: حمام زاجل'**
   String get breedHint;
+
+  /// No description provided for @genderRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجنس *'**
   String get genderRequired;
+
+  /// No description provided for @optionalData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات اختيارية'**
   String get optionalData;
+
+  /// No description provided for @chooseHatchDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر تاريخ الفقس'**
   String get chooseHatchDate;
+
+  /// No description provided for @achievementsRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإنجازات *'**
   String get achievementsRequired;
+
+  /// No description provided for @achievementsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب أهم إنجازات الطائر'**
   String get achievementsHint;
+
+  /// No description provided for @staminaRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'قدرة التحمل *'**
   String get staminaRequired;
+
+  /// No description provided for @saleData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات البيع'**
   String get saleData;
+
+  /// No description provided for @displayName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم العرض'**
   String get displayName;
+
+  /// No description provided for @displayNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم الظاهر للمشترين'**
   String get displayNameHint;
+
+  /// No description provided for @priceEgpRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر (ج.م) *'**
   String get priceEgpRequired;
+
+  /// No description provided for @priceHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 1500'**
   String get priceHint;
+
+  /// No description provided for @flyingSpeedKmh.
+  ///
+  /// In ar, this message translates to:
+  /// **'سرعة الطيران (كم/س)'**
   String get flyingSpeedKmh;
+
+  /// No description provided for @flyingSpeedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 75.5'**
   String get flyingSpeedHint;
+
+  /// No description provided for @birdStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة الطائر'**
   String get birdStatus;
+
+  /// No description provided for @pedigreeData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات النسب'**
   String get pedigreeData;
+
+  /// No description provided for @fatherRingOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الأب (اختياري)'**
   String get fatherRingOptional;
+
+  /// No description provided for @motherRingOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الأم (اختياري)'**
   String get motherRingOptional;
+
+  /// No description provided for @birdIdHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'معرّف الطائر'**
   String get birdIdHint;
+
+  /// No description provided for @saving.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ الحفظ...'**
   String get saving;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التعديلات'**
   String get saveChanges;
+
+  /// No description provided for @nextAddPhotos.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي - إضافة الصور'**
   String get nextAddPhotos;
+
+  /// No description provided for @listInMarket.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض في المتجر'**
   String get listInMarket;
+
+  /// No description provided for @listInMarketDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيظهر الطائر للمشترين في المتجر'**
   String get listInMarketDesc;
+
+  /// No description provided for @auction.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا المزاد يقبل طائراً واحداً فقط'**
+  String get auction;
+
+  /// No description provided for @adfMnIla.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل'**
+  String get adfMnIla;
+
+  /// No description provided for @pairType.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)'**
+  String get pairType;
+
+  /// No description provided for @pairType2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر'**
+  String get pairType2;
+
+  /// No description provided for @racingType.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف طائرين على الأقل لمجموعة السباق'**
+  String get racingType;
+
+  /// No description provided for @packageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقة'**
+  String get packageLabel;
+
+  /// No description provided for @pointsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط'**
+  String get pointsLabel;
+
+  /// No description provided for @singleType.
+  ///
+  /// In ar, this message translates to:
+  /// **'فردي'**
+  String get singleType;
+
+  /// No description provided for @multipleType.
+  ///
+  /// In ar, this message translates to:
+  /// **'متعدد'**
+  String get multipleType;
+
+  /// No description provided for @pairType3.
+  ///
+  /// In ar, this message translates to:
+  /// **'زوج'**
+  String get pairType3;
+
+  /// No description provided for @breedingType.
+  ///
+  /// In ar, this message translates to:
+  /// **'تناسل'**
+  String get breedingType;
+
+  /// No description provided for @racingType2.
+  ///
+  /// In ar, this message translates to:
+  /// **'سباق'**
+  String get racingType2;
+
+  /// No description provided for @add.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة طائر جديد'**
+  String get add;
+
+  /// No description provided for @auction2.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ بيانات طائر جديد وأضفه إلى المزاد'**
+  String get auction2;
+
+  /// No description provided for @chooseBird.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر'**
+  String get chooseBird;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدد'**
+  String get notSpecified;
+
+  /// No description provided for @sna.
+  ///
+  /// In ar, this message translates to:
+  /// **'{years} سنة'**
+  String sna(Object years);
+
+  /// No description provided for @aqlMnSna.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل من سنة'**
+  String get aqlMnSna;
+
+  /// No description provided for @notAvailable2.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير متاح'**
+  String get notAvailable2;
+
+  /// No description provided for @no.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد وصف.'**
+  String get no;
+
+  /// No description provided for @no2.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة للبائع (اختياري)'**
+  String get no2;
+
+  /// No description provided for @no3.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا مزادك — لا يمكنك المزايدة'**
+  String get no3;
+
+  /// No description provided for @auctionEnded2.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهى المزاد'**
+  String get auctionEnded2;
+
+  /// No description provided for @auctionNotStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزاد لم يبدأ بعد'**
+  String get auctionNotStarted;
+
+  /// No description provided for @sold.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُباع'**
+  String get sold;
+
+  /// No description provided for @sold2.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير مُباع'**
+  String get sold2;
+
+  /// No description provided for @active.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشط'**
+  String get active;
+
+  /// No description provided for @expired2.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهي'**
+  String get expired2;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'قادم'**
+  String get upcoming;
+
+  /// No description provided for @enterValidNumber2.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقمًا صحيحًا'**
+  String get enterValidNumber2;
+
+  /// No description provided for @minimumBid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى {value} ج.م'**
+  String minimumBid(Object value);
+
+  /// No description provided for @minimumBid2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى'**
+  String get minimumBid2;
+
+  /// No description provided for @currentPrice2.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر الحالي'**
+  String get currentPrice2;
+
+  /// No description provided for @jM.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} ج.م'**
+  String jM(Object value);
+
+  /// No description provided for @minimumBid3.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى'**
+  String get minimumBid3;
+
+  /// No description provided for @jM2.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} ج.م'**
+  String jM2(Object value);
+
+  /// No description provided for @jM3.
+  ///
+  /// In ar, this message translates to:
+  /// **'ج.م'**
+  String get jM3;
+
+  /// No description provided for @all2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get all2;
+
+  /// No description provided for @ynthyQryba.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي قريباً 🕐'**
+  String get ynthyQryba;
+
+  /// No description provided for @auction3.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاداتي ✈️'**
+  String get auction3;
+
+  /// No description provided for @no4.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد نتائج لـ \"{_searchQuery}\"'**
+  String no4(Object _searchQuery);
+
+  /// No description provided for @loading.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحميل المزيد'**
+  String get loading;
+
+  /// No description provided for @loading2.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ التحميل...'**
+  String get loading2;
+
+  /// No description provided for @myBids2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزايداتي'**
+  String get myBids2;
+
+  /// No description provided for @refresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get refresh;
+
+  /// No description provided for @sna2.
+  ///
+  /// In ar, this message translates to:
+  /// **'{years} سنة'**
+  String sna2(Object years);
+
+  /// No description provided for @buyer.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشتري'**
+  String get buyer;
+
+  /// No description provided for @user.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستخدم'**
+  String get user;
+
+  /// No description provided for @shhr.
+  ///
+  /// In ar, this message translates to:
+  /// **'{floor} شهر'**
+  String shhr(int floor);
+
+  /// No description provided for @ywm.
+  ///
+  /// In ar, this message translates to:
+  /// **'{inDays} يوم'**
+  String ywm(int inDays);
+
+  /// No description provided for @saaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'{inHours} ساعة'**
+  String saaa(int inHours);
+
+  /// No description provided for @now2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآن'**
+  String get now2;
+
+  /// No description provided for @loading3.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تحميل الرسائل'**
+  String get loading3;
+
+  /// No description provided for @errorOccurred2.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ'**
+  String get errorOccurred2;
+
+  /// No description provided for @now3.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآن'**
+  String get now3;
+
+  /// No description provided for @mnthD.
+  ///
+  /// In ar, this message translates to:
+  /// **'منذ {inMinutes} د'**
+  String mnthD(int inMinutes);
+
+  /// No description provided for @mnthS.
+  ///
+  /// In ar, this message translates to:
+  /// **'منذ {inHours} س'**
+  String mnthS(int inHours);
+
+  /// No description provided for @mnthAyam.
+  ///
+  /// In ar, this message translates to:
+  /// **'منذ {inDays} أيام'**
+  String mnthAyam(int inDays);
+
+  /// No description provided for @paymentRejectionDispute.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتراض على رفض الدفع'**
+  String get paymentRejectionDispute;
+
+  /// No description provided for @postSaleComplaint.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكوى ما بعد البيع'**
+  String get postSaleComplaint;
+
+  /// No description provided for @submitComplaint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقديم شكوى'**
+  String get submitComplaint;
+
+  /// No description provided for @submit.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الإرسال...'**
+  String get submit;
+
+  /// No description provided for @submitComplaintAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقديم الشكوى'**
+  String get submitComplaintAction;
+
+  /// No description provided for @shkwa.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكوى #{id}'**
+  String shkwa(Object id);
+
+  /// No description provided for @complaintNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الشكوى'**
+  String get complaintNumber;
+
+  /// No description provided for @paymentRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب الدفع'**
+  String get paymentRequest;
+
+  /// No description provided for @type.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get type;
+
+  /// No description provided for @creationDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الإنشاء'**
+  String get creationDate;
+
+  /// No description provided for @resolutionDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الحل'**
+  String get resolutionDate;
+
+  /// No description provided for @cancel2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الإلغاء'**
+  String get cancel2;
+
+  /// No description provided for @no5.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد وصف'**
+  String get no5;
+
+  /// No description provided for @complaints.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشكاوى'**
+  String get complaints;
+
+  /// No description provided for @following.
+  ///
+  /// In ar, this message translates to:
+  /// **'من أتابع'**
+  String get following;
+
+  /// No description provided for @almrbwnAlmtabawn.
+  ///
+  /// In ar, this message translates to:
+  /// **'المربّون المتابَعون ({length})'**
+  String almrbwnAlmtabawn(int length);
+
+  /// No description provided for @albaqatAlmtabaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقات المتابَعة ({length})'**
+  String albaqatAlmtabaa(int length);
+
+  /// No description provided for @peopleMayKnow.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربيون قد تعرفهم'**
+  String get peopleMayKnow;
+
+  /// No description provided for @refresh2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get refresh2;
+
+  /// No description provided for @room.
+  ///
+  /// In ar, this message translates to:
+  /// **'غرفة'**
+  String get room;
+
+  /// No description provided for @listed.
+  ///
+  /// In ar, this message translates to:
+  /// **'معروضة'**
+  String get listed;
+
+  /// No description provided for @search2.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث باسم الغرفة أو الدولة'**
+  String get search2;
+
+  /// No description provided for @auction4.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد'**
+  String get auction4;
+
+  /// No description provided for @item.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنصر'**
+  String get item;
+
+  /// No description provided for @rating.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقييم'**
+  String get rating;
+
+  /// No description provided for @no6.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد غرف حالياً'**
+  String get no6;
+
+  /// No description provided for @no7.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد نتائج مطابقة'**
+  String get no7;
+
+  /// No description provided for @search3.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب البحث باسم آخر أو دولة مختلفة'**
+  String get search3;
+
+  /// No description provided for @refresh3.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب للأسفل للتحديث والمحاولة مجدداً'**
+  String get refresh3;
+
+  /// No description provided for @room2.
+  ///
+  /// In ar, this message translates to:
+  /// **'غرفة'**
+  String get room2;
+
+  /// No description provided for @mrbyMhtrfMn.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربي محترف من {country}'**
+  String mrbyMhtrfMn(String country);
+
+  /// No description provided for @hmamZajl.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمام زاجل'**
+  String get hmamZajl;
+
+  /// No description provided for @mrbyMhtrf.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربي محترف'**
+  String get mrbyMhtrf;
+
+  /// No description provided for @auction5.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات'**
+  String get auction5;
+
+  /// No description provided for @pairType4.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد زوج تربية'**
+  String get pairType4;
+
+  /// No description provided for @auction6.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد زاجل بلجيكي'**
+  String get auction6;
+
+  /// No description provided for @sarMbdyyJM.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر مبدئي: ج.م 5,000'**
+  String get sarMbdyyJM;
+
+  /// No description provided for @sarMbdyyJM2.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر مبدئي: ج.م 12,000'**
+  String get sarMbdyyJM2;
+
+  /// No description provided for @klAlanwaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الأنواع'**
+  String get klAlanwaa;
+
+  /// No description provided for @thanya.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثانية'**
+  String get thanya;
+
+  /// No description provided for @dqyqa.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة'**
+  String get dqyqa;
+
+  /// No description provided for @saaa2.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساعة'**
+  String get saaa2;
+
+  /// No description provided for @ywm2.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم'**
+  String get ywm2;
+
+  /// No description provided for @alryysya.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرئيسية'**
+  String get alryysya;
+
+  /// No description provided for @auction7.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزادات'**
+  String get auction7;
+
+  /// No description provided for @almtjr.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتجر'**
+  String get almtjr;
+
+  /// No description provided for @rooms.
+  ///
+  /// In ar, this message translates to:
+  /// **'الغرف'**
+  String get rooms;
+
+  /// No description provided for @alntayj.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتائج'**
+  String get alntayj;
+
+  /// No description provided for @active2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات نشطة'**
+  String get active2;
+
+  /// No description provided for @tnthyQryba.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنتهي قريباً'**
+  String get tnthyQryba;
+
+  /// No description provided for @alawsma.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأوسمة ({length})'**
+  String alawsma(int length);
+
+  /// No description provided for @mlgha.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُلغى'**
+  String get mlgha;
+
+  /// No description provided for @sjlAjlaAlhz.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل عجلة الحظ'**
+  String get sjlAjlaAlhz;
+
+  /// No description provided for @tmAlfwz.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الفوز'**
+  String get tmAlfwz;
+
+  /// No description provided for @lmTfz.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تفز'**
+  String get lmTfz;
+
+  /// No description provided for @loading4.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في تحميل العجلة'**
+  String get loading4;
+
+  /// No description provided for @auction8.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة'**
+  String get auction8;
+
+  /// No description provided for @auction9.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصلت على دورة مجانية بعد مشاركتك في المزاد'**
+  String get auction9;
+
+  /// No description provided for @thanyna.
+  ///
+  /// In ar, this message translates to:
+  /// **'🎉 تهانينا!'**
+  String get thanyna;
+
+  /// No description provided for @jrbHzkMraAkhra.
+  ///
+  /// In ar, this message translates to:
+  /// **'🎲 جرّب حظك مرة أخرى!'**
+  String get jrbHzkMraAkhra;
+
+  /// No description provided for @rayaAstlmJayztk.
+  ///
+  /// In ar, this message translates to:
+  /// **'رائع! استلم جائزتك'**
+  String get rayaAstlmJayztk;
+
+  /// No description provided for @upcoming2.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسناً، في المرة القادمة'**
+  String get upcoming2;
+
+  /// No description provided for @loading5.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تحميل الإشعارات'**
+  String get loading5;
+
+  /// No description provided for @tlbDfa.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب دفع #{id}'**
+  String tlbDfa(Object id);
+
+  /// No description provided for @rqmAltlb.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الطلب'**
+  String get rqmAltlb;
+
+  /// No description provided for @type2.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get type2;
+
+  /// No description provided for @almntj.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنتج'**
+  String get almntj;
+
+  /// No description provided for @alfya.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفئة'**
+  String get alfya;
+
+  /// No description provided for @buyer2.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم المشتري'**
+  String get buyer2;
+
+  /// No description provided for @auction10.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم قطعة المزاد'**
+  String get auction10;
+
+  /// No description provided for @item2.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم عنصر الطلب'**
+  String get item2;
+
+  /// No description provided for @creationDate2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الإنشاء'**
+  String get creationDate2;
+
+  /// No description provided for @tarykhAlqbwl.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ القبول'**
+  String get tarykhAlqbwl;
+
+  /// No description provided for @tarykhAlrfd.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الرفض'**
+  String get tarykhAlrfd;
+
+  /// No description provided for @no8.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة المشتري'**
+  String get no8;
+
+  /// No description provided for @no9.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة البائع'**
+  String get no9;
+
+  /// No description provided for @fthAlswra.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح الصورة'**
+  String get fthAlswra;
+
+  /// No description provided for @irfaqIthbatAldfa.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرفاق إثبات الدفع'**
+  String get irfaqIthbatAldfa;
+
+  /// No description provided for @resubmitPaymentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة إرسال طلب الدفع'**
+  String get resubmitPaymentTitle;
+
+  /// No description provided for @resubmitPaymentSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجب إرفاق إثبات الدفع لإعادة الإرسال'**
+  String get resubmitPaymentSubtitle;
+
+  /// No description provided for @proofRequiredHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرفاق إثبات الدفع مطلوب'**
+  String get proofRequiredHint;
+
+  /// No description provided for @resubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال'**
+  String get resubmit;
+
+  /// No description provided for @shhadaNsb.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة نسب #{id}'**
+  String shhadaNsb(Object id);
+
+  /// No description provided for @tmtAlmrajaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت المراجعة'**
+  String get tmtAlmrajaa;
+
+  /// No description provided for @save2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ البيانات المُراجَعة بنجاح.'**
+  String get save2;
+
+  /// No description provided for @tmtAlmaalja.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت المعالجة'**
+  String get tmtAlmaalja;
+
+  /// No description provided for @tmAstkhrajAlbyanatRajahaAdnah.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم استخراج البيانات. راجعها أدناه.'**
+  String get tmAstkhrajAlbyanatRajahaAdnah;
+
+  /// No description provided for @fshlAltarfAltlqayy.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل التعرف التلقائي'**
+  String get fshlAltarfAltlqayy;
+
+  /// No description provided for @lmYtmAltarfTlqayyaYmknk.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم التعرف تلقائياً، يمكنك المراجعة اليدوية.'**
+  String get lmYtmAltarfTlqayyaYmknk;
+
+  /// No description provided for @mrfwa.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوع'**
+  String get mrfwa;
+
+  /// No description provided for @jaryMaaljaAlmlf.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري معالجة الملف.'**
+  String get jaryMaaljaAlmlf;
+
+  /// No description provided for @save3.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الحفظ...'**
+  String get save3;
+
+  /// No description provided for @save4.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ المراجعة'**
+  String get save4;
+
+  /// No description provided for @shhadatAlnsb.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادات النسب'**
+  String get shhadatAlnsb;
+
+  /// No description provided for @rfaShhada.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفع شهادة'**
+  String get rfaShhada;
+
+  /// No description provided for @jaryAlrfa.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الرفع...'**
+  String get jaryAlrfa;
+
+  /// No description provided for @tmtAlmrajaa2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت المراجعة'**
+  String get tmtAlmrajaa2;
+
+  /// No description provided for @tmtAlmaalja2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت المعالجة'**
+  String get tmtAlmaalja2;
+
+  /// No description provided for @fshlMrajaaYdwya.
+  ///
+  /// In ar, this message translates to:
+  /// **'OCR فشل — مراجعة يدوية'**
+  String get fshlMrajaaYdwya;
+
+  /// No description provided for @mrfwa2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوع'**
+  String get mrfwa2;
+
+  /// No description provided for @mshRmz.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح رمز QR'**
+  String get mshRmz;
+
+  /// No description provided for @no10.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفلاش'**
+  String get no10;
+
+  /// No description provided for @loading6.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تحميل بيانات الطائر...'**
+  String get loading6;
+
+  /// No description provided for @wjhAlkamyraNhwRmzAla.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجّه الكاميرا نحو رمز QR على بطاقة الطائر'**
+  String get wjhAlkamyraNhwRmzAla;
+
+  /// No description provided for @delete2.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء الحذف'**
+  String get delete2;
+
+  /// No description provided for @alhala.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة'**
+  String get alhala;
+
+  /// No description provided for @mwthq.
+  ///
+  /// In ar, this message translates to:
+  /// **'موثّق ✓'**
+  String get mwthq;
+
+  /// No description provided for @loading7.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحميل وثائق النسب'**
+  String get loading7;
+
+  /// No description provided for @jarAlmaalja.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ المعالجة'**
+  String get jarAlmaalja;
+
+  /// No description provided for @tmtAlmaalja3.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت المعالجة'**
+  String get tmtAlmaalja3;
+
+  /// No description provided for @mraja.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراجع'**
+  String get mraja;
+
+  /// No description provided for @fshl.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل'**
+  String get fshl;
+
+  /// No description provided for @wthyqa.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثيقة #{id}'**
+  String wthyqa(Object id);
+
+  /// No description provided for @swrAlhmama.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور الحمامة'**
+  String get swrAlhmama;
+
+  /// No description provided for @next2.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي — تسجيل فيديو زاجل'**
+  String get next2;
+
+  /// No description provided for @akhtyary.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري'**
+  String get akhtyary;
+
+  /// No description provided for @mrajaaAlbyanat.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراجعة البيانات'**
+  String get mrajaaAlbyanat;
+
+  /// No description provided for @almrajaaAlnhayya.
+  ///
+  /// In ar, this message translates to:
+  /// **'المراجعة النهائية'**
+  String get almrajaaAlnhayya;
+
+  /// No description provided for @albyanatAlasasya.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات الأساسية'**
+  String get albyanatAlasasya;
+
+  /// No description provided for @thkr.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذكر 🔵'**
+  String get thkr;
+
+  /// No description provided for @antha.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنثى 🔴'**
+  String get antha;
+
+  /// No description provided for @alswr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصور ({length})'**
+  String alswr(int length);
+
+  /// No description provided for @fydywZajl.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيديو زاجل'**
+  String get fydywZajl;
+
+  /// No description provided for @tmTsjylFydywZajlBnjah.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسجيل فيديو زاجل بنجاح ✓'**
+  String get tmTsjylFydywZajlBnjah;
+
+  /// No description provided for @lmYtmTsjylAlfydywBad.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم تسجيل الفيديو بعد'**
+  String get lmYtmTsjylAlfydywBad;
+
+  /// No description provided for @racingType3.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتائج السباقات ({length})'**
+  String racingType3(int length);
+
+  /// No description provided for @inshaAlhwyaAlrqmya.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الهوية الرقمية'**
+  String get inshaAlhwyaAlrqmya;
+
+  /// No description provided for @mktml.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل'**
+  String get mktml;
+
+  /// No description provided for @naqs.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناقص'**
+  String get naqs;
+
+  /// No description provided for @btaqaAltayr.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطاقة الطائر'**
+  String get btaqaAltayr;
+
+  /// No description provided for @sraaAltyran.
+  ///
+  /// In ar, this message translates to:
+  /// **'سرعة الطيران'**
+  String get sraaAltyran;
+
+  /// No description provided for @alqdraAlaAlthml.
+  ///
+  /// In ar, this message translates to:
+  /// **'القدرة على التحمل'**
+  String get alqdraAlaAlthml;
+
+  /// No description provided for @almrby.
+  ///
+  /// In ar, this message translates to:
+  /// **'المربّي'**
+  String get almrby;
+
+  /// No description provided for @no11.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجسم كاملاً'**
+  String get no11;
+
+  /// No description provided for @no12.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب'**
+  String get no12;
+
+  /// No description provided for @aljnahYmynYsar.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجناح (يمين / يسار)'**
+  String get aljnahYmynYsar;
+
+  /// No description provided for @afrdAljnahWqrbhMnAlkamyra.
+  ///
+  /// In ar, this message translates to:
+  /// **'افرد الجناح وقربه من الكاميرا'**
+  String get afrdAljnahWqrbhMnAlkamyra;
+
+  /// No description provided for @alaynMakrw.
+  ///
+  /// In ar, this message translates to:
+  /// **'العين (ماكرو)'**
+  String get alaynMakrw;
+
+  /// No description provided for @no13.
+  ///
+  /// In ar, this message translates to:
+  /// **'قرّب الكاميرا من العين لالتقاط التفاصيل'**
+  String get no13;
+
+  /// No description provided for @takdMnWdwhArqamAldbla.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكد من وضوح أرقام الدبلة في المربع أسفل الشاشة'**
+  String get takdMnWdwhArqamAldbla;
+
+  /// No description provided for @rqmAldbla.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الدبلة'**
+  String get rqmAldbla;
+
+  /// No description provided for @mtlwbIthnAlkamyra.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطلوب إذن الكاميرا'**
+  String get mtlwbIthnAlkamyra;
+
+  /// No description provided for @no14.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد كاميرا متاحة'**
+  String get no14;
+
+  /// No description provided for @tathrTshghylAlkamyra.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تشغيل الكاميرا'**
+  String get tathrTshghylAlkamyra;
+
+  /// No description provided for @fshlDmjAlfydyw.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل دمج الفيديو'**
+  String get fshlDmjAlfydyw;
+
+  /// No description provided for @fshlDmjAlfydyw2.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل دمج الفيديو'**
+  String get fshlDmjAlfydyw2;
+
+  /// No description provided for @thabtSybdaAltsjylTlqayya.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثابت ✓ — سيبدأ التسجيل تلقائياً'**
+  String get thabtSybdaAltsjylTlqayya;
+
+  /// No description provided for @thbtAlkamyraLbdAltsjyl.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثبّت الكاميرا لبدء التسجيل'**
+  String get thbtAlkamyraLbdAltsjyl;
+
+  /// No description provided for @add2.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة غرفة جديدة'**
+  String get add2;
+
+  /// No description provided for @errorOccurred3.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ، حاول مجدداً'**
+  String get errorOccurred3;
+
+  /// No description provided for @mthalHmamAlzajlAlthhby.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: حمام الزاجل الذهبي'**
+  String get mthalHmamAlzajlAlthhby;
+
+  /// No description provided for @rooms2.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل اسم الغرفة'**
+  String get rooms2;
+
+  /// No description provided for @no15.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم قصير جداً'**
+  String get no15;
+
+  /// No description provided for @no16.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم المعروض'**
+  String get no16;
+
+  /// No description provided for @asmkFyAlmnsa.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمك في المنصة'**
+  String get asmkFyAlmnsa;
+
+  /// No description provided for @no17.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم مطلوب'**
+  String get no17;
+
+  /// No description provided for @akhtrDwltk.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر دولتك'**
+  String get akhtrDwltk;
+
+  /// No description provided for @alamla.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملة'**
+  String get alamla;
+
+  /// No description provided for @akhtrAlamla.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر العملة'**
+  String get akhtrAlamla;
+
+  /// No description provided for @mntqaAlkhtr.
+  ///
+  /// In ar, this message translates to:
+  /// **'منطقة الخطر'**
+  String get mntqaAlkhtr;
+
+  /// No description provided for @msr.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصر'**
+  String get msr;
+
+  /// No description provided for @alsawdya.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعودية'**
+  String get alsawdya;
+
+  /// No description provided for @alimarat.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإمارات'**
+  String get alimarat;
+
+  /// No description provided for @alkwyt.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكويت'**
+  String get alkwyt;
+
+  /// No description provided for @qtr.
+  ///
+  /// In ar, this message translates to:
+  /// **'قطر'**
+  String get qtr;
+
+  /// No description provided for @albhryn.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحرين'**
+  String get albhryn;
+
+  /// No description provided for @aman.
+  ///
+  /// In ar, this message translates to:
+  /// **'عُمان'**
+  String get aman;
+
+  /// No description provided for @alardn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأردن'**
+  String get alardn;
+
+  /// No description provided for @alaraq.
+  ///
+  /// In ar, this message translates to:
+  /// **'العراق'**
+  String get alaraq;
+
+  /// No description provided for @lbnan.
+  ///
+  /// In ar, this message translates to:
+  /// **'لبنان'**
+  String get lbnan;
+
+  /// No description provided for @swrya.
+  ///
+  /// In ar, this message translates to:
+  /// **'سوريا'**
+  String get swrya;
+
+  /// No description provided for @flstyn.
+  ///
+  /// In ar, this message translates to:
+  /// **'فلسطين'**
+  String get flstyn;
+
+  /// No description provided for @alymn.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليمن'**
+  String get alymn;
+
+  /// No description provided for @almghrb.
+  ///
+  /// In ar, this message translates to:
+  /// **'المغرب'**
+  String get almghrb;
+
+  /// No description provided for @twns.
+  ///
+  /// In ar, this message translates to:
+  /// **'تونس'**
+  String get twns;
+
+  /// No description provided for @aljzayr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجزائر'**
+  String get aljzayr;
+
+  /// No description provided for @lybya.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليبيا'**
+  String get lybya;
+
+  /// No description provided for @alswdan.
+  ///
+  /// In ar, this message translates to:
+  /// **'السودان'**
+  String get alswdan;
+
+  /// No description provided for @trkya.
+  ///
+  /// In ar, this message translates to:
+  /// **'تركيا'**
+  String get trkya;
+
+  /// No description provided for @errorOccurred4.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ، حاول مجدداً'**
+  String get errorOccurred4;
+
+  /// No description provided for @edit2.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الغرفة'**
+  String get edit2;
+
+  /// No description provided for @rooms3.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الغرفة'**
+  String get rooms3;
+
+  /// No description provided for @mthalHmamAlzajlAlthhby2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: حمام الزاجل الذهبي'**
+  String get mthalHmamAlzajlAlthhby2;
+
+  /// No description provided for @rooms4.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل اسم الغرفة'**
+  String get rooms4;
+
+  /// No description provided for @no18.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم قصير جداً'**
+  String get no18;
+
+  /// No description provided for @aldwla.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدولة'**
+  String get aldwla;
+
+  /// No description provided for @loading8.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في تحميل الملف الشخصي'**
+  String get loading8;
+
+  /// No description provided for @buyer3.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشتري'**
+  String get buyer3;
+
+  /// No description provided for @baya.
+  ///
+  /// In ar, this message translates to:
+  /// **'بائع'**
+  String get baya;
+
+  /// No description provided for @ghyrMfal.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير مفعّل'**
+  String get ghyrMfal;
+
+  /// No description provided for @mfal.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّل'**
+  String get mfal;
+
+  /// No description provided for @salh.
+  ///
+  /// In ar, this message translates to:
+  /// **'صالح'**
+  String get salh;
+
+  /// No description provided for @ghyrSalh.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير صالح'**
+  String get ghyrSalh;
+
+  /// No description provided for @rsydAlkashbak.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد الكاشباك'**
+  String get rsydAlkashbak;
+
+  /// No description provided for @alamla2.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملة'**
+  String get alamla2;
+
+  /// No description provided for @no19.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الانضمام'**
+  String get no19;
+
+  /// No description provided for @altlbatAlmktmla.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبات المكتملة'**
+  String get altlbatAlmktmla;
+
+  /// No description provided for @aldawatAlnajha.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعوات الناجحة'**
+  String get aldawatAlnajha;
+
+  /// No description provided for @khsmAlmstwa.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم المستوى'**
+  String get khsmAlmstwa;
+
+  /// No description provided for @kashBakAlmstwa.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاش باك المستوى'**
+  String get kashBakAlmstwa;
+
+  /// No description provided for @alarwdWaltkhfydat.
+  ///
+  /// In ar, this message translates to:
+  /// **'العروض والتخفيضات'**
+  String get alarwdWaltkhfydat;
+
+  /// No description provided for @arwdkAlkhasa.
+  ///
+  /// In ar, this message translates to:
+  /// **'عروضك الخاصة'**
+  String get arwdkAlkhasa;
+
+  /// No description provided for @arwdAltkhfyd.
+  ///
+  /// In ar, this message translates to:
+  /// **'عروض التخفيض'**
+  String get arwdAltkhfyd;
+
+  /// No description provided for @arwdAlkashBak.
+  ///
+  /// In ar, this message translates to:
+  /// **'عروض الكاش باك'**
+  String get arwdAlkashBak;
+
+  /// No description provided for @tkhfyd.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخفيض'**
+  String get tkhfyd;
+
+  /// No description provided for @kashBak.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاش باك'**
+  String get kashBak;
+
+  /// No description provided for @racingType4.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل السباق'**
+  String get racingType4;
+
+  /// No description provided for @loading9.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في تحميل السباق'**
+  String get loading9;
+
+  /// No description provided for @no20.
+  ///
+  /// In ar, this message translates to:
+  /// **'وقت الإطلاق'**
+  String get no20;
+
+  /// No description provided for @addAltywr.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الطيور'**
+  String get addAltywr;
+
+  /// No description provided for @addAlmtsabqyn.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد المتسابقين'**
+  String get addAlmtsabqyn;
+
+  /// No description provided for @almsafaAlmkhtta.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة المخططة'**
+  String get almsafaAlmkhtta;
+
+  /// No description provided for @halaAltqs.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة الطقس'**
+  String get halaAltqs;
+
+  /// No description provided for @no21.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get no21;
+
+  /// No description provided for @errorOccurred5.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ'**
+  String get errorOccurred5;
+
+  /// No description provided for @search4.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث برقم حلقة الحمام أو اسم المتسابق'**
+  String get search4;
+
+  /// No description provided for @errorOccurred6.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ'**
+  String get errorOccurred6;
+
+  /// No description provided for @no22.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد نتائج مطابقة'**
+  String get no22;
+
+  /// No description provided for @altalyqat.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعليقات'**
+  String get altalyqat;
+
+  /// No description provided for @brnamjAlihala.
+  ///
+  /// In ar, this message translates to:
+  /// **'برنامج الإحالة'**
+  String get brnamjAlihala;
+
+  /// No description provided for @loading10.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في تحميل الكود'**
+  String get loading10;
+
+  /// No description provided for @adkhlAlkwdHna.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الكود هنا...'**
+  String get adkhlAlkwdHna;
+
+  /// No description provided for @alfya2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفئة'**
+  String get alfya2;
+
+  /// No description provided for @asmAlmntj.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المنتج'**
+  String get asmAlmntj;
+
+  /// No description provided for @mthalAlfHmamBrymks.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: علف حمام بريمكس'**
+  String get mthalAlfHmamBrymks;
+
+  /// No description provided for @no23.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم يجب أن يكون 3 أحرف على الأقل'**
+  String get no23;
+
+  /// No description provided for @sfAlmntjBshklWadh.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف المنتج بشكل واضح...'**
+  String get sfAlmntjBshklWadh;
+
+  /// No description provided for @alwsfMtlwb.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف مطلوب'**
+  String get alwsfMtlwb;
+
+  /// No description provided for @alsarJM.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر (ج.م)'**
+  String get alsarJM;
+
+  /// No description provided for @sarGhyrSalh.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر غير صالح'**
+  String get sarGhyrSalh;
+
+  /// No description provided for @kmyaGhyrSalha.
+  ///
+  /// In ar, this message translates to:
+  /// **'كمية غير صالحة'**
+  String get kmyaGhyrSalha;
+
+  /// No description provided for @alhala2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة'**
+  String get alhala2;
+
+  /// No description provided for @alswrHta.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصور (حتى 5)'**
+  String get alswrHta;
+
+  /// No description provided for @packageLabel2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة المستخدمة'**
+  String get packageLabel2;
+
+  /// No description provided for @add3.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة المنتج'**
+  String get add3;
+
+  /// No description provided for @save5.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التعديلات'**
+  String get save5;
+
+  /// No description provided for @edit3.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المنتج'**
+  String get edit3;
+
+  /// No description provided for @add4.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة منتج جديد'**
+  String get add4;
+
+  /// No description provided for @iksswarat.
+  ///
+  /// In ar, this message translates to:
+  /// **'إكسسوارات'**
+  String get iksswarat;
+
+  /// No description provided for @no24.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعلاف والحبوب'**
+  String get no24;
+
+  /// No description provided for @no25.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكملات غذائية'**
+  String get no25;
+
+  /// No description provided for @mtah.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح'**
+  String get mtah;
+
+  /// No description provided for @mbaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'مباع'**
+  String get mbaa;
+
+  /// No description provided for @active3.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير نشط'**
+  String get active3;
+
+  /// No description provided for @errorOccurred7.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ'**
+  String get errorOccurred7;
+
+  /// No description provided for @all3.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get all3;
+
+  /// No description provided for @iksswarat2.
+  ///
+  /// In ar, this message translates to:
+  /// **'إكسسوارات'**
+  String get iksswarat2;
+
+  /// No description provided for @no26.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكملات'**
+  String get no26;
+
+  /// No description provided for @no27.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعلاف'**
+  String get no27;
+
+  /// No description provided for @lmTdfAyMntjatBad.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تضف أي منتجات بعد'**
+  String get lmTdfAyMntjatBad;
+
+  /// No description provided for @no28.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات في هذه الفئة'**
+  String get no28;
+
+  /// No description provided for @loading11.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في تحميل المنتجات'**
+  String get loading11;
+
+  /// No description provided for @jM4.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج.م'**
+  String jM4(double price);
+
+  /// No description provided for @qtaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} قطعة'**
+  String qtaa(int count);
+
+  /// No description provided for @alakthrShabya.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأكثر شعبية'**
+  String get alakthrShabya;
+
+  /// No description provided for @shhr2.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر'**
+  String get shhr2;
+
+  /// No description provided for @shhran.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهران'**
+  String get shhran;
+
+  /// No description provided for @ashhr.
+  ///
+  /// In ar, this message translates to:
+  /// **'{days} أشهر'**
+  String ashhr(int days);
+
+  /// No description provided for @ywm3.
+  ///
+  /// In ar, this message translates to:
+  /// **'{days} يوم'**
+  String ywm3(Object days);
+
+  /// No description provided for @nqtaIjmalya.
+  ///
+  /// In ar, this message translates to:
+  /// **'{points} نقطة إجمالية'**
+  String nqtaIjmalya(Object points);
+
+  /// No description provided for @auction11.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء مزاد: {auctionCost} نقطة لكل مزاد'**
+  String auction11(Object auctionCost);
+
+  /// No description provided for @nshrMntjNqtaLklMntj.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر منتج: {productCost} نقطة لكل منتج'**
+  String nshrMntjNqtaLklMntj(Object productCost);
+
+  /// No description provided for @salhaLmda.
+  ///
+  /// In ar, this message translates to:
+  /// **'صالحة لمدة {value}'**
+  String salhaLmda(Object value);
+
+  /// No description provided for @no29.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تقديم طلب الاشتراك بنجاح سيتم تفعيل الباقة من قِبَل المشرف قريباً'**
+  String get no29;
+
+  /// No description provided for @errorOccurred8.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ غير متوقع'**
+  String get errorOccurred8;
+
+  /// No description provided for @bantzarTfaylAlmshrf.
+  ///
+  /// In ar, this message translates to:
+  /// **'بانتظار تفعيل المشرف'**
+  String get bantzarTfaylAlmshrf;
+
+  /// No description provided for @tmIrfaqIthbatAldfa.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرفاق إثبات الدفع'**
+  String get tmIrfaqIthbatAldfa;
+
+  /// No description provided for @lmYrfqIthbatAldfa.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُرفق إثبات الدفع'**
+  String get lmYrfqIthbatAldfa;
+
+  /// No description provided for @ynayr.
+  ///
+  /// In ar, this message translates to:
+  /// **'يناير'**
+  String get ynayr;
+
+  /// No description provided for @ywnyw.
+  ///
+  /// In ar, this message translates to:
+  /// **'يونيو'**
+  String get ywnyw;
+
+  /// No description provided for @mayw.
+  ///
+  /// In ar, this message translates to:
+  /// **'مايو'**
+  String get mayw;
+
+  /// No description provided for @fbrayr.
+  ///
+  /// In ar, this message translates to:
+  /// **'فبراير'**
+  String get fbrayr;
+
+  /// No description provided for @mars.
+  ///
+  /// In ar, this message translates to:
+  /// **'مارس'**
+  String get mars;
+
+  /// No description provided for @abryl.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبريل'**
+  String get abryl;
+
+  /// No description provided for @dysmbr.
+  ///
+  /// In ar, this message translates to:
+  /// **'ديسمبر'**
+  String get dysmbr;
+
+  /// No description provided for @ywlyw.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوليو'**
+  String get ywlyw;
+
+  /// No description provided for @aghsts.
+  ///
+  /// In ar, this message translates to:
+  /// **'أغسطس'**
+  String get aghsts;
+
+  /// No description provided for @sbtmbr.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبتمبر'**
+  String get sbtmbr;
+
+  /// No description provided for @aktwbr.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكتوبر'**
+  String get aktwbr;
+
+  /// No description provided for @nwfmbr.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوفمبر'**
+  String get nwfmbr;
+
+  /// No description provided for @auction12.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزاد: {auctionCost} نقطة'**
+  String auction12(Object auctionCost);
+
+  /// No description provided for @mntjNqta.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتج: {productCost} نقطة'**
+  String mntjNqta(Object productCost);
+
+  /// No description provided for @akhtrMlf.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملف (JPG / PNG / PDF)'**
+  String get akhtrMlf;
+
+  /// No description provided for @jM5.
+  ///
+  /// In ar, this message translates to:
+  /// **'ج.م'**
+  String get jM5;
+
+  /// No description provided for @packageLabel3.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر هذه الباقة'**
+  String get packageLabel3;
+
+  /// No description provided for @subscribe.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك الآن'**
+  String get subscribe;
+
+  /// No description provided for @racingChampion.
+  ///
+  /// In ar, this message translates to:
+  /// **'racing, champion, ...'**
+  String get racingChampion;
+
+  /// No description provided for @writeComment.
+  ///
+  /// In ar, this message translates to:
+  /// **'Write a comment'**
+  String get writeComment;
+
+  /// No description provided for @notesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملاحظات'**
+  String get notesTitle;
+
+  /// No description provided for @paymentProofTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إثبات الدفع'**
+  String get paymentProofTitle;
+
+  /// No description provided for @sellerActionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجراء البائع'**
+  String get sellerActionTitle;
+
+  /// No description provided for @paymentRequestNum.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب #{id}'**
+  String paymentRequestNum(Object id);
+
+  /// No description provided for @auctionPaymentRejectedNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض طلب الدفع من قِبَل البائع. لا يمكن إعادة تقديم طلب دفع لهذا المزاد.'**
+  String get auctionPaymentRejectedNotice;
+
+  /// No description provided for @selectBirdSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيوري المتاحة للإضافة في المزاد'**
+  String get selectBirdSubtitle;
+
+  /// No description provided for @reservePriceField.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر الاحتياطي'**
+  String get reservePriceField;
+
+  /// No description provided for @pickSourceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طريقة الرفع'**
+  String get pickSourceTitle;
+
+  /// No description provided for @browseFiles.
+  ///
+  /// In ar, this message translates to:
+  /// **'استعراض الملفات'**
+  String get browseFiles;
+
+  /// No description provided for @selectFromGallery.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاختيار من المعرض'**
+  String get selectFromGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقاط صورة'**
+  String get takePhoto;
 }
 
 class _AppLocalizationsDelegate

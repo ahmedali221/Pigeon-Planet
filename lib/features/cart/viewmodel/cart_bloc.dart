@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../model/cart_model.dart';
@@ -106,11 +107,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       CartCheckoutRequested event, Emitter<CartState> emit) async {
     emit(state.copyWith(status: CartStatus.checkingOut));
     final result = await _repository.checkout();
-    result.fold(
-      (f) => emit(state.copyWith(
+    await result.fold(
+      (f) async => emit(state.copyWith(
           status: CartStatus.error, errorMessage: f.message)),
-      (order) => emit(state.copyWith(
-          status: CartStatus.checkedOut, lastOrder: order)),
+      (order) async {
+        emit(state.copyWith(
+            status: CartStatus.checkedOut,
+            lastOrder: order,
+            checkoutProofFile: event.proofFile));
+        // Reload cart — backend created a new empty active cart on checkout
+        final cartResult = await _repository.getCart();
+        cartResult.fold(
+          (_) => null,
+          (cart) => emit(state.copyWith(
+              status: CartStatus.checkedOut,
+              lastOrder: order,
+              checkoutProofFile: event.proofFile,
+              cart: cart)),
+        );
+      },
     );
   }
 

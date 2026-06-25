@@ -81,12 +81,12 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
       backgroundColor: Colors.black,
       appBar: PPWAppBar(
         backgroundColor: Colors.black,
-        title: 'مسح رمز QR',
+        title: AppLocalizations.of(context).mshRmz,
         actions: [
           IconButton(
             icon: const Icon(Icons.flash_on_rounded),
             onPressed: () => _ctrl.toggleTorch(),
-            tooltip: 'الفلاش',
+            tooltip: AppLocalizations.of(context).no10,
           ),
         ],
       ),
@@ -114,8 +114,8 @@ class _BirdQrScannerPageState extends State<BirdQrScannerPage> {
                   ),
                   child: Text(
                     _navigating
-                        ? 'جارٍ تحميل بيانات الطائر...'
-                        : 'وجّه الكاميرا نحو رمز QR على بطاقة الطائر',
+                        ? AppLocalizations.of(context).loading6
+                        : AppLocalizations.of(context).wjhAlkamyraNhwRmzAla,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,

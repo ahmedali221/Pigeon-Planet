@@ -13,21 +13,24 @@ class PaymentsLoadRequested extends PaymentsEvent {
 class AuctionPaymentCreateRequested extends PaymentsEvent {
   final int auctionItemId;
   final String? buyerNote;
+  final PlatformFile? proofFile;
 
-  const AuctionPaymentCreateRequested(this.auctionItemId, {this.buyerNote});
+  const AuctionPaymentCreateRequested(this.auctionItemId, {this.buyerNote, this.proofFile});
 
   @override
-  List<Object?> get props => [auctionItemId, buyerNote];
+  List<Object?> get props => [auctionItemId, buyerNote, proofFile?.path];
 }
 
 class MarketPaymentCreateRequested extends PaymentsEvent {
   final int orderItemId;
   final String? buyerNote;
+  final PlatformFile? proofFile;
 
-  const MarketPaymentCreateRequested(this.orderItemId, {this.buyerNote});
+  const MarketPaymentCreateRequested(this.orderItemId,
+      {this.buyerNote, this.proofFile});
 
   @override
-  List<Object?> get props => [orderItemId, buyerNote];
+  List<Object?> get props => [orderItemId, buyerNote, proofFile?.path];
 }
 
 class PaymentBuyerNoteUpdateRequested extends PaymentsEvent {

@@ -54,8 +54,8 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
   }
 
   String get _defaultTitle => widget.paymentRequest.isRejected
-      ? 'اعتراض على رفض الدفع'
-      : 'شكوى ما بعد البيع';
+      ? AppLocalizations.of(context).paymentRejectionDispute
+      : AppLocalizations.of(context).postSaleComplaint;
 
   void _submit(BuildContext context) {
     final title = _titleCtrl.text.trim();
@@ -112,8 +112,8 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
         final creating = state.status == ComplaintsStatus.creating;
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
-          appBar: const PPWAppBar(
-            title: 'تقديم شكوى',
+          appBar: PPWAppBar(
+            title: AppLocalizations.of(context).submitComplaint,
           ),
           body: ListView(
             padding: EdgeInsets.all(16),
@@ -199,7 +199,7 @@ class _ComplaintCreateViewState extends State<_ComplaintCreateView> {
                               )
                             : Icon(Icons.send_rounded, size: 18),
                         label: Text(
-                          creating ? 'جاري الإرسال...' : 'تقديم الشكوى',
+                          creating ? AppLocalizations.of(context).submit : AppLocalizations.of(context).submitComplaintAction,
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,

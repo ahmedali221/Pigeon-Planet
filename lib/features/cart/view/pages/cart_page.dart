@@ -16,7 +16,8 @@ class CartPage extends StatelessWidget {
     final l = AppLocalizations.of(context);
     return BlocConsumer<CartBloc, CartState>(
       listenWhen: (prev, curr) =>
-          curr.status == CartStatus.checkedOut ||
+          (curr.status == CartStatus.checkedOut &&
+              prev.status != CartStatus.checkedOut) ||
           (curr.status == CartStatus.error &&
               prev.status == CartStatus.checkingOut),
       listener: (context, state) {
@@ -24,8 +25,10 @@ class CartPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  OrderConfirmationPage(order: state.lastOrder!),
+              builder: (_) => OrderConfirmationPage(
+                order: state.lastOrder!,
+                proofFile: state.checkoutProofFile,
+              ),
             ),
           );
         } else if (state.status == CartStatus.error) {
@@ -38,27 +41,32 @@ class CartPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final isBusy = state.status == CartStatus.loading ||
+        final isBusy =
+            state.status == CartStatus.loading ||
             state.status == CartStatus.mutating ||
             state.status == CartStatus.checkingOut;
 
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
+            showCartAction: false,
             titleWidget: Row(
               children: [
                 Text(
                   l.cartTitle,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Colors.white),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Colors.white,
+                  ),
                 ),
                 if (state.itemsCount > 0) ...[
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -80,9 +88,7 @@ class CartPage extends StatelessWidget {
                 TextButton(
                   onPressed: isBusy
                       ? null
-                      : () => context
-                          .read<CartBloc>()
-                          .add(const CartCleared()),
+                      : () => context.read<CartBloc>().add(const CartCleared()),
                   child: Text(
                     l.clearCartBtn,
                     style: const TextStyle(color: Colors.white70),
@@ -92,44 +98,44 @@ class CartPage extends StatelessWidget {
           ),
           body: state.status == CartStatus.loading
               ? const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary))
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                )
               : state.isEmpty
-                  ? _EmptyCart(onBrowse: () => Navigator.pop(context))
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView.separated(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: state.cart!.items.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final item = state.cart!.items[index];
-                              return _CartItemCard(
-                                item: item,
-                                isBusy: isBusy,
-                                onRemove: () => context
-                                    .read<CartBloc>()
-                                    .add(CartItemRemoved(item.id)),
-                                onQuantityChanged: (qty) => context
-                                    .read<CartBloc>()
-                                    .add(CartItemQuantityChanged(
-                                        item.id, qty)),
-                              );
-                            },
-                          ),
-                        ),
-                        _CartFooter(
-                          subtotal: state.cart!.subtotal,
-                          isBusy: isBusy,
-                          isCheckingOut:
-                              state.status == CartStatus.checkingOut,
-                          onCheckout: () => context
-                              .read<CartBloc>()
-                              .add(const CartCheckoutRequested()),
-                        ),
-                      ],
+              ? _EmptyCart(onBrowse: () => Navigator.pop(context))
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: state.cart!.items.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final item = state.cart!.items[index];
+                          return _CartItemCard(
+                            item: item,
+                            isBusy: isBusy,
+                            onRemove: () => context.read<CartBloc>().add(
+                              CartItemRemoved(item.id),
+                            ),
+                            onQuantityChanged: (qty) => context
+                                .read<CartBloc>()
+                                .add(CartItemQuantityChanged(item.id, qty)),
+                          );
+                        },
+                      ),
                     ),
+                    _CartFooter(
+                      subtotal: state.cart!.subtotal,
+                      isBusy: isBusy,
+                      isCheckingOut: state.status == CartStatus.checkingOut,
+                      onCheckout: () {
+                        context.read<CartBloc>().add(
+                          const CartCheckoutRequested(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
         );
       },
     );
@@ -151,21 +157,28 @@ class _EmptyCart extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.shopping_cart_outlined,
-                size: 80, color: AppColors.textHint),
+            Icon(
+              Icons.shopping_cart_outlined,
+              size: 80,
+              color: AppColors.textHint,
+            ),
             const SizedBox(height: 16),
             Text(
               l.emptyCartTitle,
               style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               l.emptyCartSubtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -174,9 +187,12 @@ class _EmptyCart extends StatelessWidget {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 32, vertical: 14),
+                  horizontal: 32,
+                  vertical: 14,
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: Text(l.browseMarket),
             ),
@@ -235,8 +251,11 @@ class _CartItemCard extends StatelessWidget {
               ),
               // Remove button — leftmost in RTL
               IconButton(
-                icon: const Icon(Icons.delete_outline_rounded,
-                    color: AppColors.error, size: 20),
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
                 onPressed: isBusy ? null : onRemove,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -247,7 +266,9 @@ class _CartItemCard extends StatelessWidget {
           Text(
             item.sellerNickname,
             style: const TextStyle(
-                fontSize: 12, color: AppColors.textSecondary),
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -273,8 +294,7 @@ class _CartItemCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             '${item.unitPrice.toStringAsFixed(2)} ر.س × ${item.quantity}',
-            style: const TextStyle(
-                fontSize: 11, color: AppColors.textHint),
+            style: const TextStyle(fontSize: 11, color: AppColors.textHint),
           ),
         ],
       ),
@@ -314,8 +334,7 @@ class _QuantityStepper extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               '$quantity',
-              style: const TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ),
           // Increase — leftmost in RTL
@@ -341,9 +360,11 @@ class _StepButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(6),
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: Icon(icon,
-            size: 16,
-            color: onTap == null ? AppColors.textHint : AppColors.primary),
+        child: Icon(
+          icon,
+          size: 16,
+          color: onTap == null ? AppColors.textHint : AppColors.primary,
+        ),
       ),
     );
   }
@@ -388,7 +409,9 @@ class _CartFooter extends StatelessWidget {
               Text(
                 l.total,
                 style: const TextStyle(
-                    fontSize: 16, color: AppColors.textSecondary),
+                  fontSize: 16,
+                  color: AppColors.textSecondary,
+                ),
               ),
               const Spacer(),
               // Amount — leftmost in RTL
@@ -409,24 +432,30 @@ class _CartFooter extends StatelessWidget {
               onPressed: isBusy ? null : onCheckout,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                disabledBackgroundColor:
-                    AppColors.primary.withValues(alpha: 0.6),
+                disabledBackgroundColor: AppColors.primary.withValues(
+                  alpha: 0.6,
+                ),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
               child: isCheckingOut
                   ? const SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2.5, color: Colors.white),
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
                     )
                   : Text(
                       l.completeOrder,
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
             ),
           ),

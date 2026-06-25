@@ -151,18 +151,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (profile.isSeller) ...[
-                    _sectionLabel('الاسم المعروض'),
+                    _sectionLabel(AppLocalizations.of(context).no16),
                     SizedBox(height: 8),
                     TextFormField(
                       controller: _nicknameCtrl,
                       enabled: !isBusy,
                       decoration: _inputDecoration(
-                        hint: 'اسمك في المنصة',
+                        hint: AppLocalizations.of(context).asmkFyAlmnsa,
                         icon: Icons.badge_outlined,
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return 'الاسم مطلوب';
+                          return AppLocalizations.of(context).no17;
                         }
                         return null;
                       },
@@ -175,11 +175,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     initialValue: _selectedCountry,
                     isExpanded: true,
                     decoration: _inputDecoration(
-                      hint: 'اختر دولتك',
+                      hint: AppLocalizations.of(context).akhtrDwltk,
                       icon: Icons.flag_outlined,
                     ),
                     items: ProfileModel.countryCodes.map((code) {
-                      final name = _countryNameFor(code);
+                      final name = _countryNameFor(context, code);
                       return DropdownMenuItem(
                         value: code,
                         child: Text('$name ($code)'),
@@ -198,7 +198,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           },
                   ),
                   SizedBox(height: 20),
-                  _sectionLabel('العملة'),
+                  _sectionLabel(AppLocalizations.of(context).alamla),
                   SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCurrency.isNotEmpty
@@ -206,7 +206,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         : null,
                     isExpanded: true,
                     decoration: _inputDecoration(
-                      hint: 'اختر العملة',
+                      hint: AppLocalizations.of(context).akhtrAlamla,
                       icon: Icons.currency_exchange_outlined,
                     ),
                     items: ProfileModel.countryCurrency.values
@@ -252,7 +252,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   SizedBox(height: 32),
                   Divider(),
                   SizedBox(height: 16),
-                  _sectionLabel('منطقة الخطر', color: Colors.red.shade700),
+                  _sectionLabel(AppLocalizations.of(context).mntqaAlkhtr, color: Colors.red.shade700),
                   SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
@@ -329,27 +329,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
   );
 }
 
-String _countryNameFor(String code) {
+String _countryNameFor(BuildContext context, String code) {
   final names = {
-    'EG': 'مصر',
-    'SA': 'السعودية',
-    'AE': 'الإمارات',
-    'KW': 'الكويت',
-    'QA': 'قطر',
-    'BH': 'البحرين',
-    'OM': 'عُمان',
-    'JO': 'الأردن',
-    'IQ': 'العراق',
-    'LB': 'لبنان',
-    'SY': 'سوريا',
-    'PS': 'فلسطين',
-    'YE': 'اليمن',
-    'MA': 'المغرب',
-    'TN': 'تونس',
-    'DZ': 'الجزائر',
-    'LY': 'ليبيا',
-    'SD': 'السودان',
-    'TR': 'تركيا',
+    'EG': AppLocalizations.of(context).msr,
+    'SA': AppLocalizations.of(context).alsawdya,
+    'AE': AppLocalizations.of(context).alimarat,
+    'KW': AppLocalizations.of(context).alkwyt,
+    'QA': AppLocalizations.of(context).qtr,
+    'BH': AppLocalizations.of(context).albhryn,
+    'OM': AppLocalizations.of(context).aman,
+    'JO': AppLocalizations.of(context).alardn,
+    'IQ': AppLocalizations.of(context).alaraq,
+    'LB': AppLocalizations.of(context).lbnan,
+    'SY': AppLocalizations.of(context).swrya,
+    'PS': AppLocalizations.of(context).flstyn,
+    'YE': AppLocalizations.of(context).alymn,
+    'MA': AppLocalizations.of(context).almghrb,
+    'TN': AppLocalizations.of(context).twns,
+    'DZ': AppLocalizations.of(context).aljzayr,
+    'LY': AppLocalizations.of(context).lybya,
+    'SD': AppLocalizations.of(context).alswdan,
+    'TR': AppLocalizations.of(context).trkya,
   };
   return names[code] ?? code;
 }

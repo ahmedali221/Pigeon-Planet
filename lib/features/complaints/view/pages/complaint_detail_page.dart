@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -50,7 +50,7 @@ class ComplaintDetailPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
-            title: 'شكوى #${complaint.id}',
+            title: AppLocalizations.of(context).shkwa(complaint.id),
           ),
           body: ListView(
             padding: EdgeInsets.all(16),
@@ -195,32 +195,32 @@ class _DetailsCard extends StatelessWidget {
         children: [
           _DetailRow(
             icon: Icons.tag_rounded,
-            label: 'رقم الشكوى',
+            label: AppLocalizations.of(context).complaintNumber,
             value: '#${complaint.id}',
           ),
           Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.payment_rounded,
-            label: 'طلب الدفع',
+            label: AppLocalizations.of(context).paymentRequest,
             value: '#${complaint.paymentRequestId}',
           ),
           Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.category_outlined,
-            label: 'النوع',
+            label: AppLocalizations.of(context).type,
             value: complaint.typeLabel,
           ),
           Divider(height: 1, indent: 16, endIndent: 16),
           _DetailRow(
             icon: Icons.calendar_today_outlined,
-            label: 'تاريخ الإنشاء',
+            label: AppLocalizations.of(context).creationDate,
             value: fmt.format(complaint.createdAt),
           ),
           if (complaint.resolvedAt != null) ...[
             Divider(height: 1, indent: 16, endIndent: 16),
             _DetailRow(
               icon: Icons.check_circle_outline_rounded,
-              label: 'تاريخ الحل',
+              label: AppLocalizations.of(context).resolutionDate,
               value: fmt.format(complaint.resolvedAt!),
             ),
           ],
@@ -228,7 +228,7 @@ class _DetailsCard extends StatelessWidget {
             Divider(height: 1, indent: 16, endIndent: 16),
             _DetailRow(
               icon: Icons.cancel_outlined,
-              label: 'تاريخ الإلغاء',
+              label: AppLocalizations.of(context).cancel2,
               value: fmt.format(complaint.cancelledAt!),
             ),
           ],
@@ -312,7 +312,7 @@ class _DescriptionCard extends StatelessWidget {
           Text(
             complaint.description?.isNotEmpty == true
                 ? complaint.description!
-                : 'لا يوجد وصف',
+                : AppLocalizations.of(context).no5,
             style: TextStyle(
               fontSize: 14,
               height: 1.5,

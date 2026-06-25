@@ -10,6 +10,7 @@ class AuctionItemInput {
   final String? pairedGender;
   final String? pairedColour;
   final String startingPrice;
+  final String? reservePrice;
 
   const AuctionItemInput({
     this.birdId,
@@ -23,12 +24,15 @@ class AuctionItemInput {
     this.pairedGender,
     this.pairedColour,
     required this.startingPrice,
+    this.reservePrice,
   });
 
   Map<String, dynamic> toJson() => {
         if (birdId != null) 'bird_id': birdId,
         if (pairedBirdId != null) 'paired_bird_id': pairedBirdId,
         'starting_price': startingPrice,
+        if (reservePrice != null && reservePrice!.isNotEmpty)
+          'reserve_price': reservePrice,
       };
 }
 

@@ -1038,6 +1038,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeOrder => 'إتمام الطلب';
 
   @override
+  String get paymentProofSheetTitle => 'إثبات الدفع';
+
+  @override
+  String get paymentProofSheetSubtitle =>
+      'يرجى إرفاق صورة إثبات الدفع قبل إتمام الطلب';
+
+  @override
+  String get attachProofBtn => 'إرفاق إثبات الدفع';
+
+  @override
+  String get changeProofBtn => 'تغيير الملف';
+
+  @override
+  String get proofRequired => 'يجب إرفاق إثبات الدفع للمتابعة';
+
+  @override
+  String get proofAttached => 'تم إرفاق إثبات الدفع';
+
+  @override
+  String get confirmAndCheckout => 'تأكيد وإتمام الطلب';
+
+  @override
   String get birdsInThisAuction => 'الطيور في هذا المزاد';
 
   @override
@@ -1529,6 +1551,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusCompleted => 'مكتمل';
+
+  @override
+  String get statusApproved => 'موافق عليه';
+
+  @override
+  String get orderItemRejected => 'مرفوض من البائع';
+
+  @override
+  String get paymentUnderReview => 'الدفع قيد المراجعة';
 
   @override
   String get statusPartialRejected => 'مرفوض جزئياً';
@@ -2479,4 +2510,1151 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get listInMarketDesc => 'سيظهر الطائر للمشترين في المتجر';
+
+  @override
+  String get auction => 'هذا المزاد يقبل طائراً واحداً فقط';
+
+  @override
+  String get adfMnIla =>
+      'أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل';
+
+  @override
+  String get pairType =>
+      'أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)';
+
+  @override
+  String get pairType2 =>
+      'مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر';
+
+  @override
+  String get racingType => 'أضف طائرين على الأقل لمجموعة السباق';
+
+  @override
+  String get packageLabel => 'باقة';
+
+  @override
+  String get pointsLabel => 'نقاط';
+
+  @override
+  String get singleType => 'فردي';
+
+  @override
+  String get multipleType => 'متعدد';
+
+  @override
+  String get pairType3 => 'زوج';
+
+  @override
+  String get breedingType => 'تناسل';
+
+  @override
+  String get racingType2 => 'سباق';
+
+  @override
+  String get add => 'إضافة طائر جديد';
+
+  @override
+  String get auction2 => 'أنشئ بيانات طائر جديد وأضفه إلى المزاد';
+
+  @override
+  String get chooseBird => 'اختر طائراً موجوداً لم يُدرج في مزاد أو متجر';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String sna(Object years) {
+    return '$years سنة';
+  }
+
+  @override
+  String get aqlMnSna => 'أقل من سنة';
+
+  @override
+  String get notAvailable2 => 'غير متاح';
+
+  @override
+  String get no => 'لا يوجد وصف.';
+
+  @override
+  String get no2 => 'ملاحظة للبائع (اختياري)';
+
+  @override
+  String get no3 => 'هذا مزادك — لا يمكنك المزايدة';
+
+  @override
+  String get auctionEnded2 => 'انتهى المزاد';
+
+  @override
+  String get auctionNotStarted => 'المزاد لم يبدأ بعد';
+
+  @override
+  String get sold => 'مُباع';
+
+  @override
+  String get sold2 => 'غير مُباع';
+
+  @override
+  String get active => 'نشط';
+
+  @override
+  String get expired2 => 'منتهي';
+
+  @override
+  String get upcoming => 'قادم';
+
+  @override
+  String get enterValidNumber2 => 'أدخل رقمًا صحيحًا';
+
+  @override
+  String minimumBid(Object value) {
+    return 'الحد الأدنى $value ج.م';
+  }
+
+  @override
+  String get minimumBid2 => 'الحد الأدنى';
+
+  @override
+  String get currentPrice2 => 'السعر الحالي';
+
+  @override
+  String jM(Object value) {
+    return '$value ج.م';
+  }
+
+  @override
+  String get minimumBid3 => 'الحد الأدنى';
+
+  @override
+  String jM2(Object value) {
+    return '$value ج.م';
+  }
+
+  @override
+  String get jM3 => 'ج.م';
+
+  @override
+  String get all2 => 'الكل';
+
+  @override
+  String get ynthyQryba => 'ينتهي قريباً 🕐';
+
+  @override
+  String get auction3 => 'مزاداتي ✈️';
+
+  @override
+  String no4(Object _searchQuery) {
+    return 'لا توجد نتائج لـ \"$_searchQuery\"';
+  }
+
+  @override
+  String get loading => 'تحميل المزيد';
+
+  @override
+  String get loading2 => 'جارٍ التحميل...';
+
+  @override
+  String get myBids2 => 'مزايداتي';
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String sna2(Object years) {
+    return '$years سنة';
+  }
+
+  @override
+  String get buyer => 'مشتري';
+
+  @override
+  String get user => 'مستخدم';
+
+  @override
+  String shhr(int floor) {
+    return '$floor شهر';
+  }
+
+  @override
+  String ywm(int inDays) {
+    return '$inDays يوم';
+  }
+
+  @override
+  String saaa(int inHours) {
+    return '$inHours ساعة';
+  }
+
+  @override
+  String get now2 => 'الآن';
+
+  @override
+  String get loading3 => 'فشل تحميل الرسائل';
+
+  @override
+  String get errorOccurred2 => 'حدث خطأ';
+
+  @override
+  String get now3 => 'الآن';
+
+  @override
+  String mnthD(int inMinutes) {
+    return 'منذ $inMinutes د';
+  }
+
+  @override
+  String mnthS(int inHours) {
+    return 'منذ $inHours س';
+  }
+
+  @override
+  String mnthAyam(int inDays) {
+    return 'منذ $inDays أيام';
+  }
+
+  @override
+  String get paymentRejectionDispute => 'اعتراض على رفض الدفع';
+
+  @override
+  String get postSaleComplaint => 'شكوى ما بعد البيع';
+
+  @override
+  String get submitComplaint => 'تقديم شكوى';
+
+  @override
+  String get submit => 'جاري الإرسال...';
+
+  @override
+  String get submitComplaintAction => 'تقديم الشكوى';
+
+  @override
+  String shkwa(Object id) {
+    return 'شكوى #$id';
+  }
+
+  @override
+  String get complaintNumber => 'رقم الشكوى';
+
+  @override
+  String get paymentRequest => 'طلب الدفع';
+
+  @override
+  String get type => 'النوع';
+
+  @override
+  String get creationDate => 'تاريخ الإنشاء';
+
+  @override
+  String get resolutionDate => 'تاريخ الحل';
+
+  @override
+  String get cancel2 => 'تاريخ الإلغاء';
+
+  @override
+  String get no5 => 'لا يوجد وصف';
+
+  @override
+  String get complaints => 'الشكاوى';
+
+  @override
+  String get following => 'من أتابع';
+
+  @override
+  String almrbwnAlmtabawn(int length) {
+    return 'المربّون المتابَعون ($length)';
+  }
+
+  @override
+  String albaqatAlmtabaa(int length) {
+    return 'الباقات المتابَعة ($length)';
+  }
+
+  @override
+  String get peopleMayKnow => 'مربيون قد تعرفهم';
+
+  @override
+  String get refresh2 => 'تحديث';
+
+  @override
+  String get room => 'غرفة';
+
+  @override
+  String get listed => 'معروضة';
+
+  @override
+  String get search2 => 'ابحث باسم الغرفة أو الدولة';
+
+  @override
+  String get auction4 => 'مزاد';
+
+  @override
+  String get item => 'عنصر';
+
+  @override
+  String get rating => 'تقييم';
+
+  @override
+  String get no6 => 'لا توجد غرف حالياً';
+
+  @override
+  String get no7 => 'لا توجد نتائج مطابقة';
+
+  @override
+  String get search3 => 'جرّب البحث باسم آخر أو دولة مختلفة';
+
+  @override
+  String get refresh3 => 'اسحب للأسفل للتحديث والمحاولة مجدداً';
+
+  @override
+  String get room2 => 'غرفة';
+
+  @override
+  String mrbyMhtrfMn(String country) {
+    return 'مربي محترف من $country';
+  }
+
+  @override
+  String get hmamZajl => 'حمام زاجل';
+
+  @override
+  String get mrbyMhtrf => 'مربي محترف';
+
+  @override
+  String get auction5 => 'مزادات';
+
+  @override
+  String get pairType4 => 'مزاد زوج تربية';
+
+  @override
+  String get auction6 => 'مزاد زاجل بلجيكي';
+
+  @override
+  String get sarMbdyyJM => 'سعر مبدئي: ج.م 5,000';
+
+  @override
+  String get sarMbdyyJM2 => 'سعر مبدئي: ج.م 12,000';
+
+  @override
+  String get klAlanwaa => 'كل الأنواع';
+
+  @override
+  String get thanya => 'ثانية';
+
+  @override
+  String get dqyqa => 'دقيقة';
+
+  @override
+  String get saaa2 => 'ساعة';
+
+  @override
+  String get ywm2 => 'يوم';
+
+  @override
+  String get alryysya => 'الرئيسية';
+
+  @override
+  String get auction7 => 'المزادات';
+
+  @override
+  String get almtjr => 'المتجر';
+
+  @override
+  String get rooms => 'الغرف';
+
+  @override
+  String get alntayj => 'النتائج';
+
+  @override
+  String get active2 => 'مزادات نشطة';
+
+  @override
+  String get tnthyQryba => 'تنتهي قريباً';
+
+  @override
+  String alawsma(int length) {
+    return 'الأوسمة ($length)';
+  }
+
+  @override
+  String get mlgha => 'مُلغى';
+
+  @override
+  String get sjlAjlaAlhz => 'سجل عجلة الحظ';
+
+  @override
+  String get tmAlfwz => 'تم الفوز';
+
+  @override
+  String get lmTfz => 'لم تفز';
+
+  @override
+  String get loading4 => 'حدث خطأ في تحميل العجلة';
+
+  @override
+  String get auction8 =>
+      'حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة';
+
+  @override
+  String get auction9 => 'حصلت على دورة مجانية بعد مشاركتك في المزاد';
+
+  @override
+  String get thanyna => '🎉 تهانينا!';
+
+  @override
+  String get jrbHzkMraAkhra => '🎲 جرّب حظك مرة أخرى!';
+
+  @override
+  String get rayaAstlmJayztk => 'رائع! استلم جائزتك';
+
+  @override
+  String get upcoming2 => 'حسناً، في المرة القادمة';
+
+  @override
+  String get loading5 => 'فشل تحميل الإشعارات';
+
+  @override
+  String tlbDfa(Object id) {
+    return 'طلب دفع #$id';
+  }
+
+  @override
+  String get rqmAltlb => 'رقم الطلب';
+
+  @override
+  String get type2 => 'النوع';
+
+  @override
+  String get almntj => 'المنتج';
+
+  @override
+  String get alfya => 'الفئة';
+
+  @override
+  String get buyer2 => 'رقم المشتري';
+
+  @override
+  String get auction10 => 'رقم قطعة المزاد';
+
+  @override
+  String get item2 => 'رقم عنصر الطلب';
+
+  @override
+  String get creationDate2 => 'تاريخ الإنشاء';
+
+  @override
+  String get tarykhAlqbwl => 'تاريخ القبول';
+
+  @override
+  String get tarykhAlrfd => 'تاريخ الرفض';
+
+  @override
+  String get no8 => 'ملاحظة المشتري';
+
+  @override
+  String get no9 => 'ملاحظة البائع';
+
+  @override
+  String get fthAlswra => 'فتح الصورة';
+
+  @override
+  String get irfaqIthbatAldfa => 'إرفاق إثبات الدفع';
+
+  @override
+  String get resubmitPaymentTitle => 'إعادة إرسال طلب الدفع';
+
+  @override
+  String get resubmitPaymentSubtitle => 'يجب إرفاق إثبات الدفع لإعادة الإرسال';
+
+  @override
+  String get proofRequiredHint => 'إرفاق إثبات الدفع مطلوب';
+
+  @override
+  String get resubmit => 'إعادة الإرسال';
+
+  @override
+  String shhadaNsb(Object id) {
+    return 'شهادة نسب #$id';
+  }
+
+  @override
+  String get tmtAlmrajaa => 'تمت المراجعة';
+
+  @override
+  String get save2 => 'تم حفظ البيانات المُراجَعة بنجاح.';
+
+  @override
+  String get tmtAlmaalja => 'تمت المعالجة';
+
+  @override
+  String get tmAstkhrajAlbyanatRajahaAdnah =>
+      'تم استخراج البيانات. راجعها أدناه.';
+
+  @override
+  String get fshlAltarfAltlqayy => 'فشل التعرف التلقائي';
+
+  @override
+  String get lmYtmAltarfTlqayyaYmknk =>
+      'لم يتم التعرف تلقائياً، يمكنك المراجعة اليدوية.';
+
+  @override
+  String get mrfwa => 'مرفوع';
+
+  @override
+  String get jaryMaaljaAlmlf => 'جاري معالجة الملف.';
+
+  @override
+  String get save3 => 'جاري الحفظ...';
+
+  @override
+  String get save4 => 'حفظ المراجعة';
+
+  @override
+  String get shhadatAlnsb => 'شهادات النسب';
+
+  @override
+  String get rfaShhada => 'رفع شهادة';
+
+  @override
+  String get jaryAlrfa => 'جاري الرفع...';
+
+  @override
+  String get tmtAlmrajaa2 => 'تمت المراجعة';
+
+  @override
+  String get tmtAlmaalja2 => 'تمت المعالجة';
+
+  @override
+  String get fshlMrajaaYdwya => 'OCR فشل — مراجعة يدوية';
+
+  @override
+  String get mrfwa2 => 'مرفوع';
+
+  @override
+  String get mshRmz => 'مسح رمز QR';
+
+  @override
+  String get no10 => 'الفلاش';
+
+  @override
+  String get loading6 => 'جارٍ تحميل بيانات الطائر...';
+
+  @override
+  String get wjhAlkamyraNhwRmzAla =>
+      'وجّه الكاميرا نحو رمز QR على بطاقة الطائر';
+
+  @override
+  String get delete2 => 'حدث خطأ أثناء الحذف';
+
+  @override
+  String get alhala => 'الحالة';
+
+  @override
+  String get mwthq => 'موثّق ✓';
+
+  @override
+  String get loading7 => 'تعذّر تحميل وثائق النسب';
+
+  @override
+  String get jarAlmaalja => 'جارٍ المعالجة';
+
+  @override
+  String get tmtAlmaalja3 => 'تمت المعالجة';
+
+  @override
+  String get mraja => 'مراجع';
+
+  @override
+  String get fshl => 'فشل';
+
+  @override
+  String wthyqa(Object id) {
+    return 'وثيقة #$id';
+  }
+
+  @override
+  String get swrAlhmama => 'صور الحمامة';
+
+  @override
+  String get next2 => 'التالي — تسجيل فيديو زاجل';
+
+  @override
+  String get akhtyary => 'اختياري';
+
+  @override
+  String get mrajaaAlbyanat => 'مراجعة البيانات';
+
+  @override
+  String get almrajaaAlnhayya => 'المراجعة النهائية';
+
+  @override
+  String get albyanatAlasasya => 'البيانات الأساسية';
+
+  @override
+  String get thkr => 'ذكر 🔵';
+
+  @override
+  String get antha => 'أنثى 🔴';
+
+  @override
+  String alswr(int length) {
+    return 'الصور ($length)';
+  }
+
+  @override
+  String get fydywZajl => 'فيديو زاجل';
+
+  @override
+  String get tmTsjylFydywZajlBnjah => 'تم تسجيل فيديو زاجل بنجاح ✓';
+
+  @override
+  String get lmYtmTsjylAlfydywBad => 'لم يتم تسجيل الفيديو بعد';
+
+  @override
+  String racingType3(int length) {
+    return 'نتائج السباقات ($length)';
+  }
+
+  @override
+  String get inshaAlhwyaAlrqmya => 'إنشاء الهوية الرقمية';
+
+  @override
+  String get mktml => 'مكتمل';
+
+  @override
+  String get naqs => 'ناقص';
+
+  @override
+  String get btaqaAltayr => 'بطاقة الطائر';
+
+  @override
+  String get sraaAltyran => 'سرعة الطيران';
+
+  @override
+  String get alqdraAlaAlthml => 'القدرة على التحمل';
+
+  @override
+  String get almrby => 'المربّي';
+
+  @override
+  String get no11 => 'الجسم كاملاً';
+
+  @override
+  String get no12 => 'وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب';
+
+  @override
+  String get aljnahYmynYsar => 'الجناح (يمين / يسار)';
+
+  @override
+  String get afrdAljnahWqrbhMnAlkamyra => 'افرد الجناح وقربه من الكاميرا';
+
+  @override
+  String get alaynMakrw => 'العين (ماكرو)';
+
+  @override
+  String get no13 => 'قرّب الكاميرا من العين لالتقاط التفاصيل';
+
+  @override
+  String get takdMnWdwhArqamAldbla =>
+      'تأكد من وضوح أرقام الدبلة في المربع أسفل الشاشة';
+
+  @override
+  String get rqmAldbla => 'رقم الدبلة';
+
+  @override
+  String get mtlwbIthnAlkamyra => 'مطلوب إذن الكاميرا';
+
+  @override
+  String get no14 => 'لا توجد كاميرا متاحة';
+
+  @override
+  String get tathrTshghylAlkamyra => 'تعذّر تشغيل الكاميرا';
+
+  @override
+  String get fshlDmjAlfydyw => 'فشل دمج الفيديو';
+
+  @override
+  String get fshlDmjAlfydyw2 => 'فشل دمج الفيديو';
+
+  @override
+  String get thabtSybdaAltsjylTlqayya => 'ثابت ✓ — سيبدأ التسجيل تلقائياً';
+
+  @override
+  String get thbtAlkamyraLbdAltsjyl => 'ثبّت الكاميرا لبدء التسجيل';
+
+  @override
+  String get add2 => 'إضافة غرفة جديدة';
+
+  @override
+  String get errorOccurred3 => 'حدث خطأ، حاول مجدداً';
+
+  @override
+  String get mthalHmamAlzajlAlthhby => 'مثال: حمام الزاجل الذهبي';
+
+  @override
+  String get rooms2 => 'أدخل اسم الغرفة';
+
+  @override
+  String get no15 => 'الاسم قصير جداً';
+
+  @override
+  String get no16 => 'الاسم المعروض';
+
+  @override
+  String get asmkFyAlmnsa => 'اسمك في المنصة';
+
+  @override
+  String get no17 => 'الاسم مطلوب';
+
+  @override
+  String get akhtrDwltk => 'اختر دولتك';
+
+  @override
+  String get alamla => 'العملة';
+
+  @override
+  String get akhtrAlamla => 'اختر العملة';
+
+  @override
+  String get mntqaAlkhtr => 'منطقة الخطر';
+
+  @override
+  String get msr => 'مصر';
+
+  @override
+  String get alsawdya => 'السعودية';
+
+  @override
+  String get alimarat => 'الإمارات';
+
+  @override
+  String get alkwyt => 'الكويت';
+
+  @override
+  String get qtr => 'قطر';
+
+  @override
+  String get albhryn => 'البحرين';
+
+  @override
+  String get aman => 'عُمان';
+
+  @override
+  String get alardn => 'الأردن';
+
+  @override
+  String get alaraq => 'العراق';
+
+  @override
+  String get lbnan => 'لبنان';
+
+  @override
+  String get swrya => 'سوريا';
+
+  @override
+  String get flstyn => 'فلسطين';
+
+  @override
+  String get alymn => 'اليمن';
+
+  @override
+  String get almghrb => 'المغرب';
+
+  @override
+  String get twns => 'تونس';
+
+  @override
+  String get aljzayr => 'الجزائر';
+
+  @override
+  String get lybya => 'ليبيا';
+
+  @override
+  String get alswdan => 'السودان';
+
+  @override
+  String get trkya => 'تركيا';
+
+  @override
+  String get errorOccurred4 => 'حدث خطأ، حاول مجدداً';
+
+  @override
+  String get edit2 => 'تعديل الغرفة';
+
+  @override
+  String get rooms3 => 'اسم الغرفة';
+
+  @override
+  String get mthalHmamAlzajlAlthhby2 => 'مثال: حمام الزاجل الذهبي';
+
+  @override
+  String get rooms4 => 'أدخل اسم الغرفة';
+
+  @override
+  String get no18 => 'الاسم قصير جداً';
+
+  @override
+  String get aldwla => 'الدولة';
+
+  @override
+  String get loading8 => 'حدث خطأ في تحميل الملف الشخصي';
+
+  @override
+  String get buyer3 => 'مشتري';
+
+  @override
+  String get baya => 'بائع';
+
+  @override
+  String get ghyrMfal => 'غير مفعّل';
+
+  @override
+  String get mfal => 'مفعّل';
+
+  @override
+  String get salh => 'صالح';
+
+  @override
+  String get ghyrSalh => 'غير صالح';
+
+  @override
+  String get rsydAlkashbak => 'رصيد الكاشباك';
+
+  @override
+  String get alamla2 => 'العملة';
+
+  @override
+  String get no19 => 'تاريخ الانضمام';
+
+  @override
+  String get altlbatAlmktmla => 'الطلبات المكتملة';
+
+  @override
+  String get aldawatAlnajha => 'الدعوات الناجحة';
+
+  @override
+  String get khsmAlmstwa => 'خصم المستوى';
+
+  @override
+  String get kashBakAlmstwa => 'كاش باك المستوى';
+
+  @override
+  String get alarwdWaltkhfydat => 'العروض والتخفيضات';
+
+  @override
+  String get arwdkAlkhasa => 'عروضك الخاصة';
+
+  @override
+  String get arwdAltkhfyd => 'عروض التخفيض';
+
+  @override
+  String get arwdAlkashBak => 'عروض الكاش باك';
+
+  @override
+  String get tkhfyd => 'تخفيض';
+
+  @override
+  String get kashBak => 'كاش باك';
+
+  @override
+  String get racingType4 => 'تفاصيل السباق';
+
+  @override
+  String get loading9 => 'حدث خطأ في تحميل السباق';
+
+  @override
+  String get no20 => 'وقت الإطلاق';
+
+  @override
+  String get addAltywr => 'عدد الطيور';
+
+  @override
+  String get addAlmtsabqyn => 'عدد المتسابقين';
+
+  @override
+  String get almsafaAlmkhtta => 'المسافة المخططة';
+
+  @override
+  String get halaAltqs => 'حالة الطقس';
+
+  @override
+  String get no21 => 'ملاحظات';
+
+  @override
+  String get errorOccurred5 => 'حدث خطأ';
+
+  @override
+  String get search4 => 'ابحث برقم حلقة الحمام أو اسم المتسابق';
+
+  @override
+  String get errorOccurred6 => 'حدث خطأ';
+
+  @override
+  String get no22 => 'لا توجد نتائج مطابقة';
+
+  @override
+  String get altalyqat => 'التعليقات';
+
+  @override
+  String get brnamjAlihala => 'برنامج الإحالة';
+
+  @override
+  String get loading10 => 'فشل في تحميل الكود';
+
+  @override
+  String get adkhlAlkwdHna => 'أدخل الكود هنا...';
+
+  @override
+  String get alfya2 => 'الفئة';
+
+  @override
+  String get asmAlmntj => 'اسم المنتج';
+
+  @override
+  String get mthalAlfHmamBrymks => 'مثال: علف حمام بريمكس';
+
+  @override
+  String get no23 => 'الاسم يجب أن يكون 3 أحرف على الأقل';
+
+  @override
+  String get sfAlmntjBshklWadh => 'صف المنتج بشكل واضح...';
+
+  @override
+  String get alwsfMtlwb => 'الوصف مطلوب';
+
+  @override
+  String get alsarJM => 'السعر (ج.م)';
+
+  @override
+  String get sarGhyrSalh => 'سعر غير صالح';
+
+  @override
+  String get kmyaGhyrSalha => 'كمية غير صالحة';
+
+  @override
+  String get alhala2 => 'الحالة';
+
+  @override
+  String get alswrHta => 'الصور (حتى 5)';
+
+  @override
+  String get packageLabel2 => 'الباقة المستخدمة';
+
+  @override
+  String get add3 => 'إضافة المنتج';
+
+  @override
+  String get save5 => 'حفظ التعديلات';
+
+  @override
+  String get edit3 => 'تعديل المنتج';
+
+  @override
+  String get add4 => 'إضافة منتج جديد';
+
+  @override
+  String get iksswarat => 'إكسسوارات';
+
+  @override
+  String get no24 => 'أعلاف والحبوب';
+
+  @override
+  String get no25 => 'مكملات غذائية';
+
+  @override
+  String get mtah => 'متاح';
+
+  @override
+  String get mbaa => 'مباع';
+
+  @override
+  String get active3 => 'غير نشط';
+
+  @override
+  String get errorOccurred7 => 'حدث خطأ';
+
+  @override
+  String get all3 => 'الكل';
+
+  @override
+  String get iksswarat2 => 'إكسسوارات';
+
+  @override
+  String get no26 => 'مكملات';
+
+  @override
+  String get no27 => 'أعلاف';
+
+  @override
+  String get lmTdfAyMntjatBad => 'لم تضف أي منتجات بعد';
+
+  @override
+  String get no28 => 'لا توجد منتجات في هذه الفئة';
+
+  @override
+  String get loading11 => 'حدث خطأ في تحميل المنتجات';
+
+  @override
+  String jM4(double price) {
+    return '$price ج.م';
+  }
+
+  @override
+  String qtaa(int count) {
+    return '$count قطعة';
+  }
+
+  @override
+  String get alakthrShabya => 'الأكثر شعبية';
+
+  @override
+  String get shhr2 => 'شهر';
+
+  @override
+  String get shhran => 'شهران';
+
+  @override
+  String ashhr(int days) {
+    return '$days أشهر';
+  }
+
+  @override
+  String ywm3(Object days) {
+    return '$days يوم';
+  }
+
+  @override
+  String nqtaIjmalya(Object points) {
+    return '$points نقطة إجمالية';
+  }
+
+  @override
+  String auction11(Object auctionCost) {
+    return 'إنشاء مزاد: $auctionCost نقطة لكل مزاد';
+  }
+
+  @override
+  String nshrMntjNqtaLklMntj(Object productCost) {
+    return 'نشر منتج: $productCost نقطة لكل منتج';
+  }
+
+  @override
+  String salhaLmda(Object value) {
+    return 'صالحة لمدة $value';
+  }
+
+  @override
+  String get no29 =>
+      'تم تقديم طلب الاشتراك بنجاح سيتم تفعيل الباقة من قِبَل المشرف قريباً';
+
+  @override
+  String get errorOccurred8 => 'حدث خطأ غير متوقع';
+
+  @override
+  String get bantzarTfaylAlmshrf => 'بانتظار تفعيل المشرف';
+
+  @override
+  String get tmIrfaqIthbatAldfa => 'تم إرفاق إثبات الدفع';
+
+  @override
+  String get lmYrfqIthbatAldfa => 'لم يُرفق إثبات الدفع';
+
+  @override
+  String get ynayr => 'يناير';
+
+  @override
+  String get ywnyw => 'يونيو';
+
+  @override
+  String get mayw => 'مايو';
+
+  @override
+  String get fbrayr => 'فبراير';
+
+  @override
+  String get mars => 'مارس';
+
+  @override
+  String get abryl => 'أبريل';
+
+  @override
+  String get dysmbr => 'ديسمبر';
+
+  @override
+  String get ywlyw => 'يوليو';
+
+  @override
+  String get aghsts => 'أغسطس';
+
+  @override
+  String get sbtmbr => 'سبتمبر';
+
+  @override
+  String get aktwbr => 'أكتوبر';
+
+  @override
+  String get nwfmbr => 'نوفمبر';
+
+  @override
+  String auction12(Object auctionCost) {
+    return 'مزاد: $auctionCost نقطة';
+  }
+
+  @override
+  String mntjNqta(Object productCost) {
+    return 'منتج: $productCost نقطة';
+  }
+
+  @override
+  String get akhtrMlf => 'اختر ملف (JPG / PNG / PDF)';
+
+  @override
+  String get jM5 => 'ج.م';
+
+  @override
+  String get packageLabel3 => 'اختر هذه الباقة';
+
+  @override
+  String get subscribe => 'اشترك الآن';
+
+  @override
+  String get racingChampion => 'racing, champion, ...';
+
+  @override
+  String get writeComment => 'Write a comment';
+
+  @override
+  String get notesTitle => 'الملاحظات';
+
+  @override
+  String get paymentProofTitle => 'إثبات الدفع';
+
+  @override
+  String get sellerActionTitle => 'إجراء البائع';
+
+  @override
+  String paymentRequestNum(Object id) {
+    return 'طلب #$id';
+  }
+
+  @override
+  String get auctionPaymentRejectedNotice =>
+      'تم رفض طلب الدفع من قِبَل البائع. لا يمكن إعادة تقديم طلب دفع لهذا المزاد.';
+
+  @override
+  String get selectBirdSubtitle => 'طيوري المتاحة للإضافة في المزاد';
+
+  @override
+  String get reservePriceField => 'السعر الاحتياطي';
+
+  @override
+  String get pickSourceTitle => 'اختر طريقة الرفع';
+
+  @override
+  String get browseFiles => 'استعراض الملفات';
+
+  @override
+  String get selectFromGallery => 'الاختيار من المعرض';
+
+  @override
+  String get takePhoto => 'التقاط صورة';
 }

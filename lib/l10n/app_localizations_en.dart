@@ -1045,6 +1045,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completeOrder => 'Complete Order';
 
   @override
+  String get paymentProofSheetTitle => 'Payment Proof';
+
+  @override
+  String get paymentProofSheetSubtitle =>
+      'Please attach your payment proof before completing the order';
+
+  @override
+  String get attachProofBtn => 'Attach Payment Proof';
+
+  @override
+  String get changeProofBtn => 'Change File';
+
+  @override
+  String get proofRequired => 'Payment proof is required to proceed';
+
+  @override
+  String get proofAttached => 'Payment proof attached';
+
+  @override
+  String get confirmAndCheckout => 'Confirm & Complete Order';
+
+  @override
   String get birdsInThisAuction => 'Birds in this auction';
 
   @override
@@ -1538,6 +1560,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusCompleted => 'Completed';
+
+  @override
+  String get statusApproved => 'Approved';
+
+  @override
+  String get orderItemRejected => 'Rejected by seller';
+
+  @override
+  String get paymentUnderReview => 'Payment under review';
 
   @override
   String get statusPartialRejected => 'Partially rejected';
@@ -2284,7 +2315,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addNewBirdSubtitle => 'أنشئ بيانات طائر جديد وأضفه إلى المزاد';
 
   @override
-  String get chooseFromMyBirds => 'اختيار من طيوري';
+  String get chooseFromMyBirds => 'TODO: اختيار من طيوري';
 
   @override
   String get chooseFromMyBirdsSub =>
@@ -2443,7 +2474,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get achievementsRequired => 'Achievements *';
 
   @override
-  String get achievementsHint => "Write the bird's most important achievements";
+  String get achievementsHint =>
+      'Write the bird\'s most important achievements';
 
   @override
   String get staminaRequired => 'Stamina ability *';
@@ -2497,6 +2529,1153 @@ class AppLocalizationsEn extends AppLocalizations {
   String get listInMarket => 'List in market';
 
   @override
-  String get listInMarketDesc =>
-      'The bird will appear to buyers in the market';
+  String get listInMarketDesc => 'The bird will appear to buyers in the market';
+
+  @override
+  String get auction => 'TODO: هذا المزاد يقبل طائراً واحداً فقط';
+
+  @override
+  String get adfMnIla =>
+      'TODO: أضف من ٢ إلى ١٠ طيور — كل طائر يُزايد عليه بشكل مستقل';
+
+  @override
+  String get pairType =>
+      'TODO: أضف طائراً واحداً ثم اختر زوجه من بطاقة الطائر (ذكر + أنثى)';
+
+  @override
+  String get pairType2 =>
+      'TODO: مزاد تناسل — طائر واحد مع زوجه (ذكر + أنثى) من بطاقة الطائر';
+
+  @override
+  String get racingType => 'TODO: أضف طائرين على الأقل لمجموعة السباق';
+
+  @override
+  String get packageLabel => 'TODO: باقة';
+
+  @override
+  String get pointsLabel => 'TODO: نقاط';
+
+  @override
+  String get singleType => 'TODO: فردي';
+
+  @override
+  String get multipleType => 'TODO: متعدد';
+
+  @override
+  String get pairType3 => 'TODO: زوج';
+
+  @override
+  String get breedingType => 'TODO: تناسل';
+
+  @override
+  String get racingType2 => 'TODO: سباق';
+
+  @override
+  String get add => 'TODO: إضافة طائر جديد';
+
+  @override
+  String get auction2 => 'TODO: أنشئ بيانات طائر جديد وأضفه إلى المزاد';
+
+  @override
+  String get chooseBird => 'TODO: اختر طائراً موجوداً لم يُدرج في مزاد أو متجر';
+
+  @override
+  String get notSpecified => 'TODO: غير محدد';
+
+  @override
+  String sna(Object years) {
+    return 'TODO: $years سنة';
+  }
+
+  @override
+  String get aqlMnSna => 'TODO: أقل من سنة';
+
+  @override
+  String get notAvailable2 => 'TODO: غير متاح';
+
+  @override
+  String get no => 'TODO: لا يوجد وصف.';
+
+  @override
+  String get no2 => 'TODO: ملاحظة للبائع (اختياري)';
+
+  @override
+  String get no3 => 'TODO: هذا مزادك — لا يمكنك المزايدة';
+
+  @override
+  String get auctionEnded2 => 'TODO: انتهى المزاد';
+
+  @override
+  String get auctionNotStarted => 'TODO: المزاد لم يبدأ بعد';
+
+  @override
+  String get sold => 'TODO: مُباع';
+
+  @override
+  String get sold2 => 'TODO: غير مُباع';
+
+  @override
+  String get active => 'TODO: نشط';
+
+  @override
+  String get expired2 => 'TODO: منتهي';
+
+  @override
+  String get upcoming => 'TODO: قادم';
+
+  @override
+  String get enterValidNumber2 => 'TODO: أدخل رقمًا صحيحًا';
+
+  @override
+  String minimumBid(Object value) {
+    return 'TODO: الحد الأدنى $value ج.م';
+  }
+
+  @override
+  String get minimumBid2 => 'TODO: الحد الأدنى';
+
+  @override
+  String get currentPrice2 => 'TODO: السعر الحالي';
+
+  @override
+  String jM(Object value) {
+    return 'TODO: $value ج.م';
+  }
+
+  @override
+  String get minimumBid3 => 'TODO: الحد الأدنى';
+
+  @override
+  String jM2(Object value) {
+    return 'TODO: $value ج.م';
+  }
+
+  @override
+  String get jM3 => 'TODO: ج.م';
+
+  @override
+  String get all2 => 'TODO: الكل';
+
+  @override
+  String get ynthyQryba => 'TODO: ينتهي قريباً 🕐';
+
+  @override
+  String get auction3 => 'TODO: مزاداتي ✈️';
+
+  @override
+  String no4(Object _searchQuery) {
+    return 'TODO: لا توجد نتائج لـ \"$_searchQuery\"';
+  }
+
+  @override
+  String get loading => 'TODO: تحميل المزيد';
+
+  @override
+  String get loading2 => 'TODO: جارٍ التحميل...';
+
+  @override
+  String get myBids2 => 'TODO: مزايداتي';
+
+  @override
+  String get refresh => 'TODO: تحديث';
+
+  @override
+  String sna2(Object years) {
+    return 'TODO: $years سنة';
+  }
+
+  @override
+  String get buyer => 'TODO: مشتري';
+
+  @override
+  String get user => 'TODO: مستخدم';
+
+  @override
+  String shhr(int floor) {
+    return 'TODO: $floor شهر';
+  }
+
+  @override
+  String ywm(int inDays) {
+    return 'TODO: $inDays يوم';
+  }
+
+  @override
+  String saaa(int inHours) {
+    return 'TODO: $inHours ساعة';
+  }
+
+  @override
+  String get now2 => 'TODO: الآن';
+
+  @override
+  String get loading3 => 'TODO: فشل تحميل الرسائل';
+
+  @override
+  String get errorOccurred2 => 'TODO: حدث خطأ';
+
+  @override
+  String get now3 => 'TODO: الآن';
+
+  @override
+  String mnthD(int inMinutes) {
+    return 'TODO: منذ $inMinutes د';
+  }
+
+  @override
+  String mnthS(int inHours) {
+    return 'TODO: منذ $inHours س';
+  }
+
+  @override
+  String mnthAyam(int inDays) {
+    return 'TODO: منذ $inDays أيام';
+  }
+
+  @override
+  String get paymentRejectionDispute => 'TODO: اعتراض على رفض الدفع';
+
+  @override
+  String get postSaleComplaint => 'TODO: شكوى ما بعد البيع';
+
+  @override
+  String get submitComplaint => 'TODO: تقديم شكوى';
+
+  @override
+  String get submit => 'TODO: جاري الإرسال...';
+
+  @override
+  String get submitComplaintAction => 'TODO: تقديم الشكوى';
+
+  @override
+  String shkwa(Object id) {
+    return 'TODO: شكوى #$id';
+  }
+
+  @override
+  String get complaintNumber => 'TODO: رقم الشكوى';
+
+  @override
+  String get paymentRequest => 'TODO: طلب الدفع';
+
+  @override
+  String get type => 'TODO: النوع';
+
+  @override
+  String get creationDate => 'TODO: تاريخ الإنشاء';
+
+  @override
+  String get resolutionDate => 'TODO: تاريخ الحل';
+
+  @override
+  String get cancel2 => 'TODO: تاريخ الإلغاء';
+
+  @override
+  String get no5 => 'TODO: لا يوجد وصف';
+
+  @override
+  String get complaints => 'TODO: الشكاوى';
+
+  @override
+  String get following => 'TODO: من أتابع';
+
+  @override
+  String almrbwnAlmtabawn(int length) {
+    return 'TODO: المربّون المتابَعون ($length)';
+  }
+
+  @override
+  String albaqatAlmtabaa(int length) {
+    return 'TODO: الباقات المتابَعة ($length)';
+  }
+
+  @override
+  String get peopleMayKnow => 'TODO: مربيون قد تعرفهم';
+
+  @override
+  String get refresh2 => 'TODO: تحديث';
+
+  @override
+  String get room => 'TODO: غرفة';
+
+  @override
+  String get listed => 'TODO: معروضة';
+
+  @override
+  String get search2 => 'TODO: ابحث باسم الغرفة أو الدولة';
+
+  @override
+  String get auction4 => 'TODO: مزاد';
+
+  @override
+  String get item => 'TODO: عنصر';
+
+  @override
+  String get rating => 'TODO: تقييم';
+
+  @override
+  String get no6 => 'TODO: لا توجد غرف حالياً';
+
+  @override
+  String get no7 => 'TODO: لا توجد نتائج مطابقة';
+
+  @override
+  String get search3 => 'TODO: جرّب البحث باسم آخر أو دولة مختلفة';
+
+  @override
+  String get refresh3 => 'TODO: اسحب للأسفل للتحديث والمحاولة مجدداً';
+
+  @override
+  String get room2 => 'TODO: غرفة';
+
+  @override
+  String mrbyMhtrfMn(String country) {
+    return 'TODO: مربي محترف من $country';
+  }
+
+  @override
+  String get hmamZajl => 'TODO: حمام زاجل';
+
+  @override
+  String get mrbyMhtrf => 'TODO: مربي محترف';
+
+  @override
+  String get auction5 => 'TODO: مزادات';
+
+  @override
+  String get pairType4 => 'TODO: مزاد زوج تربية';
+
+  @override
+  String get auction6 => 'TODO: مزاد زاجل بلجيكي';
+
+  @override
+  String get sarMbdyyJM => 'TODO: سعر مبدئي: ج.م 5,000';
+
+  @override
+  String get sarMbdyyJM2 => 'TODO: سعر مبدئي: ج.م 12,000';
+
+  @override
+  String get klAlanwaa => 'TODO: كل الأنواع';
+
+  @override
+  String get thanya => 'TODO: ثانية';
+
+  @override
+  String get dqyqa => 'TODO: دقيقة';
+
+  @override
+  String get saaa2 => 'TODO: ساعة';
+
+  @override
+  String get ywm2 => 'TODO: يوم';
+
+  @override
+  String get alryysya => 'TODO: الرئيسية';
+
+  @override
+  String get auction7 => 'TODO: المزادات';
+
+  @override
+  String get almtjr => 'TODO: المتجر';
+
+  @override
+  String get rooms => 'TODO: الغرف';
+
+  @override
+  String get alntayj => 'TODO: النتائج';
+
+  @override
+  String get active2 => 'TODO: مزادات نشطة';
+
+  @override
+  String get tnthyQryba => 'TODO: تنتهي قريباً';
+
+  @override
+  String alawsma(int length) {
+    return 'TODO: الأوسمة ($length)';
+  }
+
+  @override
+  String get mlgha => 'TODO: مُلغى';
+
+  @override
+  String get sjlAjlaAlhz => 'TODO: سجل عجلة الحظ';
+
+  @override
+  String get tmAlfwz => 'TODO: تم الفوز';
+
+  @override
+  String get lmTfz => 'TODO: لم تفز';
+
+  @override
+  String get loading4 => 'TODO: حدث خطأ في تحميل العجلة';
+
+  @override
+  String get auction8 =>
+      'TODO: حصلت على دورة مجانية بعد انتهاء مزادك بعملية بيع مدفوعة';
+
+  @override
+  String get auction9 => 'TODO: حصلت على دورة مجانية بعد مشاركتك في المزاد';
+
+  @override
+  String get thanyna => 'TODO: 🎉 تهانينا!';
+
+  @override
+  String get jrbHzkMraAkhra => 'TODO: 🎲 جرّب حظك مرة أخرى!';
+
+  @override
+  String get rayaAstlmJayztk => 'TODO: رائع! استلم جائزتك';
+
+  @override
+  String get upcoming2 => 'TODO: حسناً، في المرة القادمة';
+
+  @override
+  String get loading5 => 'TODO: فشل تحميل الإشعارات';
+
+  @override
+  String tlbDfa(Object id) {
+    return 'TODO: طلب دفع #$id';
+  }
+
+  @override
+  String get rqmAltlb => 'TODO: رقم الطلب';
+
+  @override
+  String get type2 => 'TODO: النوع';
+
+  @override
+  String get almntj => 'TODO: المنتج';
+
+  @override
+  String get alfya => 'TODO: الفئة';
+
+  @override
+  String get buyer2 => 'TODO: رقم المشتري';
+
+  @override
+  String get auction10 => 'TODO: رقم قطعة المزاد';
+
+  @override
+  String get item2 => 'TODO: رقم عنصر الطلب';
+
+  @override
+  String get creationDate2 => 'TODO: تاريخ الإنشاء';
+
+  @override
+  String get tarykhAlqbwl => 'TODO: تاريخ القبول';
+
+  @override
+  String get tarykhAlrfd => 'TODO: تاريخ الرفض';
+
+  @override
+  String get no8 => 'TODO: ملاحظة المشتري';
+
+  @override
+  String get no9 => 'TODO: ملاحظة البائع';
+
+  @override
+  String get fthAlswra => 'TODO: فتح الصورة';
+
+  @override
+  String get irfaqIthbatAldfa => 'TODO: إرفاق إثبات الدفع';
+
+  @override
+  String get resubmitPaymentTitle => 'Resubmit Payment Request';
+
+  @override
+  String get resubmitPaymentSubtitle => 'Payment proof is required to resubmit';
+
+  @override
+  String get proofRequiredHint => 'Payment proof is required';
+
+  @override
+  String get resubmit => 'Resubmit';
+
+  @override
+  String shhadaNsb(Object id) {
+    return 'TODO: شهادة نسب #$id';
+  }
+
+  @override
+  String get tmtAlmrajaa => 'TODO: تمت المراجعة';
+
+  @override
+  String get save2 => 'TODO: تم حفظ البيانات المُراجَعة بنجاح.';
+
+  @override
+  String get tmtAlmaalja => 'TODO: تمت المعالجة';
+
+  @override
+  String get tmAstkhrajAlbyanatRajahaAdnah =>
+      'TODO: تم استخراج البيانات. راجعها أدناه.';
+
+  @override
+  String get fshlAltarfAltlqayy => 'TODO: فشل التعرف التلقائي';
+
+  @override
+  String get lmYtmAltarfTlqayyaYmknk =>
+      'TODO: لم يتم التعرف تلقائياً، يمكنك المراجعة اليدوية.';
+
+  @override
+  String get mrfwa => 'TODO: مرفوع';
+
+  @override
+  String get jaryMaaljaAlmlf => 'TODO: جاري معالجة الملف.';
+
+  @override
+  String get save3 => 'TODO: جاري الحفظ...';
+
+  @override
+  String get save4 => 'TODO: حفظ المراجعة';
+
+  @override
+  String get shhadatAlnsb => 'TODO: شهادات النسب';
+
+  @override
+  String get rfaShhada => 'TODO: رفع شهادة';
+
+  @override
+  String get jaryAlrfa => 'TODO: جاري الرفع...';
+
+  @override
+  String get tmtAlmrajaa2 => 'TODO: تمت المراجعة';
+
+  @override
+  String get tmtAlmaalja2 => 'TODO: تمت المعالجة';
+
+  @override
+  String get fshlMrajaaYdwya => 'TODO: OCR فشل — مراجعة يدوية';
+
+  @override
+  String get mrfwa2 => 'TODO: مرفوع';
+
+  @override
+  String get mshRmz => 'TODO: مسح رمز QR';
+
+  @override
+  String get no10 => 'TODO: الفلاش';
+
+  @override
+  String get loading6 => 'TODO: جارٍ تحميل بيانات الطائر...';
+
+  @override
+  String get wjhAlkamyraNhwRmzAla =>
+      'TODO: وجّه الكاميرا نحو رمز QR على بطاقة الطائر';
+
+  @override
+  String get delete2 => 'TODO: حدث خطأ أثناء الحذف';
+
+  @override
+  String get alhala => 'TODO: الحالة';
+
+  @override
+  String get mwthq => 'TODO: موثّق ✓';
+
+  @override
+  String get loading7 => 'TODO: تعذّر تحميل وثائق النسب';
+
+  @override
+  String get jarAlmaalja => 'TODO: جارٍ المعالجة';
+
+  @override
+  String get tmtAlmaalja3 => 'TODO: تمت المعالجة';
+
+  @override
+  String get mraja => 'TODO: مراجع';
+
+  @override
+  String get fshl => 'TODO: فشل';
+
+  @override
+  String wthyqa(Object id) {
+    return 'TODO: وثيقة #$id';
+  }
+
+  @override
+  String get swrAlhmama => 'TODO: صور الحمامة';
+
+  @override
+  String get next2 => 'TODO: التالي — تسجيل فيديو زاجل';
+
+  @override
+  String get akhtyary => 'TODO: اختياري';
+
+  @override
+  String get mrajaaAlbyanat => 'TODO: مراجعة البيانات';
+
+  @override
+  String get almrajaaAlnhayya => 'TODO: المراجعة النهائية';
+
+  @override
+  String get albyanatAlasasya => 'TODO: البيانات الأساسية';
+
+  @override
+  String get thkr => 'TODO: ذكر 🔵';
+
+  @override
+  String get antha => 'TODO: أنثى 🔴';
+
+  @override
+  String alswr(int length) {
+    return 'TODO: الصور ($length)';
+  }
+
+  @override
+  String get fydywZajl => 'TODO: فيديو زاجل';
+
+  @override
+  String get tmTsjylFydywZajlBnjah => 'TODO: تم تسجيل فيديو زاجل بنجاح ✓';
+
+  @override
+  String get lmYtmTsjylAlfydywBad => 'TODO: لم يتم تسجيل الفيديو بعد';
+
+  @override
+  String racingType3(int length) {
+    return 'TODO: نتائج السباقات ($length)';
+  }
+
+  @override
+  String get inshaAlhwyaAlrqmya => 'TODO: إنشاء الهوية الرقمية';
+
+  @override
+  String get mktml => 'TODO: مكتمل';
+
+  @override
+  String get naqs => 'TODO: ناقص';
+
+  @override
+  String get btaqaAltayr => 'TODO: بطاقة الطائر';
+
+  @override
+  String get sraaAltyran => 'TODO: سرعة الطيران';
+
+  @override
+  String get alqdraAlaAlthml => 'TODO: القدرة على التحمل';
+
+  @override
+  String get almrby => 'TODO: المربّي';
+
+  @override
+  String get no11 => 'TODO: الجسم كاملاً';
+
+  @override
+  String get no12 => 'TODO: وجّه الكاميرا لالتقاط الحمامة بالكامل من الجانب';
+
+  @override
+  String get aljnahYmynYsar => 'TODO: الجناح (يمين / يسار)';
+
+  @override
+  String get afrdAljnahWqrbhMnAlkamyra => 'TODO: افرد الجناح وقربه من الكاميرا';
+
+  @override
+  String get alaynMakrw => 'TODO: العين (ماكرو)';
+
+  @override
+  String get no13 => 'TODO: قرّب الكاميرا من العين لالتقاط التفاصيل';
+
+  @override
+  String get takdMnWdwhArqamAldbla =>
+      'TODO: تأكد من وضوح أرقام الدبلة في المربع أسفل الشاشة';
+
+  @override
+  String get rqmAldbla => 'TODO: رقم الدبلة';
+
+  @override
+  String get mtlwbIthnAlkamyra => 'TODO: مطلوب إذن الكاميرا';
+
+  @override
+  String get no14 => 'TODO: لا توجد كاميرا متاحة';
+
+  @override
+  String get tathrTshghylAlkamyra => 'TODO: تعذّر تشغيل الكاميرا';
+
+  @override
+  String get fshlDmjAlfydyw => 'TODO: فشل دمج الفيديو';
+
+  @override
+  String get fshlDmjAlfydyw2 => 'TODO: فشل دمج الفيديو';
+
+  @override
+  String get thabtSybdaAltsjylTlqayya =>
+      'TODO: ثابت ✓ — سيبدأ التسجيل تلقائياً';
+
+  @override
+  String get thbtAlkamyraLbdAltsjyl => 'TODO: ثبّت الكاميرا لبدء التسجيل';
+
+  @override
+  String get add2 => 'TODO: إضافة غرفة جديدة';
+
+  @override
+  String get errorOccurred3 => 'TODO: حدث خطأ، حاول مجدداً';
+
+  @override
+  String get mthalHmamAlzajlAlthhby => 'TODO: مثال: حمام الزاجل الذهبي';
+
+  @override
+  String get rooms2 => 'TODO: أدخل اسم الغرفة';
+
+  @override
+  String get no15 => 'TODO: الاسم قصير جداً';
+
+  @override
+  String get no16 => 'TODO: الاسم المعروض';
+
+  @override
+  String get asmkFyAlmnsa => 'TODO: اسمك في المنصة';
+
+  @override
+  String get no17 => 'TODO: الاسم مطلوب';
+
+  @override
+  String get akhtrDwltk => 'TODO: اختر دولتك';
+
+  @override
+  String get alamla => 'TODO: العملة';
+
+  @override
+  String get akhtrAlamla => 'TODO: اختر العملة';
+
+  @override
+  String get mntqaAlkhtr => 'TODO: منطقة الخطر';
+
+  @override
+  String get msr => 'TODO: مصر';
+
+  @override
+  String get alsawdya => 'TODO: السعودية';
+
+  @override
+  String get alimarat => 'TODO: الإمارات';
+
+  @override
+  String get alkwyt => 'TODO: الكويت';
+
+  @override
+  String get qtr => 'TODO: قطر';
+
+  @override
+  String get albhryn => 'TODO: البحرين';
+
+  @override
+  String get aman => 'TODO: عُمان';
+
+  @override
+  String get alardn => 'TODO: الأردن';
+
+  @override
+  String get alaraq => 'TODO: العراق';
+
+  @override
+  String get lbnan => 'TODO: لبنان';
+
+  @override
+  String get swrya => 'TODO: سوريا';
+
+  @override
+  String get flstyn => 'TODO: فلسطين';
+
+  @override
+  String get alymn => 'TODO: اليمن';
+
+  @override
+  String get almghrb => 'TODO: المغرب';
+
+  @override
+  String get twns => 'TODO: تونس';
+
+  @override
+  String get aljzayr => 'TODO: الجزائر';
+
+  @override
+  String get lybya => 'TODO: ليبيا';
+
+  @override
+  String get alswdan => 'TODO: السودان';
+
+  @override
+  String get trkya => 'TODO: تركيا';
+
+  @override
+  String get errorOccurred4 => 'TODO: حدث خطأ، حاول مجدداً';
+
+  @override
+  String get edit2 => 'TODO: تعديل الغرفة';
+
+  @override
+  String get rooms3 => 'TODO: اسم الغرفة';
+
+  @override
+  String get mthalHmamAlzajlAlthhby2 => 'TODO: مثال: حمام الزاجل الذهبي';
+
+  @override
+  String get rooms4 => 'TODO: أدخل اسم الغرفة';
+
+  @override
+  String get no18 => 'TODO: الاسم قصير جداً';
+
+  @override
+  String get aldwla => 'TODO: الدولة';
+
+  @override
+  String get loading8 => 'TODO: حدث خطأ في تحميل الملف الشخصي';
+
+  @override
+  String get buyer3 => 'TODO: مشتري';
+
+  @override
+  String get baya => 'TODO: بائع';
+
+  @override
+  String get ghyrMfal => 'TODO: غير مفعّل';
+
+  @override
+  String get mfal => 'TODO: مفعّل';
+
+  @override
+  String get salh => 'TODO: صالح';
+
+  @override
+  String get ghyrSalh => 'TODO: غير صالح';
+
+  @override
+  String get rsydAlkashbak => 'TODO: رصيد الكاشباك';
+
+  @override
+  String get alamla2 => 'TODO: العملة';
+
+  @override
+  String get no19 => 'TODO: تاريخ الانضمام';
+
+  @override
+  String get altlbatAlmktmla => 'TODO: الطلبات المكتملة';
+
+  @override
+  String get aldawatAlnajha => 'TODO: الدعوات الناجحة';
+
+  @override
+  String get khsmAlmstwa => 'TODO: خصم المستوى';
+
+  @override
+  String get kashBakAlmstwa => 'TODO: كاش باك المستوى';
+
+  @override
+  String get alarwdWaltkhfydat => 'TODO: العروض والتخفيضات';
+
+  @override
+  String get arwdkAlkhasa => 'TODO: عروضك الخاصة';
+
+  @override
+  String get arwdAltkhfyd => 'TODO: عروض التخفيض';
+
+  @override
+  String get arwdAlkashBak => 'TODO: عروض الكاش باك';
+
+  @override
+  String get tkhfyd => 'TODO: تخفيض';
+
+  @override
+  String get kashBak => 'TODO: كاش باك';
+
+  @override
+  String get racingType4 => 'TODO: تفاصيل السباق';
+
+  @override
+  String get loading9 => 'TODO: حدث خطأ في تحميل السباق';
+
+  @override
+  String get no20 => 'TODO: وقت الإطلاق';
+
+  @override
+  String get addAltywr => 'TODO: عدد الطيور';
+
+  @override
+  String get addAlmtsabqyn => 'TODO: عدد المتسابقين';
+
+  @override
+  String get almsafaAlmkhtta => 'TODO: المسافة المخططة';
+
+  @override
+  String get halaAltqs => 'TODO: حالة الطقس';
+
+  @override
+  String get no21 => 'TODO: ملاحظات';
+
+  @override
+  String get errorOccurred5 => 'TODO: حدث خطأ';
+
+  @override
+  String get search4 => 'TODO: ابحث برقم حلقة الحمام أو اسم المتسابق';
+
+  @override
+  String get errorOccurred6 => 'TODO: حدث خطأ';
+
+  @override
+  String get no22 => 'TODO: لا توجد نتائج مطابقة';
+
+  @override
+  String get altalyqat => 'TODO: التعليقات';
+
+  @override
+  String get brnamjAlihala => 'TODO: برنامج الإحالة';
+
+  @override
+  String get loading10 => 'TODO: فشل في تحميل الكود';
+
+  @override
+  String get adkhlAlkwdHna => 'TODO: أدخل الكود هنا...';
+
+  @override
+  String get alfya2 => 'TODO: الفئة';
+
+  @override
+  String get asmAlmntj => 'TODO: اسم المنتج';
+
+  @override
+  String get mthalAlfHmamBrymks => 'TODO: مثال: علف حمام بريمكس';
+
+  @override
+  String get no23 => 'TODO: الاسم يجب أن يكون 3 أحرف على الأقل';
+
+  @override
+  String get sfAlmntjBshklWadh => 'TODO: صف المنتج بشكل واضح...';
+
+  @override
+  String get alwsfMtlwb => 'TODO: الوصف مطلوب';
+
+  @override
+  String get alsarJM => 'TODO: السعر (ج.م)';
+
+  @override
+  String get sarGhyrSalh => 'TODO: سعر غير صالح';
+
+  @override
+  String get kmyaGhyrSalha => 'TODO: كمية غير صالحة';
+
+  @override
+  String get alhala2 => 'TODO: الحالة';
+
+  @override
+  String get alswrHta => 'TODO: الصور (حتى 5)';
+
+  @override
+  String get packageLabel2 => 'TODO: الباقة المستخدمة';
+
+  @override
+  String get add3 => 'TODO: إضافة المنتج';
+
+  @override
+  String get save5 => 'TODO: حفظ التعديلات';
+
+  @override
+  String get edit3 => 'TODO: تعديل المنتج';
+
+  @override
+  String get add4 => 'TODO: إضافة منتج جديد';
+
+  @override
+  String get iksswarat => 'TODO: إكسسوارات';
+
+  @override
+  String get no24 => 'TODO: أعلاف والحبوب';
+
+  @override
+  String get no25 => 'TODO: مكملات غذائية';
+
+  @override
+  String get mtah => 'TODO: متاح';
+
+  @override
+  String get mbaa => 'TODO: مباع';
+
+  @override
+  String get active3 => 'TODO: غير نشط';
+
+  @override
+  String get errorOccurred7 => 'TODO: حدث خطأ';
+
+  @override
+  String get all3 => 'TODO: الكل';
+
+  @override
+  String get iksswarat2 => 'TODO: إكسسوارات';
+
+  @override
+  String get no26 => 'TODO: مكملات';
+
+  @override
+  String get no27 => 'TODO: أعلاف';
+
+  @override
+  String get lmTdfAyMntjatBad => 'TODO: لم تضف أي منتجات بعد';
+
+  @override
+  String get no28 => 'TODO: لا توجد منتجات في هذه الفئة';
+
+  @override
+  String get loading11 => 'TODO: حدث خطأ في تحميل المنتجات';
+
+  @override
+  String jM4(double price) {
+    return 'TODO: $price ج.م';
+  }
+
+  @override
+  String qtaa(int count) {
+    return 'TODO: $count قطعة';
+  }
+
+  @override
+  String get alakthrShabya => 'TODO: الأكثر شعبية';
+
+  @override
+  String get shhr2 => 'TODO: شهر';
+
+  @override
+  String get shhran => 'TODO: شهران';
+
+  @override
+  String ashhr(int days) {
+    return 'TODO: $days أشهر';
+  }
+
+  @override
+  String ywm3(Object days) {
+    return 'TODO: $days يوم';
+  }
+
+  @override
+  String nqtaIjmalya(Object points) {
+    return 'TODO: $points نقطة إجمالية';
+  }
+
+  @override
+  String auction11(Object auctionCost) {
+    return 'TODO: إنشاء مزاد: $auctionCost نقطة لكل مزاد';
+  }
+
+  @override
+  String nshrMntjNqtaLklMntj(Object productCost) {
+    return 'TODO: نشر منتج: $productCost نقطة لكل منتج';
+  }
+
+  @override
+  String salhaLmda(Object value) {
+    return 'TODO: صالحة لمدة $value';
+  }
+
+  @override
+  String get no29 =>
+      'TODO: تم تقديم طلب الاشتراك بنجاح سيتم تفعيل الباقة من قِبَل المشرف قريباً';
+
+  @override
+  String get errorOccurred8 => 'TODO: حدث خطأ غير متوقع';
+
+  @override
+  String get bantzarTfaylAlmshrf => 'TODO: بانتظار تفعيل المشرف';
+
+  @override
+  String get tmIrfaqIthbatAldfa => 'TODO: تم إرفاق إثبات الدفع';
+
+  @override
+  String get lmYrfqIthbatAldfa => 'TODO: لم يُرفق إثبات الدفع';
+
+  @override
+  String get ynayr => 'TODO: يناير';
+
+  @override
+  String get ywnyw => 'TODO: يونيو';
+
+  @override
+  String get mayw => 'TODO: مايو';
+
+  @override
+  String get fbrayr => 'TODO: فبراير';
+
+  @override
+  String get mars => 'TODO: مارس';
+
+  @override
+  String get abryl => 'TODO: أبريل';
+
+  @override
+  String get dysmbr => 'TODO: ديسمبر';
+
+  @override
+  String get ywlyw => 'TODO: يوليو';
+
+  @override
+  String get aghsts => 'TODO: أغسطس';
+
+  @override
+  String get sbtmbr => 'TODO: سبتمبر';
+
+  @override
+  String get aktwbr => 'TODO: أكتوبر';
+
+  @override
+  String get nwfmbr => 'TODO: نوفمبر';
+
+  @override
+  String auction12(Object auctionCost) {
+    return 'TODO: مزاد: $auctionCost نقطة';
+  }
+
+  @override
+  String mntjNqta(Object productCost) {
+    return 'TODO: منتج: $productCost نقطة';
+  }
+
+  @override
+  String get akhtrMlf => 'TODO: اختر ملف (JPG / PNG / PDF)';
+
+  @override
+  String get jM5 => 'TODO: ج.م';
+
+  @override
+  String get packageLabel3 => 'TODO: اختر هذه الباقة';
+
+  @override
+  String get subscribe => 'TODO: اشترك الآن';
+
+  @override
+  String get racingChampion => 'racing, champion, ...';
+
+  @override
+  String get writeComment => 'Write a comment';
+
+  @override
+  String get notesTitle => 'Notes';
+
+  @override
+  String get paymentProofTitle => 'Payment Proof';
+
+  @override
+  String get sellerActionTitle => 'Seller Action';
+
+  @override
+  String paymentRequestNum(Object id) {
+    return 'Request #$id';
+  }
+
+  @override
+  String get auctionPaymentRejectedNotice =>
+      'The payment request was rejected by the seller. You cannot resubmit a payment request for this auction item.';
+
+  @override
+  String get selectBirdSubtitle => 'My birds available to add to the auction';
+
+  @override
+  String get reservePriceField => 'Reserve Price';
+
+  @override
+  String get pickSourceTitle => 'Choose upload method';
+
+  @override
+  String get browseFiles => 'Browse Files';
+
+  @override
+  String get selectFromGallery => 'Select from Gallery';
+
+  @override
+  String get takePhoto => 'Take a Photo';
 }
