@@ -23,7 +23,7 @@ class ZajelScannerPage extends StatefulWidget {
 }
 
 class _ZajelScannerPageState extends State<ZajelScannerPage> {
-  late final List<_ScanStep> _steps;
+  List<_ScanStep> _steps = [];
 
   // Camera
   CameraController? _cameraController;
@@ -53,14 +53,22 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
   @override
   void initState() {
     super.initState();
-    _steps = [
-      _ScanStep(label: AppLocalizations.of(context).no11, emoji: '🦢', hint: AppLocalizations.of(context).no12),
-      _ScanStep(label: AppLocalizations.of(context).aljnahYmynYsar, emoji: '🪶', hint: AppLocalizations.of(context).afrdAljnahWqrbhMnAlkamyra),
-      _ScanStep(label: AppLocalizations.of(context).alaynMakrw, emoji: '👁️', hint: AppLocalizations.of(context).no13),
-      _ScanStep(label: AppLocalizations.of(context).rqmAldbla, emoji: '🔢', hint: AppLocalizations.of(context).takdMnWdwhArqamAldbla),
-    ];
     _initCamera();
     _listenAccelerometer();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_steps.isEmpty) {
+      final l = AppLocalizations.of(context);
+      _steps = [
+        _ScanStep(label: l.no11, emoji: '🦢', hint: l.no12),
+        _ScanStep(label: l.aljnahYmynYsar, emoji: '🪶', hint: l.afrdAljnahWqrbhMnAlkamyra),
+        _ScanStep(label: l.alaynMakrw, emoji: '👁️', hint: l.no13),
+        _ScanStep(label: l.rqmAldbla, emoji: '🔢', hint: l.takdMnWdwhArqamAldbla),
+      ];
+    }
   }
 
   Future<void> _initCamera() async {
@@ -302,6 +310,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_steps.isEmpty) return const SizedBox.shrink();
     final step = _steps[_currentStep];
     final screenSize = MediaQuery.of(context).size;
 
