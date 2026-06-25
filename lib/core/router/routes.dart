@@ -6,4 +6,5 @@ abstract final class AppRoutes {
   static const market = '/market';
   static const rooms = '/rooms';
   static const races = '/races';
+  static const clocks = '/clocks';
 }

@@ -504,6 +504,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productCount => 'Product Count';
 
   @override
+  String get customerPhone => 'Customer Phone';
+
+  @override
   String get checkoutError => 'An error occurred while processing your order';
 
   @override
@@ -613,6 +616,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentProofSentSuccess => 'Payment proof sent successfully';
+
+  @override
+  String get approvePaymentBtn => 'Approve Payment';
+
+  @override
+  String get orderAndProofSentSuccess =>
+      'Payment proof submitted • Awaiting seller approval';
 
   @override
   String get addImageBtn => 'Add Image';

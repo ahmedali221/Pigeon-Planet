@@ -41,9 +41,10 @@ class CartCleared extends CartEvent {
 
 class CartCheckoutRequested extends CartEvent {
   final PlatformFile? proofFile;
-  const CartCheckoutRequested({this.proofFile});
+  final String? buyerNote;
+  const CartCheckoutRequested({this.proofFile, this.buyerNote});
   @override
-  List<Object?> get props => [proofFile?.path];
+  List<Object?> get props => [proofFile?.path, buyerNote];
 }
 
 class OrdersLoadRequested extends CartEvent {
@@ -91,4 +92,20 @@ class OrderItemRejectRequested extends CartEvent {
   const OrderItemRejectRequested(this.itemId);
   @override
   List<Object?> get props => [itemId];
+}
+
+class SellerApprovePaymentForItemRequested extends CartEvent {
+  final int orderItemId;
+  const SellerApprovePaymentForItemRequested(this.orderItemId);
+  @override
+  List<Object?> get props => [orderItemId];
+}
+
+class SellerRejectPaymentForItemRequested extends CartEvent {
+  final int orderItemId;
+  final String? sellerNote;
+  const SellerRejectPaymentForItemRequested(this.orderItemId,
+      {this.sellerNote});
+  @override
+  List<Object?> get props => [orderItemId, sellerNote];
 }

@@ -25,6 +25,7 @@ class HomeState extends Equatable {
   final bool announcementsLoading;
   final bool summaryLoading;
   final bool sellerPrivateLoading;
+  final bool featuredBirdsLoading;
 
   const HomeState({
     this.status = HomeStatus.initial,
@@ -47,6 +48,7 @@ class HomeState extends Equatable {
     this.announcementsLoading = false,
     this.summaryLoading = false,
     this.sellerPrivateLoading = false,
+    this.featuredBirdsLoading = false,
   });
 
   bool get anyLoading =>
@@ -82,6 +84,7 @@ class HomeState extends Equatable {
     bool? announcementsLoading,
     bool? summaryLoading,
     bool? sellerPrivateLoading,
+    bool? featuredBirdsLoading,
   }) =>
       HomeState(
         status: status ?? this.status,
@@ -110,6 +113,7 @@ class HomeState extends Equatable {
         announcementsLoading: announcementsLoading ?? this.announcementsLoading,
         summaryLoading: summaryLoading ?? this.summaryLoading,
         sellerPrivateLoading: sellerPrivateLoading ?? this.sellerPrivateLoading,
+        featuredBirdsLoading: featuredBirdsLoading ?? this.featuredBirdsLoading,
       );
 
   @override
@@ -134,5 +138,6 @@ class HomeState extends Equatable {
         announcementsLoading,
         summaryLoading,
         sellerPrivateLoading,
+        featuredBirdsLoading,
       ];
 }

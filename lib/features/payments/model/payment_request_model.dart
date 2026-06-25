@@ -11,6 +11,7 @@ class PaymentRequestModel {
   final String assetTitle;
   final String assetCategory;
   final int? buyerProfileId;
+  final String? buyerPhone;
   final int? sellerProfileId;
   final DateTime created;
   final DateTime? modified;
@@ -31,6 +32,7 @@ class PaymentRequestModel {
     this.assetTitle = '',
     this.assetCategory = '',
     this.buyerProfileId,
+    this.buyerPhone,
     this.sellerProfileId,
     required this.created,
     this.modified,
@@ -90,6 +92,7 @@ class PaymentRequestModel {
       assetTitle: asset?['title'] as String? ?? '',
       assetCategory: asset?['category'] as String? ?? '',
       buyerProfileId: buyer?['id'] as int?,
+      buyerPhone: buyer?['phone'] as String?,
       sellerProfileId: seller?['id'] as int?,
       created: DateTime.parse(json['created'] as String),
       modified: DateTime.tryParse(json['modified'] as String? ?? ''),
@@ -118,6 +121,7 @@ class PaymentRequestModel {
         assetTitle: assetTitle,
         assetCategory: assetCategory,
         buyerProfileId: buyerProfileId,
+        buyerPhone: buyerPhone,
         sellerProfileId: sellerProfileId,
         created: created,
         modified: modified,

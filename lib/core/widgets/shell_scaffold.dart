@@ -61,7 +61,7 @@ class _ShellScaffoldState extends State<ShellScaffold> {
         child: Scaffold(
           body: widget.navigationShell,
           bottomNavigationBar: HomeBottomNavBar(
-            currentIndex: widget.navigationShell.currentIndex.clamp(0, 4),
+            currentIndex: widget.navigationShell.currentIndex.clamp(0, 5),
             onTap: (index) => _onTap(context, index),
           ),
         ),
@@ -71,7 +71,7 @@ class _ShellScaffoldState extends State<ShellScaffold> {
 
   void _onTap(BuildContext context, int index) {
     final l = AppLocalizations.of(context);
-    if (index >= 5) {
+    if (index >= 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l.comingSoon),

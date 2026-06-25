@@ -6,6 +6,7 @@ import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../model/order_item_model.dart';
 import '../../viewmodel/cart_bloc.dart';
+import 'order_detail_page.dart';
 
 class SellerOrdersPage extends StatefulWidget {
   const SellerOrdersPage({super.key});
@@ -20,6 +21,7 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
   static const _filters = [
     null,
     'pending_seller',
+    'awaiting_payment_review',
     'approved',
     'rejected',
     'completed',
@@ -114,6 +116,18 @@ class _SellerOrdersPageState extends State<SellerOrdersPage> {
                           return _SellerOrderItemCard(
                             item: filtered[i],
                             actioning: state.itemActioning,
+                            onTap: filtered[i].orderId == null
+                                ? null
+                                : () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: context.read<CartBloc>(),
+                                          child: OrderDetailPage(
+                                              orderId: filtered[i].orderId!),
+                                        ),
+                                      ),
+                                    ),
                           );
                         },
                       ),
@@ -142,6 +156,8 @@ class _FilterChips extends StatelessWidget {
     switch (status) {
       case 'pending_seller':
         return AppLocalizations.of(context).statusPending;
+      case 'awaiting_payment_review':
+        return AppLocalizations.of(context).paymentUnderReview;
       case 'approved':
         return AppLocalizations.of(context).statusApproved;
       case 'rejected':
@@ -222,15 +238,23 @@ class _LoadMoreButton extends StatelessWidget {
 class _SellerOrderItemCard extends StatelessWidget {
   final OrderItemModel item;
   final bool actioning;
+  final VoidCallback? onTap;
 
-  const _SellerOrderItemCard({required this.item, required this.actioning});
+  const _SellerOrderItemCard({
+    required this.item,
+    required this.actioning,
+    this.onTap,
+  });
 
   bool get _isPending => item.status == 'pending_seller';
+  bool get _isAwaitingPayment => item.status == 'awaiting_payment_review';
 
   Color _statusColor(String status) {
     switch (status) {
       case 'approved':
         return AppColors.success;
+      case 'awaiting_payment_review':
+        return AppColors.blue;
       case 'rejected':
         return AppColors.error;
       case 'completed':
@@ -246,7 +270,9 @@ class _SellerOrderItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final color = _statusColor(item.status);
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -351,9 +377,61 @@ class _SellerOrderItemCard extends StatelessWidget {
                 ),
               ],
             ),
+          ] else if (_isAwaitingPayment) ...[
+            const SizedBox(height: 12),
+            const Divider(height: 1, color: AppColors.divider),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: actioning
+                        ? null
+                        : () => context.read<CartBloc>().add(
+                              SellerRejectPaymentForItemRequested(item.id),
+                            ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                    ),
+                    child: actioning
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: AppColors.error),
+                          )
+                        : Text(l.reject),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: actioning
+                        ? null
+                        : () => context.read<CartBloc>().add(
+                              SellerApprovePaymentForItemRequested(item.id),
+                            ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: actioning
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
+                          )
+                        : Text(l.approvePaymentBtn),
+                  ),
+                ),
+              ],
+            ),
           ],
         ],
       ),
+    ),
     );
   }
 }

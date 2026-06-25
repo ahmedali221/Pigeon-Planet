@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/file_source_sheet.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../market/model/product_model.dart';
@@ -19,8 +23,23 @@ class BuyNowPage extends StatefulWidget {
 }
 
 class _BuyNowPageState extends State<BuyNowPage> {
-  // true while we're waiting for CartItemAdded to land before checkout
   bool _addingToCart = false;
+  PlatformFile? _proofFile;
+  final _noteController = TextEditingController();
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickProof() async {
+    final file = await FileSourceSheet.show(
+      context,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+    );
+    if (file != null) setState(() => _proofFile = file);
+  }
 
   void _onPlaceOrder() {
     setState(() => _addingToCart = true);
@@ -55,7 +74,12 @@ class _BuyNowPageState extends State<BuyNowPage> {
       listener: (context, state) {
         if (_addingToCart && state.status == CartStatus.loaded) {
           setState(() => _addingToCart = false);
-          context.read<CartBloc>().add(const CartCheckoutRequested());
+          context.read<CartBloc>().add(CartCheckoutRequested(
+                proofFile: _proofFile,
+                buyerNote: _noteController.text.trim().isEmpty
+                    ? null
+                    : _noteController.text.trim(),
+              ));
           return;
         }
         if (state.status == CartStatus.checkedOut) {
@@ -64,6 +88,7 @@ class _BuyNowPageState extends State<BuyNowPage> {
             MaterialPageRoute(
               builder: (_) => OrderConfirmationPage(
                 order: state.lastOrder!,
+                proofFile: state.checkoutProofFile,
               ),
             ),
             (route) => route.isFirst,
@@ -91,6 +116,7 @@ class _BuyNowPageState extends State<BuyNowPage> {
               state.status == CartStatus.checkingOut;
           final total = widget.product.price * widget.quantity;
           final l = AppLocalizations.of(context);
+          final canOrder = _proofFile != null && !isBusy;
 
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
@@ -111,7 +137,12 @@ class _BuyNowPageState extends State<BuyNowPage> {
                         const SizedBox(height: 12),
                         _SellerCard(product: widget.product),
                         const SizedBox(height: 12),
-                        _OrderNoteCard(l: l),
+                        _BuyNowProofSection(
+                          proofFile: _proofFile,
+                          noteController: _noteController,
+                          isBusy: isBusy,
+                          onPick: _pickProof,
+                        ),
                       ],
                     ),
                   ),
@@ -119,7 +150,7 @@ class _BuyNowPageState extends State<BuyNowPage> {
                 _PlaceOrderFooter(
                   total: total,
                   isCheckingOut: isBusy,
-                  onPlaceOrder: isBusy ? null : _onPlaceOrder,
+                  onPlaceOrder: canOrder ? _onPlaceOrder : null,
                 ),
               ],
             ),
@@ -304,34 +335,125 @@ class _SellerCard extends StatelessWidget {
   }
 }
 
-class _OrderNoteCard extends StatelessWidget {
-  final AppLocalizations l;
+class _BuyNowProofSection extends StatelessWidget {
+  final PlatformFile? proofFile;
+  final TextEditingController noteController;
+  final bool isBusy;
+  final VoidCallback onPick;
 
-  const _OrderNoteCard({required this.l});
+  const _BuyNowProofSection({
+    required this.proofFile,
+    required this.noteController,
+    required this.isBusy,
+    required this.onPick,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.orangeLight,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.orange.withValues(alpha: 0.3)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded,
-              size: 18, color: AppColors.orange),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              l.awaitingSellerApproval,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.orange,
+          Text(
+            l.paymentProofSheetTitle,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l.paymentProofSheetSubtitle,
+            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 12),
+          // Proof picker tile
+          GestureDetector(
+            onTap: isBusy ? null : onPick,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: proofFile != null
+                    ? AppColors.primaryLight
+                    : AppColors.pageBackground,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: proofFile != null
+                      ? AppColors.primary
+                      : AppColors.border,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    proofFile != null
+                        ? Icons.check_circle_rounded
+                        : Icons.add_photo_alternate_outlined,
+                    size: 18,
+                    color: proofFile != null
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      proofFile != null
+                          ? proofFile!.name
+                          : l.proofRequiredHint,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: proofFile != null
+                            ? AppColors.primary
+                            : AppColors.textHint,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (proofFile?.path != null) ...[
+                    const SizedBox(width: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.file(
+                        File(proofFile!.path!),
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
+          ),
+          const SizedBox(height: 12),
+          // Optional note
+          TextField(
+            controller: noteController,
+            maxLines: 2,
+            textAlign: TextAlign.start,
+            decoration: InputDecoration(
+              hintText: l.noteForBuyerHint,
+              isDense: true,
+              contentPadding: const EdgeInsets.all(10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+            ),
+            style: const TextStyle(fontSize: 13),
           ),
         ],
       ),

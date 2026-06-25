@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../widgets/points_system_modal.dart';
+// import '../widgets/points_system_modal.dart';
 
 class HomeAccountRow extends StatelessWidget {
   final bool isServiceProvider;
@@ -99,55 +99,55 @@ class HomeAccountRow extends StatelessWidget {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => PointsSystemModal.show(
-              context,
-              pointsBalance: pointsBalance ?? 0,
-              isSeller: isServiceProvider,
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.bolt_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-                if (pointsLabel != null && pointsLabel!.isNotEmpty)
-                  Positioned(
-                    top: -4,
-                    left: -4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 1,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.orange,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        pointsLabel!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+          // const SizedBox(width: 8),
+          // GestureDetector(
+          //   onTap: () => PointsSystemModal.show(
+          //     context,
+          //     pointsBalance: pointsBalance ?? 0,
+          //     isSeller: isServiceProvider,
+          //   ),
+          //   child: Stack(
+          //     clipBehavior: Clip.none,
+          //     children: [
+          //       Container(
+          //         width: 34,
+          //         height: 34,
+          //         decoration: const BoxDecoration(
+          //           color: AppColors.primary,
+          //           shape: BoxShape.circle,
+          //         ),
+          //         child: const Icon(
+          //           Icons.bolt_rounded,
+          //           color: Colors.white,
+          //           size: 20,
+          //         ),
+          //       ),
+          //       if (pointsLabel != null && pointsLabel!.isNotEmpty)
+          //         Positioned(
+          //           top: -4,
+          //           left: -4,
+          //           child: Container(
+          //             padding: const EdgeInsets.symmetric(
+          //               horizontal: 4,
+          //               vertical: 1,
+          //             ),
+          //             decoration: BoxDecoration(
+          //               color: AppColors.orange,
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //             child: Text(
+          //               pointsLabel!,
+          //               style: const TextStyle(
+          //                 color: Colors.white,
+          //                 fontSize: 9,
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

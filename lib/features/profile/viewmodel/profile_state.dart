@@ -6,6 +6,8 @@ enum ProfileStatus {
   loaded,
   updating,
   updated,
+  photoUploading,
+  photoUpdated,
   deleting,
   deleted,
   error,

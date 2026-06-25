@@ -38,6 +38,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, void>> deleteProfile(ProfileModel profile) =>
       _wrapVoid(() => _dataSource.deleteProfile(profile));
 
+  @override
+  Future<Either<Failure, ProfileModel>> uploadProfilePhoto({
+    required int profileId,
+    required String profileType,
+    required String filePath,
+  }) =>
+      _wrap(() => _dataSource.uploadProfilePhoto(
+            profileId: profileId,
+            profileType: profileType,
+            filePath: filePath,
+          ));
+
   Future<Either<Failure, T>> _wrap<T>(Future<T> Function() fn) async {
     try {
       return Right(await fn());

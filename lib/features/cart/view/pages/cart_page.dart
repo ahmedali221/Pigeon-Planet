@@ -1,15 +1,41 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/file_source_sheet.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../model/cart_item_model.dart';
 import '../../viewmodel/cart_bloc.dart';
 import 'order_confirmation_page.dart';
 
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   const CartPage({super.key});
+
+  @override
+  State<CartPage> createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  PlatformFile? _proofFile;
+  final _noteController = TextEditingController();
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickProof() async {
+    final file = await FileSourceSheet.show(
+      context,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+    );
+    if (file != null) setState(() => _proofFile = file);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +154,17 @@ class CartPage extends StatelessWidget {
                       subtotal: state.cart!.subtotal,
                       isBusy: isBusy,
                       isCheckingOut: state.status == CartStatus.checkingOut,
+                      proofFile: _proofFile,
+                      noteController: _noteController,
+                      onPickProof: _pickProof,
                       onCheckout: () {
                         context.read<CartBloc>().add(
-                          const CartCheckoutRequested(),
+                          CartCheckoutRequested(
+                            proofFile: _proofFile,
+                            buyerNote: _noteController.text.trim().isEmpty
+                                ? null
+                                : _noteController.text.trim(),
+                          ),
                         );
                       },
                     ),
@@ -376,18 +410,25 @@ class _CartFooter extends StatelessWidget {
   final double subtotal;
   final bool isBusy;
   final bool isCheckingOut;
+  final PlatformFile? proofFile;
+  final TextEditingController noteController;
+  final VoidCallback onPickProof;
   final VoidCallback onCheckout;
 
   const _CartFooter({
     required this.subtotal,
     required this.isBusy,
     required this.isCheckingOut,
+    required this.proofFile,
+    required this.noteController,
+    required this.onPickProof,
     required this.onCheckout,
   });
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final canCheckout = proofFile != null && !isBusy;
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
@@ -403,6 +444,35 @@ class _CartFooter extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // ── Proof picker ──────────────────────────────────────────
+          _ProofPickerRow(
+            proofFile: proofFile,
+            isBusy: isBusy,
+            onPick: onPickProof,
+          ),
+          const SizedBox(height: 10),
+          // ── Note field ────────────────────────────────────────────
+          TextField(
+            controller: noteController,
+            maxLines: 2,
+            textAlign: TextAlign.start,
+            decoration: InputDecoration(
+              hintText: l.noteForBuyerHint,
+              isDense: true,
+              contentPadding: const EdgeInsets.all(10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+            ),
+            style: const TextStyle(fontSize: 13),
+          ),
+          const SizedBox(height: 12),
+          // ── Total row ─────────────────────────────────────────────
           Row(
             children: [
               // Label — rightmost in RTL
@@ -426,14 +496,15 @@ class _CartFooter extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+          // ── Checkout button ───────────────────────────────────────
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: isBusy ? null : onCheckout,
+              onPressed: canCheckout ? onCheckout : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 disabledBackgroundColor: AppColors.primary.withValues(
-                  alpha: 0.6,
+                  alpha: 0.4,
                 ),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -460,6 +531,108 @@ class _CartFooter extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProofPickerRow extends StatelessWidget {
+  final PlatformFile? proofFile;
+  final bool isBusy;
+  final VoidCallback onPick;
+
+  const _ProofPickerRow({
+    required this.proofFile,
+    required this.isBusy,
+    required this.onPick,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: isBusy ? null : onPick,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: proofFile != null
+              ? AppColors.primaryLight
+              : AppColors.pageBackground,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: proofFile != null ? AppColors.primary : AppColors.border,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Icon — rightmost in RTL
+            Icon(
+              proofFile != null
+                  ? Icons.check_circle_rounded
+                  : Icons.attach_file_rounded,
+              size: 18,
+              color: proofFile != null
+                  ? AppColors.primary
+                  : AppColors.textSecondary,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.paymentProofSheetTitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: proofFile != null
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  if (proofFile != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      proofFile!.name,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      l.proofRequiredHint,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textHint,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            // Preview thumbnail or change icon — leftmost in RTL
+            if (proofFile?.path != null) ...[
+              const SizedBox(width: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.file(
+                  File(proofFile!.path!),
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ] else ...[
+              const SizedBox(width: 8),
+              Icon(Icons.add_photo_alternate_outlined,
+                  size: 20, color: AppColors.primary),
+            ],
+          ],
+        ),
       ),
     );
   }

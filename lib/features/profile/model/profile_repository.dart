@@ -13,4 +13,9 @@ abstract class ProfileRepository {
   });
   Future<Either<Failure, ProfileModel>> updateProfile(ProfileModel profile);
   Future<Either<Failure, void>> deleteProfile(ProfileModel profile);
+  Future<Either<Failure, ProfileModel>> uploadProfilePhoto({
+    required int profileId,
+    required String profileType,
+    required String filePath,
+  });
 }

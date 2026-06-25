@@ -157,7 +157,10 @@ void setupDependencies() {
     () => RealCartRemoteDataSource(sl()),
   );
   sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(sl()));
-  sl.registerLazySingleton(() => CartBloc(repository: sl()));
+  sl.registerLazySingleton(() => CartBloc(
+        repository: sl<CartRepository>(),
+        paymentsRepository: sl<PaymentsRepository>(),
+      ));
 
   // ── Profile ───────────────────────────────────────────────────────────────
   sl.registerLazySingleton<ProfileRemoteDataSource>(

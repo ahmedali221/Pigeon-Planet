@@ -6,15 +6,21 @@ import '../model/cart_model.dart';
 import '../model/cart_repository.dart';
 import '../model/order_item_model.dart';
 import '../model/order_model.dart';
+import '../../payments/model/payment_request_model.dart';
+import '../../payments/model/payments_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepository _repository;
+  final PaymentsRepository _paymentsRepository;
 
-  CartBloc({required CartRepository repository})
-      : _repository = repository,
+  CartBloc({
+    required CartRepository repository,
+    required PaymentsRepository paymentsRepository,
+  })  : _repository = repository,
+        _paymentsRepository = paymentsRepository,
         super(const CartState()) {
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
@@ -29,6 +35,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<SellerOrderItemsLoadMoreRequested>(_onSellerItemsLoadMore);
     on<OrderItemApproveRequested>(_onApproveItem);
     on<OrderItemRejectRequested>(_onRejectItem);
+    on<SellerApprovePaymentForItemRequested>(_onApprovePaymentForItem);
+    on<SellerRejectPaymentForItemRequested>(_onRejectPaymentForItem);
   }
 
   Future<void> _onStarted(
@@ -111,6 +119,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (f) async => emit(state.copyWith(
           status: CartStatus.error, errorMessage: f.message)),
       (order) async {
+        // After checkout succeeds, auto-create payment requests for every item.
+        // Failures are silently swallowed — the order is already placed.
+        if (event.proofFile != null) {
+          for (final item in order.items) {
+            await _paymentsRepository.createMarketPaymentRequest(
+              item.id,
+              buyerNote: event.buyerNote,
+              proofFile: event.proofFile,
+            );
+          }
+        }
         emit(state.copyWith(
             status: CartStatus.checkedOut,
             lastOrder: order,
@@ -232,6 +251,82 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (_) async {
         emit(state.copyWith(itemActioning: false));
         add(const SellerOrderItemsLoadRequested());
+      },
+    );
+  }
+
+  Future<void> _onApprovePaymentForItem(
+      SellerApprovePaymentForItemRequested event,
+      Emitter<CartState> emit) async {
+    emit(state.copyWith(itemActioning: true, clearItemActionError: true));
+    final requestsResult = await _paymentsRepository.getPaymentRequests();
+    await requestsResult.fold(
+      (f) async =>
+          emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
+      (requests) async {
+        PaymentRequestModel? request;
+        for (final r in requests) {
+          if (r.orderItemId == event.orderItemId && r.isPending) {
+            request = r;
+            break;
+          }
+        }
+        if (request == null) {
+          emit(state.copyWith(
+            itemActioning: false,
+            itemActionError: 'لم يتم العثور على طلب دفع معلق لهذا المنتج',
+          ));
+          return;
+        }
+        final approveResult =
+            await _paymentsRepository.approvePaymentRequest(request.id);
+        approveResult.fold(
+          (f) =>
+              emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
+          (_) {
+            emit(state.copyWith(itemActioning: false));
+            add(const SellerOrderItemsLoadRequested());
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _onRejectPaymentForItem(
+      SellerRejectPaymentForItemRequested event,
+      Emitter<CartState> emit) async {
+    emit(state.copyWith(itemActioning: true, clearItemActionError: true));
+    final requestsResult = await _paymentsRepository.getPaymentRequests();
+    await requestsResult.fold(
+      (f) async =>
+          emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
+      (requests) async {
+        PaymentRequestModel? request;
+        for (final r in requests) {
+          if (r.orderItemId == event.orderItemId && r.isPending) {
+            request = r;
+            break;
+          }
+        }
+        if (request == null) {
+          emit(state.copyWith(
+            itemActioning: false,
+            itemActionError: 'لم يتم العثور على طلب دفع معلق لهذا المنتج',
+          ));
+          return;
+        }
+        final rejectResult = await _paymentsRepository.rejectPaymentRequest(
+          request.id,
+          sellerNote: event.sellerNote,
+        );
+        rejectResult.fold(
+          (f) =>
+              emit(state.copyWith(itemActioning: false, itemActionError: f.message)),
+          (_) {
+            emit(state.copyWith(itemActioning: false));
+            add(const SellerOrderItemsLoadRequested());
+          },
+        );
       },
     );
   }

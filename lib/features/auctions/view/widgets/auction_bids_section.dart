@@ -112,23 +112,14 @@ class AuctionBidsSection extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final bid = bids[i];
                   final isTop = i == 0;
-                  return isOwner
-                      ? _OwnerBidRow(
-                          bid: bid,
-                          isTop: isTop,
-                          rank: i + 1,
-                          fmtPrice: _fmtPrice,
-                          fmtDate: (dt) => _fmtDate(dt, l),
-                          l: l,
-                        )
-                      : _AnonymousBidRow(
-                          bid: bid,
-                          isTop: isTop,
-                          rank: i + 1,
-                          fmtPrice: _fmtPrice,
-                          fmtDate: (dt) => _fmtDate(dt, l),
-                          l: l,
-                        );
+                  return _OwnerBidRow(
+                      bid: bid,
+                      isTop: isTop,
+                      rank: i + 1,
+                      fmtPrice: _fmtPrice,
+                      fmtDate: (dt) => _fmtDate(dt, l),
+                      l: l,
+                    );
                 },
               ),
           ],
@@ -228,97 +219,6 @@ class _OwnerBidRow extends StatelessWidget {
                       fontSize: 11, color: AppColors.textSecondary),
                 ),
               ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                l.auctionBidAmountEgp(fmtPrice(bid.amount)),
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: isTop ? const Color(0xFFD4A017) : AppColors.textPrimary,
-                ),
-              ),
-              if (bid.isWinningBid)
-                Text(
-                  l.highestBid,
-                  style: const TextStyle(
-                      fontSize: 10,
-                      color: Color(0xFFD4A017),
-                      fontWeight: FontWeight.w600),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Anonymous view: rank number + amount + time ───────────────────────────────
-class _AnonymousBidRow extends StatelessWidget {
-  final BidModel bid;
-  final bool isTop;
-  final int rank;
-  final String Function(double) fmtPrice;
-  final String Function(DateTime) fmtDate;
-  final AppLocalizations l;
-
-  const _AnonymousBidRow({
-    required this.bid,
-    required this.isTop,
-    required this.rank,
-    required this.fmtPrice,
-    required this.fmtDate,
-    required this.l,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Row(
-        children: [
-          Stack(
-            alignment: Alignment.bottomLeft,
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: isTop
-                    ? const Color(0xFFD4A017)
-                    : AppColors.primary.withValues(alpha: 0.15),
-                child: Text(
-                  '#$rank',
-                  style: TextStyle(
-                    color: isTop ? Colors.white : AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-              if (isTop)
-                Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.emoji_events_rounded,
-                    color: Color(0xFFD4A017),
-                    size: 12,
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              fmtDate(bid.created),
-              style: const TextStyle(
-                  fontSize: 12, color: AppColors.textSecondary),
             ),
           ),
           Column(

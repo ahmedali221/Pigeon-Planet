@@ -31,22 +31,13 @@ class _AuctionsView extends StatefulWidget {
 }
 
 class _AuctionsViewState extends State<_AuctionsView> {
-  int _filterIndex = 0;
   String _searchQuery = '';
   final _searchCtrl = TextEditingController();
-
-  static const _filterValues = ['all', 'ending_soon', 'my_auctions'];
 
   @override
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
-  }
-
-  void _onFilterTap(int i) {
-    if (_filterIndex == i) return;
-    setState(() => _filterIndex = i);
-    context.read<AuctionsBloc>().add(AuctionsFilterChanged(_filterValues[i]));
   }
 
   List<AuctionModel> _applySearch(List<AuctionModel> auctions) {
@@ -66,11 +57,6 @@ class _AuctionsViewState extends State<_AuctionsView> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final filterKeys = [
-      {'filter': 'all', 'label': l.all2},
-      {'filter': 'ending_soon', 'label': l.ynthyQryba},
-      {'filter': 'my_auctions', 'label': l.auction3},
-    ];
     final isSeller = context.select<AuthBloc, bool>((b) {
       final s = b.state;
       if (s is AuthSuccess) return s.user.isSeller;
@@ -105,6 +91,13 @@ class _AuctionsViewState extends State<_AuctionsView> {
             buildWhen: (p, c) => p.auctions.length != c.auctions.length,
             builder: (context, state) => _AuctionsHeader(
               auctionCount: state.auctions.length,
+              searchController: _searchCtrl,
+              searchQuery: _searchQuery,
+              onSearchChanged: (v) => setState(() => _searchQuery = v),
+              onClearSearch: () {
+                _searchCtrl.clear();
+                setState(() => _searchQuery = '');
+              },
               onRefresh: () => context
                   .read<AuctionsBloc>()
                   .add(const AuctionsRefreshRequested()),
@@ -114,94 +107,6 @@ class _AuctionsViewState extends State<_AuctionsView> {
               ),
             ),
           ),
-
-          // ── Search bar ────────────────────────────────────────────────────
-          Container(
-            color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-            child: Container(
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                controller: _searchCtrl,
-                textAlign: TextAlign.start,
-                onChanged: (v) => setState(() => _searchQuery = v),
-                decoration: InputDecoration(
-                  hintText: l.searchAuctionHint,
-                  hintStyle:
-                      const TextStyle(color: AppColors.textHint, fontSize: 13),
-                  prefixIcon: const Icon(Icons.search_rounded,
-                      color: AppColors.textHint, size: 20),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close_rounded,
-                              color: AppColors.textHint, size: 18),
-                          onPressed: () {
-                            _searchCtrl.clear();
-                            setState(() => _searchQuery = '');
-                          },
-                        )
-                      : null,
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ),
-
-          // ── Filter chips ──────────────────────────────────────────────────
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(filterKeys.length, (i) {
-                  final isSelected = _filterIndex == i;
-                  return Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 8),
-                    child: GestureDetector(
-                      onTap: () => _onFilterTap(i),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.pageBackground,
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primary
-                                : AppColors.border,
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                        ),
-                        child: Text(
-                          filterKeys[i]['label'] as String,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? Colors.white
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-          ),
-
-          const Divider(height: 1, color: AppColors.divider),
 
           // ── Content ───────────────────────────────────────────────────────
           Expanded(
@@ -304,7 +209,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                           child: Text(
-                            '${displayed.length} مزاد نشط',
+                            l.activeAuctionsCount(displayed.length),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary,
@@ -335,10 +240,15 @@ class _AuctionsViewState extends State<_AuctionsView> {
                                     : 0),
                           ),
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                MediaQuery.sizeOf(context).width >= 920
+                                    ? 4
+                                    : MediaQuery.sizeOf(context).width >= 640
+                                        ? 3
+                                        : 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
                             childAspectRatio: 0.58,
                           ),
                         ),
@@ -398,11 +308,19 @@ class _AuctionLoadMoreTile extends StatelessWidget {
 
 class _AuctionsHeader extends StatelessWidget {
   final int auctionCount;
+  final TextEditingController searchController;
+  final String searchQuery;
+  final ValueChanged<String> onSearchChanged;
+  final VoidCallback onClearSearch;
   final VoidCallback onRefresh;
   final VoidCallback onMyBids;
 
   const _AuctionsHeader({
     required this.auctionCount,
+    required this.searchController,
+    required this.searchQuery,
+    required this.onSearchChanged,
+    required this.onClearSearch,
     required this.onRefresh,
     required this.onMyBids,
   });
@@ -413,57 +331,99 @@ class _AuctionsHeader extends StatelessWidget {
     final topPadding = MediaQuery.of(context).padding.top;
     return Container(
       color: AppColors.primary,
-      padding: EdgeInsets.only(
-          top: topPadding + 12, bottom: 14, left: 16, right: 16),
-      child: Row(
+      padding: EdgeInsets.fromLTRB(16, topPadding + 12, 16, 16),
+      child: Column(
         children: [
-          ShellBackButton(color: Colors.white),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  l.activeAuctions,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                if (auctionCount > 0) ...[
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '$auctionCount مزاد',
+          Row(
+            children: [
+              ShellBackButton(color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      l.activeAuctions,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ],
+                    if (auctionCount > 0) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          l.auctionCountBadge(auctionCount),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              _HeaderBtn(
+                icon: Icons.gavel_rounded,
+                tooltip: AppLocalizations.of(context).myBids2,
+                onTap: onMyBids,
+              ),
+              const SizedBox(width: 8),
+              _HeaderBtn(
+                icon: Icons.refresh_rounded,
+                tooltip: AppLocalizations.of(context).refresh,
+                onTap: onRefresh,
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            height: 46,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ),
-          const SizedBox(width: 8),
-          _HeaderBtn(
-            icon: Icons.gavel_rounded,
-            tooltip: AppLocalizations.of(context).myBids2,
-            onTap: onMyBids,
-          ),
-          const SizedBox(width: 8),
-          _HeaderBtn(
-            icon: Icons.refresh_rounded,
-            tooltip: AppLocalizations.of(context).refresh,
-            onTap: onRefresh,
+            child: TextField(
+              controller: searchController,
+              textAlign: TextAlign.start,
+              onChanged: onSearchChanged,
+              decoration: InputDecoration(
+                hintText: l.searchAuctionHint,
+                hintStyle: const TextStyle(
+                  color: AppColors.textHint,
+                  fontSize: 13,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.textHint,
+                  size: 20,
+                ),
+                suffixIcon: searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: AppColors.textHint,
+                          size: 18,
+                        ),
+                        onPressed: onClearSearch,
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 13),
+              ),
+            ),
           ),
         ],
       ),

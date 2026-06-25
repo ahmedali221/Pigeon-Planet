@@ -93,9 +93,6 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     Either<Failure, List<AuctionModel>>? listResult;
     Either<Failure, AuctionPageResult>? pageResult;
     switch (event.filter) {
-      case 'ending_soon':
-        listResult = await _repository.getEndingSoon();
-        break;
       case 'active':
         listResult = await _repository.getActiveAuctions();
         break;

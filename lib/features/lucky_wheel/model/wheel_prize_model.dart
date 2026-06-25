@@ -9,6 +9,7 @@ class WheelPrizeModel extends Equatable {
   final int weight;
   final bool isEnabled;
   final String description;
+  final bool showIcon;
 
   const WheelPrizeModel({
     required this.type,
@@ -18,6 +19,7 @@ class WheelPrizeModel extends Equatable {
     required this.weight,
     required this.isEnabled,
     required this.description,
+    this.showIcon = true,
   });
 
   factory WheelPrizeModel.fromJson(Map<String, dynamic> json) {
@@ -32,9 +34,11 @@ class WheelPrizeModel extends Equatable {
       weight: json['weight'] as int? ?? 10,
       isEnabled: json['is_enabled'] as bool? ?? true,
       description: json['description'] as String? ?? '',
+      showIcon: json['show_icon'] as bool? ?? true,
     );
   }
 
   @override
-  List<Object?> get props => [type, label, emoji, weight, isEnabled, description];
+  List<Object?> get props =>
+      [type, label, emoji, weight, isEnabled, description, showIcon];
 }

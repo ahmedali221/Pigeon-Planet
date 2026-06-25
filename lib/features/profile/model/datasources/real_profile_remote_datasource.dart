@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../profile_model.dart';
@@ -88,5 +90,26 @@ class RealProfileRemoteDataSource implements ProfileRemoteDataSource {
         ? ApiConstants.sellerDetail(profile.id)
         : ApiConstants.customerDetail(profile.id);
     await _dio.delete(endpoint);
+  }
+
+  @override
+  Future<ProfileModel> uploadProfilePhoto({
+    required int profileId,
+    required String profileType,
+    required String filePath,
+  }) async {
+    final endpoint = profileType == 'Seller'
+        ? ApiConstants.sellerAvatar(profileId)
+        : ApiConstants.customerAvatar(profileId);
+    final fileName = filePath.replaceAll('\\', '/').split('/').last;
+    final formData = FormData.fromMap({
+      'avatar': await MultipartFile.fromFile(filePath, filename: fileName),
+    });
+    final response = await _dio.patch(
+      endpoint,
+      data: formData,
+      options: Options(contentType: Headers.multipartFormDataContentType),
+    );
+    return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

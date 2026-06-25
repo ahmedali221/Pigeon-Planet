@@ -18,6 +18,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileDeleteRequested>(_onDeleteRequested);
     on<ProfileRoomsLoadRequested>(_onRoomsLoad);
     on<ProfileCreateRoomRequested>(_onCreateRoom);
+    on<ProfilePhotoUpdateRequested>(_onPhotoUpdateRequested);
   }
 
   Future<void> _onStarted(
@@ -90,6 +91,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(state.copyWith(roomsStatus: RoomsStatus.created));
         add(ProfileRoomsLoadRequested());
       },
+    );
+  }
+
+  Future<void> _onPhotoUpdateRequested(
+      ProfilePhotoUpdateRequested event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(status: ProfileStatus.photoUploading));
+    final result = await _repository.uploadProfilePhoto(
+      profileId: event.profileId,
+      profileType: event.profileType,
+      filePath: event.filePath,
+    );
+    result.fold(
+      (f) => emit(state.copyWith(
+          status: ProfileStatus.error, errorMessage: f.message)),
+      (updated) =>
+          emit(state.copyWith(status: ProfileStatus.photoUpdated, profile: updated)),
     );
   }
 }

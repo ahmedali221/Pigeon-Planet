@@ -20,7 +20,7 @@ class AuctionsLoadMoreRequested extends AuctionsEvent {
 }
 
 class AuctionsFilterChanged extends AuctionsEvent {
-  // 'all' | 'ending_soon' | 'my_auctions'
+  // 'all' | 'my_auctions' | 'my_active' | 'my_ended' | 'my_cancelled'
   final String filter;
   const AuctionsFilterChanged(this.filter);
 

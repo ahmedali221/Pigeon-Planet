@@ -8,7 +8,6 @@ import '../widgets/home_active_auctions_section.dart';
 import '../widgets/home_auctions_section.dart';
 import '../widgets/home_breeders_section.dart';
 import '../widgets/home_coming_soon_section.dart';
-import '../widgets/home_fixed_price_birds_section.dart';
 import '../widgets/home_hero_banner.dart';
 import '../widgets/home_seller_metrics_section.dart';
 import '../widgets/home_insights_preview_section.dart';
@@ -16,15 +15,17 @@ import '../widgets/home_top_bar.dart';
 import '../widgets/points_system_modal.dart';
 import '../widgets/home_demo_cards_section.dart';
 import '../widgets/home_section_skeletons.dart';
+import '../widgets/home_store_birds_section.dart';
 import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/view/pages/auction_create_page.dart';
-import '../../../auctions/view/pages/bird_detail_page.dart';
 import '../../../auctions/viewmodel/auctions_bloc.dart';
+import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
+import '../../../notifications/view/pages/notifications_page.dart';
 import '../../../profile/view/pages/profile_page.dart';
 import '../../../profile/viewmodel/profile_bloc.dart';
 import '../../../profile/model/profile_repository.dart';
-import '../../../pigeon_id/view/pages/bird_qr_scanner_page.dart';
+
 import '../../../pigeon_id/view/pages/pigeon_id_form_page.dart';
 import '../../../pigeon_id/viewmodel/pigeon_id_bloc.dart';
 
@@ -440,8 +441,22 @@ class _HomeViewState extends State<_HomeView> {
                               avatarUrl: authUser?.avatarUrl,
                               unreadCount: homeState.unreadNotificationCount +
                                   chatUnread,
-                              onQrScanPressed: () =>
-                                  BirdQrScannerPage.push(context),
+                              showCart: !isSeller,
+                              onNotificationsPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => NotificationsPage(),
+                                ),
+                              ),
+                              onCartPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: context.read<CartBloc>(),
+                                    child: CartPage(),
+                                  ),
+                                ),
+                              ),
                               onMenuPressed: () =>
                                   _scaffoldKey.currentState?.openEndDrawer(),
                               onAvatarTap: () {
@@ -520,60 +535,27 @@ class _HomeViewState extends State<_HomeView> {
                                       ],
                                       // ── Seller sections ─────────────────────
                                       if (isSeller) ...[
+                                        // 1. Green welcome + quick actions (auctions / birds / store / tools)
                                         if (homeState.summaryLoading)
                                           const HomeSellerMetricsSkeleton()
                                         else
                                           HomeSellerMetricsSection(
                                             summary: homeState.sellerSummary,
                                             displayName: displayName,
-                                            myAuctionsCount: homeState.sellerSummary?.activeLiveAuctions ?? 0,
-                                            myBirdsCount: homeState.myBirds.length,
                                           ),
                                         const SizedBox(height: 20),
+                                        // 2. Announcements
                                         if (homeState.announcementsLoading)
                                           const HomeHeroBannerSkeleton()
                                         else if (announcementBanners.isNotEmpty)
                                           HomeHeroBanner(banners: announcementBanners),
                                         if (homeState.announcementsLoading || announcementBanners.isNotEmpty)
                                           const SizedBox(height: 20),
+                                        // 3. ملخص نشاطك
                                         HomeInsightsPreviewSection(),
                                         const SizedBox(height: 20),
-                                        HomeDemoCardsSection(
-                                          onMarketTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => SellerProductsPage(),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        if (homeState.sellersLoading)
-                                          const HomeBreedersSkeleton()
-                                        else
-                                          HomeBreedersSection(sellers: homeState.sellers),
                                       ],
                                       const SizedBox(height: 20),
-                                      // ── Fixed-price birds ───────────────────
-                                      if (homeState.featuredBirds.isNotEmpty) ...[
-                                        HomeFixedPriceBirdsSection(
-                                          birds: homeState.featuredBirds,
-                                          onBirdTap: (bird) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) => BlocProvider.value(
-                                                  value: context.read<CartBloc>(),
-                                                  child: BirdDetailPage(
-                                                    bird: bird,
-                                                    sellerNickname: bird.sellerNickname,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 20),
-                                      ],
                                       // ── Active auctions ─────────────────────
                                       if (homeState.activeAuctionsLoading)
                                         const HomeActiveAuctionsSkeleton()
@@ -581,6 +563,12 @@ class _HomeViewState extends State<_HomeView> {
                                         HomeActiveAuctionsSection(auctions: activeAuctions),
                                       if (homeState.activeAuctionsLoading || activeAuctions.isNotEmpty)
                                         const SizedBox(height: 20),
+                                      // ── Store birds ─────────────────────────
+                                      HomeStoreBirdsSection(
+                                        birds: homeState.featuredBirds,
+                                        isLoading: homeState.featuredBirdsLoading,
+                                      ),
+                                      const SizedBox(height: 20),
                                       // ── Coming soon ─────────────────────────
                                       if (homeState.comingSoonLoading)
                                         const HomeComingSoonSkeleton()

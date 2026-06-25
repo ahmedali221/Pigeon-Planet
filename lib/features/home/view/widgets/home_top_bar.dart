@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/shell_scaffold.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class HomeTopBar extends StatelessWidget {
   final VoidCallback? onMenuPressed;
   final VoidCallback? onAvatarTap;
-  final VoidCallback? onQrScanPressed;
+  final VoidCallback? onNotificationsPressed;
+  final VoidCallback? onCartPressed;
   final String? avatarUrl;
   final int unreadCount;
+  final bool showCart;
 
   const HomeTopBar({
     super.key,
     this.onMenuPressed,
     this.onAvatarTap,
-    this.onQrScanPressed,
+    this.onNotificationsPressed,
+    this.onCartPressed,
     this.avatarUrl,
     this.unreadCount = 0,
+    this.showCart = false,
   });
 
   @override
@@ -69,30 +72,25 @@ class HomeTopBar extends StatelessWidget {
               ),
             ),
           ),
-          // QR scanner
-          IconButton(
-            icon: const Icon(
-              Icons.qr_code_scanner_rounded,
-              color: Colors.white,
-              size: 24,
+          // Cart (customers only)
+          if (showCart) ...[
+            IconButton(
+              icon: const Icon(Icons.shopping_cart_rounded,
+                  color: Colors.white, size: 24),
+              onPressed: onCartPressed,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
-            onPressed: onQrScanPressed,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            tooltip: AppLocalizations.of(context).scanBirdCardTooltip,
-          ),
-          const SizedBox(width: 4),
-          // Hamburger — opens drawer (leftmost in RTL)
+            const SizedBox(width: 4),
+          ],
+          // Notifications
           Stack(
             clipBehavior: Clip.none,
             children: [
               IconButton(
-                icon: const Icon(
-                  Icons.menu_rounded,
-                  color: Colors.white,
-                  size: 26,
-                ),
-                onPressed: onMenuPressed,
+                icon: const Icon(Icons.notifications_rounded,
+                    color: Colors.white, size: 24),
+                onPressed: onNotificationsPressed,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -103,6 +101,14 @@ class HomeTopBar extends StatelessWidget {
                   child: _NotificationBadge(count: unreadCount),
                 ),
             ],
+          ),
+          const SizedBox(width: 4),
+          // Hamburger — opens drawer (leftmost in RTL)
+          IconButton(
+            icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 26),
+            onPressed: onMenuPressed,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

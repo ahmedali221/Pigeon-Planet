@@ -23,6 +23,8 @@ class _HomeActiveAuctionsSectionState
   bool _favoritesOnly = false;
   bool _searchOpen = false;
   bool _initialized = false;
+  int _displayCount = 4;
+  static const _countOptions = [4, 6, 8, 10, 12];
   final _searchCtrl = TextEditingController();
   final Set<int> _favorites = {};
 
@@ -174,6 +176,34 @@ class _HomeActiveAuctionsSectionState
                 ),
               ),
               SizedBox(width: 8),
+              // count dropdown
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: _displayCount,
+                    style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 13,
+                        fontFamily: 'Cairo'),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.textSecondary, size: 18),
+                    items: _countOptions
+                        .map((n) => DropdownMenuItem(
+                            value: n, child: Text('$n')))
+                        .toList(),
+                    onChanged: (v) =>
+                        setState(() => _displayCount = v ?? _displayCount),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
               // favorites filter
               _IconBtn(
                 icon: _favoritesOnly
@@ -246,7 +276,7 @@ class _HomeActiveAuctionsSectionState
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'عرض ${filtered.length > 4 ? 4 : filtered.length} من ${widget.auctions.length} مزاد نشط',
+            'عرض ${filtered.length > _displayCount ? _displayCount : filtered.length} من ${widget.auctions.length} مزاد نشط',
             style: TextStyle(
                 fontSize: 12, color: AppColors.textSecondary),
             textAlign: TextAlign.start,
@@ -287,7 +317,7 @@ class _HomeActiveAuctionsSectionState
                 mainAxisSpacing: 10,
                 childAspectRatio: 0.72,
               ),
-              itemCount: filtered.length > 4 ? 4 : filtered.length,
+              itemCount: filtered.length > _displayCount ? _displayCount : filtered.length,
               itemBuilder: (context, i) {
                 final a = filtered[i];
                 final id = a['id'] as int?;

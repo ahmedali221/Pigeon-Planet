@@ -12,6 +12,7 @@ import '../../model/discount_offer_model.dart';
 import '../../model/product_model.dart';
 import '../../viewmodel/market_bloc.dart';
 import '../widgets/market_category_tile.dart';
+import 'product_detail_page.dart';
 import 'products_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -304,16 +305,12 @@ class _StatsBar extends StatelessWidget {
                   Text('🚚', style: TextStyle(fontSize: 24)),
                   SizedBox(height: 4),
                   Text(
-                    AppLocalizations.of(context).free,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  Text(
                     AppLocalizations.of(context).homeDelivery,
-                    style: TextStyle(fontSize: 12, color: AppColors.primary),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ],
               ),
@@ -543,7 +540,7 @@ class _FeedSection extends StatelessWidget {
         ),
         SizedBox(height: 10),
         SizedBox(
-          height: 186,
+          height: 224,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsetsDirectional.only(start: 16, end: 8),
@@ -592,7 +589,26 @@ class _FeedSection extends StatelessWidget {
                         ),
                       );
               }
-              return _FeedProductCard(product: products[i]);
+              return _FeedProductCard(
+                product: products[i],
+                onTap: () {
+                  context.read<MarketBloc>().add(
+                    MarketProductOpened(products[i]),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<MarketBloc>(),
+                        child: BlocProvider.value(
+                          value: context.read<CartBloc>(),
+                          child: ProductDetailPage(),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ),
@@ -603,28 +619,35 @@ class _FeedSection extends StatelessWidget {
 
 class _FeedProductCard extends StatelessWidget {
   final ProductModel product;
-  _FeedProductCard({required this.product});
+  final VoidCallback onTap;
+
+  _FeedProductCard({
+    required this.product,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isFollowing = product.source == 'following';
 
-    return Container(
-      width: 130,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 158,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Thumbnail
           ClipRRect(
             borderRadius: BorderRadius.only(
@@ -634,7 +657,7 @@ class _FeedProductCard extends StatelessWidget {
             child: Stack(
               children: [
                 SizedBox(
-                  height: 102,
+                  height: 132,
                   child: product.thumbnailUrl != null
                       ? Image.network(
                           product.thumbnailUrl!,
@@ -692,7 +715,7 @@ class _FeedProductCard extends StatelessWidget {
                   Text(
                     product.name,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
@@ -705,7 +728,7 @@ class _FeedProductCard extends StatelessWidget {
                       product.price.toStringAsFixed(0),
                     ),
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),
@@ -714,7 +737,8 @@ class _FeedProductCard extends StatelessWidget {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

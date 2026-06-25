@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
@@ -17,6 +18,7 @@ import 'edit_profile_page.dart';
 import '../../../notifications/view/pages/notifications_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+
 class ProfilePage extends StatelessWidget {
   final int unreadNotificationCount;
   ProfilePage({super.key, this.unreadNotificationCount = 0});
@@ -26,8 +28,10 @@ class ProfilePage extends StatelessWidget {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listenWhen: (prev, curr) =>
           curr.status == ProfileStatus.deleted ||
+          curr.status == ProfileStatus.photoUpdated ||
           (curr.status == ProfileStatus.error &&
-              prev.status == ProfileStatus.deleting),
+              (prev.status == ProfileStatus.deleting ||
+                  prev.status == ProfileStatus.photoUploading)),
       listener: (context, state) {
         if (state.status == ProfileStatus.deleted) {
           Navigator.of(context).pop();
@@ -39,10 +43,22 @@ class ProfilePage extends StatelessWidget {
           );
           return;
         }
+        if (state.status == ProfileStatus.photoUpdated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم تحديث صورة الملف الشخصي'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          return;
+        }
         if (state.status == ProfileStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? AppLocalizations.of(context).errorOccurred),
+              content: Text(
+                state.errorMessage ??
+                    AppLocalizations.of(context).errorOccurred,
+              ),
               backgroundColor: Colors.red.shade600,
               behavior: SnackBarBehavior.floating,
             ),
@@ -60,16 +76,16 @@ class ProfilePage extends StatelessWidget {
         if (state.status == ProfileStatus.error && state.profile == null) {
           return Scaffold(
             backgroundColor: AppColors.pageBackground,
-            appBar: PPWAppBar(
-              title: AppLocalizations.of(context).profile,
-            ),
+            appBar: PPWAppBar(title: AppLocalizations.of(context).profile),
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.error_outline, color: Colors.red, size: 48),
                   SizedBox(height: 12),
-                  Text(state.errorMessage ?? AppLocalizations.of(context).loading8),
+                  Text(
+                    state.errorMessage ?? AppLocalizations.of(context).loading8,
+                  ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<ProfileBloc>().add(
@@ -87,53 +103,74 @@ class ProfilePage extends StatelessWidget {
           backgroundColor: AppColors.pageBackground,
           body: CustomScrollView(
             slivers: [
-              _ProfileHeader(profile: profile),
+              _ProfileHeader(),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _StatusChips(profile: profile),
-                      SizedBox(height: 12),
-                      _LevelBadge(profile: profile),
-                      SizedBox(height: 16),
-                      _StatsCard(profile: profile),
-                      SizedBox(height: 16),
-                      _InfoCard(profile: profile),
-                      SizedBox(height: 16),
-                      if (profile.isSeller) ...[
-                        _RatingCard(profile: profile),
-                        SizedBox(height: 16),
-                      ],
-                      if (!profile.isSeller &&
-                          ((profile.levelDiscountPercent ?? 0) > 0 ||
-                              (profile.levelCashbackPercent ?? 0) > 0)) ...[
-                        _BenefitsCard(profile: profile),
-                        SizedBox(height: 16),
-                      ],
-                      _NotificationsNavTile(
-                        unreadCount: unreadNotificationCount,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _GreenAvatarHeader(
+                      profile: profile,
+                      isUploading:
+                          state.status == ProfileStatus.photoUploading,
+                      onEditPhoto: () async {
+                        final picked = await ImagePicker().pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 80,
+                        );
+                        if (picked == null || !context.mounted) return;
+                        context.read<ProfileBloc>().add(
+                          ProfilePhotoUpdateRequested(
+                            profileId: profile.id,
+                            profileType: profile.type,
+                            filePath: picked.path,
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: _GreenAvatarHeader.avatarRadius + 20),
+                    _ProfileNameSection(profile: profile),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 16),
+                          if (profile.isSeller) ...[
+                            _RatingStatsCard(profile: profile),
+                            SizedBox(height: 16),
+                          ],
+                          _InfoCard(profile: profile),
+                          SizedBox(height: 16),
+                          if (!profile.isSeller &&
+                              ((profile.levelDiscountPercent ?? 0) > 0 ||
+                                  (profile.levelCashbackPercent ?? 0) > 0)) ...[
+                            _BenefitsCard(profile: profile),
+                            SizedBox(height: 16),
+                          ],
+                          _NotificationsNavTile(
+                            unreadCount: unreadNotificationCount,
+                          ),
+                          SizedBox(height: 12),
+                          _PaymentsNavTile(),
+                          SizedBox(height: 12),
+                          _ComplaintsNavTile(),
+                          SizedBox(height: 12),
+                          if (!profile.isSeller) ...[
+                            _CashbackHistoryNavTile(),
+                            SizedBox(height: 12),
+                            _PromotionsOffersNavTile(),
+                            SizedBox(height: 12),
+                            _FollowingNavTile(),
+                            SizedBox(height: 12),
+                          ],
+                          _PedigreesNavTile(),
+                          SizedBox(height: 12),
+                          _EditButton(profile: profile),
+                          SizedBox(height: 80),
+                        ],
                       ),
-                      SizedBox(height: 12),
-                      _PaymentsNavTile(),
-                      SizedBox(height: 12),
-                      _ComplaintsNavTile(),
-                      SizedBox(height: 12),
-                      if (!profile.isSeller) ...[
-                        _CashbackHistoryNavTile(),
-                        SizedBox(height: 12),
-                        _PromotionsOffersNavTile(),
-                        SizedBox(height: 12),
-                        _FollowingNavTile(),
-                        SizedBox(height: 12),
-                      ],
-                      _PedigreesNavTile(),
-                      SizedBox(height: 12),
-                      _EditButton(profile: profile),
-                      SizedBox(height: 80),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -145,13 +182,11 @@ class ProfilePage extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  final ProfileModel profile;
-  _ProfileHeader({required this.profile});
+  _ProfileHeader();
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 220,
       pinned: true,
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
@@ -159,109 +194,293 @@ class _ProfileHeader extends StatelessWidget {
         AppLocalizations.of(context).profile,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1B5E20), AppColors.primary],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
+    );
+  }
+}
+
+class _GreenAvatarHeader extends StatelessWidget {
+  final ProfileModel profile;
+  final VoidCallback? onEditPhoto;
+  final bool isUploading;
+  _GreenAvatarHeader({
+    required this.profile,
+    this.onEditPhoto,
+    this.isUploading = false,
+  });
+
+  static const double barHeight = 130;
+  static const double avatarRadius = 70;
+
+  @override
+  Widget build(BuildContext context) {
+    final levelLabel = profile.isSeller
+        ? profile.sellerLevelLabel
+        : profile.customerLevelLabel;
+    final avatarUrl = profile.avatarUrl?.trim();
+    final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+
+    return SizedBox(
+      height: barHeight,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          // Green gradient bar — fills the full SizedBox height
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1B5E20), AppColors.primary],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
+              ),
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          // "تعديل الصورة" — bottom-start of green bar
+          Positioned(
+            bottom: 14,
+            left: 16,
+            child: GestureDetector(
+              onTap: onEditPhoto,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.camera_alt_outlined, color: Colors.white, size: 14),
+                  SizedBox(width: 4),
+                  Text(
+                    'تعديل الصورة',
+                    style: TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Avatar — center aligned at the bottom edge of the green bar,
+          // extending below it (clipBehavior: Clip.none lets it overflow)
+          Positioned(
+            bottom: -avatarRadius,
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
               children: [
-                SizedBox(height: 20),
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.white.withValues(alpha: 0.15),
-                  backgroundImage: profile.avatarUrl != null
-                      ? NetworkImage(profile.avatarUrl!)
-                      : null,
-                  child: profile.avatarUrl == null
-                      ? Icon(
-                          Icons.person_rounded,
-                          color: Colors.white,
-                          size: 44,
-                        )
-                      : null,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  profile.displayName,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 6),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 4),
                   ),
-                  child: Text(
-                    profile.isSeller ? AppLocalizations.of(context).baya : AppLocalizations.of(context).buyer3,
-                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: avatarRadius * 2,
+                      height: avatarRadius * 2,
+                      child: hasAvatar
+                          ? Image.network(
+                              avatarUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => Container(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  color: Colors.white,
+                                  size: 74,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              child: Icon(
+                                Icons.person_rounded,
+                                color: Colors.white,
+                                size: 74,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                // Level badge — bottom-right
+                if (levelLabel != null && levelLabel.isNotEmpty)
+                  Positioned(
+                    bottom: 0,
+                    right: -6,
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2.5),
+                      ),
+                      child: Icon(Icons.workspace_premium_rounded, color: Colors.white, size: 18),
+                    ),
+                  ),
+                // Verified badge — bottom-left
+                if (profile.isValid)
+                  Positioned(
+                    bottom: 0,
+                    left: -6,
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF2E7D32),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2.5),
+                      ),
+                      child: Icon(Icons.verified_rounded, color: Colors.white, size: 18),
+                    ),
+                  ),
+                // Camera edit button — bottom center
+                Positioned(
+                  bottom: -8,
+                  child: GestureDetector(
+                    onTap: isUploading ? null : onEditPhoto,
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: isUploading
+                          ? Padding(
+                              padding: EdgeInsets.all(6),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class _StatusChips extends StatelessWidget {
+class _ProfileNameSection extends StatelessWidget {
   final ProfileModel profile;
-  _StatusChips({required this.profile});
+  _ProfileNameSection({required this.profile});
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        _chip(
-          label: profile.activated ? AppLocalizations.of(context).mfal : AppLocalizations.of(context).ghyrMfal,
-          color: profile.activated ? Colors.green : Colors.orange,
-          icon: profile.activated
-              ? Icons.check_circle_outline
-              : Icons.pending_outlined,
-        ),
-        _chip(
-          label: profile.isActive ? AppLocalizations.of(context).statusActive : AppLocalizations.of(context).inactive,
-          color: profile.isActive ? Colors.blue : Colors.grey,
-          icon: profile.isActive
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
-        ),
-        _chip(
-          label: profile.isValid ? AppLocalizations.of(context).salh : AppLocalizations.of(context).ghyrSalh,
-          color: profile.isValid ? Colors.teal : Colors.red,
-          icon: profile.isValid
-              ? Icons.verified_outlined
-              : Icons.block_outlined,
-        ),
-      ],
+    final avg = profile.avgRating ?? 0.0;
+    final ratingCount = profile.ratingsCount ?? 0;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Column(
+        children: [
+          Text(
+            profile.displayName,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if ((profile.username ?? '').isNotEmpty) ...[
+            SizedBox(height: 4),
+            Text(
+              '@${profile.username}',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          if (profile.isSeller && avg > 0) ...[
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  avg.toStringAsFixed(1),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(width: 6),
+                ...List.generate(5, (i) {
+                  final filled = i < avg.floor();
+                  final half = !filled && i < avg;
+                  return Icon(
+                    half
+                        ? Icons.star_half_rounded
+                        : (filled
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded),
+                    color: Colors.amber,
+                    size: 17,
+                  );
+                }),
+                SizedBox(width: 6),
+                Text(
+                  '($ratingCount تقييم)',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _StatusChip(
+                label: profile.isActive
+                    ? AppLocalizations.of(context).statusActive
+                    : AppLocalizations.of(context).inactive,
+                icon: profile.isActive
+                    ? Icons.flash_on_rounded
+                    : Icons.flash_off_rounded,
+                color: profile.isActive ? Colors.green : Colors.grey,
+              ),
+              SizedBox(width: 10),
+              _StatusChip(
+                label: profile.isValid
+                    ? AppLocalizations.of(context).salh
+                    : AppLocalizations.of(context).ghyrSalh,
+                icon: profile.isValid
+                    ? Icons.verified_rounded
+                    : Icons.cancel_outlined,
+                color: profile.isValid ? Colors.blue : Colors.red,
+              ),
+            ],
+          ),
+          if ((profile.address ?? '').isNotEmpty) ...[
+            SizedBox(height: 10),
+            Text(
+              profile.address!,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            ),
+          ],
+        ],
+      ),
     );
   }
+}
 
-  Widget _chip({
-    required String label,
-    required Color color,
-    required IconData icon,
-  }) {
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  _StatusChip({required this.label, required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -271,7 +490,7 @@ class _StatusChips extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 14),
-          SizedBox(width: 4),
+          SizedBox(width: 5),
           Text(
             label,
             style: TextStyle(
@@ -362,11 +581,7 @@ class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+  _InfoRow({required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -378,10 +593,7 @@ class _InfoRow extends StatelessWidget {
           SizedBox(width: 12),
           Text(
             label,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
           Spacer(),
           Text(
@@ -398,134 +610,16 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _RatingCard extends StatelessWidget {
+class _RatingStatsCard extends StatelessWidget {
   final ProfileModel profile;
-  _RatingCard({required this.profile});
+  _RatingStatsCard({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     final avg = profile.avgRating ?? 0.0;
     final count = profile.ratingsCount ?? 0;
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.orange.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.star_rounded,
-              color: AppColors.orange,
-              size: 28,
-            ),
-          ),
-          SizedBox(width: 14),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                avg.toStringAsFixed(1),
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              Text(
-                '$count تقييم',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          Spacer(),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(5, (i) {
-              final filled = i < avg.floor();
-              final half = !filled && i < avg;
-              return Icon(
-                half
-                    ? Icons.star_half_rounded
-                    : (filled ? Icons.star_rounded : Icons.star_border_rounded),
-                color: AppColors.orange,
-                size: 20,
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LevelBadge extends StatelessWidget {
-  final ProfileModel profile;
-  _LevelBadge({required this.profile});
-
-  @override
-  Widget build(BuildContext context) {
-    final label = profile.isSeller
-        ? profile.sellerLevelLabel
-        : profile.customerLevelLabel;
-    if (label == null || label.isEmpty) return SizedBox.shrink();
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.workspace_premium_rounded,
-                  color: AppColors.primary, size: 15),
-              SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatsCard extends StatelessWidget {
-  final ProfileModel profile;
-  _StatsCard({required this.profile});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -540,63 +634,60 @@ class _StatsCard extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            _StatCell(
-              icon: Icons.shopping_bag_outlined,
-              label: AppLocalizations.of(context).altlbatAlmktmla,
-              value: profile.completedOrdersCount.toString(),
-              color: AppColors.blue,
+            Expanded(
+              child: Column(
+                children: [
+                  Icon(Icons.star_rounded, color: Colors.amber, size: 26),
+                  SizedBox(height: 8),
+                  Text(
+                    avg.toStringAsFixed(1),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'متوسط التقييم',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
             VerticalDivider(width: 1, thickness: 1),
-            _StatCell(
-              icon: Icons.person_add_alt_1_outlined,
-              label: AppLocalizations.of(context).aldawatAlnajha,
-              value: profile.successfulInvitesCount.toString(),
-              color: AppColors.purple,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCell extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-  _StatCell({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+            Expanded(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.rate_review_outlined,
+                    color: AppColors.primary,
+                    size: 26,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    count.toString(),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'عدد التقييمات',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -689,10 +780,7 @@ class _BenefitChip extends StatelessWidget {
           SizedBox(height: 2),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
         ],

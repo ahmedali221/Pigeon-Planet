@@ -59,6 +59,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       announcementsLoading: true,
       summaryLoading: true,
       sellerPrivateLoading: isSeller,
+      featuredBirdsLoading: true,
     ));
 
     // Fire all independent sections in parallel — each emits as soon as it resolves.
@@ -69,6 +70,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _loadSellers(emit),
       _loadAnnouncements(emit),
       _loadSummary(emit, isSeller),
+      _loadFeaturedBirds(emit),
     ]);
 
     // Seller-only private data (sequential by design — birds before auctions).
@@ -81,6 +83,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _pollTimer ??= Timer.periodic(const Duration(seconds: 30), (_) {
       if (!isClosed) add(const _UnreadCountTick());
     });
+  }
+
+  Future<void> _loadFeaturedBirds(Emitter<HomeState> emit) async {
+    final result = await _auctionsRepository.getSellerBirds();
+    final birds = result.fold((_) => <BirdSummaryModel>[], (list) => list);
+    emit(state.copyWith(featuredBirds: birds, featuredBirdsLoading: false));
   }
 
   Future<void> _loadActiveAuctions(Emitter<HomeState> emit) async {

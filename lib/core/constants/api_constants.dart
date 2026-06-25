@@ -15,8 +15,10 @@ class ApiConstants {
   // ── User profiles ─────────────────────────────────────────────────────────
   static const String mySellers = '/users/mobile/sellers/';
   static String sellerDetail(int id) => '/users/mobile/sellers/$id/';
+  static String sellerAvatar(int id) => '/users/mobile/sellers/$id/avatar/';
   static const String myCustomers = '/users/mobile/customers/';
   static String customerDetail(int id) => '/users/mobile/customers/$id/';
+  static String customerAvatar(int id) => '/users/mobile/customers/$id/avatar/';
 
   // ── Insights ──────────────────────────────────────────────────────────────
   static const String insightsSellerHome = '/insights/seller/home/';

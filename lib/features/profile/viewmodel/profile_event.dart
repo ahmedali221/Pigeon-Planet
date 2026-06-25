@@ -43,3 +43,16 @@ class ProfileCreateRoomRequested extends ProfileEvent {
   @override
   List<Object?> get props => [nickname, country, currency];
 }
+
+class ProfilePhotoUpdateRequested extends ProfileEvent {
+  final int profileId;
+  final String profileType;
+  final String filePath;
+  const ProfilePhotoUpdateRequested({
+    required this.profileId,
+    required this.profileType,
+    required this.filePath,
+  });
+  @override
+  List<Object?> get props => [profileId, profileType, filePath];
+}

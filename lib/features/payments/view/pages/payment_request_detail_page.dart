@@ -312,6 +312,14 @@ class _DetailsCard extends StatelessWidget {
               value: '#${request.buyerProfileId}',
             ),
           ],
+          if (request.buyerPhone != null && request.buyerPhone!.isNotEmpty) ...[
+            Divider(height: 1, indent: 16, endIndent: 16),
+            _Row(
+              icon: Icons.phone_outlined,
+              label: 'رقم المشتري',
+              value: request.buyerPhone!,
+            ),
+          ],
           Divider(height: 1, indent: 16, endIndent: 16),
           if (request.auctionItemId != null) ...[
             _Row(

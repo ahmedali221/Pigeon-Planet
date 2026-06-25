@@ -648,26 +648,6 @@ class _AuctionItemCard extends StatelessWidget {
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
-                            Text(l.startingPriceLabel,
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color:
-                                        AppColors.textSecondary)),
-                            Text(
-                              '${_fmt(item.startingPrice)} ج.م',
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textHint,
-                                  decoration:
-                                      TextDecoration.lineThrough),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
                             Text(l.currentPrice,
                                 style: const TextStyle(
                                     fontSize: 11,

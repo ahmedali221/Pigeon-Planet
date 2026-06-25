@@ -16,6 +16,7 @@ import '../../features/auctions/view/pages/auctions_page.dart';
 import '../../features/market/view/pages/market_page.dart';
 import '../../features/rooms/view/pages/rooms_page.dart';
 import '../../features/races/view/pages/races_page.dart';
+import '../../features/electronic_clocks/view/pages/electronic_clocks_page.dart';
 import '../../features/splash/view/pages/splash_page.dart';
 
 class AppRouter {
@@ -25,6 +26,7 @@ class AppRouter {
   static final _marketKey = GlobalKey<NavigatorState>();
   static final _roomsKey = GlobalKey<NavigatorState>();
   static final _racesKey = GlobalKey<NavigatorState>();
+  static final _clocksKey = GlobalKey<NavigatorState>();
 
   static final _refresh = _GoRouterRefreshStream(sl<AuthBloc>().stream);
 
@@ -109,6 +111,15 @@ class AppRouter {
             navigatorKey: _racesKey,
             routes: [
               GoRoute(path: AppRoutes.races, builder: (_, _) => RacesPage()),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _clocksKey,
+            routes: [
+              GoRoute(
+                path: AppRoutes.clocks,
+                builder: (_, _) => const ElectronicClocksPage(),
+              ),
             ],
           ),
         ],

@@ -21,6 +21,7 @@ class ProductsPage extends StatelessWidget {
           (curr.status == CartStatus.error &&
               prev.status == CartStatus.mutating),
       listener: (context, state) {
+        if (ModalRoute.of(context)?.isCurrent != true) return;
         if (state.status == CartStatus.loaded) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

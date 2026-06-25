@@ -7,6 +7,8 @@ import '../model/lucky_wheel_segment_model.dart';
 import '../model/wheel_prize_model.dart';
 import '../model/wheel_spin_result_model.dart';
 
+const int maxLuckyWheelComponents = 8;
+
 // ── Events ────────────────────────────────────────────────────────────────────
 
 abstract class LuckyWheelEvent extends Equatable {
@@ -51,8 +53,7 @@ class LuckyWheelState extends Equatable {
   });
 
   List<WheelPrizeModel> get prizes {
-    final segments = current?.segments ?? const <LuckyWheelSegmentModel>[];
-    return segments
+    return visibleSegments
         .map((s) => WheelPrizeModel(
               type: s.prizeType,
               label: s.label,
@@ -61,8 +62,23 @@ class LuckyWheelState extends Equatable {
               weight: 1,
               isEnabled: true,
               description: s.description,
+              showIcon: _shouldShowIcon(s),
             ))
         .toList();
+  }
+
+  List<LuckyWheelSegmentModel> get visibleSegments {
+    final segments = current?.segments ?? const <LuckyWheelSegmentModel>[];
+    return segments.take(maxLuckyWheelComponents).toList();
+  }
+
+  static bool _shouldShowIcon(LuckyWheelSegmentModel segment) {
+    final mode =
+        (segment.metadata['display_mode'] ?? segment.metadata['displayMode'])
+            ?.toString()
+            .toLowerCase();
+    if (mode == 'text' || mode == 'text_only') return false;
+    return segment.emoji.trim().isNotEmpty;
   }
 
   LuckyWheelState copyWith({
@@ -139,11 +155,11 @@ class LuckyWheelBloc extends Bloc<LuckyWheelEvent, LuckyWheelState> {
     if (state.hasSpun ||
         current == null ||
         !current.eligible ||
-        current.segments.isEmpty) {
+        state.visibleSegments.isEmpty) {
       return;
     }
 
-    final segmentIds = current.segments.map((s) => s.id).toList();
+    final segmentIds = state.visibleSegments.map((s) => s.id).toList();
     final idempotencyKey = 'spin-${DateTime.now().microsecondsSinceEpoch}';
 
     emit(state.copyWith(status: LuckyWheelStatus.spinning));

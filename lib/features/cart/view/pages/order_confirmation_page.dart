@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/router/routes.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
@@ -49,9 +51,12 @@ class OrderConfirmationPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    l.awaitingSellerApproval,
+                    proofFile != null
+                        ? l.orderAndProofSentSuccess
+                        : l.awaitingSellerApproval,
                     style: const TextStyle(
                         fontSize: 13, color: AppColors.textSecondary),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -203,11 +208,7 @@ class OrderConfirmationPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Pop back to home (cart page + confirmation = 2 pages)
-                  int count = 0;
-                  Navigator.popUntil(context, (_) => ++count > 2);
-                },
+                onPressed: () => context.go(AppRoutes.home),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,

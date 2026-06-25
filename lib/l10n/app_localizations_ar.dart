@@ -502,6 +502,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productCount => 'عدد المنتجات';
 
   @override
+  String get customerPhone => 'رقم هاتف العميل';
+
+  @override
   String get checkoutError => 'حدث خطأ أثناء إتمام الطلب';
 
   @override
@@ -610,6 +613,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paymentProofSentSuccess => 'تم إرسال إثبات الدفع بنجاح';
+
+  @override
+  String get approvePaymentBtn => 'قبول الدفع';
+
+  @override
+  String get orderAndProofSentSuccess =>
+      'تم إرسال إثبات الدفع • بانتظار موافقة البائع';
 
   @override
   String get addImageBtn => 'إضافة صورة';

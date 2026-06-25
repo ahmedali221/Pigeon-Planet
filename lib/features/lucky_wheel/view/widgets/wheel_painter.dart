@@ -59,19 +59,37 @@ class WheelPainter extends CustomPainter {
 
     for (int i = 0; i < n; i++) {
       final midAngle = startOffset + (i + 0.5) * sliceAngle;
-      final textR = radius * 0.62;
-      final tx = center.dx + textR * cos(midAngle);
-      final ty = center.dy + textR * sin(midAngle);
+      final textR = radius * 0.58;
+      final prize = prizes[i];
+      final icon = prize.showIcon ? prize.emoji.trim() : '';
+      final label = prize.label.trim();
+      final text = [
+        if (icon.isNotEmpty) icon,
+        if (label.isNotEmpty) label,
+      ].join('\n');
+      if (text.isEmpty) continue;
 
       final tp = TextPainter(
         text: TextSpan(
-          text: prizes[i].emoji,
-          style: const TextStyle(fontSize: 22),
+          text: text,
+          style: TextStyle(
+            color: _textColorFor(prize.color),
+            fontSize: icon.isNotEmpty ? 12 : 13,
+            fontWeight: FontWeight.w800,
+            height: 1.15,
+          ),
         ),
-        textDirection: TextDirection.ltr,
-      )..layout();
+        textAlign: TextAlign.center,
+        maxLines: icon.isNotEmpty ? 3 : 2,
+        ellipsis: '...',
+        textDirection: _textDirectionFor(label),
+      )..layout(maxWidth: radius * (n <= 4 ? 0.46 : 0.36));
 
-      tp.paint(canvas, Offset(tx - tp.width / 2, ty - tp.height / 2));
+      canvas.save();
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(midAngle + pi / 2);
+      tp.paint(canvas, Offset(-tp.width / 2, -textR - tp.height / 2));
+      canvas.restore();
     }
 
     canvas.drawCircle(center, 24, Paint()..color = Colors.white);
@@ -89,4 +107,15 @@ class WheelPainter extends CustomPainter {
   @override
   bool shouldRepaint(WheelPainter oldDelegate) =>
       oldDelegate.prizes != prizes;
+
+  Color _textColorFor(Color background) {
+    return background.computeLuminance() > 0.45
+        ? Colors.black.withValues(alpha: 0.82)
+        : Colors.white;
+  }
+
+  TextDirection _textDirectionFor(String text) {
+    final hasRtl = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+    return hasRtl ? TextDirection.rtl : TextDirection.ltr;
+  }
 }

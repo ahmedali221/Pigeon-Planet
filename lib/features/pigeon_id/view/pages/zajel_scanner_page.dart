@@ -35,6 +35,9 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
   Timer? _stabilityTimer;
   double _tiltOffset = 0.5;
 
+  // Demo mode — bypasses accelerometer stability, auto-captures each step
+  static const _demoMode = true;
+
   // Scan state
   int _currentStep = 0;
   bool _isStable = false;
@@ -100,9 +103,16 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       }
       _cameraController = controller;
       setState(() => _cameraReady = true);
+      if (_demoMode) Future.delayed(const Duration(seconds: 1), _triggerDemoCapture);
     } catch (e) {
       if (mounted) setState(() => _cameraError = AppLocalizations.of(context).tathrTshghylAlkamyra);
     }
+  }
+
+  void _triggerDemoCapture() {
+    if (!mounted || _isRecording || _allDone) return;
+    setState(() => _isStable = true);
+    _startVideoRecording();
   }
 
   void _listenAccelerometer() {
@@ -110,9 +120,10 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       samplingPeriod: SensorInterval.normalInterval,
     ).listen((event) {
       if (!mounted) return;
-      final tilt = event.x.abs() + event.z.abs();
       final offset = ((event.x + 2.5) / 5.0).clamp(0.0, 1.0);
       setState(() => _tiltOffset = offset);
+      if (_demoMode) return; // stability detection disabled in demo mode
+      final tilt = event.x.abs() + event.z.abs();
       final nowStable = tilt < 1.5;
 
       if (nowStable && !_isStable && !_isRecording && !_allDone && !_isProcessing) {
@@ -206,6 +217,7 @@ class _ZajelScannerPageState extends State<ZajelScannerPage> {
       });
       _stabilityTimer?.cancel();
       _stabilityTimer = null;
+      if (_demoMode) Future.delayed(const Duration(milliseconds: 600), _triggerDemoCapture);
     } else {
       setState(() {
         _allDone = true;

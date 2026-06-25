@@ -1064,6 +1064,12 @@ abstract class AppLocalizations {
   /// **'عدد المنتجات'**
   String get productCount;
 
+  /// No description provided for @customerPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم هاتف العميل'**
+  String get customerPhone;
+
   /// No description provided for @checkoutError.
   ///
   /// In ar, this message translates to:
@@ -1279,6 +1285,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم إرسال إثبات الدفع بنجاح'**
   String get paymentProofSentSuccess;
+
+  /// No description provided for @approvePaymentBtn.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول الدفع'**
+  String get approvePaymentBtn;
+
+  /// No description provided for @orderAndProofSentSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال إثبات الدفع • بانتظار موافقة البائع'**
+  String get orderAndProofSentSuccess;
 
   /// No description provided for @addImageBtn.
   ///

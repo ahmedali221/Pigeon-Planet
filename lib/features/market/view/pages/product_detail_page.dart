@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/ppw_app_bar.dart';
 import '../../../auth/viewmodel/auth_bloc.dart';
 import '../../../cart/view/pages/buy_now_page.dart';
+import '../../../cart/view/pages/cart_page.dart';
 import '../../../cart/viewmodel/cart_bloc.dart';
 import '../../../ratings/view/widgets/ratings_section.dart';
 import '../../model/product_model.dart';
@@ -12,36 +13,11 @@ import '../../viewmodel/market_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class ProductDetailPage extends StatelessWidget {
-  ProductDetailPage({super.key});
+  const ProductDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CartBloc, CartState>(
-      listenWhen: (prev, curr) =>
-          (curr.status == CartStatus.loaded &&
-              prev.status == CartStatus.mutating) ||
-          (curr.status == CartStatus.error &&
-              prev.status == CartStatus.mutating),
-      listener: (context, state) {
-        if (state.status == CartStatus.loaded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).addedToCart),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        } else if (state.status == CartStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
-              ),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
-      child: BlocBuilder<MarketBloc, MarketState>(
+    return BlocBuilder<MarketBloc, MarketState>(
         builder: (context, state) {
           final product = state.selectedProduct;
           if (product == null) return SizedBox.shrink();
@@ -107,7 +83,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
           );
         },
-      ),
     );
   }
 }
@@ -554,107 +529,152 @@ class _StepBtn extends StatelessWidget {
 }
 
 // ── Action buttons ────────────────────────────────────────────────────────────
-class _ActionButtons extends StatelessWidget {
+class _ActionButtons extends StatefulWidget {
+  const _ActionButtons();
+
+  @override
+  State<_ActionButtons> createState() => _ActionButtonsState();
+}
+
+class _ActionButtonsState extends State<_ActionButtons> {
+  bool _isAddingToCart = false;
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CartBloc, CartState>(
-      buildWhen: (p, c) => p.status != c.status,
-      builder: (context, cartState) {
-        final isBusy = cartState.status == CartStatus.mutating;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              // Buy Now — skips cart, goes directly to order confirmation
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final ms = context.read<MarketBloc>().state;
-                      final product = ms.selectedProduct;
-                      if (product == null) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<CartBloc>(),
-                            child: BuyNowPage(
-                              product: product,
-                              quantity: ms.quantity,
+    return BlocListener<CartBloc, CartState>(
+      listenWhen: (prev, curr) =>
+          _isAddingToCart &&
+          ((curr.status == CartStatus.loaded &&
+                  prev.status == CartStatus.mutating) ||
+              (curr.status == CartStatus.error &&
+                  prev.status == CartStatus.mutating)),
+      listener: (context, state) {
+        if (!_isAddingToCart) return;
+        setState(() => _isAddingToCart = false);
+        if (state.status == CartStatus.loaded) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<CartBloc>(),
+                child: const CartPage(),
+              ),
+            ),
+          );
+        } else if (state.status == CartStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
+              ),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<CartBloc, CartState>(
+        buildWhen: (p, c) => p.status != c.status,
+        builder: (context, cartState) {
+          final isBusy =
+              _isAddingToCart || cartState.status == CartStatus.mutating;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // Buy Now — skips cart, goes directly to order confirmation
+                Expanded(
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final ms = context.read<MarketBloc>().state;
+                        final product = ms.selectedProduct;
+                        if (product == null) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<CartBloc>(),
+                              child: BuyNowPage(
+                                product: product,
+                                quantity: ms.quantity,
+                              ),
                             ),
                           ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.orange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.orange,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context).buyNow,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                      child: Text(
+                        AppLocalizations.of(context).buyNow,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(width: 12),
+                const SizedBox(width: 12),
 
-              // Add to Cart — adds item, stays on page, listener shows toast
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: OutlinedButton.icon(
-                    onPressed: isBusy
-                        ? null
-                        : () {
-                            final ms = context.read<MarketBloc>().state;
-                            final assetId = int.tryParse(ms.selectedProduct?.id ?? '');
-                            if (assetId != null) {
-                              context.read<CartBloc>().add(
-                                CartItemAdded(assetId, ms.quantity),
-                              );
-                            }
-                          },
-                    icon: isBusy
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primary,
-                            ),
-                          )
-                        : const Icon(Icons.shopping_cart_outlined, size: 18),
-                    label: Text(
-                      AppLocalizations.of(context).addToCart,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                // Add to Cart — adds item then navigates to CartPage
+                Expanded(
+                  child: SizedBox(
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      onPressed: isBusy
+                          ? null
+                          : () {
+                              final ms = context.read<MarketBloc>().state;
+                              final assetId =
+                                  int.tryParse(ms.selectedProduct?.id ?? '');
+                              if (assetId != null) {
+                                setState(() => _isAddingToCart = true);
+                                context.read<CartBloc>().add(
+                                  CartItemAdded(assetId, ms.quantity),
+                                );
+                              }
+                            },
+                      icon: isBusy
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary,
+                              ),
+                            )
+                          : const Icon(Icons.shopping_cart_outlined, size: 18),
+                      label: Text(
+                        AppLocalizations.of(context).addToCart,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(color: AppColors.primary, width: 2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side:
+                            const BorderSide(color: AppColors.primary, width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -14,7 +14,6 @@ import '../widgets/auction_description_section.dart';
 import '../widgets/auction_details_grid.dart';
 import '../widgets/auction_float_btn.dart';
 import '../widgets/auction_media_section.dart';
-import '../widgets/auction_pedigree_button.dart';
 import '../widgets/auction_reviews_section.dart';
 import '../widgets/auction_verification_row.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -40,10 +39,12 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuctionsBloc>().add(AuctionItemDetailRequested(
-          itemId: widget.item.id,
-          birdId: widget.item.bird.id,
-        ));
+    context.read<AuctionsBloc>().add(
+      AuctionItemDetailRequested(
+        itemId: widget.item.id,
+        birdId: widget.item.bird.id,
+      ),
+    );
   }
 
   String _fmt(double v) {
@@ -64,17 +65,19 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     final bird = item.bird;
     final startingPrice = item.startingPrice;
     final currentPrice = item.currentPrice;
-    final savings =
-        currentPrice > startingPrice ? currentPrice - startingPrice : 0.0;
+    final savings = currentPrice > startingPrice
+        ? currentPrice - startingPrice
+        : 0.0;
     final discountPercent = startingPrice > 0
         ? ((savings / startingPrice) * 100).round()
         : 0;
 
     String age = AppLocalizations.of(context).notSpecified;
     if (bird.birthday != null) {
-      final years =
-          DateTime.now().difference(bird.birthday!).inDays ~/ 365;
-      age = years > 0 ? AppLocalizations.of(context).sna(years) : AppLocalizations.of(context).aqlMnSna;
+      final years = DateTime.now().difference(bird.birthday!).inDays ~/ 365;
+      age = years > 0
+          ? AppLocalizations.of(context).sna(years)
+          : AppLocalizations.of(context).aqlMnSna;
     }
 
     return {
@@ -108,8 +111,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
 
   void _showBidDialog(BuildContext context, [AuctionItemModel? selectedItem]) {
     final item = selectedItem ?? widget.item;
-    final minBid =
-        item.currentPrice + widget.auction.minBidIncrement;
+    final minBid = item.currentPrice + widget.auction.minBidIncrement;
     final bloc = context.read<AuctionsBloc>();
 
     showModalBottomSheet(
@@ -154,8 +156,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
     );
   }
 
-  void _confirmPaymentRequest(
-      BuildContext context, int itemId, double amount) {
+  void _confirmPaymentRequest(BuildContext context, int itemId, double amount) {
     String note = '';
     showDialog(
       context: context,
@@ -195,10 +196,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary),
-            child: const Text('إرسال',
-                style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            child: const Text('إرسال', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -211,47 +210,53 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      appBar: PPWAppBar(
-        title: d['name'] as String,
-      ),
+      appBar: PPWAppBar(title: d['name'] as String),
       body: BlocConsumer<AuctionsBloc, AuctionsState>(
         listenWhen: (p, c) =>
-            (p.isBidding && !c.isBidding) ||
-            (p.isBuyingNow && !c.isBuyingNow),
+            (p.isBidding && !c.isBidding) || (p.isBuyingNow && !c.isBuyingNow),
         listener: (context, state) {
           if (state.isBidding || state.isBuyingNow) return;
           if (state.buyNowError != null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.buyNowError!),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.buyNowError!),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           } else if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           } else if (!state.isBidding) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('تمت المزايدة بنجاح'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تمت المزايدة بنجاح'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           }
         },
         builder: (context, state) {
           final item = state.selectedItemDetail ?? widget.item;
           final contentData = _buildData(item);
-          final sellerIsBlocked = widget.auction.owner != null &&
+          final sellerIsBlocked =
+              widget.auction.owner != null &&
               context.select<FeedBloc, bool>(
-                (bloc) => bloc.state.blockedProfileIds
-                    .contains(widget.auction.owner),
+                (bloc) =>
+                    bloc.state.blockedProfileIds.contains(widget.auction.owner),
               );
-          final canBid = widget.auction.isActive &&
+          final canBid =
+              widget.auction.isActive &&
               !widget.auction.isOwner &&
               !sellerIsBlocked;
-          final canBuyNow = widget.auction.isActive &&
+          final canBuyNow =
+              widget.auction.isActive &&
               !widget.auction.isOwner &&
               !sellerIsBlocked &&
               widget.auction.buyNowEnabled &&
@@ -268,8 +273,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                     AuctionMediaSection(
                       currentImage: _currentImage,
                       isFavorite: _isFavorite,
-                      onPageChanged: (i) =>
-                          setState(() => _currentImage = i),
+                      onPageChanged: (i) => setState(() => _currentImage = i),
                       onFavorite: () =>
                           setState(() => _isFavorite = !_isFavorite),
                       imageUrls: item.bird.imageUrls,
@@ -282,16 +286,19 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                     AuctionDetailsGrid(data: contentData),
                     const SizedBox(height: 12),
                     AuctionDescriptionSection(
-                        text: contentData['description'] as String),
-                    const SizedBox(height: 12),
-                    const AuctionPedigreeButton(),
+                      text: contentData['description'] as String,
+                    ),
                     const SizedBox(height: 12),
                     _ItemBidCard(
                       item: item,
                       auction: widget.auction,
                       fmtFn: _fmt,
-                      onBid: canBid ? () => _showBidDialog(context, item) : null,
-                      onBuyNow: canBuyNow ? () => _confirmBuyNow(context, item) : null,
+                      onBid: canBid
+                          ? () => _showBidDialog(context, item)
+                          : null,
+                      onBuyNow: canBuyNow
+                          ? () => _confirmBuyNow(context, item)
+                          : null,
                       isBuyingNow: state.isBuyingNow,
                       blockedMessage: sellerIsBlocked
                           ? 'You cannot bid while this seller is blocked.'
@@ -310,21 +317,28 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => PaymentsPage(
-                                            pendingAuctionItemId: item.id,
+                                        pendingAuctionItemId: item.id,
                                       ),
                                     ),
                                   ),
-                                  icon: const Icon(Icons.receipt_long_rounded,
-                                      color: Colors.white, size: 18),
-                                  label: const Text('عرض تفاصيل الدفع',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
+                                  icon: const Icon(
+                                    Icons.receipt_long_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  label: const Text(
+                                    'عرض تفاصيل الدفع',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                     elevation: 0,
                                   ),
                                 )
@@ -334,17 +348,24 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                                     item.id,
                                     item.currentPrice,
                                   ),
-                                  icon: const Icon(Icons.payment_rounded,
-                                      color: Colors.white, size: 18),
-                                  label: const Text('إرسال طلب دفع',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
+                                  icon: const Icon(
+                                    Icons.payment_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  label: const Text(
+                                    'إرسال طلب دفع',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.blue,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                     elevation: 0,
                                   ),
                                 ),
@@ -357,7 +378,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                         padding: EdgeInsets.symmetric(vertical: 24),
                         child: Center(
                           child: CircularProgressIndicator(
-                              color: AppColors.primary),
+                            color: AppColors.primary,
+                          ),
                         ),
                       )
                     else ...[
@@ -381,19 +403,6 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                   ],
                 ),
               ),
-
-              // Floating bid button
-              if (canBid)
-                Positioned(
-                  top: 16,
-                  left: 0,
-                  child: AuctionFloatBtn(
-                    icon: Icons.gavel_rounded,
-                    badge: '${state.itemBids.length}',
-                    color: AppColors.primary,
-                    onTap: () => _showBidDialog(context, item),
-                  ),
-                ),
             ],
           );
         },
@@ -444,30 +453,20 @@ class _ItemBidCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('سعر البداية',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary)),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${fmtFn(item.startingPrice)} ج.م',
-                        style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textHint,
-                            decoration: TextDecoration.lineThrough),
-                      ),
                       Text(
                         '${fmtFn(item.currentPrice)} ج.م',
                         style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary),
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
                       Text(
                         'الحد الأدنى للمزايدة: ${fmtFn(minBid)} ج.م',
                         style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary),
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -487,17 +486,24 @@ class _ItemBidCard extends StatelessWidget {
                         height: 50,
                         child: ElevatedButton.icon(
                           onPressed: onBid,
-                          icon: const Icon(Icons.gavel_rounded,
-                              color: Colors.white, size: 18),
-                          label: const Text('زايد الآن',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
+                          icon: const Icon(
+                            Icons.gavel_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          label: const Text(
+                            'زايد الآن',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             elevation: 0,
                           ),
                         ),
@@ -515,18 +521,28 @@ class _ItemBidCard extends StatelessWidget {
                                   width: 18,
                                   height: 18,
                                   child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white))
-                              : const Icon(Icons.flash_on_rounded,
-                                  color: Colors.white, size: 18),
-                          label: const Text('اشتري الآن',
-                              style: TextStyle(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.flash_on_rounded,
                                   color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
+                                  size: 18,
+                                ),
+                          label: const Text(
+                            'اشتري الآن',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.orange,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             elevation: 0,
                           ),
                         ),
@@ -540,14 +556,16 @@ class _ItemBidCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
                 child: Text(
                   blockedMessage ??
-                  (auction.isOwner
-                      ? AppLocalizations.of(context).no3
-                      : auction.isEnded
+                      (auction.isOwner
+                          ? AppLocalizations.of(context).no3
+                          : auction.isEnded
                           ? AppLocalizations.of(context).auctionEnded2
                           : AppLocalizations.of(context).auctionNotStarted),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary),
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
           ],
@@ -591,9 +609,14 @@ class _StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
-      child: Text(label,
-          style: TextStyle(
-              fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
+      ),
     );
   }
 }
@@ -632,8 +655,11 @@ class _WinnerBar extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.emoji_events_rounded,
-                color: Colors.white, size: 22),
+            child: const Icon(
+              Icons.emoji_events_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -659,8 +685,7 @@ class _WinnerBar extends StatelessWidget {
                 ),
                 Text(
                   'فاز في مزاد $birdName',
-                  style: const TextStyle(
-                      color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -697,8 +722,7 @@ class _BidSheetState extends State<_BidSheet> {
   @override
   void initState() {
     super.initState();
-    _ctrl =
-        TextEditingController(text: widget.minBid.toStringAsFixed(0));
+    _ctrl = TextEditingController(text: widget.minBid.toStringAsFixed(0));
     _ctrl.addListener(_validate);
   }
 
@@ -714,8 +738,9 @@ class _BidSheetState extends State<_BidSheet> {
       if (v == null) {
         _validationError = AppLocalizations.of(context).enterValidNumber2;
       } else if (v < widget.minBid) {
-        _validationError =
-            AppLocalizations.of(context).minimumBid(widget.fmtFn(widget.minBid));
+        _validationError = AppLocalizations.of(
+          context,
+        ).minimumBid(widget.fmtFn(widget.minBid));
       } else {
         _validationError = null;
       }
@@ -724,8 +749,7 @@ class _BidSheetState extends State<_BidSheet> {
 
   void _setAmount(double amount) {
     _ctrl.text = amount.toStringAsFixed(0);
-    _ctrl.selection =
-        TextSelection.collapsed(offset: _ctrl.text.length);
+    _ctrl.selection = TextSelection.collapsed(offset: _ctrl.text.length);
     _validate();
   }
 
@@ -733,8 +757,8 @@ class _BidSheetState extends State<_BidSheet> {
     final amount = double.tryParse(_ctrl.text.trim()) ?? 0;
     if (amount < widget.minBid) return;
     ctx.read<AuctionsBloc>().add(
-          AuctionBidPlaced(itemId: widget.item.id, amount: amount),
-        );
+      AuctionBidPlaced(itemId: widget.item.id, amount: amount),
+    );
     Navigator.pop(ctx);
   }
 
@@ -749,13 +773,13 @@ class _BidSheetState extends State<_BidSheet> {
     ];
 
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -765,8 +789,9 @@ class _BidSheetState extends State<_BidSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2)),
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
             const SizedBox(height: 20),
             Padding(
@@ -776,27 +801,35 @@ class _BidSheetState extends State<_BidSheet> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(Icons.gavel_rounded,
-                        color: AppColors.primary, size: 22),
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.gavel_rounded,
+                      color: AppColors.primary,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('تقديم مزايدة',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary)),
+                      const Text(
+                        'تقديم مزايدة',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
                       Text(
                         widget.item.bird.name.isNotEmpty
                             ? widget.item.bird.name
                             : widget.auction.title,
                         style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textSecondary),
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -808,28 +841,34 @@ class _BidSheetState extends State<_BidSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 12),
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                    color: AppColors.pageBackground,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border)),
+                  color: AppColors.pageBackground,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                ),
                 child: Row(
                   children: [
                     _PricePill(
                       label: AppLocalizations.of(context).currentPrice2,
-                      value:
-                          AppLocalizations.of(context).jM(widget.fmtFn(widget.item.currentPrice)),
+                      value: AppLocalizations.of(
+                        context,
+                      ).jM(widget.fmtFn(widget.item.currentPrice)),
                       valueColor: AppColors.textPrimary,
                     ),
                     Container(
-                        width: 1,
-                        height: 32,
-                        color: AppColors.divider,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 16)),
+                      width: 1,
+                      height: 32,
+                      color: AppColors.divider,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
                     _PricePill(
                       label: AppLocalizations.of(context).minimumBid3,
-                      value: AppLocalizations.of(context).jM2(widget.fmtFn(widget.minBid)),
+                      value: AppLocalizations.of(
+                        context,
+                      ).jM2(widget.fmtFn(widget.minBid)),
                       valueColor: AppColors.primary,
                     ),
                   ],
@@ -841,42 +880,38 @@ class _BidSheetState extends State<_BidSheet> {
               height: 36,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemCount: chips.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(width: 8),
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
                   final (label, amount) = chips[i];
-                  final current =
-                      double.tryParse(_ctrl.text.trim()) ?? -1;
-                  final selected =
-                      (current - amount).abs() < 0.01;
+                  final current = double.tryParse(_ctrl.text.trim()) ?? -1;
+                  final selected = (current - amount).abs() < 0.01;
                   return GestureDetector(
                     onTap: () => _setAmount(amount),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
                         color: selected
                             ? AppColors.primary
                             : AppColors.primaryLight,
-                        borderRadius:
-                            BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.border),
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.border,
+                        ),
                       ),
                       alignment: Alignment.center,
-                      child: Text(label,
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: selected
-                                  ? Colors.white
-                                  : AppColors.primary)),
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: selected ? Colors.white : AppColors.primary,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -889,44 +924,58 @@ class _BidSheetState extends State<_BidSheet> {
                 controller: _ctrl,
                 autofocus: true,
                 keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true),
+                  decimal: true,
+                ),
                 style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
                   prefixText: AppLocalizations.of(context).jM3,
                   prefixStyle: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500),
+                    fontSize: 16,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                   hintText: '0',
                   errorText: _validationError,
                   filled: true,
                   fillColor: AppColors.pageBackground,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.border)),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
                   enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.border)),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
                   focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                          color: AppColors.primary, width: 2)),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
                   errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                          color: AppColors.error, width: 1.5)),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.error,
+                      width: 1.5,
+                    ),
+                  ),
                   focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                          color: AppColors.error, width: 2)),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.error,
+                      width: 2,
+                    ),
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                 ),
               ),
             ),
@@ -941,37 +990,37 @@ class _BidSheetState extends State<_BidSheet> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 14),
-                          side: const BorderSide(
-                              color: AppColors.border),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: AppColors.border),
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        child: const Text('إلغاء',
-                            style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w600)),
+                        child: const Text(
+                          'إلغاء',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       flex: 5,
                       child: ElevatedButton(
-                        onPressed: (state.isBidding ||
-                                _validationError != null)
+                        onPressed: (state.isBidding || _validationError != null)
                             ? null
                             : () => _submit(blocCtx),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
-                          disabledBackgroundColor: AppColors.primary
-                              .withValues(alpha: 0.4),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 14),
+                          disabledBackgroundColor: AppColors.primary.withValues(
+                            alpha: 0.4,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           elevation: 0,
                         ),
                         child: state.isBidding
@@ -979,22 +1028,27 @@ class _BidSheetState extends State<_BidSheet> {
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white))
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
                             : const Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.gavel_rounded,
-                                      color: Colors.white,
-                                      size: 18),
+                                  Icon(
+                                    Icons.gavel_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                   SizedBox(width: 8),
-                                  Text('زايد الآن',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight:
-                                              FontWeight.bold)),
+                                  Text(
+                                    'زايد الآن',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                       ),
@@ -1015,10 +1069,11 @@ class _PricePill extends StatelessWidget {
   final String label;
   final String value;
   final Color valueColor;
-  const _PricePill(
-      {required this.label,
-      required this.value,
-      required this.valueColor});
+  const _PricePill({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1026,15 +1081,22 @@ class _PricePill extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 11, color: AppColors.textSecondary)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: valueColor)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
+            ),
+          ),
         ],
       ),
     );

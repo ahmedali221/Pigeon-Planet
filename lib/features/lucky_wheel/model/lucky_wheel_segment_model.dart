@@ -8,6 +8,7 @@ class LuckyWheelSegmentModel extends Equatable {
   final String prizeType;
   final int? pointsAmount;
   final String? badgeType;
+  final String? icon;
   final Map<String, dynamic> metadata;
 
   const LuckyWheelSegmentModel({
@@ -17,10 +18,12 @@ class LuckyWheelSegmentModel extends Equatable {
     required this.prizeType,
     this.pointsAmount,
     this.badgeType,
+    this.icon,
     this.metadata = const {},
   });
 
   factory LuckyWheelSegmentModel.fromJson(Map<String, dynamic> json) {
+    final metadata = (json['metadata'] as Map<String, dynamic>?) ?? const {};
     return LuckyWheelSegmentModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
       label: json['label'] as String? ?? '',
@@ -28,7 +31,11 @@ class LuckyWheelSegmentModel extends Equatable {
       prizeType: json['prize_type'] as String? ?? 'no_prize',
       pointsAmount: (json['points_amount'] as num?)?.toInt(),
       badgeType: json['badge_type'] as String?,
-      metadata: (json['metadata'] as Map<String, dynamic>?) ?? const {},
+      icon: (json['icon'] as String?) ??
+          (json['emoji'] as String?) ??
+          (metadata['icon'] as String?) ??
+          (metadata['emoji'] as String?),
+      metadata: metadata,
     );
   }
 
@@ -41,7 +48,7 @@ class LuckyWheelSegmentModel extends Equatable {
         _ => const Color(0xFF6366F1),
       };
 
-  String get emoji => switch (prizeType) {
+  String get emoji => icon ?? switch (prizeType) {
         'pp_coins' => '🌕',
         'discount_offer' => '✂️',
         'cashback_offer' => '💰',
@@ -51,5 +58,5 @@ class LuckyWheelSegmentModel extends Equatable {
       };
 
   @override
-  List<Object?> get props => [id, label, prizeType];
+  List<Object?> get props => [id, label, prizeType, icon, metadata];
 }
