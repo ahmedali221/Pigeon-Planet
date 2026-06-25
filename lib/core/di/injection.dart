@@ -108,6 +108,11 @@ import '../../features/transfers/model/datasources/real_transfers_remote_datasou
 import '../../features/transfers/model/transfers_repository.dart';
 import '../../features/transfers/model/transfers_repository_impl.dart';
 import '../../features/transfers/viewmodel/transfers_bloc.dart';
+import '../../features/electronic_clocks/model/datasources/clocks_remote_datasource.dart';
+import '../../features/electronic_clocks/model/datasources/real_clocks_remote_datasource.dart';
+import '../../features/electronic_clocks/model/clocks_repository.dart';
+import '../../features/electronic_clocks/model/clocks_repository_impl.dart';
+import '../../features/electronic_clocks/viewmodel/clocks_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 
@@ -314,4 +319,13 @@ void setupDependencies() {
     () => TransfersRepositoryImpl(sl()),
   );
   sl.registerFactory(() => TransfersBloc(repository: sl()));
+
+  // ── Electronic Clocks ─────────────────────────────────────────────────────
+  sl.registerLazySingleton<ClocksRemoteDataSource>(
+    () => RealClocksRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<ClocksRepository>(
+    () => ClocksRepositoryImpl(sl()),
+  );
+  sl.registerFactory(() => ClocksBloc(repository: sl()));
 }

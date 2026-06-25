@@ -38,13 +38,13 @@ class ClockCard extends StatelessWidget {
                   child: SizedBox(
                     height: 120,
                     width: double.infinity,
-                    child: clock.imageUrl != null
+                    child: clock.firstImageUrl != null
                         ? Image.network(
-                            clock.imageUrl!,
+                            clock.firstImageUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _IconPlaceholder(),
+                            errorBuilder: (_, _, _) => const _IconPlaceholder(),
                           )
-                        : _IconPlaceholder(),
+                        : const _IconPlaceholder(),
                   ),
                 ),
                 // brand badge — top start (right in RTL)

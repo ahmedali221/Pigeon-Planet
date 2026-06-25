@@ -175,6 +175,14 @@ class ApiConstants {
   static String pedigreeDocumentReview(int id) =>
       '/pedigrees/documents/$id/review/';
 
+  // ── Electronic Clocks ─────────────────────────────────────────────────────
+  static const String clocks = '/clocks/';
+  static String clockDetail(int id) => '/clocks/$id/';
+  static const String clockOrders = '/clocks/orders/';
+  static String clockOrderDetail(int id) => '/clocks/orders/$id/';
+  static String clockOrderPay(int id) => '/clocks/orders/$id/pay/';
+  static String clockOrderCancel(int id) => '/clocks/orders/$id/cancel/';
+
   // ── Dead / unimplemented backend endpoints (DO NOT USE in new code) ───────
   // `/core/activity/` does not exist in the current backend — feature is a stub
   static const String coreActivity = '/core/activity/';

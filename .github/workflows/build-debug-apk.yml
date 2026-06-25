@@ -27,7 +27,6 @@ jobs:
           cache: true
 
       - name: Flutter pub get
-        working-directory: pigeon_planet
         run: flutter pub get
 
       # ── Date-based version: YYYY.MM.DD+<run_number> — fully automatic ─────────
@@ -41,7 +40,6 @@ jobs:
           echo "full=${DATE}+${BUILD_NUM}" >> "$GITHUB_OUTPUT"
 
       - name: Build debug APK
-        working-directory: pigeon_planet
         run: |
           flutter build apk --debug \
             --build-name=${{ steps.version.outputs.name }} \
@@ -58,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.meta.outputs.apk_name }}
-          path: pigeon_planet/build/app/outputs/flutter-apk/app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 7
 
       # ── Upload to Google Drive via rclone + service account ─────────────────
@@ -78,7 +76,7 @@ jobs:
 
       - name: Upload APK to Google Drive
         run: |
-          APK_SRC="pigeon_planet/build/app/outputs/flutter-apk/app-debug.apk"
+          APK_SRC="build/app/outputs/flutter-apk/app-debug.apk"
           APK_DST="${{ steps.meta.outputs.apk_name }}"
           # Copy file and rename it on the remote
           rclone copyto "$APK_SRC" "gdrive:/$APK_DST" \

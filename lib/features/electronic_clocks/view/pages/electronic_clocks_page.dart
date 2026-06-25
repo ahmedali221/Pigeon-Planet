@@ -1,171 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/injection.dart';
 import '../../model/electronic_clock_model.dart';
+import '../../viewmodel/clocks_bloc.dart';
 import '../widgets/clock_card.dart';
 import 'clock_detail_page.dart';
 
 class ElectronicClocksPage extends StatelessWidget {
   const ElectronicClocksPage({super.key});
 
-  static const _clocks = <ElectronicClockModel>[
-    ElectronicClockModel(
-      id: '1',
-      name: 'Benzing G2 لتسجيل الحمام',
-      brand: 'Benzing',
-      description:
-          'ساعة إلكترونية احترافية لتسجيل أوقات وصول الحمام في سباقات الهواة، دقة عالية بمستوى الميلي ثانية، تدعم تسجيل ما يصل إلى 500 طائر في جلسة واحدة.',
-      price: 4500,
-      imageUrl: null,
-      rating: 4.8,
-      reviewCount: 124,
-      inStock: true,
-      features: [
-        'دقة ميلي ثانية',
-        'تسجيل حتى 500 طائر',
-        'متوافق مع PIPA و NFU',
-        'بطارية مدمجة قابلة للشحن',
-        'شاشة LCD واضحة',
-        'واجهة عربية',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag1',
-        name: 'أحمد محمود السيد',
-        governorate: 'القاهرة',
-        photoUrl: null,
-        phoneNumber: '01012345678',
-      ),
-    ),
-    ElectronicClockModel(
-      id: '2',
-      name: 'Benzing NFC Ultra',
-      brand: 'Benzing',
-      description:
-          'أحدث إصدار من ساعات Benzing بتقنية NFC للقراءة السريعة للخواتم، مثالية للسباقات الكبرى والبطولات الدولية.',
-      price: 6200,
-      imageUrl: null,
-      rating: 4.9,
-      reviewCount: 89,
-      inStock: true,
-      features: [
-        'قراءة NFC فائقة السرعة',
-        'تخزين داخلي 8 جيجابايت',
-        'اتصال Wi-Fi مباشر',
-        'تحديثات تلقائية',
-        'ضمان سنتين',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag2',
-        name: 'محمد عبدالعزيز حسن',
-        governorate: 'الجيزة',
-        photoUrl: null,
-        phoneNumber: '01123456789',
-      ),
-    ),
-    ElectronicClockModel(
-      id: '3',
-      name: 'Gaba Tauben GT-1000',
-      brand: 'Gaba',
-      description:
-          'ساعة ألمانية الصنع مصممة خصيصاً لهواة تربية الحمام، واجهة بسيطة وسهلة الاستخدام مع دقة استثنائية في التسجيل.',
-      price: 3800,
-      imageUrl: null,
-      rating: 4.6,
-      reviewCount: 67,
-      inStock: true,
-      features: [
-        'واجهة مبسطة',
-        'دقة عالية في التسجيل',
-        'مقاومة للماء IP54',
-        'بطارية تدوم 48 ساعة',
-        'صيانة مجانية السنة الأولى',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag3',
-        name: 'كريم سامي الفقي',
-        governorate: 'الإسكندرية',
-        photoUrl: null,
-        phoneNumber: '01234567890',
-      ),
-    ),
-    ElectronicClockModel(
-      id: '4',
-      name: 'UNIKON ETS System',
-      brand: 'UNIKON',
-      description:
-          'نظام إلكتروني متكامل لتسجيل سباقات الحمام، يشمل الساعة وجهاز القراءة والبرنامج التحليلي لمتابعة النتائج.',
-      price: 7500,
-      imageUrl: null,
-      rating: 4.7,
-      reviewCount: 43,
-      inStock: false,
-      features: [
-        'نظام متكامل شامل',
-        'برنامج تحليلي مجاني',
-        'تقارير مفصلة للنتائج',
-        'دعم فني على مدار الساعة',
-        'تحديثات مجانية مدى الحياة',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag4',
-        name: 'طارق إبراهيم النجار',
-        governorate: 'المنوفية',
-        photoUrl: null,
-        phoneNumber: '01098765432',
-      ),
-    ),
-    ElectronicClockModel(
-      id: '5',
-      name: 'Belgian Timing BT-500',
-      brand: 'Belgian',
-      description:
-          'ساعة بلجيكية الأصل تستخدمها أفضل النوادي الأوروبية، معتمدة رسمياً من الاتحادات الدولية لسباقات الحمام.',
-      price: 5100,
-      imageUrl: null,
-      rating: 4.7,
-      reviewCount: 56,
-      inStock: true,
-      features: [
-        'معتمدة دولياً',
-        'دقة نانو ثانية',
-        'اتصال لاسلكي مشفر',
-        'تخزين سحابي',
-        'شاشة ملونة تاتش',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag5',
-        name: 'عمرو جلال البنا',
-        governorate: 'الشرقية',
-        photoUrl: null,
-        phoneNumber: '01187654321',
-      ),
-    ),
-    ElectronicClockModel(
-      id: '6',
-      name: 'Super Sport SS-200 Pro',
-      brand: 'Super Sport',
-      description:
-          'ساعة اقتصادية عالية الجودة مناسبة للمبتدئين والأندية الصغيرة، سهولة في الاستخدام مع كفاءة تسجيل ممتازة.',
-      price: 2200,
-      imageUrl: null,
-      rating: 4.4,
-      reviewCount: 198,
-      inStock: true,
-      features: [
-        'سهولة الاستخدام',
-        'سعر مناسب للجميع',
-        'خدمة ما بعد البيع',
-        'ضمان سنة كاملة',
-        'تدريب مجاني للمستخدمين الجدد',
-      ],
-      agent: ClockAgentModel(
-        id: 'ag6',
-        name: 'سامي محمود الديب',
-        governorate: 'البحيرة',
-        photoUrl: null,
-        phoneNumber: '01276543210',
-      ),
-    ),
-  ];
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<ClocksBloc>()..add(ClocksListLoaded()),
+      child: const _ClocksView(),
+    );
+  }
+}
+
+class _ClocksView extends StatefulWidget {
+  const _ClocksView();
+
+  @override
+  State<_ClocksView> createState() => _ClocksViewState();
+}
+
+class _ClocksViewState extends State<_ClocksView> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,30 +42,53 @@ class ElectronicClocksPage extends StatelessWidget {
       backgroundColor: AppColors.pageBackground,
       body: Column(
         children: [
-          _ClocksHeader(),
-          _SearchBar(),
-          _StatsRow(count: _clocks.length),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.73,
-              ),
-              itemCount: _clocks.length,
-              itemBuilder: (context, index) {
-                final clock = _clocks[index];
-                return ClockCard(
-                  clock: clock,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ClockDetailPage(clock: clock),
-                    ),
+          _ClocksHeader(
+            onFilterInStock: (val) => context.read<ClocksBloc>().add(
+                  ClocksListLoaded(
+                    search: _searchController.text,
+                    inStockOnly: val,
                   ),
+                ),
+          ),
+          _SearchBar(
+            controller: _searchController,
+            onChanged: (q) =>
+                context.read<ClocksBloc>().add(ClocksSearchChanged(q)),
+          ),
+          BlocBuilder<ClocksBloc, ClocksState>(
+            buildWhen: (p, c) =>
+                p.listStatus != c.listStatus || p.clocks != c.clocks,
+            builder: (context, state) {
+              if (state.listStatus == ClocksListStatus.loading) {
+                return Expanded(
+                  child: _StatsRow(count: 0, loading: true),
                 );
+              }
+              return _StatsRow(
+                count: state.clocks.length,
+                loading: false,
+              );
+            },
+          ),
+          Expanded(
+            child: BlocBuilder<ClocksBloc, ClocksState>(
+              buildWhen: (p, c) =>
+                  p.listStatus != c.listStatus || p.clocks != c.clocks,
+              builder: (context, state) {
+                if (state.listStatus == ClocksListStatus.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state.listStatus == ClocksListStatus.error) {
+                  return _ErrorView(
+                    message: state.errorMessage ?? 'حدث خطأ',
+                    onRetry: () =>
+                        context.read<ClocksBloc>().add(ClocksListLoaded()),
+                  );
+                }
+                if (state.clocks.isEmpty) {
+                  return const _EmptyView();
+                }
+                return _ClockGrid(clocks: state.clocks);
               },
             ),
           ),
@@ -206,10 +98,53 @@ class ElectronicClocksPage extends StatelessWidget {
   }
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
+// ── Grid ──────────────────────────────────────────────────────────────────────
 
-class _ClocksHeader extends StatelessWidget {
-  const _ClocksHeader();
+class _ClockGrid extends StatelessWidget {
+  final List<ElectronicClockModel> clocks;
+
+  const _ClockGrid({required this.clocks});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.73,
+      ),
+      itemCount: clocks.length,
+      itemBuilder: (context, index) {
+        final clock = clocks[index];
+        return ClockCard(
+          clock: clock,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ClockDetailPage(clockId: clock.id),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+class _ClocksHeader extends StatefulWidget {
+  final ValueChanged<bool> onFilterInStock;
+
+  const _ClocksHeader({required this.onFilterInStock});
+
+  @override
+  State<_ClocksHeader> createState() => _ClocksHeaderState();
+}
+
+class _ClocksHeaderState extends State<_ClocksHeader> {
+  bool _inStockOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +158,33 @@ class _ClocksHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
+          GestureDetector(
+            onTap: () {
+              setState(() => _inStockOnly = !_inStockOnly);
+              widget.onFilterInStock(_inStockOnly);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: _inStockOnly
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'المتاح فقط',
+                style: TextStyle(
+                  color: _inStockOnly
+                      ? AppColors.primary
+                      : Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 8),
           const Text(
             'الساعة الإلكترونية',
@@ -242,7 +204,10 @@ class _ClocksHeader extends StatelessWidget {
 // ── Search bar ────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  const _SearchBar({required this.controller, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -260,10 +225,22 @@ class _SearchBar extends StatelessWidget {
             const SizedBox(width: 12),
             const Icon(Icons.search, color: AppColors.textHint, size: 20),
             const SizedBox(width: 8),
-            const Text(
-              'ابحث عن ساعة...',
-              style: TextStyle(color: AppColors.textHint, fontSize: 14),
+            Expanded(
+              child: TextField(
+                controller: controller,
+                onChanged: onChanged,
+                decoration: const InputDecoration(
+                  hintText: 'ابحث عن ساعة...',
+                  hintStyle: TextStyle(
+                      color: AppColors.textHint, fontSize: 14),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: const TextStyle(fontSize: 14),
+              ),
             ),
+            const SizedBox(width: 12),
           ],
         ),
       ),
@@ -275,7 +252,9 @@ class _SearchBar extends StatelessWidget {
 
 class _StatsRow extends StatelessWidget {
   final int count;
-  const _StatsRow({required this.count});
+  final bool loading;
+
+  const _StatsRow({required this.count, required this.loading});
 
   @override
   Widget build(BuildContext context) {
@@ -285,8 +264,9 @@ class _StatsRow extends StatelessWidget {
         children: [
           const SizedBox(width: 4),
           Text(
-            '$count ساعة متاحة',
-            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            loading ? 'جارٍ التحميل…' : '$count ساعة',
+            style: const TextStyle(
+                fontSize: 13, color: AppColors.textSecondary),
           ),
           const SizedBox(width: 4),
           const Icon(
@@ -295,6 +275,68 @@ class _StatsRow extends StatelessWidget {
             color: AppColors.textSecondary,
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── States ────────────────────────────────────────────────────────────────────
+
+class _EmptyView extends StatelessWidget {
+  const _EmptyView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.timer_off_rounded,
+              size: 56, color: AppColors.textHint),
+          SizedBox(height: 12),
+          Text(
+            'لا توجد ساعات متاحة',
+            style:
+                TextStyle(fontSize: 15, color: AppColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _ErrorView({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline,
+                size: 48, color: AppColors.error),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontSize: 14, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: onRetry,
+              style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary),
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
       ),
     );
   }
