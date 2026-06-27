@@ -9,6 +9,11 @@ abstract class RacesRemoteDataSource {
     String? birdRingNumber,
     String? competitorName,
     int? raceId,
+    String? clubName,
+    String? country,
+    String? seasonYear,
+    String? stationName,
+    String? rank,
     int page,
   });
 }

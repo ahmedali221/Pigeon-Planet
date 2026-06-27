@@ -9,8 +9,14 @@ import '../../../../l10n/app_localizations.dart';
 class HomeStoreBirdsSection extends StatefulWidget {
   final List<BirdSummaryModel> birds;
   final bool isLoading;
+  final bool isSellerView;
 
-  HomeStoreBirdsSection({super.key, required this.birds, this.isLoading = false});
+  const HomeStoreBirdsSection({
+    super.key,
+    required this.birds,
+    this.isLoading = false,
+    this.isSellerView = false,
+  });
 
   @override
   State<HomeStoreBirdsSection> createState() => _HomeStoreBirdsSectionState();
@@ -20,7 +26,10 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
   String _selectedGender = '';
   String _query = '';
   bool _searchOpen = false;
+  bool _isHorizontal = true;
   bool _initialized = false;
+  int _displayCount = 4;
+  static const _countOptions = [4, 6, 8, 10, 12];
 
   String _allLabel = '';
   final _searchCtrl = TextEditingController();
@@ -60,7 +69,8 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
       }
       if (q.isNotEmpty) {
         final hay =
-            '${b.name} ${b.ringNumber} ${b.colour} ${b.description}'.toLowerCase();
+            '${b.name} ${b.ringNumber} ${b.colour} ${b.description}'
+                .toLowerCase();
         if (!hay.contains(q)) return false;
       }
       return true;
@@ -86,7 +96,8 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: context.read<CartBloc>(),
-          child: BirdDetailPage(bird: bird, sellerNickname: bird.sellerNickname),
+          child: BirdDetailPage(
+              bird: bird, sellerNickname: bird.sellerNickname),
         ),
       ),
     );
@@ -96,61 +107,64 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final filtered = _filtered;
-    final displayed = filtered;
+    final screenH = MediaQuery.sizeOf(context).height;
+    final screenW = MediaQuery.sizeOf(context).width;
+    final cardWidth = screenW * 0.42;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Section header ───────────────────────────────────────────────────
+        // ── Section header ─────────────────────────────────────────────────
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.flutter_dash,
+                child: const Icon(Icons.flutter_dash,
                     color: AppColors.primary, size: 18),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                l.fixedPriceBirds,
-                style: TextStyle(
+                widget.isSellerView ? l.myListedBirds : l.fixedPriceBirds,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              Spacer(),
-              GestureDetector(
-                onTap: () {},
-                child: Row(
-                  children: [
-                    Text(l.all,
-                        style: TextStyle(
-                            color: AppColors.primary.withValues(alpha: 0.85),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600)),
-                    Icon(Icons.chevron_left_rounded,
-                        color: AppColors.primary, size: 20),
-                  ],
+              const Spacer(),
+              if (!widget.isSellerView)
+                GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Text(l.all,
+                          style: TextStyle(
+                              color:
+                                  AppColors.primary.withValues(alpha: 0.85),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600)),
+                      const Icon(Icons.chevron_left_rounded,
+                          color: AppColors.primary, size: 20),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
-        // ── Filter row ───────────────────────────────────────────────────────
+        // ── Filter row ─────────────────────────────────────────────────────
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              // gender dropdown
               Expanded(
                 child: _Dropdown(
                   value: _selectedGender,
@@ -158,10 +172,41 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
                   onChanged: (v) => setState(() => _selectedGender = v),
                 ),
               ),
-              SizedBox(width: 8),
-              // search toggle
+              const SizedBox(width: 8),
+              // Count dropdown — shown only in vertical/grid mode
+              if (!_isHorizontal) ...[
+                Container(
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: _displayCount,
+                      style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 13,
+                          fontFamily: 'Cairo'),
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                          color: AppColors.textSecondary, size: 16),
+                      items: _countOptions
+                          .map((n) => DropdownMenuItem(
+                              value: n, child: Text('$n')))
+                          .toList(),
+                      onChanged: (v) =>
+                          setState(() => _displayCount = v ?? _displayCount),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
               _IconBtn(
-                icon: _searchOpen ? Icons.close_rounded : Icons.search_rounded,
+                icon: _searchOpen
+                    ? Icons.close_rounded
+                    : Icons.search_rounded,
                 active: _searchOpen,
                 onTap: () => setState(() {
                   _searchOpen = !_searchOpen;
@@ -171,41 +216,53 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
                   }
                 }),
               ),
+              const SizedBox(width: 8),
+              // Layout toggle
+              _IconBtn(
+                icon: _isHorizontal
+                    ? Icons.grid_view_rounded
+                    : Icons.view_carousel_rounded,
+                active: false,
+                onTap: () =>
+                    setState(() => _isHorizontal = !_isHorizontal),
+              ),
             ],
           ),
         ),
 
-        // ── Search field ─────────────────────────────────────────────────────
+        // ── Search field ───────────────────────────────────────────────────
         if (_searchOpen) ...[
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               controller: _searchCtrl,
               autofocus: true,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 13),
+              style: const TextStyle(fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'ابحث باسم الطائر أو رقم الحلقة...',
-                hintStyle: TextStyle(color: AppColors.textHint, fontSize: 13),
-                prefixIcon: Icon(Icons.search_rounded,
+                hintStyle: const TextStyle(
+                    color: AppColors.textHint, fontSize: 13),
+                prefixIcon: const Icon(Icons.search_rounded,
                     color: AppColors.textSecondary, size: 20),
                 isDense: true,
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.border),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                  borderSide: const BorderSide(
+                      color: AppColors.primary, width: 1.5),
                 ),
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -213,80 +270,120 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
           ),
         ],
 
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
 
-        // ── Count label ──────────────────────────────────────────────────────
+        // ── Count label ────────────────────────────────────────────────────
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'عرض ${displayed.length} من ${widget.birds.length} طائر',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            'عرض ${filtered.length} من ${widget.birds.length} طائر',
+            style: const TextStyle(
+                fontSize: 12, color: AppColors.textSecondary),
             textAlign: TextAlign.start,
           ),
         ),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
-        // ── Loading skeletons ────────────────────────────────────────────────
+        // ── Content ────────────────────────────────────────────────────────
         if (widget.isLoading)
           SizedBox(
-            height: 220,
+            height: screenH * 0.27,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: 4,
-              itemBuilder: (_, _) => _SkeletonCard(),
+              itemBuilder: (_, _) => _SkeletonCard(width: cardWidth),
             ),
           )
-        // ── Empty state ──────────────────────────────────────────────────────
-        else if (displayed.isEmpty)
+        else if (filtered.isEmpty)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            padding: const EdgeInsets.symmetric(
+                vertical: 28, horizontal: 16),
             child: Center(
               child: Column(
                 children: [
                   Icon(Icons.flutter_dash,
                       size: 40,
                       color: AppColors.textHint.withValues(alpha: 0.7)),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     widget.birds.isEmpty
                         ? 'لا توجد طيور في المتجر'
                         : 'لا توجد طيور مطابقة',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 13, color: AppColors.textSecondary),
                   ),
                 ],
               ),
             ),
           )
-        // ── Horizontal scroll list ───────────────────────────────────────────
-        else ...[
+        else if (_isHorizontal)
+          // ── Horizontal carousel ──────────────────────────────────────────
           SizedBox(
-            height: 220,
+            height: screenH * 0.27,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              itemCount: displayed.length,
-              itemBuilder: (context, i) => _BirdCard(
-                bird: displayed[i],
-                fmtPrice: _fmt,
-                onTap: () => _navigateToBird(displayed[i]),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: filtered.length,
+              itemBuilder: (context, i) => SizedBox(
+                width: cardWidth,
+                child: _BirdCard(
+                  bird: filtered[i],
+                  fmtPrice: _fmt,
+                  onTap: () => _navigateToBird(filtered[i]),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 14),
+          )
+        else
+          // ── Responsive grid ──────────────────────────────────────────────
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: LayoutBuilder(
+              builder: (ctx, constraints) {
+                final w = constraints.maxWidth;
+                final cols = w < 380 ? 1 : w < 640 ? 2 : 3;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: cols,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: cols == 1 ? 2.0 : 0.74,
+                  ),
+                  itemCount: filtered.length > _displayCount
+                      ? _displayCount
+                      : filtered.length,
+                  itemBuilder: (context, i) => _BirdCard(
+                    bird: filtered[i],
+                    fmtPrice: _fmt,
+                    onTap: () => _navigateToBird(filtered[i]),
+                  ),
+                );
+              },
+            ),
+          ),
+
+        // ── View all button (customers only, horizontal mode) ──────────────
+        if (!widget.isLoading &&
+            filtered.isNotEmpty &&
+            !widget.isSellerView) ...[
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SizedBox(
               width: double.infinity,
               height: 46,
               child: ElevatedButton.icon(
                 onPressed: () {},
-                icon: Icon(Icons.flutter_dash, size: 18),
+                icon: const Icon(Icons.flutter_dash, size: 18),
                 label: Text(
                   'عرض جميع الطيور (${widget.birds.length})',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -305,20 +402,24 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
   }
 }
 
-// ── Shared dropdown widget ────────────────────────────────────────────────────
+// ── Shared dropdown ──────────────────────────────────────────────────────────
 
 class _Dropdown extends StatelessWidget {
   final String value;
   final List<String> options;
   final ValueChanged<String> onChanged;
 
-  _Dropdown({required this.value, required this.options, required this.onChanged});
+  const _Dropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 40,
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -328,13 +429,16 @@ class _Dropdown extends StatelessWidget {
         child: DropdownButton<String>(
           value: options.contains(value) ? value : options.first,
           isExpanded: true,
-          style: TextStyle(
-              color: AppColors.textPrimary, fontSize: 13, fontFamily: 'Cairo'),
-          icon: Icon(Icons.keyboard_arrow_down_rounded,
+          style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 13,
+              fontFamily: 'Cairo'),
+          icon: const Icon(Icons.keyboard_arrow_down_rounded,
               color: AppColors.textSecondary),
           items: options
               .map((v) => DropdownMenuItem(
-                  value: v, child: Text(v, textAlign: TextAlign.start)))
+                  value: v,
+                  child: Text(v, textAlign: TextAlign.start)))
               .toList(),
           onChanged: (v) => onChanged(v ?? value),
         ),
@@ -343,14 +447,18 @@ class _Dropdown extends StatelessWidget {
   }
 }
 
-// ── Icon button ───────────────────────────────────────────────────────────────
+// ── Icon button ──────────────────────────────────────────────────────────────
 
 class _IconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final bool active;
 
-  _IconBtn({required this.icon, required this.onTap, this.active = false});
+  const _IconBtn({
+    required this.icon,
+    required this.onTap,
+    this.active = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -373,14 +481,18 @@ class _IconBtn extends StatelessWidget {
   }
 }
 
-// ── Bird card (breeder-card style) ────────────────────────────────────────────
+// ── Bird card ────────────────────────────────────────────────────────────────
 
 class _BirdCard extends StatelessWidget {
   final BirdSummaryModel bird;
   final String Function(double) fmtPrice;
   final VoidCallback onTap;
 
-  _BirdCard({required this.bird, required this.fmtPrice, required this.onTap});
+  const _BirdCard({
+    required this.bird,
+    required this.fmtPrice,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -390,8 +502,7 @@ class _BirdCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 160,
-        margin: EdgeInsets.symmetric(horizontal: 5),
+        margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -399,13 +510,13 @@ class _BirdCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           children: [
-            // ── Gradient header with bird image ──────────────────────────────
+            // ── Gradient header ────────────────────────────────────────────
             Container(
               height: 70,
               decoration: BoxDecoration(
@@ -417,7 +528,7 @@ class _BirdCard extends StatelessWidget {
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(18),
                   topRight: Radius.circular(18),
                 ),
@@ -425,7 +536,6 @@ class _BirdCard extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // decorative circle
                   Positioned(
                     top: -10,
                     left: -10,
@@ -438,14 +548,13 @@ class _BirdCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // gender badge
                   if (bird.gender.isNotEmpty)
                     Positioned(
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
                         decoration: BoxDecoration(
                           color: bird.gender == 'male'
                               ? AppColors.blue
@@ -458,21 +567,20 @@ class _BirdCard extends StatelessWidget {
                               : bird.gender == 'female'
                                   ? l.female
                                   : l.genderYoung,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 9,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-                  // bird image — bottom centre, overflowing
                   Positioned(
                     bottom: -24,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: Container(
-                        padding: EdgeInsets.all(2.5),
+                        padding: const EdgeInsets.all(2.5),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -480,7 +588,7 @@ class _BirdCard extends StatelessWidget {
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.12),
                               blurRadius: 6,
-                              offset: Offset(0, 2),
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
@@ -491,8 +599,9 @@ class _BirdCard extends StatelessWidget {
                                   thumbnailUrl.isNotEmpty)
                               ? NetworkImage(thumbnailUrl) as ImageProvider
                               : null,
-                          child: (thumbnailUrl == null || thumbnailUrl.isEmpty)
-                              ? Icon(Icons.flutter_dash,
+                          child: (thumbnailUrl == null ||
+                                  thumbnailUrl.isEmpty)
+                              ? const Icon(Icons.flutter_dash,
                                   color: AppColors.primary, size: 24)
                               : null,
                         ),
@@ -503,16 +612,16 @@ class _BirdCard extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 28),
+            const SizedBox(height: 28),
 
-            // ── Info ─────────────────────────────────────────────────────────
+            // ── Info ──────────────────────────────────────────────────────
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Text(
                     bird.name.isNotEmpty ? bird.name : bird.ringNumber,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -520,19 +629,19 @@ class _BirdCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   Text(
                     bird.colour,
-                    style:
-                        TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                        fontSize: 10, color: AppColors.textSecondary),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
                     'ج.م ${fmtPrice(bird.price)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -542,11 +651,11 @@ class _BirdCard extends StatelessWidget {
               ),
             ),
 
-            Spacer(),
+            const Spacer(),
 
-            // ── View details button ───────────────────────────────────────────
+            // ── Button ────────────────────────────────────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 12),
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
               child: SizedBox(
                 width: double.infinity,
                 height: 30,
@@ -561,7 +670,7 @@ class _BirdCard extends StatelessWidget {
                     padding: EdgeInsets.zero,
                   ),
                   child: Text(l.viewDetails,
-                      style: TextStyle(fontSize: 11)),
+                      style: const TextStyle(fontSize: 11)),
                 ),
               ),
             ),
@@ -572,16 +681,18 @@ class _BirdCard extends StatelessWidget {
   }
 }
 
-// ── Skeleton card ─────────────────────────────────────────────────────────────
+// ── Skeleton card ────────────────────────────────────────────────────────────
 
 class _SkeletonCard extends StatelessWidget {
-  _SkeletonCard();
+  final double width;
+
+  const _SkeletonCard({required this.width});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160,
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      width: width,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         color: AppColors.border,
         borderRadius: BorderRadius.circular(18),

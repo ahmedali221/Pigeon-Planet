@@ -64,6 +64,11 @@ class RacesRepositoryImpl implements RacesRepository {
     String? birdRingNumber,
     String? competitorName,
     int? raceId,
+    String? clubName,
+    String? country,
+    String? seasonYear,
+    String? stationName,
+    String? rank,
     int page = 1,
   }) async {
     try {
@@ -72,6 +77,11 @@ class RacesRepositoryImpl implements RacesRepository {
         birdRingNumber: birdRingNumber,
         competitorName: competitorName,
         raceId: raceId,
+        clubName: clubName,
+        country: country,
+        seasonYear: seasonYear,
+        stationName: stationName,
+        rank: rank,
         page: page,
       );
       return Right(list);

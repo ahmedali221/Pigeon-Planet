@@ -12,7 +12,6 @@ import '../widgets/auction_bids_section.dart';
 import '../widgets/auction_bird_info_section.dart';
 import '../widgets/auction_description_section.dart';
 import '../widgets/auction_details_grid.dart';
-import '../widgets/auction_float_btn.dart';
 import '../widgets/auction_media_section.dart';
 import '../widgets/auction_reviews_section.dart';
 import '../widgets/auction_verification_row.dart';
@@ -133,15 +132,16 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
   void _confirmBuyNow(BuildContext context, [AuctionItemModel? selectedItem]) {
     final item = selectedItem ?? widget.item;
     final price = widget.auction.buyNowPrice ?? 0;
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('شراء فوري'),
-        content: Text('هل تريد شراء هذا الطائر فوراً بسعر ${_fmt(price)} ج.م؟'),
+        title: Text(l.buyNowDialogTitle),
+        content: Text(l.buyNowConfirm(_fmt(price))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
+            child: Text(l.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -149,7 +149,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
               context.read<AuctionsBloc>().add(AuctionBuyNowRequested(item.id));
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('تأكيد', style: TextStyle(color: Colors.white)),
+            child: Text(l.confirm, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -158,19 +158,20 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
 
   void _confirmPaymentRequest(BuildContext context, int itemId, double amount) {
     String note = '';
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إرسال طلب دفع'),
+        title: Text(l.sendPaymentRequestTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('المبلغ: ${_fmt(amount)} ج.م'),
+            Text(l.amountLabel(_fmt(amount))),
             const SizedBox(height: 12),
             TextField(
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context).no2,
-                border: OutlineInputBorder(),
+                labelText: l.no2,
+                border: const OutlineInputBorder(),
               ),
               onChanged: (v) => note = v,
               maxLines: 2,
@@ -181,7 +182,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
+            child: Text(l.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -197,7 +198,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('إرسال', style: TextStyle(color: Colors.white)),
+            child: Text(l.send, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -234,8 +235,8 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
             );
           } else if (!state.isBidding) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('تمت المزايدة بنجاح'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context).bidSuccessful),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -301,7 +302,7 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                           : null,
                       isBuyingNow: state.isBuyingNow,
                       blockedMessage: sellerIsBlocked
-                          ? 'You cannot bid while this seller is blocked.'
+                          ? AppLocalizations.of(context).cannotBidSellerBlocked
                           : null,
                     ),
                     if (canRequestPayment) ...[
@@ -326,9 +327,9 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                                     color: Colors.white,
                                     size: 18,
                                   ),
-                                  label: const Text(
-                                    'عرض تفاصيل الدفع',
-                                    style: TextStyle(
+                                  label: Text(
+                                    AppLocalizations.of(context).viewPaymentDetails,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -353,9 +354,9 @@ class _AuctionItemDetailPageState extends State<AuctionItemDetailPage> {
                                     color: Colors.white,
                                     size: 18,
                                   ),
-                                  label: const Text(
-                                    'إرسال طلب دفع',
-                                    style: TextStyle(
+                                  label: Text(
+                                    AppLocalizations.of(context).sendPaymentRequestBtn,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -454,7 +455,7 @@ class _ItemBidCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${fmtFn(item.currentPrice)} ج.م',
+                        AppLocalizations.of(context).jM(fmtFn(item.currentPrice)),
                         style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
@@ -462,7 +463,7 @@ class _ItemBidCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'الحد الأدنى للمزايدة: ${fmtFn(minBid)} ج.م',
+                        AppLocalizations.of(context).minBidDisplay(fmtFn(minBid)),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -491,9 +492,9 @@ class _ItemBidCard extends StatelessWidget {
                             color: Colors.white,
                             size: 18,
                           ),
-                          label: const Text(
-                            'زايد الآن',
-                            style: TextStyle(
+                          label: Text(
+                            AppLocalizations.of(context).bidNowBtn,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -530,9 +531,9 @@ class _ItemBidCard extends StatelessWidget {
                                   color: Colors.white,
                                   size: 18,
                                 ),
-                          label: const Text(
-                            'اشتري الآن',
-                            style: TextStyle(
+                          label: Text(
+                            AppLocalizations.of(context).buyNow,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -684,7 +685,7 @@ class _WinnerBar extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  'فاز في مزاد $birdName',
+                  AppLocalizations.of(context).wonAuctionBird(birdName),
                   style: const TextStyle(color: Colors.white70, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -814,9 +815,9 @@ class _BidSheetState extends State<_BidSheet> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'تقديم مزايدة',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context).placeBidTitle,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,

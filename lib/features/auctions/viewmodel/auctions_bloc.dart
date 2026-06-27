@@ -22,7 +22,7 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
       : _repository = repository,
         super(const AuctionsState()) {
     on<AuctionsStarted>(_onStarted);
-    on<AuctionsRefreshRequested>(_onStarted);
+    on<AuctionsRefreshRequested>(_onRefresh);
     on<AuctionsLoadMoreRequested>(_onLoadMore);
     on<AuctionsFilterChanged>(_onFilterChanged);
     on<AuctionDetailRequested>(_onDetailRequested);
@@ -36,6 +36,18 @@ class AuctionsBloc extends Bloc<AuctionsEvent, AuctionsState> {
     on<AuctionBuyNowRequested>(_onBuyNowRequested);
     on<AuctionMyBidsLoadRequested>(_onMyBidsLoad);
     on<AuctionMyBidsLoadMoreRequested>(_onMyBidsLoadMore);
+  }
+
+  Future<void> _onRefresh(
+    AuctionsRefreshRequested event,
+    Emitter<AuctionsState> emit,
+  ) async {
+    // Re-apply the current filter so seller context is preserved on refresh
+    if (state.activeFilter != 'all' && state.activeFilter.isNotEmpty) {
+      await _onFilterChanged(AuctionsFilterChanged(state.activeFilter), emit);
+    } else {
+      await _onStarted(event, emit);
+    }
   }
 
   Future<void> _onStarted(

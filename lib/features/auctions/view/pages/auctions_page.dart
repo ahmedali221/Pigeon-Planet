@@ -11,20 +11,39 @@ import '../../../../l10n/app_localizations.dart';
 import 'auction_create_page.dart';
 import 'my_bids_page.dart';
 
+enum _LayoutMode { grid, horizontal }
+
 class AuctionsPage extends StatelessWidget {
-  AuctionsPage({super.key});
+  const AuctionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isSeller = context.select<AuthBloc, bool>((b) {
+      final s = b.state;
+      if (s is AuthSuccess) return s.user.isSeller;
+      if (s is AuthSwitchingProfile) return s.user.isSeller;
+      return false;
+    });
+
     return BlocProvider(
-      create: (_) => sl<AuctionsBloc>()..add(const AuctionsStarted()),
-      child: const _AuctionsView(),
+      create: (_) {
+        final bloc = sl<AuctionsBloc>();
+        if (isSeller) {
+          bloc.add(const AuctionsFilterChanged('my_auctions'));
+        } else {
+          bloc.add(const AuctionsStarted());
+        }
+        return bloc;
+      },
+      child: _AuctionsView(isSeller: isSeller),
     );
   }
 }
 
 class _AuctionsView extends StatefulWidget {
-  const _AuctionsView();
+  final bool isSeller;
+
+  const _AuctionsView({required this.isSeller});
 
   @override
   State<_AuctionsView> createState() => _AuctionsViewState();
@@ -32,6 +51,7 @@ class _AuctionsView extends StatefulWidget {
 
 class _AuctionsViewState extends State<_AuctionsView> {
   String _searchQuery = '';
+  _LayoutMode _layoutMode = _LayoutMode.grid;
   final _searchCtrl = TextEditingController();
 
   @override
@@ -39,6 +59,15 @@ class _AuctionsViewState extends State<_AuctionsView> {
     _searchCtrl.dispose();
     super.dispose();
   }
+
+  _LayoutMode get _nextLayoutMode =>
+      _layoutMode == _LayoutMode.grid ? _LayoutMode.horizontal : _LayoutMode.grid;
+
+  IconData get _layoutToggleIcon =>
+      _layoutMode == _LayoutMode.grid ? Icons.view_stream_rounded : Icons.grid_view_rounded;
+
+  String _layoutToggleTooltip(AppLocalizations l) =>
+      _layoutMode == _LayoutMode.grid ? l.layoutHorizontal : l.layoutGrid;
 
   List<AuctionModel> _applySearch(List<AuctionModel> auctions) {
     final q = _searchQuery.trim().toLowerCase();
@@ -57,16 +86,11 @@ class _AuctionsViewState extends State<_AuctionsView> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isSeller = context.select<AuthBloc, bool>((b) {
-      final s = b.state;
-      if (s is AuthSuccess) return s.user.isSeller;
-      if (s is AuthSwitchingProfile) return s.user.isSeller;
-      return false;
-    });
+    final screenW = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      floatingActionButton: isSeller
+      floatingActionButton: widget.isSeller
           ? FloatingActionButton.extended(
               onPressed: () => Navigator.push(
                 context,
@@ -93,6 +117,9 @@ class _AuctionsViewState extends State<_AuctionsView> {
               auctionCount: state.auctions.length,
               searchController: _searchCtrl,
               searchQuery: _searchQuery,
+              layoutToggleIcon: _layoutToggleIcon,
+              layoutToggleTooltip: _layoutToggleTooltip(l),
+              isSeller: widget.isSeller,
               onSearchChanged: (v) => setState(() => _searchQuery = v),
               onClearSearch: () {
                 _searchCtrl.clear();
@@ -105,6 +132,8 @@ class _AuctionsViewState extends State<_AuctionsView> {
                 context,
                 MaterialPageRoute(builder: (_) => const MyBidsPage()),
               ),
+              onToggleLayout: () =>
+                  setState(() => _layoutMode = _nextLayoutMode),
             ),
           ),
 
@@ -168,33 +197,36 @@ class _AuctionsViewState extends State<_AuctionsView> {
                   );
                 }
 
-                final displayed = _applySearch(state.auctions);
+                // Exclude ended auctions, then apply search
+                final displayed = _applySearch(
+                  state.auctions.where((a) => !a.isEnded).toList(),
+                );
 
-                if (displayed.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _searchQuery.isNotEmpty
-                              ? Icons.search_off_rounded
-                              : Icons.gavel_rounded,
-                          size: 56,
-                          color: AppColors.textHint,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _searchQuery.isNotEmpty
-                              ? AppLocalizations.of(context).no4(_searchQuery)
-                              : l.noAuctions,
-                          style: const TextStyle(
-                              color: AppColors.textSecondary, fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                // ── Split into 3 sections ────────────────────────────────────
+                final endingSoon = (displayed
+                        .where((a) =>
+                            a.isActive &&
+                            a.timeRemaining != null &&
+                            a.timeRemaining! <= 10800)
+                        .toList()
+                      ..sort((a, b) =>
+                          a.timeRemaining!.compareTo(b.timeRemaining!)));
+
+                final ongoing = displayed
+                    .where((a) =>
+                        a.isActive &&
+                        (a.timeRemaining == null || a.timeRemaining! > 10800))
+                    .toList();
+
+                final upcoming = (displayed
+                        .where((a) => !a.isActive && !a.isEnded)
+                        .toList()
+                      ..sort((a, b) =>
+                          a.startTime.compareTo(b.startTime)));
+
+                final hasAny = endingSoon.isNotEmpty ||
+                    ongoing.isNotEmpty ||
+                    upcoming.isNotEmpty;
 
                 return RefreshIndicator(
                   color: AppColors.primary,
@@ -218,41 +250,79 @@ class _AuctionsViewState extends State<_AuctionsView> {
                           ),
                         ),
                       ),
-                      // grid
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                        sliver: SliverGrid(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, i) {
-                              if (i == displayed.length) {
-                                return _AuctionLoadMoreTile(
-                                  loading: state.auctionsLoadingMore,
-                                  onPressed: () => context
-                                      .read<AuctionsBloc>()
-                                      .add(const AuctionsLoadMoreRequested()),
-                                );
-                              }
-                              return AuctionCard(auction: displayed[i]);
-                            },
-                            childCount: displayed.length +
-                                (state.auctionsHasMore && _searchQuery.isEmpty
-                                    ? 1
-                                    : 0),
+
+                      // ── Sections (always rendered; placeholder when empty) ──
+                      if (_searchQuery.isNotEmpty && !hasAny)
+                        SliverFillRemaining(
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.search_off_rounded,
+                                    size: 56, color: AppColors.textHint),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l.no4(_searchQuery),
+                                  style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 14),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                MediaQuery.sizeOf(context).width >= 920
-                                    ? 4
-                                    : MediaQuery.sizeOf(context).width >= 640
-                                        ? 3
-                                        : 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.58,
+                        )
+                      else ...[
+                        SliverToBoxAdapter(
+                          child: _AuctionSection(
+                            title: l.endingSoon,
+                            emptyLabel: l.noAuctionsInCategory,
+                            icon: Icons.timer_rounded,
+                            accentColor: AppColors.red,
+                            auctions: endingSoon,
+                            layoutMode: _layoutMode,
+                            screenW: screenW,
                           ),
                         ),
-                      ),
+                        SliverToBoxAdapter(
+                          child: _AuctionSection(
+                            title: l.ongoingAuctions,
+                            emptyLabel: l.noAuctionsInCategory,
+                            icon: Icons.gavel_rounded,
+                            accentColor: AppColors.primary,
+                            auctions: ongoing,
+                            layoutMode: _layoutMode,
+                            screenW: screenW,
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: _AuctionSection(
+                            title: l.upcomingAuctions,
+                            emptyLabel: l.noAuctionsInCategory,
+                            icon: Icons.schedule_rounded,
+                            accentColor: AppColors.orange,
+                            auctions: upcoming,
+                            layoutMode: _layoutMode,
+                            screenW: screenW,
+                          ),
+                        ),
+                      ],
+
+                      // ── Load more (pagination, all filter only) ─────────────
+                      if (state.auctionsHasMore && _searchQuery.isEmpty)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            child: _AuctionLoadMoreTile(
+                              loading: state.auctionsLoadingMore,
+                              onPressed: () => context
+                                  .read<AuctionsBloc>()
+                                  .add(const AuctionsLoadMoreRequested()),
+                            ),
+                          ),
+                        ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 90)),
                     ],
                   ),
                 );
@@ -265,6 +335,7 @@ class _AuctionsViewState extends State<_AuctionsView> {
   }
 }
 
+// ── Load more tile ───────────────────────────────────────────────────────────
 class _AuctionLoadMoreTile extends StatelessWidget {
   final bool loading;
   final VoidCallback onPressed;
@@ -290,7 +361,9 @@ class _AuctionLoadMoreTile extends StatelessWidget {
                       strokeWidth: 2, color: Colors.white),
                 )
               : const Icon(Icons.expand_more_rounded, size: 20),
-          label: Text(loading ? AppLocalizations.of(context).loading2 : AppLocalizations.of(context).loading),
+          label: Text(loading
+              ? AppLocalizations.of(context).loading2
+              : AppLocalizations.of(context).loading),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
@@ -306,23 +379,32 @@ class _AuctionLoadMoreTile extends StatelessWidget {
   }
 }
 
+// ── Header ───────────────────────────────────────────────────────────────────
 class _AuctionsHeader extends StatelessWidget {
   final int auctionCount;
   final TextEditingController searchController;
   final String searchQuery;
+  final IconData layoutToggleIcon;
+  final String layoutToggleTooltip;
+  final bool isSeller;
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onClearSearch;
   final VoidCallback onRefresh;
   final VoidCallback onMyBids;
+  final VoidCallback onToggleLayout;
 
   const _AuctionsHeader({
     required this.auctionCount,
     required this.searchController,
     required this.searchQuery,
+    required this.layoutToggleIcon,
+    required this.layoutToggleTooltip,
+    required this.isSeller,
     required this.onSearchChanged,
     required this.onClearSearch,
     required this.onRefresh,
     required this.onMyBids,
+    required this.onToggleLayout,
   });
 
   @override
@@ -343,7 +425,7 @@ class _AuctionsHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      l.activeAuctions,
+                      isSeller ? l.myAuctions : l.activeAuctions,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -373,6 +455,13 @@ class _AuctionsHeader extends StatelessWidget {
                     ],
                   ],
                 ),
+              ),
+              const SizedBox(width: 8),
+              // layout toggle: cycles grid → list → horizontal
+              _HeaderBtn(
+                icon: layoutToggleIcon,
+                tooltip: layoutToggleTooltip,
+                onTap: onToggleLayout,
               ),
               const SizedBox(width: 8),
               _HeaderBtn(
@@ -457,6 +546,150 @@ class _HeaderBtn extends StatelessWidget {
           ),
           child: Icon(icon, color: Colors.white, size: 20),
         ),
+      ),
+    );
+  }
+}
+
+// ── Auction section (ending soon / ongoing / upcoming) ────────────────────────
+class _AuctionSection extends StatelessWidget {
+  final String title;
+  final String emptyLabel;
+  final IconData icon;
+  final Color accentColor;
+  final List<AuctionModel> auctions;
+  final _LayoutMode layoutMode;
+  final double screenW;
+
+  const _AuctionSection({
+    required this.title,
+    required this.emptyLabel,
+    required this.icon,
+    required this.accentColor,
+    required this.auctions,
+    required this.layoutMode,
+    required this.screenW,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Section header ─────────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: accentColor, size: 18),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: accentColor,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '${auctions.length}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // ── Content ────────────────────────────────────────────────────────
+        _buildContent(),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    if (auctions.isEmpty) {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+        height: 80,
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: accentColor.withValues(alpha: 0.18)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: accentColor.withValues(alpha: 0.35), size: 22),
+            const SizedBox(width: 10),
+            Text(
+              emptyLabel,
+              style: TextStyle(
+                fontSize: 13,
+                color: accentColor.withValues(alpha: 0.6),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final cardW = screenW * 0.42;
+    final cardH = cardW / 0.58;
+
+    if (layoutMode == _LayoutMode.horizontal) {
+      return SizedBox(
+        height: cardH,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+          itemCount: auctions.length,
+          itemBuilder: (context, i) => Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: SizedBox(
+              width: cardW,
+              child: AuctionCard(auction: auctions[i]),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Grid mode
+    final cols = screenW >= 920 ? 4 : screenW >= 640 ? 3 : 2;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: cols,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.58,
+        ),
+        itemCount: auctions.length,
+        itemBuilder: (context, i) => AuctionCard(auction: auctions[i]),
       ),
     );
   }

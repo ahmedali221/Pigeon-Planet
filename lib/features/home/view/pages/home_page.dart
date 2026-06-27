@@ -533,10 +533,37 @@ class _HomeViewState extends State<_HomeView> {
                                           const HomeBreedersSkeleton()
                                         else
                                           HomeBreedersSection(sellers: homeState.sellers),
+                                        const SizedBox(height: 20),
+                                        // Marketplace auctions
+                                        if (homeState.activeAuctionsLoading)
+                                          const HomeActiveAuctionsSkeleton()
+                                        else if (activeAuctions.isNotEmpty)
+                                          HomeActiveAuctionsSection(auctions: activeAuctions),
+                                        if (homeState.activeAuctionsLoading || activeAuctions.isNotEmpty)
+                                          const SizedBox(height: 20),
+                                        // Featured store birds
+                                        HomeStoreBirdsSection(
+                                          birds: homeState.featuredBirds,
+                                          isLoading: homeState.featuredBirdsLoading,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        // Coming soon
+                                        if (homeState.comingSoonLoading)
+                                          const HomeComingSoonSkeleton()
+                                        else
+                                          HomeComingSoonSection(auctions: homeState.comingSoonAuctions),
+                                        const SizedBox(height: 20),
+                                        // Ending soon
+                                        if (homeState.endingSoonLoading)
+                                          const HomeEndingSoonSkeleton()
+                                        else if (endingSoon.isNotEmpty)
+                                          HomeAuctionsSection(auctions: endingSoon),
+                                        if (homeState.endingSoonLoading || endingSoon.isNotEmpty)
+                                          const SizedBox(height: 20),
                                       ],
                                       // ── Seller sections ─────────────────────
                                       if (isSeller) ...[
-                                        // 1. Green welcome + quick actions (auctions / birds / store / tools)
+                                        // 1. Metrics banner
                                         if (homeState.summaryLoading)
                                           const HomeSellerMetricsSkeleton()
                                         else
@@ -552,40 +579,32 @@ class _HomeViewState extends State<_HomeView> {
                                           HomeHeroBanner(banners: announcementBanners),
                                         if (homeState.announcementsLoading || announcementBanners.isNotEmpty)
                                           const SizedBox(height: 20),
-                                        // 3. ملخص نشاطك
+                                        // 3. Activity summary
                                         HomeInsightsPreviewSection(),
                                         const SizedBox(height: 20),
-                                        // 4. أدوات البائع (ملكية، إحالة، ...)
+                                        // 4. Seller tools
                                         HomeSellerDemoSection(),
                                         const SizedBox(height: 20),
+                                        // 5. Seller's own auctions
+                                        if (homeState.sellerPrivateLoading)
+                                          const HomeActiveAuctionsSkeleton()
+                                        else
+                                          HomeActiveAuctionsSection(
+                                            auctions: _toActiveAuctionMaps(
+                                              homeState.myAuctions,
+                                              context,
+                                            ),
+                                            isSellerView: true,
+                                          ),
+                                        const SizedBox(height: 20),
+                                        // 6. Seller's own listed birds
+                                        HomeStoreBirdsSection(
+                                          birds: homeState.myBirds,
+                                          isLoading: homeState.sellerPrivateLoading,
+                                          isSellerView: true,
+                                        ),
+                                        const SizedBox(height: 20),
                                       ],
-                                      const SizedBox(height: 20),
-                                      // ── Active auctions ─────────────────────
-                                      if (homeState.activeAuctionsLoading)
-                                        const HomeActiveAuctionsSkeleton()
-                                      else if (activeAuctions.isNotEmpty)
-                                        HomeActiveAuctionsSection(auctions: activeAuctions),
-                                      if (homeState.activeAuctionsLoading || activeAuctions.isNotEmpty)
-                                        const SizedBox(height: 20),
-                                      // ── Store birds ─────────────────────────
-                                      HomeStoreBirdsSection(
-                                        birds: homeState.featuredBirds,
-                                        isLoading: homeState.featuredBirdsLoading,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      // ── Coming soon ─────────────────────────
-                                      if (homeState.comingSoonLoading)
-                                        const HomeComingSoonSkeleton()
-                                      else
-                                        HomeComingSoonSection(auctions: homeState.comingSoonAuctions),
-                                      const SizedBox(height: 20),
-                                      // ── Ending soon ─────────────────────────
-                                      if (homeState.endingSoonLoading)
-                                        const HomeEndingSoonSkeleton()
-                                      else if (endingSoon.isNotEmpty)
-                                        HomeAuctionsSection(auctions: endingSoon),
-                                      if (homeState.endingSoonLoading || endingSoon.isNotEmpty)
-                                        const SizedBox(height: 20),
                                       // ── Error banner ────────────────────────
                                       if (homeState.status == HomeStatus.error)
                                         Padding(

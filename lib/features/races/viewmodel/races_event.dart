@@ -90,3 +90,28 @@ class RaceResultSearchLoadMoreRequested extends RacesEvent {
 class RacesLoadMoreRequested extends RacesEvent {
   const RacesLoadMoreRequested();
 }
+
+class RacesFilterSearchRequested extends RacesEvent {
+  final String rank;
+  final String country;
+  final String clubName;
+  final String competitorName;
+  final String seasonYear;
+  final String stationName;
+  final String birdNumber;
+
+  const RacesFilterSearchRequested({
+    this.rank = '',
+    this.country = '',
+    this.clubName = '',
+    this.competitorName = '',
+    this.seasonYear = '',
+    this.stationName = '',
+    this.birdNumber = '',
+  });
+
+  @override
+  List<Object?> get props => [
+        rank, country, clubName, competitorName, seasonYear, stationName, birdNumber,
+      ];
+}

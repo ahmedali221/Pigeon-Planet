@@ -99,7 +99,7 @@ class _LoadMoreButton extends StatelessWidget {
                 height: 16,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Text('Load more'),
+            : Text(AppLocalizations.of(context).loadMore),
       ),
     );
   }

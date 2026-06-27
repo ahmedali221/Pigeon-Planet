@@ -18,6 +18,7 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     on<RacesTypeChanged>(_onTypeChanged);
     on<RacesSearchChanged>(_onSearchChanged);
     on<RacesFilterChanged>(_onFilterChanged);
+    on<RacesFilterSearchRequested>(_onFilterSearch);
     on<RaceDetailRequested>(_onDetailRequested);
     on<RaceDetailResultsLoadMoreRequested>(_onDetailResultsLoadMore);
     on<RaceResultSearchChanged>(_onResultSearchChanged);
@@ -30,27 +31,10 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
     Emitter<RacesState> emit,
   ) async {
     emit(state.copyWith(
-      status: RacesStatus.loading,
+      status: RacesStatus.initial,
+      globalSearchResults: [],
       clearError: true,
-      currentPage: 1,
-      hasMore: false,
-      loadingMore: false,
     ));
-    final result = await _repository.getRaces(
-      page: 1,
-      seasonYear: _nullable(state.seasonYearFilter),
-      stationName: _nullable(state.stationNameFilter),
-    );
-    result.fold(
-      (f) => emit(
-          state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
-      (page) => emit(state.copyWith(
-        status: RacesStatus.loaded,
-        races: page.races,
-        currentPage: 1,
-        hasMore: page.hasMore,
-      )),
-    );
   }
 
   Future<void> _onTypeChanged(
@@ -59,7 +43,8 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
   ) async {
     emit(state.copyWith(
       raceType: event.raceType,
-      // Clear all filter fields on type switch
+      status: RacesStatus.initial,
+      globalSearchResults: [],
       countryFilter: '',
       clubFilter: '',
       seasonYearFilter: '',
@@ -68,21 +53,50 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
       hobbyistNameFilter: '',
       rankFilter: '',
       birdNumberFilter: '',
+      resultSearchCurrentPage: 1,
+      resultSearchHasMore: false,
+      resultSearchLoadingMore: false,
+      clearError: true,
+    ));
+  }
+
+  Future<void> _onFilterSearch(
+    RacesFilterSearchRequested event,
+    Emitter<RacesState> emit,
+  ) async {
+    emit(state.copyWith(
       status: RacesStatus.loading,
       clearError: true,
-      currentPage: 1,
-      hasMore: false,
-      loadingMore: false,
+      countryFilter: event.country,
+      clubFilter: event.clubName,
+      seasonYearFilter: event.seasonYear,
+      stationNameFilter: event.stationName,
+      hobbyistNameFilter: event.competitorName,
+      rankFilter: event.rank,
+      birdNumberFilter: event.birdNumber,
+      globalSearchResults: [],
+      resultSearchCurrentPage: 1,
+      resultSearchHasMore: false,
+      resultSearchLoadingMore: false,
     ));
-    final result = await _repository.getRaces(page: 1);
+    final result = await _repository.searchResults(
+      competitorName: _nullable(event.competitorName),
+      birdRingNumber: _nullable(event.birdNumber),
+      clubName: _nullable(event.clubName),
+      country: _nullable(event.country),
+      seasonYear: _nullable(event.seasonYear),
+      stationName: _nullable(event.stationName),
+      rank: _nullable(event.rank),
+      page: 1,
+    );
     result.fold(
       (f) => emit(
           state.copyWith(status: RacesStatus.error, errorMessage: f.message)),
       (page) => emit(state.copyWith(
         status: RacesStatus.loaded,
-        races: page.races,
-        currentPage: 1,
-        hasMore: page.hasMore,
+        globalSearchResults: page.results,
+        resultSearchHasMore: page.hasMore,
+        resultSearchCurrentPage: 1,
       )),
     );
   }
@@ -273,6 +287,13 @@ class RacesBloc extends Bloc<RacesEvent, RacesState> {
       q: state.resultSearchQuery.isNotEmpty
           ? state.resultSearchQuery
           : state.searchQuery,
+      competitorName: _nullable(state.hobbyistNameFilter),
+      birdRingNumber: _nullable(state.birdNumberFilter),
+      clubName: _nullable(state.clubFilter),
+      country: _nullable(state.countryFilter),
+      seasonYear: _nullable(state.seasonYearFilter),
+      stationName: _nullable(state.stationNameFilter),
+      rank: _nullable(state.rankFilter),
       page: nextPage,
     );
     result.fold(

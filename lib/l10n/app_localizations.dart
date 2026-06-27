@@ -1820,6 +1820,72 @@ abstract class AppLocalizations {
   /// **'تحميل المزيد'**
   String get loadMore;
 
+  /// No description provided for @clubManagerResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتائج نوادي Club Manager'**
+  String get clubManagerResults;
+
+  /// No description provided for @pointsResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتائج النقاط'**
+  String get pointsResults;
+
+  /// No description provided for @rankLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المركز'**
+  String get rankLabel;
+
+  /// No description provided for @clubNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم النادي'**
+  String get clubNameLabel;
+
+  /// No description provided for @competitorNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المتسابق'**
+  String get competitorNameLabel;
+
+  /// No description provided for @birdRingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الطير'**
+  String get birdRingLabel;
+
+  /// No description provided for @filterSearchPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الفلاتر واضغط بحث لعرض النتائج'**
+  String get filterSearchPrompt;
+
+  /// No description provided for @clearData.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح البيانات'**
+  String get clearData;
+
+  /// No description provided for @chooseSeason.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر السيزون'**
+  String get chooseSeason;
+
+  /// No description provided for @speedUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'م/ث'**
+  String get speedUnit;
+
+  /// No description provided for @distanceKmUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'كم'**
+  String get distanceKmUnit;
+
   /// Upload box file size/type hint
   ///
   /// In ar, this message translates to:
@@ -7015,6 +7081,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'التقاط صورة'**
   String get takePhoto;
+
+  /// No description provided for @ongoingAuctions.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزادات جارية'**
+  String get ongoingAuctions;
+
+  /// No description provided for @noAuctionsInCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مزادات في هذه الفئة حالياً'**
+  String get noAuctionsInCategory;
+
+  /// No description provided for @layoutHorizontal.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفقي'**
+  String get layoutHorizontal;
+
+  /// No description provided for @layoutGrid.
+  ///
+  /// In ar, this message translates to:
+  /// **'شبكة'**
+  String get layoutGrid;
+
+  /// No description provided for @cannotBidSellerBlocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكنك المزايدة بينما هذا البائع محظور'**
+  String get cannotBidSellerBlocked;
+
+  /// No description provided for @wonAuctionBird.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاز في مزاد {birdName}'**
+  String wonAuctionBird(String birdName);
 }
 
 class _AppLocalizationsDelegate

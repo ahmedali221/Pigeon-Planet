@@ -893,6 +893,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loadMore => 'تحميل المزيد';
 
   @override
+  String get clubManagerResults => 'نتائج نوادي Club Manager';
+
+  @override
+  String get pointsResults => 'نتائج النقاط';
+
+  @override
+  String get rankLabel => 'المركز';
+
+  @override
+  String get clubNameLabel => 'اسم النادي';
+
+  @override
+  String get competitorNameLabel => 'اسم المتسابق';
+
+  @override
+  String get birdRingLabel => 'رقم الطير';
+
+  @override
+  String get filterSearchPrompt => 'اختر الفلاتر واضغط بحث لعرض النتائج';
+
+  @override
+  String get clearData => 'مسح البيانات';
+
+  @override
+  String get chooseSeason => 'اختر السيزون';
+
+  @override
+  String get speedUnit => 'م/ث';
+
+  @override
+  String get distanceKmUnit => 'كم';
+
+  @override
   String get uploadSizeHint => 'PNG, JPG حتى 10MB';
 
   @override
@@ -3699,4 +3732,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get takePhoto => 'التقاط صورة';
+
+  @override
+  String get ongoingAuctions => 'مزادات جارية';
+
+  @override
+  String get noAuctionsInCategory => 'لا توجد مزادات في هذه الفئة حالياً';
+
+  @override
+  String get layoutHorizontal => 'أفقي';
+
+  @override
+  String get layoutGrid => 'شبكة';
+
+  @override
+  String get cannotBidSellerBlocked =>
+      'لا يمكنك المزايدة بينما هذا البائع محظور';
+
+  @override
+  String wonAuctionBird(String birdName) {
+    return 'فاز في مزاد $birdName';
+  }
 }

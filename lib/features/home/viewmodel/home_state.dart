@@ -7,6 +7,7 @@ class HomeState extends Equatable {
   final List<AuctionModel> activeAuctions;
   final List<AuctionModel> endingSoonAuctions;
   final List<AuctionModel> comingSoonAuctions;
+  final List<AuctionModel> myAuctions;
   final List<BirdSummaryModel> featuredBirds;
   final List<BirdSummaryModel> myBirds;
   final List<SellerModel> sellers;
@@ -32,6 +33,7 @@ class HomeState extends Equatable {
     this.activeAuctions = const [],
     this.endingSoonAuctions = const [],
     this.comingSoonAuctions = const [],
+    this.myAuctions = const [],
     this.featuredBirds = const [],
     this.myBirds = const [],
     this.sellers = const [],
@@ -65,6 +67,7 @@ class HomeState extends Equatable {
     List<AuctionModel>? activeAuctions,
     List<AuctionModel>? endingSoonAuctions,
     List<AuctionModel>? comingSoonAuctions,
+    List<AuctionModel>? myAuctions,
     List<BirdSummaryModel>? featuredBirds,
     List<BirdSummaryModel>? myBirds,
     List<SellerModel>? sellers,
@@ -91,6 +94,7 @@ class HomeState extends Equatable {
         activeAuctions: activeAuctions ?? this.activeAuctions,
         endingSoonAuctions: endingSoonAuctions ?? this.endingSoonAuctions,
         comingSoonAuctions: comingSoonAuctions ?? this.comingSoonAuctions,
+        myAuctions: myAuctions ?? this.myAuctions,
         featuredBirds: featuredBirds ?? this.featuredBirds,
         myBirds: myBirds ?? this.myBirds,
         sellers: sellers ?? this.sellers,
@@ -122,6 +126,7 @@ class HomeState extends Equatable {
         activeAuctions,
         endingSoonAuctions,
         comingSoonAuctions,
+        myAuctions,
         featuredBirds,
         myBirds,
         sellers,

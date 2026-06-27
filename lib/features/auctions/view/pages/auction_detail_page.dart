@@ -592,18 +592,21 @@ class _AuctionItemCard extends StatelessWidget {
             Row(
           children: [
             // ── thumbnail ──
-            ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(14)),
-              child: thumb != null
-                  ? Image.network(thumb,
-                      width: 100,
-                      height: 110,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) =>
-                          _PlaceholderThumb())
-                  : _PlaceholderThumb(),
-            ),
+            Builder(builder: (context) {
+              final tw = MediaQuery.sizeOf(context).width * 0.25;
+              return ClipRRect(
+                borderRadius: const BorderRadius.horizontal(
+                    right: Radius.circular(14)),
+                child: thumb != null
+                    ? Image.network(thumb,
+                        width: tw,
+                        height: tw * 1.1,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) =>
+                            _PlaceholderThumb(width: tw))
+                    : _PlaceholderThumb(width: tw),
+              );
+            }),
             const SizedBox(width: 12),
 
             // ── info ──
@@ -745,14 +748,20 @@ class _AuctionItemCard extends StatelessWidget {
 }
 
 class _PlaceholderThumb extends StatelessWidget {
+  final double? width;
+  const _PlaceholderThumb({this.width});
+
   @override
-  Widget build(BuildContext context) => Container(
-        width: 100,
-        height: 110,
-        color: AppColors.primaryLight,
-        child: const Icon(Icons.flutter_dash_rounded,
-            color: AppColors.primary, size: 36),
-      );
+  Widget build(BuildContext context) {
+    final w = width ?? MediaQuery.sizeOf(context).width * 0.25;
+    return Container(
+      width: w,
+      height: w * 1.1,
+      color: AppColors.primaryLight,
+      child: const Icon(Icons.flutter_dash_rounded,
+          color: AppColors.primary, size: 36),
+    );
+  }
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────────────

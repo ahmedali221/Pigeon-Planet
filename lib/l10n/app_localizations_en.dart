@@ -899,6 +899,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadMore => 'Load More';
 
   @override
+  String get clubManagerResults => 'Club Manager Results';
+
+  @override
+  String get pointsResults => 'Points Results';
+
+  @override
+  String get rankLabel => 'Rank';
+
+  @override
+  String get clubNameLabel => 'Club Name';
+
+  @override
+  String get competitorNameLabel => 'Competitor Name';
+
+  @override
+  String get birdRingLabel => 'Bird Ring';
+
+  @override
+  String get filterSearchPrompt =>
+      'Select filters and press Search to view results';
+
+  @override
+  String get clearData => 'Clear Data';
+
+  @override
+  String get chooseSeason => 'Choose Season';
+
+  @override
+  String get speedUnit => 'm/s';
+
+  @override
+  String get distanceKmUnit => 'km';
+
+  @override
   String get uploadSizeHint => 'PNG, JPG up to 10MB';
 
   @override
@@ -3721,4 +3755,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get takePhoto => 'Take a Photo';
+
+  @override
+  String get ongoingAuctions => 'Ongoing Auctions';
+
+  @override
+  String get noAuctionsInCategory => 'No auctions in this category right now';
+
+  @override
+  String get layoutHorizontal => 'Horizontal';
+
+  @override
+  String get layoutGrid => 'Grid';
+
+  @override
+  String get cannotBidSellerBlocked =>
+      'You cannot bid while this seller is blocked';
+
+  @override
+  String wonAuctionBird(String birdName) {
+    return 'Won auction for $birdName';
+  }
 }

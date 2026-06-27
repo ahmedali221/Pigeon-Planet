@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter *)",
+      "Bash(dart *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(cat *)",
+      "PowerShell(flutter *)",
+      "PowerShell(dart *)",
+      "PowerShell(git *)",
+      "PowerShell(Get-ChildItem *)",
+      "Read(d:\\Freelance\\pingeon planet\\pigeon_planet\\**)",
+      "Read(d:\\Freelance\\pingeon planet\\PPW\\**)",
+      "Read(d:\\Freelance\\pingeon planet\\MOBILE_BACKEND_AUDIT.md)",
+      "Read(d:\\Freelance\\pingeon planet\\MODULE_COMPARISON.md)",
+      "Read(d:\\Freelance\\pingeon planet\\REQUIREMENTS_AUDIT.md)"
+    ]
+  }
+}

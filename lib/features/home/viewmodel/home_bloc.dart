@@ -218,6 +218,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final needsFallback = existingSummary == null ||
         existingSummary.nickname.isEmpty;
     emit(state.copyWith(
+      myAuctions: myAuctions,
       sellerSummary: needsFallback
           ? _buildSellerSummary(
               myAuctions: myAuctions,
