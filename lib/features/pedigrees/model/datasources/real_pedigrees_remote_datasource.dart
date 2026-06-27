@@ -17,7 +17,8 @@ class RealPedigreesRemoteDataSource implements PedigreesRemoteDataSource {
       ApiConstants.pedigreeDocuments,
       queryParameters: birdId != null ? {'bird_id': birdId} : null,
     );
-    final list = response.data as List<dynamic>;
+    final data = response.data;
+    final list = (data is Map ? data['results'] : data) as List<dynamic>;
     return list
         .map((e) => PedigreeDocumentModel.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -34,6 +35,24 @@ class RealPedigreesRemoteDataSource implements PedigreesRemoteDataSource {
       ApiConstants.pedigreeDocuments,
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
+    );
+    return PedigreeDocumentModel.fromJson(
+        response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<PedigreeDocumentModel> createTextDocument(
+    String ringNumber, {
+    String description = '',
+    int? birdId,
+  }) async {
+    final response = await _dio.dio.post(
+      ApiConstants.pedigreeDocuments,
+      data: {
+        'bird_ring_number': ringNumber,
+        'description': description,
+        'bird_id': birdId,
+      },
     );
     return PedigreeDocumentModel.fromJson(
         response.data as Map<String, dynamic>);

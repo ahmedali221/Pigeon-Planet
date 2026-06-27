@@ -75,6 +75,7 @@ import '../../features/pedigrees/model/datasources/real_pedigrees_remote_datasou
 import '../../features/pedigrees/model/pedigrees_repository.dart';
 import '../../features/pedigrees/model/pedigrees_repository_impl.dart';
 import '../../features/pedigrees/viewmodel/pedigrees_bloc.dart';
+import '../../features/pedigrees/viewmodel/pedigree_tree_cubit.dart';
 import '../../features/chat/model/datasources/chat_remote_datasource.dart';
 import '../../features/chat/model/datasources/real_chat_remote_datasource.dart';
 import '../../features/chat/model/chat_repository.dart';
@@ -253,6 +254,7 @@ void setupDependencies() {
     () => PedigreesRepositoryImpl(sl()),
   );
   sl.registerFactory(() => PedigreesBloc(repository: sl()));
+  sl.registerLazySingleton(() => PedigreeTreeCubit());
 
   // ── Chat ──────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<ChatRemoteDataSource>(

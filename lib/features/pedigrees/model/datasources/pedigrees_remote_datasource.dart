@@ -5,6 +5,11 @@ import '../pedigree_document_model.dart';
 abstract class PedigreesRemoteDataSource {
   Future<List<PedigreeDocumentModel>> listDocuments({int? birdId});
   Future<PedigreeDocumentModel> uploadDocument(XFile file, {int? birdId});
+  Future<PedigreeDocumentModel> createTextDocument(
+    String ringNumber, {
+    String description,
+    int? birdId,
+  });
   Future<PedigreeDocumentModel> getDocument(int id);
   Future<PedigreeDocumentModel> reviewDocument(
     int id, {

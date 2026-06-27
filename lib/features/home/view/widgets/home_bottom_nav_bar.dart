@@ -20,7 +20,8 @@ class HomeBottomNavBar extends StatelessWidget {
       _NavItem(icon: Icons.storefront_rounded, label: AppLocalizations.of(context).almtjr),
       _NavItem(icon: Icons.meeting_room_rounded, label: AppLocalizations.of(context).rooms),
       _NavItem(icon: Icons.emoji_events_rounded, label: AppLocalizations.of(context).alntayj),
-      _NavItem(icon: Icons.timer_rounded, label: 'الساعة'),
+      _NavItem(icon: Icons.timer_rounded, label: AppLocalizations.of(context).alsaaa),
+      _NavItem(icon: Icons.cottage_rounded, label: AppLocalizations.of(context).brnamjAlwft),
     ];
     return Container(
       decoration: BoxDecoration(

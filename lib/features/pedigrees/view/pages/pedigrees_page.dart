@@ -1,89 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../core/di/injection.dart';
+import '../../../../../core/widgets/ppw_app_bar.dart';
+import '../../../auth/viewmodel/auth_bloc.dart';
+import '../../viewmodel/pedigree_tree_cubit.dart';
 import '../../model/pedigree_document_model.dart';
 import '../../viewmodel/pedigrees_bloc.dart';
 import '../../viewmodel/pedigrees_event.dart';
 import '../../viewmodel/pedigrees_state.dart';
+import '../widgets/customer_pedigrees_tab.dart';
+import '../widgets/pedigree_status_badge.dart';
+import '../widgets/seller_pedigrees_tab.dart';
 import 'pedigree_detail_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
-class PedigreesPage extends StatelessWidget {
-  // Pre-fill birdId when opened from a bird detail page.
-  final int? initialBirdId;
 
-  PedigreesPage({super.key, this.initialBirdId});
+class PedigreesPage extends StatelessWidget {
+  final int? initialBirdId;
+  // true when the current user does NOT own this bird (customer viewing seller's bird)
+  final bool isReadOnly;
+
+  const PedigreesPage({
+    super.key,
+    this.initialBirdId,
+    this.isReadOnly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<PedigreesBloc>()
-        ..add(PedigreesListRequested(birdId: initialBirdId)),
-      child: _PedigreesView(initialBirdId: initialBirdId),
+    final authState = context.watch<AuthBloc>().state;
+    final isSeller = authState is AuthSuccess && authState.user.isSeller;
+
+    // Bottom-nav tab (no birdId) — local tree only, no API pedigree list needed
+    if (initialBirdId == null) {
+      return BlocProvider.value(
+        value: sl<PedigreeTreeCubit>(),
+        child: isSeller
+            ? const SellerPedigreesTab()
+            : const CustomerPedigreesTab(),
+      );
+    }
+
+    // birdId-scoped view — show per-bird API documents + local tree cubit
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<PedigreesBloc>()
+            ..add(PedigreesListRequested(birdId: initialBirdId)),
+        ),
+        BlocProvider.value(value: sl<PedigreeTreeCubit>()),
+      ],
+      child: _PedigreesView(isReadOnly: isReadOnly),
     );
   }
 }
 
+// ── Bird-scoped or owner pedigree list view ───────────────────────────────────
+
 class _PedigreesView extends StatelessWidget {
-  final int? initialBirdId;
-
-  _PedigreesView({this.initialBirdId});
-
-  Future<void> _pickAndUpload(BuildContext context) async {
-    final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery);
-    if (file == null || !context.mounted) return;
-    context.read<PedigreesBloc>().add(
-          PedigreeUploadRequested(file, birdId: initialBirdId),
-        );
-  }
+  final bool isReadOnly;
+  const _PedigreesView({this.isReadOnly = false});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PedigreesBloc, PedigreesState>(
-      listenWhen: (prev, curr) =>
-          curr.status == PedigreesStatus.loaded &&
-          prev.status == PedigreesStatus.uploading &&
-          curr.selectedDocument != null,
-      listener: (context, state) {
-        // Navigate to detail page immediately after successful upload.
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: context.read<PedigreesBloc>(),
-              child: PedigreeDetailPage(document: state.selectedDocument!),
-            ),
-          ),
-        );
-      },
+    return BlocBuilder<PedigreesBloc, PedigreesState>(
       builder: (context, state) {
-        final isUploading = state.status == PedigreesStatus.uploading;
-
         return Scaffold(
           backgroundColor: AppColors.pageBackground,
           appBar: PPWAppBar(
             title: AppLocalizations.of(context).shhadatAlnsb,
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: isUploading ? null : () => _pickAndUpload(context),
-            backgroundColor: AppColors.purple,
-            foregroundColor: Colors.white,
-            icon: isUploading
-                ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
-                  )
-                : Icon(Icons.upload_file_rounded),
-            label: Text(isUploading ? AppLocalizations.of(context).jaryAlrfa : AppLocalizations.of(context).rfaShhada),
-          ),
-          body: _Body(state: state),
+          body: _Body(state: state, isReadOnly: isReadOnly),
         );
       },
     );
@@ -92,29 +81,31 @@ class _PedigreesView extends StatelessWidget {
 
 class _Body extends StatelessWidget {
   final PedigreesState state;
-  _Body({required this.state});
+  final bool isReadOnly;
+  const _Body({required this.state, required this.isReadOnly});
 
   @override
   Widget build(BuildContext context) {
     if (state.status == PedigreesStatus.loading && state.documents.isEmpty) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.status == PedigreesStatus.error &&
-        state.documents.isEmpty) {
+    if (state.status == PedigreesStatus.error && state.documents.isEmpty) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline,
+              const Icon(Icons.error_outline,
                   color: AppColors.error, size: 48),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
-                state.errorMessage ?? AppLocalizations.of(context).errorOccurred,
+                state.errorMessage ??
+                    AppLocalizations.of(context).errorOccurred,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary),
+                style:
+                    const TextStyle(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -123,42 +114,45 @@ class _Body extends StatelessWidget {
     }
 
     if (state.documents.isEmpty) {
-      return _EmptyState();
+      return _EmptyState(isReadOnly: isReadOnly);
     }
 
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       itemCount: state.documents.length,
-      separatorBuilder: (_, _) => SizedBox(height: 12),
-      itemBuilder: (context, i) =>
-          _DocumentTile(document: state.documents[i]),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, i) => _DocumentTile(
+        document: state.documents[i],
+        isReadOnly: isReadOnly,
+      ),
     );
   }
 }
 
 class _EmptyState extends StatelessWidget {
-  _EmptyState();
+  final bool isReadOnly;
+  const _EmptyState({required this.isReadOnly});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.purpleLight,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.description_outlined,
+              child: const Icon(Icons.description_outlined,
                   color: AppColors.purple, size: 40),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'لا توجد شهادات نسب',
               style: TextStyle(
                 fontSize: 18,
@@ -166,11 +160,14 @@ class _EmptyState extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'اضغط على زر الرفع لإضافة شهادة نسب لطائرك',
+              isReadOnly
+                  ? 'لم يتم رفع شهادة نسب لهذا الطائر بعد'
+                  : 'لا توجد شهادات نسب لهذا الطائر بعد',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              style: const TextStyle(
+                  color: AppColors.textSecondary, fontSize: 14),
             ),
           ],
         ),
@@ -181,7 +178,8 @@ class _EmptyState extends StatelessWidget {
 
 class _DocumentTile extends StatelessWidget {
   final PedigreeDocumentModel document;
-  _DocumentTile({required this.document});
+  final bool isReadOnly;
+  const _DocumentTile({required this.document, required this.isReadOnly});
 
   @override
   Widget build(BuildContext context) {
@@ -191,12 +189,15 @@ class _DocumentTile extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: context.read<PedigreesBloc>(),
-            child: PedigreeDetailPage(document: document),
+            child: PedigreeDetailPage(
+              document: document,
+              isReadOnly: isReadOnly,
+            ),
           ),
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -204,7 +205,7 @@ class _DocumentTile extends StatelessWidget {
             BoxShadow(
                 color: Colors.black.withValues(alpha: 0.06),
                 blurRadius: 8,
-                offset: Offset(0, 2)),
+                offset: const Offset(0, 2)),
           ],
         ),
         child: Row(
@@ -212,40 +213,40 @@ class _DocumentTile extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.purpleLight,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.description_rounded,
+              child: const Icon(Icons.description_rounded,
                   color: AppColors.purple, size: 22),
             ),
-            SizedBox(width: 14),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'شهادة نسب #${document.id}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  _StatusBadge(status: document.status),
+                  const SizedBox(height: 4),
+                  PedigreeStatusBadge(status: document.status),
                   if (document.created != null) ...[
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       _formatDate(document.created!),
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 12, color: AppColors.textHint),
                     ),
                   ],
                 ],
               ),
             ),
-            Icon(Icons.arrow_back_ios_rounded,
+            const Icon(Icons.arrow_back_ios_rounded,
                 color: AppColors.textSecondary, size: 14),
           ],
         ),
@@ -255,33 +256,4 @@ class _DocumentTile extends StatelessWidget {
 
   String _formatDate(DateTime d) =>
       '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
-}
-
-class _StatusBadge extends StatelessWidget {
-  final String status;
-  _StatusBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final (label, color) = switch (status) {
-      'reviewed' => (AppLocalizations.of(context).tmtAlmrajaa2, AppColors.success),
-      'processed' => (AppLocalizations.of(context).tmtAlmaalja2, AppColors.blue),
-      'failed' => (AppLocalizations.of(context).fshlMrajaaYdwya, AppColors.orange),
-      _ => (AppLocalizations.of(context).mrfwa2, AppColors.textSecondary),
-    };
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-            fontSize: 11, color: color, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
 }

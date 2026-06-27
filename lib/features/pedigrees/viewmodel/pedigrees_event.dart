@@ -47,3 +47,18 @@ class PedigreeReviewSubmitted extends PedigreesEvent {
   @override
   List<Object?> get props => [documentId, ringNumber, description];
 }
+
+class PedigreeCreateSubmitted extends PedigreesEvent {
+  final String ringNumber;
+  final String description;
+  final int? birdId;
+
+  const PedigreeCreateSubmitted({
+    required this.ringNumber,
+    this.description = '',
+    this.birdId,
+  });
+
+  @override
+  List<Object?> get props => [ringNumber, description, birdId];
+}

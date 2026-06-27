@@ -5642,6 +5642,18 @@ abstract class AppLocalizations {
   /// **'النتائج'**
   String get alntayj;
 
+  /// No description provided for @alsaaa.
+  ///
+  /// In ar, this message translates to:
+  /// **'الساعة'**
+  String get alsaaa;
+
+  /// No description provided for @brnamjAlwft.
+  ///
+  /// In ar, this message translates to:
+  /// **'برنامج اللوفت'**
+  String get brnamjAlwft;
+
   /// No description provided for @active2.
   ///
   /// In ar, this message translates to:

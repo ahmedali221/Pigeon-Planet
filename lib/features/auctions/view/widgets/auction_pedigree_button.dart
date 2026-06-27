@@ -45,7 +45,8 @@ class AuctionPedigreeButton extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PedigreesPage(initialBirdId: birdId),
+        builder: (_) =>
+            PedigreesPage(initialBirdId: birdId, isReadOnly: !isOwner),
       ),
     );
   }

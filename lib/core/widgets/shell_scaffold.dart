@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/viewmodel/auth_bloc.dart';
 import '../../features/cart/viewmodel/cart_bloc.dart';
 import '../../features/home/view/widgets/home_bottom_nav_bar.dart';
 import '../../l10n/app_localizations.dart';
@@ -30,7 +31,10 @@ class _ShellScaffoldState extends State<ShellScaffold> {
   void didUpdateWidget(ShellScaffold old) {
     super.didUpdateWidget(old);
     _backController.attach(widget.navigationShell);
-    if (widget.navigationShell.currentIndex == _marketIndex &&
+    final isCustomer = context.read<AuthBloc>().state is AuthSuccess &&
+        (context.read<AuthBloc>().state as AuthSuccess).user.isCustomer;
+    if (isCustomer &&
+        widget.navigationShell.currentIndex == _marketIndex &&
         old.navigationShell.currentIndex != _marketIndex) {
       context.read<CartBloc>().add(const CartStarted());
     }
@@ -61,7 +65,7 @@ class _ShellScaffoldState extends State<ShellScaffold> {
         child: Scaffold(
           body: widget.navigationShell,
           bottomNavigationBar: HomeBottomNavBar(
-            currentIndex: widget.navigationShell.currentIndex.clamp(0, 5),
+            currentIndex: widget.navigationShell.currentIndex.clamp(0, 6),
             onTap: (index) => _onTap(context, index),
           ),
         ),
@@ -71,7 +75,7 @@ class _ShellScaffoldState extends State<ShellScaffold> {
 
   void _onTap(BuildContext context, int index) {
     final l = AppLocalizations.of(context);
-    if (index >= 6) {
+    if (index >= 7) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l.comingSoon),

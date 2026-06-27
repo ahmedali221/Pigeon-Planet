@@ -18,6 +18,7 @@ import '../widgets/auction_description_section.dart';
 import '../widgets/auction_details_grid.dart';
 import '../widgets/auction_inquiries_section.dart';
 import '../widgets/auction_media_section.dart';
+import '../widgets/auction_pedigree_button.dart';
 import '../widgets/auction_verification_row.dart';
 import '../../../ratings/view/widgets/ratings_section.dart';
 
@@ -201,8 +202,8 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     if (!_hasCartBloc(context)) {
-      return BlocProvider(
-        create: (_) => sl<CartBloc>()..add(const CartStarted()),
+      return BlocProvider.value(
+        value: sl<CartBloc>(),
         child: BirdDetailPage(
           bird: widget.bird,
           sellerNickname: widget.sellerNickname,
@@ -265,6 +266,11 @@ class _BirdDetailPageState extends State<BirdDetailPage> {
               AuctionDetailsGrid(data: d),
               const SizedBox(height: 12),
               AuctionDescriptionSection(text: d['description'] as String),
+              const SizedBox(height: 12),
+              AuctionPedigreeButton(
+                birdId: widget.bird.id,
+                isOwner: widget.isOwner,
+              ),
               const SizedBox(height: 12),
               _BirdPriceSection(
                 data: d,

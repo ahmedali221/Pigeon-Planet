@@ -12,6 +12,12 @@ abstract class PedigreesRepository {
     int? birdId,
   });
 
+  Future<Either<Failure, PedigreeDocumentModel>> createTextDocument(
+    String ringNumber, {
+    String description,
+    int? birdId,
+  });
+
   Future<Either<Failure, PedigreeDocumentModel>> getDocument(int id);
 
   Future<Either<Failure, PedigreeDocumentModel>> reviewDocument(

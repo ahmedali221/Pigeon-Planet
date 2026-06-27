@@ -422,8 +422,8 @@ class _BirdListTile extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => sl<CartBloc>()..add(CartStarted()),
+          builder: (_) => BlocProvider.value(
+            value: sl<CartBloc>(),
             child: BirdDetailPage(
               bird: bird,
               sellerNickname: bird.sellerNickname,

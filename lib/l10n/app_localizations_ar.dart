@@ -2974,6 +2974,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alntayj => 'النتائج';
 
   @override
+  String get alsaaa => 'الساعة';
+
+  @override
+  String get brnamjAlwft => 'برنامج اللوفت';
+
+  @override
   String get active2 => 'مزادات نشطة';
 
   @override

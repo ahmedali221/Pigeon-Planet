@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../model/pedigree_document_model.dart';
 
-enum PedigreesStatus { initial, loading, uploading, loaded, reviewing, error }
+enum PedigreesStatus { initial, loading, uploading, creating, loaded, reviewing, error }
 
 class PedigreesState extends Equatable {
   final PedigreesStatus status;

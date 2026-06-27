@@ -47,6 +47,25 @@ class PedigreesRepositoryImpl implements PedigreesRepository {
   }
 
   @override
+  Future<Either<Failure, PedigreeDocumentModel>> createTextDocument(
+    String ringNumber, {
+    String description = '',
+    int? birdId,
+  }) async {
+    try {
+      return Right(await _dataSource.createTextDocument(
+        ringNumber,
+        description: description,
+        birdId: birdId,
+      ));
+    } on ApiException catch (e) {
+      return Left(_map(e));
+    } catch (_) {
+      return const Left(ServerFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, PedigreeDocumentModel>> getDocument(int id) async {
     try {
       return Right(await _dataSource.getDocument(id));

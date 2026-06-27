@@ -7,4 +7,5 @@ abstract final class AppRoutes {
   static const rooms = '/rooms';
   static const races = '/races';
   static const clocks = '/clocks';
+  static const pedigrees = '/pedigrees';
 }

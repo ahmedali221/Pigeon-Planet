@@ -2995,6 +2995,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alntayj => 'TODO: النتائج';
 
   @override
+  String get alsaaa => 'Timer';
+
+  @override
+  String get brnamjAlwft => 'Loft Program';
+
+  @override
   String get active2 => 'TODO: مزادات نشطة';
 
   @override

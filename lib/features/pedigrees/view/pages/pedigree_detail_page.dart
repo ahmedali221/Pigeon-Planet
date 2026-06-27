@@ -11,8 +11,13 @@ import '../../viewmodel/pedigrees_state.dart';
 import '../../../../l10n/app_localizations.dart';
 class PedigreeDetailPage extends StatefulWidget {
   final PedigreeDocumentModel document;
+  final bool isReadOnly;
 
-  PedigreeDetailPage({super.key, required this.document});
+  const PedigreeDetailPage({
+    super.key,
+    required this.document,
+    this.isReadOnly = false,
+  });
 
   @override
   State<PedigreeDetailPage> createState() => _PedigreeDetailPageState();
@@ -104,7 +109,8 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
                 ],
                 _ExtractedFieldsCard(doc: doc),
                 SizedBox(height: 16),
-                if (doc.canReview || doc.isReviewed) ...[
+                if (!widget.isReadOnly &&
+                    (doc.canReview || doc.isReviewed)) ...[
                   _ReviewForm(
                     ringCtrl: _ringCtrl,
                     descCtrl: _descCtrl,
@@ -132,7 +138,7 @@ class _PedigreeDetailPageState extends State<PedigreeDetailPage> {
 
 class _StatusCard extends StatelessWidget {
   final PedigreeDocumentModel doc;
-  _StatusCard({required this.doc});
+  const _StatusCard({required this.doc});
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +206,7 @@ class _StatusCard extends StatelessWidget {
 
 class _FilePreviewCard extends StatelessWidget {
   final String url;
-  _FilePreviewCard({required this.url});
+  const _FilePreviewCard({required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +250,7 @@ class _FilePreviewCard extends StatelessWidget {
 
 class _ExtractedFieldsCard extends StatelessWidget {
   final PedigreeDocumentModel doc;
-  _ExtractedFieldsCard({required this.doc});
+  const _ExtractedFieldsCard({required this.doc});
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +295,7 @@ class _ExtractedFieldsCard extends StatelessWidget {
 class _FieldRow extends StatelessWidget {
   final String label;
   final String? value;
-  _FieldRow({required this.label, this.value});
+  const _FieldRow({required this.label, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +332,7 @@ class _ReviewForm extends StatelessWidget {
   final bool isReviewed;
   final VoidCallback onSubmit;
 
-  _ReviewForm({
+  const _ReviewForm({
     required this.ringCtrl,
     required this.descCtrl,
     required this.isReviewing,
@@ -439,7 +445,7 @@ class _ReviewForm extends StatelessWidget {
 
 class _ErrorBanner extends StatelessWidget {
   final String message;
-  _ErrorBanner({required this.message});
+  const _ErrorBanner({required this.message});
 
   @override
   Widget build(BuildContext context) {

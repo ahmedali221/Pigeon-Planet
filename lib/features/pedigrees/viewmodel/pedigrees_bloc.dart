@@ -12,6 +12,7 @@ class PedigreesBloc extends Bloc<PedigreesEvent, PedigreesState> {
         super(const PedigreesState()) {
     on<PedigreesListRequested>(_onList);
     on<PedigreeUploadRequested>(_onUpload);
+    on<PedigreeCreateSubmitted>(_onCreate);
     on<PedigreeDetailRequested>(_onDetail);
     on<PedigreeReviewSubmitted>(_onReview);
   }
@@ -56,11 +57,33 @@ class PedigreesBloc extends Bloc<PedigreesEvent, PedigreesState> {
     );
   }
 
+  Future<void> _onCreate(
+    PedigreeCreateSubmitted event,
+    Emitter<PedigreesState> emit,
+  ) async {
+    emit(state.copyWith(status: PedigreesStatus.creating, clearError: true));
+    final result = await _repository.createTextDocument(
+      event.ringNumber,
+      description: event.description,
+      birdId: event.birdId,
+    );
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: PedigreesStatus.error,
+        errorMessage: failure.message,
+      )),
+      (doc) => emit(state.copyWith(
+        status: PedigreesStatus.loaded,
+        documents: [doc, ...state.documents],
+      )),
+    );
+  }
+
   Future<void> _onDetail(
     PedigreeDetailRequested event,
     Emitter<PedigreesState> emit,
   ) async {
-    emit(state.copyWith(status: PedigreesStatus.uploading, clearError: true));
+    emit(state.copyWith(status: PedigreesStatus.loading, clearError: true));
     final result = await _repository.getDocument(event.documentId);
     result.fold(
       (failure) => emit(state.copyWith(

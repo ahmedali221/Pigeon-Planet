@@ -17,6 +17,7 @@ import '../../features/market/view/pages/market_page.dart';
 import '../../features/rooms/view/pages/rooms_page.dart';
 import '../../features/races/view/pages/races_page.dart';
 import '../../features/electronic_clocks/view/pages/electronic_clocks_page.dart';
+import '../../features/pedigrees/view/pages/pedigrees_page.dart';
 import '../../features/splash/view/pages/splash_page.dart';
 
 class AppRouter {
@@ -27,6 +28,7 @@ class AppRouter {
   static final _roomsKey = GlobalKey<NavigatorState>();
   static final _racesKey = GlobalKey<NavigatorState>();
   static final _clocksKey = GlobalKey<NavigatorState>();
+  static final _pedigreesKey = GlobalKey<NavigatorState>();
 
   static final _refresh = _GoRouterRefreshStream(sl<AuthBloc>().stream);
 
@@ -70,7 +72,17 @@ class AppRouter {
           // never closes it — closing a singleton would break any widget still
           // holding a reference to it (e.g. the drawer during animations).
           final cartBloc = sl<CartBloc>();
-          if (!cartBloc.isClosed) cartBloc.add(const CartStarted());
+          // Only auto-load the cart for customers and only on first mount.
+          // The builder runs on every tab-switch rebuild, so the status guard
+          // prevents firing CartStarted on subsequent navigation events.
+          final authState = context.read<AuthBloc>().state;
+          final isCustomer =
+              authState is AuthSuccess && authState.user.isCustomer;
+          if (isCustomer &&
+              !cartBloc.isClosed &&
+              cartBloc.state.status == CartStatus.initial) {
+            cartBloc.add(const CartStarted());
+          }
           return MultiBlocProvider(
             providers: [
               BlocProvider<CartBloc>.value(value: cartBloc),
@@ -119,6 +131,15 @@ class AppRouter {
               GoRoute(
                 path: AppRoutes.clocks,
                 builder: (_, _) => const ElectronicClocksPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _pedigreesKey,
+            routes: [
+              GoRoute(
+                path: AppRoutes.pedigrees,
+                builder: (_, _) => PedigreesPage(),
               ),
             ],
           ),
