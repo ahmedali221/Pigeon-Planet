@@ -32,6 +32,7 @@ class RealMarketRemoteDataSource implements MarketRemoteDataSource {
 
     final params = <String, dynamic>{
       'is_market_listed': true,
+      'status': 'available',
       'page': page,
       if (query != null && query.isNotEmpty) 'q': query,
       'ordering': ?ordering,

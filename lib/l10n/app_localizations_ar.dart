@@ -731,7 +731,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseFromGallery => 'اختيار من المعرض';
 
   @override
-  String get requiredField => 'إلزامي';
+  String requiredField(Object label) {
+    return 'إلزامي';
+  }
 
   @override
   String get noPhotos => 'لا توجد صور';
@@ -893,10 +895,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loadMore => 'تحميل المزيد';
 
   @override
-  String get clubManagerResults => 'نتائج نوادي Club Manager';
+  String get clubRaces => 'سباقات الأندية';
 
   @override
-  String get pointsResults => 'نتائج النقاط';
+  String get olrRaces => 'سباقات O.L.R';
 
   @override
   String get rankLabel => 'المركز';
@@ -911,7 +913,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get birdRingLabel => 'رقم الطير';
 
   @override
+  String get pointNameLabel => 'اسم النقطة';
+
+  @override
+  String get hobbyistNameLabel => 'اسم الهاوي';
+
+  @override
   String get filterSearchPrompt => 'اختر الفلاتر واضغط بحث لعرض النتائج';
+
+  @override
+  String get requiredFieldsError =>
+      'يرجى ملء الحقول الإلزامية: الدولة والنادي والسيزون';
 
   @override
   String get clearData => 'مسح البيانات';
@@ -924,6 +936,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get distanceKmUnit => 'كم';
+
+  @override
+  String get racePointsLabel => 'النقاط';
+
+  @override
+  String get totalBirdsLabel => 'إجمالي عدد الطيور';
+
+  @override
+  String get resultLine1Label => 'النتيجة 1';
+
+  @override
+  String get resultLine2Label => 'النتيجة 2';
+
+  @override
+  String get baskLabel => 'Bask';
+
+  @override
+  String get seasonLabel => 'السيزون';
+
+  @override
+  String get arrivalDateTimeLabel => 'تاريخ ووقت الوصول';
+
+  @override
+  String get timeDifferenceLabel => 'فرق التوقيت';
+
+  @override
+  String get arrivalsCountLabel => 'الواصلين';
 
   @override
   String get uploadSizeHint => 'PNG, JPG حتى 10MB';
@@ -1137,6 +1176,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusCancelled => 'ملغي';
+
+  @override
+  String get statusClosed => 'مغلق';
+
+  @override
+  String get auctionTypeSingle => 'طائر واحد';
+
+  @override
+  String get auctionTypeMulti => 'متعدد الطيور';
+
+  @override
+  String get auctionTypePair => 'زوج (ذكر وأنثى)';
+
+  @override
+  String get auctionTypeBreeding => 'زوج تربية';
+
+  @override
+  String get auctionTypeRacing => 'مجموعة سباق';
 
   @override
   String minBidLabel(String amount) {
@@ -2429,6 +2486,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get egpCurrency => 'ج.م';
 
   @override
+  String get discount => 'خصم';
+
+  @override
+  String get cashback => 'كاش باك';
+
+  @override
+  String get sellerLabel => 'البائع';
+
+  @override
   String get noCashbackTransactionsYet => 'لا توجد معاملات حتى الآن';
 
   @override
@@ -2983,6 +3049,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noPrizesConfiguredHint => 'لم يتم تعيين جوائز لعجلة الحظ بعد.';
+
+  @override
+  String get wheelTurnAvailable => '🎰 دورتك متاحة!';
+
+  @override
+  String get noPrizesWheelEmpty => 'لا توجد جوائز';
+
+  @override
+  String get addPrizesToShowWheel =>
+      'أضف جوائز عجلة الحظ النشطة لعرض عناصر العجلة.';
+
+  @override
+  String get noPrizesYet => 'لا توجد جوائز بعد';
+
+  @override
+  String get prizesListEmptyRefresh =>
+      'قائمة الجوائز فارغة حالياً. حدّث الصفحة للمحاولة مجدداً.';
 
   @override
   String get loading5 => 'فشل تحميل الإشعارات';
@@ -3695,7 +3778,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get racingChampion => 'racing, champion, ...';
 
   @override
-  String get writeComment => 'Write a comment';
+  String get writeComment => 'اكتب تعليقاً';
 
   @override
   String get notesTitle => 'الملاحظات';
@@ -3753,4 +3836,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String wonAuctionBird(String birdName) {
     return 'فاز في مزاد $birdName';
   }
+
+  @override
+  String get discussion => 'المناقشات';
+
+  @override
+  String get auctionClosedLabel => 'المزاد مغلق';
+
+  @override
+  String get ownerPill => 'المالك';
+
+  @override
+  String get auctionClosedComments =>
+      'هذا المزاد مغلق. لم تعد التعليقات مقبولة.';
+
+  @override
+  String get noAuctionItemComments => 'لا يوجد طائر في المزاد للتعليق.';
+
+  @override
+  String get blocked => 'محظور';
+
+  @override
+  String get messageSeller => 'مراسلة';
+
+  @override
+  String get followFirst => 'تابع أولاً';
+
+  @override
+  String get auctionEventsLabel => 'الأحداث';
 }

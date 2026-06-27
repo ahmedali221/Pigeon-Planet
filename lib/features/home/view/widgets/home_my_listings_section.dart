@@ -5,6 +5,7 @@ import '../../../auctions/model/auction_model.dart';
 import '../../../auctions/model/bird_summary_model.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/utils/auction_labels.dart';
 class HomeMyListingsSection extends StatelessWidget {
   final List<AuctionModel> auctions;
   final List<BirdSummaryModel> birds;
@@ -247,18 +248,7 @@ class _AuctionCard extends StatelessWidget {
   }
 
   String _statusLabel(AppLocalizations l) {
-    switch (auction.status) {
-      case 'active':
-        return l.statusActive;
-      case 'ended':
-        return l.statusEnded;
-      case 'cancelled':
-        return l.statusCancelled;
-      default:
-        return auction.statusDisplay.isNotEmpty
-            ? auction.statusDisplay
-            : auction.status;
-    }
+    return localizedAuctionStatus(auction.status, l);
   }
 
   String _timeLabel(AppLocalizations l) {

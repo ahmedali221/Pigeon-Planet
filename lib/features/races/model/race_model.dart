@@ -12,6 +12,17 @@ class RaceResultModel {
   final double speed;
   final String arrivalDatetime;
   final int? basketNumber;
+  // Extended fields – club tab
+  final String? country;
+  final String? clubName;
+  final double? points;
+  final int? totalBirds;
+  final String? resultLines1;
+  final String? resultLines2;
+  // Extended fields – OLR tab
+  final String? pointName;
+  final String? timeDifference;
+  final int? arrivalsCount;
   final DateTime? created;
   final DateTime? modified;
   final DateTime? createdAt;
@@ -31,6 +42,15 @@ class RaceResultModel {
     required this.speed,
     required this.arrivalDatetime,
     this.basketNumber,
+    this.country,
+    this.clubName,
+    this.points,
+    this.totalBirds,
+    this.resultLines1,
+    this.resultLines2,
+    this.pointName,
+    this.timeDifference,
+    this.arrivalsCount,
     this.created,
     this.modified,
     this.createdAt,
@@ -53,6 +73,15 @@ class RaceResultModel {
       speed: double.tryParse(json['speed']?.toString() ?? '0') ?? 0.0,
       arrivalDatetime: json['arrival_datetime'] as String? ?? '',
       basketNumber: json['basket_number'] as int?,
+      country: json['country'] as String? ?? raceJson?['country'] as String?,
+      clubName: json['club_name'] as String? ?? raceJson?['club_name'] as String?,
+      points: double.tryParse(json['points']?.toString() ?? ''),
+      totalBirds: json['total_birds'] as int? ?? raceJson?['total_birds'] as int?,
+      resultLines1: json['result_lines_1'] as String?,
+      resultLines2: json['result_lines_2'] as String?,
+      pointName: json['point_name'] as String? ?? raceJson?['point_name'] as String?,
+      timeDifference: json['time_difference'] as String?,
+      arrivalsCount: json['arrivals_count'] as int?,
       created: DateTime.tryParse(json['created'] as String? ?? ''),
       modified: DateTime.tryParse(json['modified'] as String? ?? ''),
       createdAt: DateTime.tryParse(json['created_at'] as String? ?? ''),

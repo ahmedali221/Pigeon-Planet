@@ -62,7 +62,7 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
         SizedBox(height: 12),
 
         SizedBox(
-          height: 220,
+          height: 248,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 12),
@@ -171,6 +171,18 @@ class HomeFixedPriceBirdsSection extends StatelessWidget {
                                 fontSize: 10,
                                 color: AppColors.textSecondary),
                             maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      if (bird.description.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 2, 10, 0),
+                          child: Text(
+                            bird.description,
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textSecondary),
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

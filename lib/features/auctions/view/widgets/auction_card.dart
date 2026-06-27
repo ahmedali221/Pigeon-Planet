@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../core/utils/auction_labels.dart';
 import '../../model/auction_model.dart';
 import '../pages/auction_detail_page.dart';
 
@@ -112,7 +113,7 @@ class _AuctionCardState extends State<AuctionCard> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        a.auctionTypeDisplay,
+                        localizedAuctionType(a.auctionType, AppLocalizations.of(context)),
                         style: const TextStyle(
                             color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                       ),

@@ -102,7 +102,8 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
     if (text.isEmpty) return;
     final assetId = _commentAssetId;
     if (assetId == null) {
-      setState(() => _commentError = 'No auction item is available for comments.');
+      setState(() => _commentError =
+          AppLocalizations.of(context).noAuctionItemComments);
       return;
     }
     setState(() {
@@ -179,18 +180,18 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Discussion',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).discussion,
+                      style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     if (auctionClosed)
-                      const Text(
-                        'Auction closed',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context).auctionClosedLabel,
+                        style: const TextStyle(
                           color: AppColors.textHint,
                           fontSize: 12,
                         ),
@@ -199,7 +200,7 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
                 ),
               ),
               if (widget.auction.isOwner)
-                const _SmallPill(label: 'Owner'),
+                _SmallPill(label: AppLocalizations.of(context).ownerPill),
             ],
           ),
           const SizedBox(height: 14),
@@ -249,8 +250,8 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This auction is closed. Comments are no longer accepted.',
-                      style: TextStyle(
+                      AppLocalizations.of(context).auctionClosedComments,
+                      style: const TextStyle(
                         color: AppColors.error,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -354,11 +355,11 @@ class _AuctionChatSectionState extends State<AuctionChatSection> {
               ),
             )
           else if (_comments.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
-                'No comments yet. Saved as comments on the auction bird until auction comments exist.',
-                style: TextStyle(
+                AppLocalizations.of(context).noCommentsYet,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12,
                   height: 1.35,
@@ -388,6 +389,7 @@ class _SellerContactRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -410,10 +412,10 @@ class _SellerContactRow extends StatelessWidget {
                 ),
                 label: Text(
                   isBlocked
-                      ? 'Blocked'
+                      ? l.blocked
                       : isFollowing
-                          ? 'Following'
-                          : 'Follow',
+                          ? l.followed
+                          : l.follow,
                   overflow: TextOverflow.ellipsis,
                 ),
                 style: OutlinedButton.styleFrom(
@@ -444,7 +446,7 @@ class _SellerContactRow extends StatelessWidget {
                 onPressed: onMessage,
                 icon: const Icon(Icons.send_rounded, size: 18),
                 label: Text(
-                  isFollowing ? 'Message' : 'Follow first',
+                  isFollowing ? l.messageSeller : l.followFirst,
                   overflow: TextOverflow.ellipsis,
                 ),
                 style: ElevatedButton.styleFrom(
@@ -537,7 +539,7 @@ class _CommentTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      _formatTime(comment.created),
+                      _formatTime(comment.created, AppLocalizations.of(context)),
                       style: const TextStyle(
                         color: AppColors.textHint,
                         fontSize: 11,
@@ -562,18 +564,14 @@ class _CommentTile extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime dt) {
+  String _formatTime(DateTime dt, AppLocalizations l) {
     final now = DateTime.now();
     final diff = now.difference(dt);
 
-    if (diff.inDays > 0) {
-      return '${diff.inDays}d ago';
-    } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago';
-    } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes}m ago';
-    }
-    return 'now';
+    if (diff.inDays > 0) return l.daysAgo(diff.inDays);
+    if (diff.inHours > 0) return l.hoursAgo(diff.inHours);
+    if (diff.inMinutes > 0) return l.minutesAgo(diff.inMinutes);
+    return l.now;
   }
 }
 

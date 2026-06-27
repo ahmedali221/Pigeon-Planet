@@ -288,7 +288,7 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
         // ── Content ────────────────────────────────────────────────────────
         if (widget.isLoading)
           SizedBox(
-            height: screenH * 0.27,
+            height: screenH * 0.32,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -321,7 +321,7 @@ class _HomeStoreBirdsSectionState extends State<HomeStoreBirdsSection> {
         else if (_isHorizontal)
           // ── Horizontal carousel ──────────────────────────────────────────
           SizedBox(
-            height: screenH * 0.27,
+            height: screenH * 0.32,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -638,6 +638,17 @@ class _BirdCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (bird.description.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      bird.description,
+                      style: const TextStyle(
+                          fontSize: 10, color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                   const SizedBox(height: 6),
                   Text(
                     'ج.م ${fmtPrice(bird.price)}',

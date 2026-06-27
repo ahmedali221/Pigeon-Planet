@@ -41,7 +41,8 @@ class MarketProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ── Image ──────────────────────────────────────────────────────
-            Stack(
+            LayoutBuilder(
+              builder: (context, constraints) => Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.only(
@@ -49,7 +50,7 @@ class MarketProductCard extends StatelessWidget {
                     topRight: Radius.circular(14),
                   ),
                   child: SizedBox(
-                    height: 130,
+                    height: constraints.maxWidth * 0.72,
                     width: double.infinity,
                     child: product.thumbnailUrl != null
                         ? Image.network(
@@ -126,6 +127,7 @@ class MarketProductCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
             ),
 
             // ── Info ───────────────────────────────────────────────────────

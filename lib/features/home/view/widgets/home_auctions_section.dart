@@ -287,7 +287,7 @@ class _AuctionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     auction['name'] as String,
@@ -296,15 +296,23 @@ class _AuctionCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(auction['origin'] as String,
                       style: const TextStyle(
                           fontSize: 12, color: AppColors.textSecondary)),
-                  const SizedBox(height: 2),
-                  Text(auction['note'] as String,
+                  if ((auction['note'] as String).isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      auction['note'] as String,
                       style: const TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary)),
+                          fontSize: 12, color: AppColors.textSecondary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   Row(
                     children: [

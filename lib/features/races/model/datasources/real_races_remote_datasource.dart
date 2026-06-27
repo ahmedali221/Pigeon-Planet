@@ -89,6 +89,8 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
     String? seasonYear,
     String? stationName,
     String? rank,
+    String? pointName,
+    String? hobbyistName,
     int page = 1,
   }) async {
     final params = <String, dynamic>{
@@ -99,12 +101,15 @@ class RealRacesRemoteDataSource implements RacesRemoteDataSource {
         'bird_ring_number': birdRingNumber,
       if (competitorName != null && competitorName.isNotEmpty)
         'competitor_name': competitorName,
+      if (hobbyistName != null && hobbyistName.isNotEmpty)
+        'hobbyist_name': hobbyistName,
       'race_id': ?raceId,
       if (clubName != null && clubName.isNotEmpty) 'club_name': clubName,
       if (country != null && country.isNotEmpty) 'country': country,
       if (seasonYear != null && seasonYear.isNotEmpty) 'season_year': seasonYear,
       if (stationName != null && stationName.isNotEmpty) 'station_name': stationName,
       if (rank != null && rank.isNotEmpty) 'rank': rank,
+      if (pointName != null && pointName.isNotEmpty) 'point_name': pointName,
     };
     final response = await _dio.get(
       ApiConstants.raceResultsGlobal,

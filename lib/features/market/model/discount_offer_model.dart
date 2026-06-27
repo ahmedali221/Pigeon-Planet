@@ -22,10 +22,10 @@ class DiscountOfferModel {
         targetType: json['target_type'] as String? ?? 'all',
       );
 
-  String get displayLabel {
+  String label(String prefix, String currency) {
     final v = value == value.truncateToDouble()
         ? value.toInt().toString()
         : value.toStringAsFixed(1);
-    return valueType == 'percentage' ? 'خصم $v%' : 'خصم $v ج.م';
+    return valueType == 'percentage' ? '$prefix $v%' : '$prefix $v $currency';
   }
 }

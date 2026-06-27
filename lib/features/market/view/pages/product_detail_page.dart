@@ -97,7 +97,7 @@ class _ProductImage extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: 260,
+          height: MediaQuery.sizeOf(context).width * 0.65,
           width: double.infinity,
           child: product.thumbnailUrl != null
               ? Image.network(
@@ -320,7 +320,7 @@ class _SellerSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'البائع',
+                  AppLocalizations.of(context).sellerLabel,
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,

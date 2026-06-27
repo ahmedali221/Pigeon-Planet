@@ -26,10 +26,10 @@ class CashbackOfferModel {
         targetType: json['target_type'] as String? ?? 'all',
       );
 
-  String get displayLabel {
+  String label(String prefix, String currency) {
     final v = earnValue == earnValue.truncateToDouble()
         ? earnValue.toInt().toString()
         : earnValue.toStringAsFixed(1);
-    return valueType == 'percentage' ? 'كاش باك $v%' : 'كاش باك $v ج.م';
+    return valueType == 'percentage' ? '$prefix $v%' : '$prefix $v $currency';
   }
 }

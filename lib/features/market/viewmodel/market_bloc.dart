@@ -166,10 +166,9 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     }
 
     if (q.length < 2) {
-      final filtered = state.allProducts
-          .where((p) => p.name.toLowerCase().contains(q.toLowerCase()))
-          .toList();
-      emit(state.copyWith(filteredProducts: filtered));
+      // Too short to search — restore full category list so we don't filter
+      // over potentially stale allProducts (e.g. mock fallback data).
+      emit(state.copyWith(filteredProducts: state.allProducts));
       return;
     }
 

@@ -250,7 +250,7 @@ class _WheelInfoHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🎰 دورتك متاحة!',
+                  AppLocalizations.of(context).wheelTurnAvailable,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 17,
@@ -406,7 +406,7 @@ class _WheelWithPointer extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'No prizes',
+              AppLocalizations.of(context).noPrizesWheelEmpty,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 16,
@@ -417,7 +417,7 @@ class _WheelWithPointer extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 42),
               child: Text(
-                'Add active Lucky Wheel prizes to show wheel items.',
+                AppLocalizations.of(context).addPrizesToShowWheel,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.textSecondary,
@@ -608,7 +608,7 @@ class _PrizeLegend extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                'No wheel prizes yet',
+                AppLocalizations.of(context).noPrizesYet,
                 style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 15,
@@ -617,7 +617,7 @@ class _PrizeLegend extends StatelessWidget {
               ),
               SizedBox(height: 6),
               Text(
-                'The server returned an empty prizes list. Add active Lucky Wheel prizes in the backend/admin panel, then refresh this page.',
+                AppLocalizations.of(context).prizesListEmptyRefresh,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.textSecondary,
@@ -706,15 +706,34 @@ class _PrizeRow extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10),
-          // Label
+          // Label + description
           Expanded(
-            child: Text(
-              prize.label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: active ? AppColors.textPrimary : AppColors.textHint,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  prize.label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: active ? AppColors.textPrimary : AppColors.textHint,
+                  ),
+                ),
+                if (prize.description.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    prize.description,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: active
+                          ? AppColors.textSecondary
+                          : AppColors.textHint,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
             ),
           ),
           // Probability bar + percentage

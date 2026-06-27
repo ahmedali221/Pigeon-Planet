@@ -69,6 +69,8 @@ class RacesRepositoryImpl implements RacesRepository {
     String? seasonYear,
     String? stationName,
     String? rank,
+    String? pointName,
+    String? hobbyistName,
     int page = 1,
   }) async {
     try {
@@ -82,6 +84,8 @@ class RacesRepositoryImpl implements RacesRepository {
         seasonYear: seasonYear,
         stationName: stationName,
         rank: rank,
+        pointName: pointName,
+        hobbyistName: hobbyistName,
         page: page,
       );
       return Right(list);

@@ -737,7 +737,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseFromGallery => 'Choose from Gallery';
 
   @override
-  String get requiredField => 'Required';
+  String requiredField(Object label) {
+    return '$label *';
+  }
 
   @override
   String get noPhotos => 'No photos';
@@ -899,10 +901,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadMore => 'Load More';
 
   @override
-  String get clubManagerResults => 'Club Manager Results';
+  String get clubRaces => 'Club Races';
 
   @override
-  String get pointsResults => 'Points Results';
+  String get olrRaces => 'O.L.R Races';
 
   @override
   String get rankLabel => 'Rank';
@@ -917,8 +919,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get birdRingLabel => 'Bird Ring';
 
   @override
+  String get pointNameLabel => 'Point Name';
+
+  @override
+  String get hobbyistNameLabel => 'Hobbyist Name';
+
+  @override
   String get filterSearchPrompt =>
       'Select filters and press Search to view results';
+
+  @override
+  String get requiredFieldsError =>
+      'Please fill in the required fields: Country, Club, and Season';
 
   @override
   String get clearData => 'Clear Data';
@@ -931,6 +943,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get distanceKmUnit => 'km';
+
+  @override
+  String get racePointsLabel => 'Points';
+
+  @override
+  String get totalBirdsLabel => 'Total Birds';
+
+  @override
+  String get resultLine1Label => 'Result 1';
+
+  @override
+  String get resultLine2Label => 'Result 2';
+
+  @override
+  String get baskLabel => 'Bask';
+
+  @override
+  String get seasonLabel => 'Season';
+
+  @override
+  String get arrivalDateTimeLabel => 'Arrival Date & Time';
+
+  @override
+  String get timeDifferenceLabel => 'Time Diff';
+
+  @override
+  String get arrivalsCountLabel => 'Arrivals';
 
   @override
   String get uploadSizeHint => 'PNG, JPG up to 10MB';
@@ -1145,6 +1184,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusClosed => 'Closed';
+
+  @override
+  String get auctionTypeSingle => 'Single Bird';
+
+  @override
+  String get auctionTypeMulti => 'Multi-Bird';
+
+  @override
+  String get auctionTypePair => 'Pair (Male + Female)';
+
+  @override
+  String get auctionTypeBreeding => 'Breeding Pair';
+
+  @override
+  String get auctionTypeRacing => 'Racing Group';
 
   @override
   String minBidLabel(String amount) {
@@ -2449,6 +2506,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get egpCurrency => 'EGP';
 
   @override
+  String get discount => 'Discount';
+
+  @override
+  String get cashback => 'Cashback';
+
+  @override
+  String get sellerLabel => 'Seller';
+
+  @override
   String get noCashbackTransactionsYet => 'No transactions yet';
 
   @override
@@ -3005,6 +3071,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noPrizesConfiguredHint => 'Wheel prizes are not configured yet.';
+
+  @override
+  String get wheelTurnAvailable => '🎰 Your spin is available!';
+
+  @override
+  String get noPrizesWheelEmpty => 'No prizes';
+
+  @override
+  String get addPrizesToShowWheel =>
+      'Add active Lucky Wheel prizes to show wheel items.';
+
+  @override
+  String get noPrizesYet => 'No wheel prizes yet';
+
+  @override
+  String get prizesListEmptyRefresh =>
+      'The prize list is currently empty. Refresh the page to try again.';
 
   @override
   String get loading5 => 'TODO: فشل تحميل الإشعارات';
@@ -3776,4 +3859,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String wonAuctionBird(String birdName) {
     return 'Won auction for $birdName';
   }
+
+  @override
+  String get discussion => 'Discussion';
+
+  @override
+  String get auctionClosedLabel => 'Auction closed';
+
+  @override
+  String get ownerPill => 'Owner';
+
+  @override
+  String get auctionClosedComments =>
+      'This auction is closed. Comments are no longer accepted.';
+
+  @override
+  String get noAuctionItemComments => 'No auction item available for comments.';
+
+  @override
+  String get blocked => 'Blocked';
+
+  @override
+  String get messageSeller => 'Message';
+
+  @override
+  String get followFirst => 'Follow first';
+
+  @override
+  String get auctionEventsLabel => 'Events';
 }

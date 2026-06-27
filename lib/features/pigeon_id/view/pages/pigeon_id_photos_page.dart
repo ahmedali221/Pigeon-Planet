@@ -277,7 +277,7 @@ class _PhotoSlot extends StatelessWidget {
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text(AppLocalizations.of(context).requiredField,
+              child: Text(AppLocalizations.of(context).requiredField(''),
                   style: TextStyle(color: Colors.white, fontSize: 9)),
             ),
           ),
@@ -334,7 +334,7 @@ class _AddPhotoSlot extends StatelessWidget {
             ),
             SizedBox(height: 4),
             Text(
-              isMandatory ? AppLocalizations.of(context).requiredField : AppLocalizations.of(context).akhtyary,
+              isMandatory ? AppLocalizations.of(context).requiredField('') : AppLocalizations.of(context).akhtyary,
               style: TextStyle(
                 fontSize: 10,
                 color: isMandatory

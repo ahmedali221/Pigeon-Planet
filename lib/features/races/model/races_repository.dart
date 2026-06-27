@@ -24,6 +24,8 @@ abstract class RacesRepository {
     String? seasonYear,
     String? stationName,
     String? rank,
+    String? pointName,
+    String? hobbyistName,
     int page,
   });
 }

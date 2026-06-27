@@ -1518,7 +1518,7 @@ abstract class AppLocalizations {
   ///
   /// In ar, this message translates to:
   /// **'إلزامي'**
-  String get requiredField;
+  String requiredField(Object label);
 
   /// No description provided for @noPhotos.
   ///
@@ -1820,17 +1820,17 @@ abstract class AppLocalizations {
   /// **'تحميل المزيد'**
   String get loadMore;
 
-  /// No description provided for @clubManagerResults.
+  /// No description provided for @clubRaces.
   ///
   /// In ar, this message translates to:
-  /// **'نتائج نوادي Club Manager'**
-  String get clubManagerResults;
+  /// **'سباقات الأندية'**
+  String get clubRaces;
 
-  /// No description provided for @pointsResults.
+  /// No description provided for @olrRaces.
   ///
   /// In ar, this message translates to:
-  /// **'نتائج النقاط'**
-  String get pointsResults;
+  /// **'سباقات O.L.R'**
+  String get olrRaces;
 
   /// No description provided for @rankLabel.
   ///
@@ -1856,11 +1856,29 @@ abstract class AppLocalizations {
   /// **'رقم الطير'**
   String get birdRingLabel;
 
+  /// No description provided for @pointNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم النقطة'**
+  String get pointNameLabel;
+
+  /// No description provided for @hobbyistNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الهاوي'**
+  String get hobbyistNameLabel;
+
   /// No description provided for @filterSearchPrompt.
   ///
   /// In ar, this message translates to:
   /// **'اختر الفلاتر واضغط بحث لعرض النتائج'**
   String get filterSearchPrompt;
+
+  /// No description provided for @requiredFieldsError.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى ملء الحقول الإلزامية: الدولة والنادي والسيزون'**
+  String get requiredFieldsError;
 
   /// No description provided for @clearData.
   ///
@@ -1885,6 +1903,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'كم'**
   String get distanceKmUnit;
+
+  /// No description provided for @racePointsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقاط'**
+  String get racePointsLabel;
+
+  /// No description provided for @totalBirdsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي عدد الطيور'**
+  String get totalBirdsLabel;
+
+  /// No description provided for @resultLine1Label.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتيجة 1'**
+  String get resultLine1Label;
+
+  /// No description provided for @resultLine2Label.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتيجة 2'**
+  String get resultLine2Label;
+
+  /// No description provided for @baskLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'Bask'**
+  String get baskLabel;
+
+  /// No description provided for @seasonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيزون'**
+  String get seasonLabel;
+
+  /// No description provided for @arrivalDateTimeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ ووقت الوصول'**
+  String get arrivalDateTimeLabel;
+
+  /// No description provided for @timeDifferenceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'فرق التوقيت'**
+  String get timeDifferenceLabel;
+
+  /// No description provided for @arrivalsCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الواصلين'**
+  String get arrivalsCountLabel;
 
   /// Upload box file size/type hint
   ///
@@ -2269,6 +2341,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ملغي'**
   String get statusCancelled;
+
+  /// Auction status: closed by admin
+  ///
+  /// In ar, this message translates to:
+  /// **'مغلق'**
+  String get statusClosed;
+
+  /// No description provided for @auctionTypeSingle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طائر واحد'**
+  String get auctionTypeSingle;
+
+  /// No description provided for @auctionTypeMulti.
+  ///
+  /// In ar, this message translates to:
+  /// **'متعدد الطيور'**
+  String get auctionTypeMulti;
+
+  /// No description provided for @auctionTypePair.
+  ///
+  /// In ar, this message translates to:
+  /// **'زوج (ذكر وأنثى)'**
+  String get auctionTypePair;
+
+  /// No description provided for @auctionTypeBreeding.
+  ///
+  /// In ar, this message translates to:
+  /// **'زوج تربية'**
+  String get auctionTypeBreeding;
+
+  /// No description provided for @auctionTypeRacing.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجموعة سباق'**
+  String get auctionTypeRacing;
 
   /// Minimum bid increment label with amount
   ///
@@ -4640,6 +4748,24 @@ abstract class AppLocalizations {
   /// **'ج.م'**
   String get egpCurrency;
 
+  /// No description provided for @discount.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم'**
+  String get discount;
+
+  /// No description provided for @cashback.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاش باك'**
+  String get cashback;
+
+  /// No description provided for @sellerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البائع'**
+  String get sellerLabel;
+
   /// No description provided for @noCashbackTransactionsYet.
   ///
   /// In ar, this message translates to:
@@ -5659,6 +5785,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لم يتم تعيين جوائز لعجلة الحظ بعد.'**
   String get noPrizesConfiguredHint;
+
+  /// No description provided for @wheelTurnAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'🎰 دورتك متاحة!'**
+  String get wheelTurnAvailable;
+
+  /// No description provided for @noPrizesWheelEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد جوائز'**
+  String get noPrizesWheelEmpty;
+
+  /// No description provided for @addPrizesToShowWheel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف جوائز عجلة الحظ النشطة لعرض عناصر العجلة.'**
+  String get addPrizesToShowWheel;
+
+  /// No description provided for @noPrizesYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد جوائز بعد'**
+  String get noPrizesYet;
+
+  /// No description provided for @prizesListEmptyRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة الجوائز فارغة حالياً. حدّث الصفحة للمحاولة مجدداً.'**
+  String get prizesListEmptyRefresh;
 
   /// No description provided for @loading5.
   ///
@@ -7013,7 +7169,7 @@ abstract class AppLocalizations {
   /// No description provided for @writeComment.
   ///
   /// In ar, this message translates to:
-  /// **'Write a comment'**
+  /// **'اكتب تعليقاً'**
   String get writeComment;
 
   /// No description provided for @notesTitle.
@@ -7117,6 +7273,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فاز في مزاد {birdName}'**
   String wonAuctionBird(String birdName);
+
+  /// No description provided for @discussion.
+  ///
+  /// In ar, this message translates to:
+  /// **'المناقشات'**
+  String get discussion;
+
+  /// No description provided for @auctionClosedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزاد مغلق'**
+  String get auctionClosedLabel;
+
+  /// No description provided for @ownerPill.
+  ///
+  /// In ar, this message translates to:
+  /// **'المالك'**
+  String get ownerPill;
+
+  /// No description provided for @auctionClosedComments.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا المزاد مغلق. لم تعد التعليقات مقبولة.'**
+  String get auctionClosedComments;
+
+  /// No description provided for @noAuctionItemComments.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد طائر في المزاد للتعليق.'**
+  String get noAuctionItemComments;
+
+  /// No description provided for @blocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'محظور'**
+  String get blocked;
+
+  /// No description provided for @messageSeller.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراسلة'**
+  String get messageSeller;
+
+  /// No description provided for @followFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'تابع أولاً'**
+  String get followFirst;
+
+  /// No description provided for @auctionEventsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحداث'**
+  String get auctionEventsLabel;
 }
 
 class _AppLocalizationsDelegate

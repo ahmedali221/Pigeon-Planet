@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/injection.dart';
 import '../../../../../core/widgets/ppw_app_bar.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../core/utils/auction_labels.dart';
 import '../../../feed/viewmodel/feed_bloc.dart';
 import '../../model/auction_item_model.dart';
 import '../../model/auction_model.dart';
@@ -179,7 +180,7 @@ class _AuctionOverviewView extends StatelessWidget {
                 if (auction.events.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _SectionLabel(
-                    label: 'Events',
+                    label: l.auctionEventsLabel,
                     count: auction.events.length,
                   ),
                   const SizedBox(height: 8),
@@ -293,10 +294,7 @@ class _AuctionHeader extends StatelessWidget {
 
   String _statusLabel(BuildContext context) {
     final l = AppLocalizations.of(context);
-    if (auction.statusDisplay.isNotEmpty) return auction.statusDisplay;
-    if (auction.isActive) return l.statusActive;
-    if (auction.isEnded) return l.statusEnded;
-    return l.statusUpcoming;
+    return localizedAuctionStatus(auction.status, l);
   }
 
   @override
@@ -340,9 +338,7 @@ class _AuctionHeader extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 _Badge(
-                    label: auction.auctionTypeDisplay.isNotEmpty
-                        ? auction.auctionTypeDisplay
-                        : auction.auctionType,
+                    label: localizedAuctionType(auction.auctionType, AppLocalizations.of(context)),
                     color: AppColors.blue),
               ],
             ),

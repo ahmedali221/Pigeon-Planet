@@ -5,6 +5,7 @@ import '../../../auctions/view/pages/auction_detail_page.dart';
 import '../../../auctions/view/pages/auctions_page.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/utils/auction_labels.dart';
 class HomeComingSoonSection extends StatelessWidget {
   final List<AuctionModel> auctions;
 
@@ -251,9 +252,7 @@ class _ComingSoonCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      auction.auctionTypeDisplay.isNotEmpty
-                          ? auction.auctionTypeDisplay
-                          : AppLocalizations.of(context).comingSoon,
+                      localizedAuctionType(auction.auctionType, AppLocalizations.of(context)),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,

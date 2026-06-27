@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/services/cloudinary_service.dart';
 import '../../model/electronic_clock_model.dart';
 import '../../viewmodel/clocks_bloc.dart';
 
@@ -805,14 +809,76 @@ class _PaymentProofSheet extends StatefulWidget {
 }
 
 class _PaymentProofSheetState extends State<_PaymentProofSheet> {
-  final _urlController = TextEditingController();
   final _noteController = TextEditingController();
+  String? _imagePath;
+  String? _uploadedUrl;
+  bool _isUploading = false;
 
   @override
   void dispose() {
-    _urlController.dispose();
     _noteController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: source, imageQuality: 85);
+    if (picked == null) return;
+
+    setState(() {
+      _imagePath = picked.path;
+      _uploadedUrl = null;
+      _isUploading = true;
+    });
+
+    final url = await CloudinaryService.uploadPaymentProof(picked.path);
+
+    if (!mounted) return;
+    setState(() {
+      _isUploading = false;
+      _uploadedUrl = url;
+    });
+
+    if (url == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('فشل رفع الصورة، حاول مرة أخرى'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  void _showPickerOptions(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_rounded),
+              title: const Text('التقاط صورة'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded),
+              title: const Text('اختيار من المعرض'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -835,7 +901,8 @@ class _PaymentProofSheetState extends State<_PaymentProofSheet> {
       },
       buildWhen: (p, c) => p.orderStatus != c.orderStatus,
       builder: (context, state) {
-        final isLoading = state.orderStatus == ClockOrderStatus.paying;
+        final isSubmitting = state.orderStatus == ClockOrderStatus.paying;
+        final isBusy = isSubmitting || _isUploading;
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -872,31 +939,116 @@ class _PaymentProofSheetState extends State<_PaymentProofSheet> {
               ),
               const SizedBox(height: 6),
               const Text(
-                'أرسل المبلغ وأرفق رابط صورة إثبات الدفع (Cloudinary أو أي رابط صورة)',
-                style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.5),
+                'أرسل المبلغ وارفق صورة إيصال الدفع',
+                style: TextStyle(
+                    fontSize: 12, color: AppColors.textSecondary, height: 1.5),
               ),
               const SizedBox(height: 16),
 
-              TextField(
-                controller: _urlController,
-                keyboardType: TextInputType.url,
-                decoration: InputDecoration(
-                  hintText: 'رابط صورة الإيصال...',
-                  hintStyle: const TextStyle(
-                      color: AppColors.textHint, fontSize: 13),
-                  prefixIcon: const Icon(Icons.link_rounded,
-                      color: AppColors.textHint, size: 20),
-                  border: OutlineInputBorder(
+              // ── Image picker area ──────────────────────────────────────────
+              GestureDetector(
+                onTap: isBusy ? null : () => _showPickerOptions(context),
+                child: Container(
+                  height: 140,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.inputBg,
+                    border: Border.all(
+                      color: _uploadedUrl != null
+                          ? AppColors.success
+                          : AppColors.border,
+                    ),
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  contentPadding: const EdgeInsets.all(12),
+                  child: _isUploading
+                      ? const Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(strokeWidth: 2),
+                              SizedBox(height: 8),
+                              Text('جارٍ الرفع...',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary)),
+                            ],
+                          ),
+                        )
+                      : _imagePath != null
+                          ? Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(9),
+                                  child: Image.file(
+                                    File(_imagePath!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                if (_uploadedUrl != null)
+                                  Positioned(
+                                    top: 8,
+                                    left: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.success,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.check_circle,
+                                              color: Colors.white, size: 14),
+                                          SizedBox(width: 4),
+                                          Text('تم الرفع',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                Positioned(
+                                  bottom: 8,
+                                  left: 8,
+                                  child: GestureDetector(
+                                    onTap: () => _showPickerOptions(context),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Text('تغيير',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 11)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_photo_alternate_outlined,
+                                    size: 36, color: AppColors.textHint),
+                                SizedBox(height: 8),
+                                Text('اضغط لإضافة صورة الإيصال',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: AppColors.textSecondary)),
+                                SizedBox(height: 4),
+                                Text('كاميرا أو معرض الصور',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.textHint)),
+                              ],
+                            ),
                 ),
-                style: const TextStyle(fontSize: 13),
               ),
               const SizedBox(height: 12),
 
@@ -924,14 +1076,13 @@ class _PaymentProofSheetState extends State<_PaymentProofSheet> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: isLoading
+                  onPressed: isBusy
                       ? null
                       : () {
-                          final url = _urlController.text.trim();
-                          if (url.isEmpty) {
+                          if (_uploadedUrl == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('الرجاء إدخال رابط الإيصال'),
+                                content: Text('الرجاء رفع صورة الإيصال أولاً'),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -939,7 +1090,7 @@ class _PaymentProofSheetState extends State<_PaymentProofSheet> {
                           }
                           context.read<ClocksBloc>().add(ClockPaymentSubmitted(
                                 orderId: widget.orderId,
-                                proofUrl: url,
+                                proofUrl: _uploadedUrl!,
                                 note: _noteController.text.trim(),
                               ));
                         },
@@ -950,7 +1101,7 @@ class _PaymentProofSheetState extends State<_PaymentProofSheet> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: isLoading
+                  child: isSubmitting
                       ? const SizedBox(
                           height: 20,
                           width: 20,

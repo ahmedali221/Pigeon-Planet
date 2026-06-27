@@ -99,6 +99,8 @@ class RacesFilterSearchRequested extends RacesEvent {
   final String seasonYear;
   final String stationName;
   final String birdNumber;
+  final String pointName;
+  final String hobbyistName;
 
   const RacesFilterSearchRequested({
     this.rank = '',
@@ -108,10 +110,13 @@ class RacesFilterSearchRequested extends RacesEvent {
     this.seasonYear = '',
     this.stationName = '',
     this.birdNumber = '',
+    this.pointName = '',
+    this.hobbyistName = '',
   });
 
   @override
   List<Object?> get props => [
-        rank, country, clubName, competitorName, seasonYear, stationName, birdNumber,
+        rank, country, clubName, competitorName, seasonYear,
+        stationName, birdNumber, pointName, hobbyistName,
       ];
 }

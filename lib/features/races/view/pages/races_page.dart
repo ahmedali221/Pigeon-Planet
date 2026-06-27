@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -63,18 +64,13 @@ class _RacesViewState extends State<_RacesView>
         leading: ShellBackButton(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
           indicatorColor: Colors.white,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white60,
-          labelStyle: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           tabs: [
-            Tab(text: l10n.clubManagerResults),
-            Tab(text: l10n.pointsResults),
+            Tab(text: l10n.clubRaces),
+            Tab(text: l10n.olrRaces),
           ],
         ),
       ),
@@ -119,12 +115,22 @@ class _ClubFilterTabState extends State<_ClubFilterTab> {
   }
 
   void _search() {
+    final l10n = AppLocalizations.of(context);
+    final country = _countryCtrl.text.trim();
+    final club = _clubCtrl.text.trim();
+    final year = _selectedYear;
+    if (country.isEmpty || club.isEmpty || year.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.requiredFieldsError)),
+      );
+      return;
+    }
     context.read<RacesBloc>().add(RacesFilterSearchRequested(
           rank: _rankCtrl.text.trim(),
-          country: _countryCtrl.text.trim(),
-          clubName: _clubCtrl.text.trim(),
+          country: country,
+          clubName: club,
           competitorName: _competitorCtrl.text.trim(),
-          seasonYear: _selectedYear,
+          seasonYear: year,
           stationName: _stationCtrl.text.trim(),
           birdNumber: _birdCtrl.text.trim(),
         ));
@@ -144,71 +150,55 @@ class _ClubFilterTabState extends State<_ClubFilterTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return _TabLayout(
-      filterCard: _FilterCard(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _FilterField(
-                  controller: _rankCtrl,
-                  label: l10n.rankLabel,
-                  icon: Icons.emoji_events_rounded,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _FilterField(
-                  controller: _countryCtrl,
-                  label: l10n.country,
-                  icon: Icons.flag_rounded,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          _FilterField(
-            controller: _clubCtrl,
-            label: l10n.clubNameLabel,
-            icon: Icons.shield_rounded,
-          ),
-          const SizedBox(height: 10),
-          _FilterField(
-            controller: _competitorCtrl,
-            label: l10n.competitorNameLabel,
-            icon: Icons.person_rounded,
-          ),
-          const SizedBox(height: 10),
-          _SeasonPickerTile(
-            selectedYear: _selectedYear,
-            onPicked: (y) => setState(() => _selectedYear = y),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _FilterField(
-                  controller: _stationCtrl,
-                  label: l10n.station,
-                  icon: Icons.train_rounded,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _FilterField(
-                  controller: _birdCtrl,
-                  label: l10n.birdRingLabel,
-                  icon: Icons.flutter_dash_rounded,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          _ActionButtons(onSearch: _search, onClear: _clear),
-        ],
-      ),
-      resultsBody: _ResultsBody(onSearch: _search),
+    return _FilterScrollLayout(
+      onSearch: _search,
+      filterChildren: [
+        _FilterField(
+          controller: _rankCtrl,
+          label: l10n.rankLabel,
+          icon: Icons.emoji_events_rounded,
+          keyboardType: TextInputType.number,
+          digitsOnly: true,
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _countryCtrl,
+          label: '${l10n.country} *',
+          icon: Icons.flag_rounded,
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _clubCtrl,
+          label: '${l10n.clubNameLabel} *',
+          icon: Icons.shield_rounded,
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _competitorCtrl,
+          label: l10n.competitorNameLabel,
+          icon: Icons.person_rounded,
+        ),
+        const SizedBox(height: 10),
+        _SeasonPickerTile(
+          selectedYear: _selectedYear,
+          isRequired: true,
+          onPicked: (y) => setState(() => _selectedYear = y),
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _stationCtrl,
+          label: l10n.station,
+          icon: Icons.train_rounded,
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _birdCtrl,
+          label: l10n.birdRingLabel,
+          icon: Icons.flutter_dash_rounded,
+        ),
+        const SizedBox(height: 14),
+        _ActionButtons(onSearch: _search, onClear: _clear),
+      ],
     );
   }
 }
@@ -223,35 +213,35 @@ class _OlrFilterTab extends StatefulWidget {
 }
 
 class _OlrFilterTabState extends State<_OlrFilterTab> {
-  final _clubCtrl = TextEditingController();
+  final _rankCtrl = TextEditingController();
+  final _pointNameCtrl = TextEditingController();
   final _competitorCtrl = TextEditingController();
-  final _stationCtrl = TextEditingController();
   final _birdCtrl = TextEditingController();
   String _selectedYear = '';
 
   @override
   void dispose() {
-    _clubCtrl.dispose();
+    _rankCtrl.dispose();
+    _pointNameCtrl.dispose();
     _competitorCtrl.dispose();
-    _stationCtrl.dispose();
     _birdCtrl.dispose();
     super.dispose();
   }
 
   void _search() {
     context.read<RacesBloc>().add(RacesFilterSearchRequested(
-          clubName: _clubCtrl.text.trim(),
+          rank: _rankCtrl.text.trim(),
+          pointName: _pointNameCtrl.text.trim(),
           competitorName: _competitorCtrl.text.trim(),
           seasonYear: _selectedYear,
-          stationName: _stationCtrl.text.trim(),
           birdNumber: _birdCtrl.text.trim(),
         ));
   }
 
   void _clear() {
-    _clubCtrl.clear();
+    _rankCtrl.clear();
+    _pointNameCtrl.clear();
     _competitorCtrl.clear();
-    _stationCtrl.clear();
     _birdCtrl.clear();
     setState(() => _selectedYear = '');
     context.read<RacesBloc>().add(const RacesStarted());
@@ -260,114 +250,141 @@ class _OlrFilterTabState extends State<_OlrFilterTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return _TabLayout(
-      filterCard: _FilterCard(
-        children: [
-          _FilterField(
-            controller: _clubCtrl,
-            label: l10n.clubNameLabel,
-            icon: Icons.shield_rounded,
-          ),
-          const SizedBox(height: 10),
-          _FilterField(
-            controller: _competitorCtrl,
-            label: l10n.competitorNameLabel,
-            icon: Icons.person_rounded,
-          ),
-          const SizedBox(height: 10),
-          _SeasonPickerTile(
-            selectedYear: _selectedYear,
-            onPicked: (y) => setState(() => _selectedYear = y),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _FilterField(
-                  controller: _stationCtrl,
-                  label: l10n.station,
-                  icon: Icons.train_rounded,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _FilterField(
-                  controller: _birdCtrl,
-                  label: l10n.birdRingLabel,
-                  icon: Icons.flutter_dash_rounded,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          _ActionButtons(onSearch: _search, onClear: _clear),
-        ],
-      ),
-      resultsBody: _ResultsBody(onSearch: _search),
-    );
-  }
-}
-
-// ── Responsive tab layout ─────────────────────────────────────────────────────
-
-class _TabLayout extends StatelessWidget {
-  final Widget filterCard;
-  final Widget resultsBody;
-
-  const _TabLayout({required this.filterCard, required this.resultsBody});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 640),
-        child: Column(
-          children: [
-            filterCard,
-            Expanded(child: resultsBody),
-          ],
+    return _FilterScrollLayout(
+      onSearch: _search,
+      filterChildren: [
+        _FilterField(
+          controller: _rankCtrl,
+          label: l10n.rankLabel,
+          icon: Icons.emoji_events_rounded,
+          keyboardType: TextInputType.number,
+          digitsOnly: true,
         ),
-      ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _pointNameCtrl,
+          label: l10n.pointNameLabel,
+          icon: Icons.place_rounded,
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _competitorCtrl,
+          label: l10n.competitorNameLabel,
+          icon: Icons.person_rounded,
+        ),
+        const SizedBox(height: 10),
+        _SeasonPickerTile(
+          selectedYear: _selectedYear,
+          onPicked: (y) => setState(() => _selectedYear = y),
+        ),
+        const SizedBox(height: 10),
+        _FilterField(
+          controller: _birdCtrl,
+          label: l10n.birdRingLabel,
+          icon: Icons.flutter_dash_rounded,
+        ),
+        const SizedBox(height: 14),
+        _ActionButtons(onSearch: _search, onClear: _clear),
+      ],
     );
   }
 }
 
-// ── Results body ──────────────────────────────────────────────────────────────
+// ── Unified scroll layout: filter form + results in one scroll ────────────────
 
-class _ResultsBody extends StatelessWidget {
+class _FilterScrollLayout extends StatelessWidget {
+  final List<Widget> filterChildren;
   final VoidCallback onSearch;
 
-  const _ResultsBody({required this.onSearch});
+  const _FilterScrollLayout({
+    required this.filterChildren,
+    required this.onSearch,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return BlocBuilder<RacesBloc, RacesState>(
-      builder: (context, state) {
-        if (state.status == RacesStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state.status == RacesStatus.error) {
-          return _ErrorView(
-            message: state.errorMessage ?? l10n.errorOccurred,
-            onRetry: onSearch,
-          );
-        }
-        if (state.status == RacesStatus.initial) {
-          return _EmptyPrompt(message: l10n.filterSearchPrompt);
-        }
-        if (state.globalSearchResults.isEmpty) {
-          return _EmptyView(message: l10n.noMatchingResults);
-        }
-        final hasFooter =
-            state.resultSearchHasMore || state.resultSearchLoadingMore;
-        return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          itemCount: state.globalSearchResults.length + (hasFooter ? 1 : 0),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 640),
+        child: BlocBuilder<RacesBloc, RacesState>(
+          builder: (context, state) {
+            return CustomScrollView(
+              slivers: [
+                // ── Filter card ──────────────────────────────────────────────
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: filterChildren,
+                    ),
+                  ),
+                ),
+                // ── Results section ──────────────────────────────────────────
+                ..._buildResultSlivers(context, state, l10n),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildResultSlivers(
+    BuildContext context,
+    RacesState state,
+    AppLocalizations l10n,
+  ) {
+    Widget fillWith(Widget child) => SliverFillRemaining(
+          hasScrollBody: false,
+          child: child,
+        );
+
+    if (state.status == RacesStatus.loading) {
+      return [fillWith(const Center(child: CircularProgressIndicator()))];
+    }
+    if (state.status == RacesStatus.error) {
+      return [
+        fillWith(_ErrorView(
+          message: state.errorMessage ?? l10n.errorOccurred,
+          onRetry: onSearch,
+        )),
+      ];
+    }
+    if (state.status == RacesStatus.initial) {
+      return [fillWith(_EmptyPrompt(message: l10n.filterSearchPrompt))];
+    }
+    if (state.globalSearchResults.isEmpty) {
+      return [fillWith(_EmptyView(message: l10n.noMatchingResults))];
+    }
+
+    final results = state.globalSearchResults;
+    final hasFooter = state.resultSearchHasMore || state.resultSearchLoadingMore;
+    final count = results.length + (hasFooter ? 1 : 0);
+
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        sliver: SliverList.separated(
+          itemCount: count,
           separatorBuilder: (_, i) => const SizedBox(height: 8),
           itemBuilder: (ctx, i) {
-            if (i == state.globalSearchResults.length) {
+            if (i == results.length) {
               return _LoadMoreButton(
                 loading: state.resultSearchLoadingMore,
                 label: l10n.loadMore,
@@ -376,7 +393,7 @@ class _ResultsBody extends StatelessWidget {
                     .add(const RaceResultSearchLoadMoreRequested()),
               );
             }
-            final result = state.globalSearchResults[i];
+            final result = results[i];
             return _ResultRow(
               result: result,
               onTap: result.raceId != null
@@ -392,55 +409,27 @@ class _ResultsBody extends StatelessWidget {
                   : null,
             );
           },
-        );
-      },
-    );
+        ),
+      ),
+    ];
   }
 }
 
 // ── Shared filter widgets ─────────────────────────────────────────────────────
-
-class _FilterCard extends StatelessWidget {
-  final List<Widget> children;
-
-  const _FilterCard({required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      ),
-    );
-  }
-}
 
 class _FilterField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final IconData icon;
   final TextInputType? keyboardType;
+  final bool digitsOnly;
 
   const _FilterField({
     required this.controller,
     required this.label,
     required this.icon,
     this.keyboardType,
+    this.digitsOnly = false,
   });
 
   @override
@@ -448,6 +437,9 @@ class _FilterField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: digitsOnly
+          ? [FilteringTextInputFormatter.digitsOnly]
+          : null,
       textAlign: TextAlign.start,
       decoration: InputDecoration(
         labelText: label,
@@ -472,10 +464,12 @@ class _FilterField extends StatelessWidget {
 class _SeasonPickerTile extends StatelessWidget {
   final String selectedYear;
   final ValueChanged<String> onPicked;
+  final bool isRequired;
 
   const _SeasonPickerTile({
     required this.selectedYear,
     required this.onPicked,
+    this.isRequired = false,
   });
 
   Future<void> _pick(BuildContext context) async {
@@ -536,7 +530,7 @@ class _SeasonPickerTile extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                hasValue ? selectedYear : l10n.season,
+                hasValue ? selectedYear : (isRequired ? '${l10n.season} *' : l10n.season),
                 style: TextStyle(
                   fontSize: 16,
                   color:
@@ -601,7 +595,7 @@ class _ActionButtons extends StatelessWidget {
   }
 }
 
-// ── Result row ────────────────────────────────────────────────────────────────
+// ── Result card ───────────────────────────────────────────────────────────────
 
 class _ResultRow extends StatelessWidget {
   final RaceResultModel result;
@@ -615,100 +609,250 @@ class _ResultRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // ── Header: rank + name + country/club ──────────────────
             Container(
-              width: 36,
-              height: 36,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: _rankColor(result.rank),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '${result.rank}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                color: AppColors.primary.withValues(alpha: 0.06),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    result.competitorName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: AppColors.textPrimary,
+                  _RankBadge(rank: result.rank),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          result.competitorName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: AppColors.textPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (result.clubName != null ||
+                            result.pointName != null ||
+                            result.raceSeasonYear != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            [
+                              if (result.clubName != null) result.clubName!,
+                              if (result.pointName != null) result.pointName!,
+                              if (result.raceSeasonYear != null)
+                                '${result.raceSeasonYear}',
+                            ].join(' · '),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    l10n.ringLabel(result.birdRingNumber),
-                    style: const TextStyle(
-                        fontSize: 12, color: AppColors.textSecondary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (result.raceTitle != null) ...[
-                    const SizedBox(height: 2),
+                  if (result.country != null) ...[
+                    const SizedBox(width: 8),
                     Text(
-                      result.raceTitle!,
+                      result.country!,
                       style: TextStyle(
-                          fontSize: 11, color: AppColors.primary),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
                     ),
+                  ],
+                  if (onTap != null) ...[
+                    const SizedBox(width: 4),
+                    Icon(Icons.chevron_left_rounded,
+                        size: 16, color: AppColors.textSecondary),
                   ],
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${result.speed.toStringAsFixed(2)} ${l10n.speedUnit}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: AppColors.primary,
+            // ── Station row ─────────────────────────────────────────
+            if (result.raceStationName != null)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(
+                  children: [
+                    Icon(Icons.train_rounded,
+                        size: 14, color: AppColors.textSecondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      result.raceStationName!,
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            // ── Bird ring ────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Row(
+                children: [
+                  Icon(Icons.flutter_dash_rounded,
+                      size: 14, color: AppColors.textSecondary),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.ringLabel(result.birdRingNumber),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textSecondary),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${result.distanceKm.toStringAsFixed(2)} ${l10n.distanceKmUnit}',
-                  style: const TextStyle(
-                      fontSize: 11, color: AppColors.textSecondary),
-                ),
-                if (onTap != null) ...[
-                  const SizedBox(height: 2),
-                  Icon(Icons.chevron_left_rounded,
-                      size: 16, color: AppColors.textSecondary),
                 ],
-              ],
+              ),
             ),
+            // ── Arrival datetime (OLR) ───────────────────────────────
+            if (result.arrivalDatetime.isNotEmpty)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Row(
+                  children: [
+                    Icon(Icons.access_time_rounded,
+                        size: 14, color: AppColors.textSecondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${l10n.arrivalDateTimeLabel}: ${result.arrivalDatetime}',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            const Divider(height: 1, indent: 12, endIndent: 12),
+            // ── Metrics grid ─────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _MetricChip(
+                    label: l10n.speedUnit,
+                    value: result.speed.toStringAsFixed(2),
+                    icon: Icons.speed_rounded,
+                    highlight: true,
+                  ),
+                  _MetricChip(
+                    label: l10n.distanceKmUnit,
+                    value: result.distanceKm.toStringAsFixed(2),
+                    icon: Icons.straighten_rounded,
+                  ),
+                  if (result.points != null)
+                    _MetricChip(
+                      label: l10n.racePointsLabel,
+                      value: result.points!.toStringAsFixed(2),
+                      icon: Icons.stars_rounded,
+                    ),
+                  if (result.timeDifference != null)
+                    _MetricChip(
+                      label: l10n.timeDifferenceLabel,
+                      value: result.timeDifference!,
+                      icon: Icons.timer_outlined,
+                    ),
+                  if (result.arrivalsCount != null)
+                    _MetricChip(
+                      label: l10n.arrivalsCountLabel,
+                      value: '${result.arrivalsCount}',
+                      icon: Icons.groups_rounded,
+                    ),
+                  if (result.totalBirds != null)
+                    _MetricChip(
+                      label: l10n.totalBirdsLabel,
+                      value: '${result.totalBirds}',
+                      icon: Icons.flutter_dash_rounded,
+                    ),
+                  if (result.basketNumber != null)
+                    _MetricChip(
+                      label: l10n.baskLabel,
+                      value: '${result.basketNumber}',
+                      icon: Icons.inventory_2_rounded,
+                    ),
+                ],
+              ),
+            ),
+            // ── Result lines ─────────────────────────────────────────
+            if (result.resultLines1 != null || result.resultLines2 != null) ...[
+              const Divider(height: 1, indent: 12, endIndent: 12),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    if (result.resultLines1 != null)
+                      Expanded(
+                        child: _TimeLine(
+                          label: l10n.resultLine1Label,
+                          value: result.resultLines1!,
+                        ),
+                      ),
+                    if (result.resultLines1 != null &&
+                        result.resultLines2 != null)
+                      const SizedBox(width: 12),
+                    if (result.resultLines2 != null)
+                      Expanded(
+                        child: _TimeLine(
+                          label: l10n.resultLine2Label,
+                          value: result.resultLines2!,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RankBadge extends StatelessWidget {
+  final int rank;
+
+  const _RankBadge({required this.rank});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: _rankColor(rank),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          '$rank',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
         ),
       ),
     );
@@ -728,6 +872,85 @@ class _ResultRow extends StatelessWidget {
   }
 }
 
+class _MetricChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final bool highlight;
+
+  const _MetricChip({
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: highlight
+            ? AppColors.primary.withValues(alpha: 0.08)
+            : AppColors.pageBackground,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon,
+              size: 13,
+              color: highlight ? AppColors.primary : AppColors.textSecondary),
+          const SizedBox(width: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: highlight ? AppColors.primary : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(width: 3),
+          Text(
+            label,
+            style: const TextStyle(
+                fontSize: 11, color: AppColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TimeLine extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _TimeLine({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ── Utility widgets ───────────────────────────────────────────────────────────
 
 class _EmptyPrompt extends StatelessWidget {
@@ -739,7 +962,7 @@ class _EmptyPrompt extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -766,18 +989,21 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.emoji_events_rounded,
-              size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.emoji_events_rounded,
+                size: 64, color: Colors.grey.shade300),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

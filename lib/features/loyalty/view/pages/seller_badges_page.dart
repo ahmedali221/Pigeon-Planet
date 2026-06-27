@@ -341,6 +341,21 @@ class _BadgeCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            if (badge.description.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                badge.description,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isRevoked || isExpired
+                      ? AppColors.textHint
+                      : AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
             // Expiry hint for active temporary badges
             if (badge.expiresAt != null && !isRevoked && !isExpired) ...[
               SizedBox(height: 4),

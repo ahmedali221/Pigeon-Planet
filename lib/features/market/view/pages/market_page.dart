@@ -21,6 +21,11 @@ class MarketPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final isSeller = authState is AuthSuccess ? authState.user.isSeller : false;
+
+    if (isSeller) return SellerProductsPage();
+
     return BlocProvider(
       create: (_) => sl<MarketBloc>()..add(MarketStarted()),
       child: _MarketView(),
@@ -448,14 +453,20 @@ class _PromotionsStrip extends StatelessWidget {
             children: [
               ...discountOffers.map(
                 (o) => _OfferChip(
-                  label: o.displayLabel,
+                  label: o.label(
+                    AppLocalizations.of(context).discount,
+                    AppLocalizations.of(context).egpCurrency,
+                  ),
                   color: AppColors.orange,
                   icon: '🎁',
                 ),
               ),
               ...cashbackOffers.map(
                 (o) => _OfferChip(
-                  label: o.displayLabel,
+                  label: o.label(
+                    AppLocalizations.of(context).cashback,
+                    AppLocalizations.of(context).egpCurrency,
+                  ),
                   color: AppColors.primary,
                   icon: '💰',
                 ),
@@ -540,7 +551,7 @@ class _FeedSection extends StatelessWidget {
         ),
         SizedBox(height: 10),
         SizedBox(
-          height: 224,
+          height: MediaQuery.sizeOf(context).width * 0.42 * 1.42,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsetsDirectional.only(start: 16, end: 8),
@@ -633,7 +644,7 @@ class _FeedProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 158,
+        width: MediaQuery.sizeOf(context).width * 0.42,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -657,7 +668,7 @@ class _FeedProductCard extends StatelessWidget {
             child: Stack(
               children: [
                 SizedBox(
-                  height: 132,
+                  height: MediaQuery.sizeOf(context).width * 0.42 * 0.84,
                   child: product.thumbnailUrl != null
                       ? Image.network(
                           product.thumbnailUrl!,

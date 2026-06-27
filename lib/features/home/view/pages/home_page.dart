@@ -41,6 +41,7 @@ import '../../../subscription/view/pages/packages_page.dart';
 import '../widgets/home_drawer.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/utils/auction_labels.dart';
 import '../../model/announcement_model.dart';
 UserModel? _homeAuthUserForUi(AuthState authState) {
   if (authState is AuthSuccess) return authState.user;
@@ -108,9 +109,9 @@ class _HomeViewState extends State<_HomeView> {
       return {
         'id': a.id,
         'ring': ring,
-        'type': a.auctionTypeDisplay.isNotEmpty ? a.auctionTypeDisplay : l.auctionTypeDefault,
+        'type': localizedAuctionType(a.auctionType, l),
         'typeColor': 0xFF3E7B52,
-        'breed': a.items.isNotEmpty ? a.items.first.bird.colour : '—',
+        'breed': a.items.isNotEmpty ? a.items.first.bird.colour : '',
         'desc': a.description,
         'price': _fmtPrice(a.currentPrice),
         'timeLabel': timeLabel,
@@ -135,7 +136,7 @@ class _HomeViewState extends State<_HomeView> {
       final s = seconds % 60;
       return {
         'id': a.id,
-        'name': '${a.sellerNickname} $ring',
+        'name': a.title.isNotEmpty ? a.title : ring,
         'seller': a.sellerNickname,
         'price': _fmtPrice(a.currentPrice),
         'views': '0',
